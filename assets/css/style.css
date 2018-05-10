@@ -256,6 +256,17 @@ nav ul li.active {
     color:#fff;
 }
 
+.btn-brown {
+    border:1px solid #6e6867;
+    background-color:#6e6867;
+    color:#fff;
+}
+
+.btn-small {
+    padding:3px 7px;
+    font-size:8pt !important;
+}
+
 .btn-left {
     float:left;
 }
@@ -436,4 +447,86 @@ nav ul li.active {
 .ui-datepicker-trigger{
     border:none;
     background:none;
+}
+
+.ui-widget-header {
+    background-color:#6E5645;
+    border-radius:0;
+    color:#fff;
+}
+
+.ui-dialog .ui-dialog-content {
+    padding:0;
+    overflow-x:hidden;
+}
+
+.modal-title {
+    font-size:10pt;
+    /*background-color:#FCE5CD;*/
+    background-color:#CCCCCC;
+
+}
+
+.modal-title-text {
+    background-color:#FCE5CD;
+    width:17%;
+    padding:5px 10px
+}
+
+.modal-field {
+    display:block;
+    clear:both;
+    font-size:9pt;
+    padding:5px 10px;
+    width:99%;
+}
+
+.modal-field-input {
+    display:inline-block;
+    width:49%;
+}
+
+.modal-field-input.full {
+    display:block;
+    width:100%;
+}
+
+.modal-field-input > .input > input[type="text"] {
+    height:15px;
+    width:90%;
+}
+
+
+.modal-field-input > .label {
+    display:inline-block;
+    width:39%;
+}
+
+.modal-field-input > .input {
+    display:inline-block;
+    width:60%;
+}
+
+.modal-field-input.full > .label {
+    display:inline-block;
+    width:19%;
+}
+
+.modal-field-input.full > .input {
+    display:inline-block;
+}
+
+.modal-field-input > .input > input[type="text"].width-button {
+    width:61%;
+}
+
+.modal-field-input.full > .input {
+
+}
+
+.modal-button {
+    border-top:1px solid #ddd;
+    margin:10px auto;
+    padding-top:10px;
+    text-align:center;
 }

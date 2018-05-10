@@ -48,4 +48,13 @@ $(function(){
         showOn: "both",
         buttonText: "<i class='fa fa-calendar-alt'></i>"
     });
+
+    $(".btn-add").click(function(){
+        $('#dialog').dialog({
+            title: '회원 등록',
+            modal: true,
+            width: '40%',
+            draggable: false
+        });
+    })
 })
