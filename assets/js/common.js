@@ -41,20 +41,8 @@ $(function(){
         var select_name = $(this).children('option:selected').text();
         $(this).siblings('label').text(select_name);
         $(this).parent().removeClass('focus');
+        // checkChange($(this));
     });
 
-    $( ".datepicker" ).datepicker({
-        dateFormat: 'yy-mm-dd',
-        showOn: "both",
-        buttonText: "<i class='fa fa-calendar-alt'></i>"
-    });
 
-    $(".btn-add").click(function(){
-        $('#dialog').dialog({
-            title: '회원 등록',
-            modal: true,
-            width: '40%',
-            draggable: false
-        });
-    })
 })

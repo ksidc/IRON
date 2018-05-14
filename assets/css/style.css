@@ -36,6 +36,10 @@ input[type="text"] {
     height:20px;
 }
 
+textarea:focus, input:focus{
+    outline: none;
+}
+
 /*select {
     width:150px;
     padding: .5em .5em;
@@ -342,38 +346,34 @@ nav ul li.active {
     width:100%;
     text-align:center;
     padding:10px 0px;
-}
-
-.pagination ul {
     list-style:none;
-    padding:0;
     margin:0;
 }
 
-.pagination ul li {
+.pagination li {
     display:inline-block;
 
     font-size:9pt;
     cursor:pointer;
-}
-
-.pagination ul li.first, .pagination ul li.last {
-    border:1px solid #d9d9d9;
-    padding:2px 6px;
-    width:20px;
-}
-
-.pagination ul li a.num {
     padding:4px 10px 0px 10px;
     width:20px;
     color:#333333;
 }
 
-.pagination ul li a.num:hover {
+.pagination li a {
+    color:#333333;
+}
+.pagination li.first, .pagination li.last {
+    border:1px solid #d9d9d9;
+    padding:2px 6px;
+    width:20px;
+}
+
+.pagination li:hover {
     font-weight:bold;
 }
 
-.pagination ul li a.active {
+.pagination li.active a {
     color:#49aeed;
     text-decoration:underline;
 }
