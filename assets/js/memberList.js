@@ -27,6 +27,7 @@ $(function(){
         $(".edit").hide();
         $(".user").hide();
         $(".company").show();
+        $("#mb_type_text").text("사업자");
 
         $(".md-id-str").html("");
         $("#mb_address").val("");
@@ -58,15 +59,15 @@ $(function(){
         $("#mb_payment_type").val("");
         $("#mb_phone").val("");
         $("#mb_tel").val("");
-        $("#mb_type").val("");
+        $("#mb_type").val("0");
         $("#mb_zipcode").val("");
         $("#mb_seq").val("");
 
         $('#dialog').dialog({
             title: '회원 등록',
             modal: true,
-            width: '40%',
-            draggable: false
+            width: '800px',
+            draggable: true
         });
     });
 
@@ -140,9 +141,11 @@ $(function(){
                 if(response.mb_type == "0"){
                     $(".user").hide();
                     $(".company").show();
+                    $("#mb_type_text").text("사업자");
                 }else{
                     $(".user").show();
                     $(".company").hide();
+                    $("#mb_type_text").text("개인");
                 }
                 $(".md-id-str").html(response.mb_id);
                 $("#mb_address").val(response.mb_address);
@@ -181,17 +184,28 @@ $(function(){
                 $('#dialog').dialog({
                     title: '회원 수정',
                     modal: true,
-                    width: '40%',
-                    draggable: false
+                    width: '800px',
+                    draggable: true
                 });
             }
         });
     });
     // 등록 & 수정
-    $(".btn-register").click(function(){
+    $("#registerForm").submit(function(){
+
+        var PT_E_N = /^[a-zA-Z0-9]+$/;
+        var PT_comnum = /^\d{3}-\d{2}-\d{5}$/;
+        var PT_birth = /^(19[0-9][0-9]|20\d{2})-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
+        var PT_phone = /^\d{3}-\d{3,4}-\d{4}$/;
+        var PT_tel = /^\d{2,3}-\d{3,4}-\d{4}$/;
         if($("#mb_seq").val() == ""){
             if($("#mb_id").val() == ""){
                 alert("회원 아이디(코드)를 입력해 주세요");
+                return false;
+            }
+
+            if(!PT_E_N.test($("#mb_id").val())){
+                alert("영문/숫자만 입력 가능합니다.");
                 return false;
             }
         }
@@ -202,20 +216,45 @@ $(function(){
 
 
         if($("#mb_name").val() == ""){
-            alert("상호명을 입력해 주세요");
-            return false;
-        }
-
-        if($("#mb_number").val() == ""){
-            alert("사업자등록번호를 입력해 주세요");
-            return false;
-        }
-        if($("#mb_seq").val() == ""){
-            if($("#dupleNumberYn").val() == "N"){
-                alert("사업자등록번호 중복확인을 해주시기 바랍니다.");
+            if($("#mb_type").val() == "0"){
+                alert("상호명을 입력해 주세요");
+                return false;
+            }else{
+                alert("이름을 입력해 주세요");
                 return false;
             }
         }
+
+        if($("#mb_number").val() == ""){
+            if($("#mb_type").val() == "0"){
+                alert("사업자등록번호를 입력해 주세요");
+                return false;
+            }else{
+                alert("생년월일을 입력해 주세요");
+                return false;
+            }
+        }
+
+        if($("#mb_type").val() == "0"){
+            // console.log(PT_comnum.test($("#mb_number").val()));
+            if(!PT_comnum.test($("#mb_number").val())){
+                alert("사업자 번호를 정확히 입력해 주세요.");
+                return false;
+            }
+            if($("#mb_seq").val() == ""){
+                if($("#dupleNumberYn").val() == "N"){
+                    alert("사업자등록번호 중복확인을 해주시기 바랍니다.");
+                    return false;
+                }
+            }
+        }else{
+            if(!PT_birth.test($("#mb_number").val())){
+                alert("생년월일을 정확히 입력해 주세요.");
+                return false;
+            }
+        }
+
+
 
         if($("#mb_ceo").val() == ""){
             alert("대표자를 입력해 주세요");
@@ -232,8 +271,18 @@ $(function(){
             return false;
         }
 
+        if(!PT_tel.test($("#mb_tel").val())){
+            alert("전화번호를 정확히 입력해 주세요.");
+            return false;
+        }
+
         if($("#mb_phone").val() == ""){
             alert("휴대폰번호를 입력해 주세요");
+            return false;
+        }
+
+        if(!PT_phone.test($("#mb_phone").val())){
+            alert("휴대폰번호를 정확히 입력해 주세요.");
             return false;
         }
 
@@ -242,19 +291,20 @@ $(function(){
             return false;
         }
 
-        if($("#mb_fax").val() == ""){
-            alert("팩스를 입력해 주세요");
-            return false;
-        }
+        // if($("#mb_fax").val() == ""){
+        //     alert("팩스를 입력해 주세요");
+        //     return false;
+        // }
+        if($("#mb_type").val() == "0"){
+            if($("#mb_business_conditions").val() == ""){
+                alert("업태를 입력해 주세요");
+                return false;
+            }
 
-        if($("#mb_business_conditions").val() == ""){
-            alert("업태를 입력해 주세요");
-            return false;
-        }
-
-        if($("#mb_business_type").val() == ""){
-            alert("종목을 입력해 주세요");
-            return false;
+            if($("#mb_business_type").val() == ""){
+                alert("종목을 입력해 주세요");
+                return false;
+            }
         }
 
         $(".emailCheck").each(function(){
@@ -276,6 +326,8 @@ $(function(){
             var actionType = "edit";
         }
         var datas = $("#registerForm").serialize();
+        datas += "&mb_type="+$("#mb_type").val();
+        datas += "&mb_payment_type="+$("#mb_payment_type").val()+"&mb_auto_payment="+$("#mb_auto_payment").val()+"&mb_payment_publish="+$("#mb_payment_publish").val()+"&mb_payment_publish_type="+$("#mb_payment_publish_type").val();
         $.ajax({
             url : url,
             type : 'POST',
@@ -363,9 +415,6 @@ $(function(){
     getList();
 
     // 검색
-    $(".btn-form-search").click(function(){
-        getList();
-    })
 
     $(".emailCheck").focusout(function(){
         if($(this).val() != ""){
@@ -418,9 +467,10 @@ $(function(){
 
 var getList = function(){
     var start = $("#start").val();
-    var end = 10;
+    var end = 5;
     var url = "/api/memberList/"+start+"/"+end;
     var searchForm = $("#searchForm").serialize();
+    // console.log(url);
     $.ajax({
         url : url,
         type : 'GET',
@@ -431,9 +481,12 @@ var getList = function(){
             var html = "";
             if(response.list.length > 0){
                 for(var i = 0; i < response.list.length;i++){
+                    var num = response.total - ((start-1)*end) - i;
+
+
                     html += '<tr>\
                                 <td><input type="checkbox" class="listCheck" name="mb_seq[]" value="'+response.list[i].mb_seq+'"></td>\
-                                <td>1</td>\
+                                <td>'+num+'</td>\
                                 <td>'+response.list[i].mb_id+'</td>\
                                 <td>'+response.list[i].mb_name+'</td>\
                                 <td></td>\
@@ -442,15 +495,15 @@ var getList = function(){
                                 <td>'+response.list[i].mb_payment_name+'</td>\
                                 <td>'+response.list[i].mb_regdate+'</td>\
                                 <td>0</td>\
-                                <td class="btn-modify" data-seq="'+response.list[i].mb_seq+'">[수정]</td>\
-                                <td class="btn-delete" data-seq="'+response.list[i].mb_seq+'">[삭제]</td>\
+                                <td class="btn-modify" data-seq="'+response.list[i].mb_seq+'" style="cursor:pointer"><i class="fas fa-edit"></i></td>\
+                                <td class="btn-delete" data-seq="'+response.list[i].mb_seq+'" style="cursor:pointer"><i class="fas fa-trash"></i></td>\
                             </tr>';
                 }
 
                 $(".pagination-html").bootpag({
-                    total : Math.ceil(response.list.length/10), // 총페이지수 (총 Row / list노출개수)
+                    total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
                     page : $("#start").val(), // 현재 페이지 default = 1
-                    maxVisible:10, // 페이지 숫자 노출 개수
+                    maxVisible:5, // 페이지 숫자 노출 개수
                     wrapClass : "pagination",
                     next : ">",
                     prev : "<",
@@ -460,6 +513,8 @@ var getList = function(){
 
                 }).on('page', function(event,num){ // 이벤트 액션
                     // document.location.href='/pageName/'+num; // 페이지 이동
+                    $("#start").val(num);
+                    getList();
                 })
             }else{
                 html += '<tr><td colspan="12" style="text-align:center">회원이 없습니다.</td></tr>';
@@ -467,6 +522,7 @@ var getList = function(){
             $("#tbody-list").html(html);
         }
     });
+    return false;
 }
 
 // 다음 우편번호 호출

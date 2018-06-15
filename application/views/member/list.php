@@ -1,3 +1,4 @@
+
 <script src="/assets/js/memberList.js?date=<?=time()?>"></script>
 <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
@@ -6,7 +7,7 @@
         <i class="fa fa-file"></i> 회원 관리
     </h2>
     <div class="search">
-        <form name="searchForm" id="searchForm">
+        <form name="searchForm" id="searchForm" onsubmit="return getList();">
             <div class="search1">
                 <div class="form-group">
                     <input type="checkbox" name="serviceYn" id="serviceYn" value="Y"> 서비스 이용 중인 회원만 표시
@@ -40,7 +41,7 @@
                         </select>
                     </div>
                     <input type="text" name="searchWord" id="searchWord">
-                    <button class="btn btn-search btn-form-search" type="button">검색</button>
+                    <button class="btn btn-search btn-form-search" type="submit">검색</button>
                 </div>
             </div>
         </form>
@@ -96,7 +97,7 @@
 </div>
 <input type="hidden" id="start" value=1>
 
-<div id="dialog">
+<div id="dialog" class="dialog">
     <form name="registerForm" id="registerForm">
         <input type="hidden" name="mb_seq" id="mb_seq">
         <input type="hidden" name="dupleIdYn" id="dupleIdYn" value="N">
@@ -119,9 +120,9 @@
                 <div class="label">회원구분</div>
                 <div class="input">
                     <div class="selectbox" style="width:92%">
-                        <label for="mb_type" style="top:1.5px;padding:.1em .5em">사업자</label>
+                        <label for="mb_type" style="top:1.5px;padding:.1em .5em" id="mb_type_text">사업자</label>
                         <select name="mb_type" id="mb_type" style="padding:.2em .5em">
-                            <option selected value="0">사업자</option>
+                            <option value="0" selected>사업자</option>
                             <option value="1">개인</option>
 
                         </select>
@@ -129,7 +130,8 @@
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">상호명</div>
+                <div class="label company">상호명</div>
+                <div class="label user">이름</div>
                 <div class="input"><input type="text" name="mb_name" id="mb_name"></div>
             </div>
         </div>
@@ -137,7 +139,7 @@
             <div class="modal-field-input">
                 <div class="label company">사업자등록번호(-포함)</div>
                 <div class="label user">생년월일(1900-01-01)</div>
-                <div class="input"><input type="text" class="width-button" name="mb_number" id="mb_number"><button class="btn btn-brown btn-small btn-number-duple" type="button">중복확인</button></div>
+                <div class="input"><input type="text" class="width-button" name="mb_number" id="mb_number"><button class="btn btn-brown btn-small btn-number-duple company" type="button">중복확인</button></div>
             </div>
             <div class="modal-field-input">
                 <div class="label">대표자</div>
@@ -200,7 +202,7 @@
                 <div class="input"><input type="text" name="mb_contract_tel" id="mb_contract_tel"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">휴대푠번호(-포함)</div>
+                <div class="label">휴대폰번호(-포함)</div>
                 <div class="input"><input type="text" name="mb_contract_phone" id="mb_contract_phone"></div>
             </div>
         </div>
@@ -223,7 +225,7 @@
                 <div class="input"><input type="text" name="mb_payment_tel" id="mb_payment_tel"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">휴대푠번호(-포함)</div>
+                <div class="label">휴대폰번호(-포함)</div>
                 <div class="input"><input type="text" name="mb_payment_phone" id="mb_payment_phone"></div>
             </div>
         </div>
@@ -271,10 +273,10 @@
                 <div class="label">자동 청구일</div>
                 <div class="input">
                     <div class="selectbox" style="width:60%">
-                        <label for="mb_auto_payment" style="top:1.5px;padding:.1em .5em">1일</label>
+                        <label for="mb_auto_payment" style="top:1.5px;padding:.1em .5em">25일</label>
                         <select name="mb_auto_payment" id="mb_auto_payment" style="padding:.2em .5em">
                             <?php for($i = 1; $i < 32; $i++): ?>
-                                <?php if($i == 1): ?>
+                                <?php if($i == 25): ?>
                                     <option selected value="<?=$i?>"><?=$i?>일</option>
                                 <?php else: ?>
                                     <option value="<?=$i?>"><?=$i?>일</option>
@@ -324,7 +326,7 @@
             </div>
         </div>
         <div class="modal-button">
-            <button class="btn btn-black btn-register" type="button">등록</button>
+            <button class="btn btn-black btn-register" type="submit">등록</button>
         </div>
     </form>
 </div>

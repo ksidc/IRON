@@ -13,6 +13,7 @@ body {
 }
 a {
     text-decoration:none;
+    color:#000;
 }
 
 a:hover{
@@ -39,6 +40,8 @@ input[type="text"] {
 textarea:focus, input:focus{
     outline: none;
 }
+
+i {cursor:pointer;}
 
 /*select {
     width:150px;
@@ -191,7 +194,7 @@ nav ul li.active {
     display:none;
 }
 
-.sub-menu p {
+.sub-menu p{
     padding:15px 0px 0px 15px;
     font-size:12pt;
     color:#7f7f7f;
@@ -199,8 +202,12 @@ nav ul li.active {
     margin:0px;
 }
 
-.sub-menu p:hover, .sub-menu p.active {
-    color:#fff;
+.sub-menu p a{
+    color:#7f7f7f;
+}
+
+.sub-menu p:hover, .sub-menu p.active , .sub-menu p a:hover, .sub-menu p a.active {
+    color:#fff !important;
     background-color:#6e5645;
 }
 
@@ -240,6 +247,7 @@ nav ul li.active {
 .btn {
     padding:5px 12px;
     font-size:10pt;
+    cursor:pointer;
 }
 
 .btn-default {
@@ -295,11 +303,11 @@ nav ul li.active {
 .table > thead {
     background-color:#6e6867;
     color:#fff;
-    font-size:14pt;
+    font-size:10pt;
 }
 
 .table > thead > tr > th {
-    height:45px;
+    height:35px;
 }
 
 .table > tbody {
@@ -468,9 +476,11 @@ nav ul li.active {
 }
 
 .modal-title-text {
-    background-color:#FCE5CD;
-    width:17%;
-    padding:5px 10px
+	/* 0528_KSIDC */
+    background-color:#EBE9E4;
+    width:18%;
+    padding:7px 10px;
+	font-weight: bold;
 }
 
 .modal-field {
@@ -529,4 +539,130 @@ nav ul li.active {
     margin:10px auto;
     padding-top:10px;
     text-align:center;
+}
+
+.modal_search {
+    padding:5px 10px;
+    border:1px solid #ddd;
+    background:#eee;
+}
+
+.modal_search ul {
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+
+.modal_search ul li {
+    display:inline-block;
+}
+
+.dialog {
+    display:none;
+}
+
+.modal_search_list {
+    margin-top:10px;
+}
+
+.modal_search_list > table > thead > tr > th {
+    height:25px;
+    font-size:14px;
+}
+
+.modal_search_list > table > tbody {
+    height:300px;
+    overflow:auto;
+}
+
+.type-add {
+    font-size:12px;
+    width:100%;
+}
+
+.type-add-left {
+    display:inline-block;
+}
+
+.type-add-right {
+    display:inline-block;
+}
+
+.text-center {
+    text-align:center;
+}
+
+.content-tab ul {
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+
+.content-tab ul li {
+    background-color:gray;
+    padding:8px 20px;
+    display:inline-block;
+    font-size:13px;
+    color:#fff;
+    cursor:pointer;
+    margin-right:3px;
+}
+
+.content-tab ul li.active {
+    background-color:#6e5645;
+
+}
+
+.content-tab ul li.add {
+    background-color:#333;
+}
+
+.modal-close-btn {
+    text-align:center;
+    background:#dedede;
+    margin-top:5px;
+    line-height:40px
+}
+
+.modal_search ul li {
+    font-size:12px;
+}
+
+.etc-info {
+    border-top:1px solid #ddd;border-bottom:1px solid #ddd;font-size:12px;line-height:30px
+}
+
+.full > .input {
+    width:80%;
+}
+
+/* Clearable text inputs */
+.clearable{
+    position: relative;
+    display: inline-block;
+}
+.clearable input[type=text]{
+    padding-right: 24px;
+    width: 100%;
+    box-sizing: border-box;
+    height:20px;
+}
+.clearable__clear{
+    /*display: none;*/
+    position: absolute;
+    right:0; top:3px;
+    padding: 0 8px;
+    font-style: normal;
+    font-size: 1.2em;
+    user-select: none;
+    cursor: pointer;
+}
+.clearable input::-ms-clear {  /* Remove IE default X */
+    display: none;
+}
+
+.popup_title {
+    color:#fff;
+    background-color:#6e5645;
+    height:20px;
 }

@@ -23,16 +23,9 @@
 
 <body>
     <div class="wrapper">
-        <header>
-            <?=$header?>
-        </header>
         <section>
-            <?=$left?>
             <?=$content?>
         </section>
-        <footer>
-            <?=$footer?>
-        </footer>
     </div>
     <script src="/assets/js/common.js?date=<?=time()?>"></script>
 </body>
