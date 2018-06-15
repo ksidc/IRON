@@ -188,7 +188,8 @@ $(function(){
         });
     });
     // 등록 & 수정
-    $("#registerForm").submit(function(){
+
+    $("#registerForm").submit(function(event){
 
         var PT_E_N = /^[a-zA-Z0-9]+$/;
         var PT_comnum = /^\d{3}-\d{2}-\d{5}$/;
@@ -290,35 +291,57 @@ $(function(){
         // var datas = $("#registerForm").serialize();
         // datas += "&c_payment_type="+$("#c_payment_type").val();
         $("#c_payment_type").val($("#c_payment_type_select").val());
-        $("#registerForm").ajaxForm({ // submit 액션 생성
-            url : url, // url 입력
-            enctype : "multipart/form-data", // 파일 업로드 처리
-            dataType : "json", // 전송 타입 및 리턴 타입 설정
-            error : function(xhr,option,error){ // 에러 처리
-                console.log(error);
-            },
-            success : function(data){ // 성공 처리
-                // console.log(data);
-                if(data.result){
-                    if(actionType == "add"){
-                        alert("등록 되었습니다.");
-                    }else{
-                        alert("수정 되었습니다.");
-                    }
-                    getList();
-                    $("#dialog").dialog( "close" );
+        // $("#registerForm").ajaxForm({ // submit 액션 생성
+        //     url : url, // url 입력
+        //     enctype : "multipart/form-data", // 파일 업로드 처리
+        //     dataType : "json", // 전송 타입 및 리턴 타입 설정
+        //     error : function(xhr,option,error){ // 에러 처리
+        //         console.log(xhr);
+        //     },
+        //     success : function(data){ // 성공 처리
+        //         // console.log(data);
+        //         if(data.result){
+        //             if(actionType == "add"){
+        //                 alert("등록 되었습니다.");
+        //             }else{
+        //                 alert("수정 되었습니다.");
+        //             }
+        //             getList();
+        //             $("#dialog").dialog( "close" );
+        //         }
+        //     }
+        // });
+        // $("#registerForm").submit();
+        // return false;
+        event.preventDefault(); //prevent default action
+        var post_url = url; //get form action url
+        var request_method = "POST"; //get form GET/POST method
+        var form_data = new FormData(this); //Creates new FormData object
+        $.ajax({
+            url : post_url,
+            type: request_method,
+            data : form_data,
+            contentType: false,
+            cache: false,
+            processData:false
+        }).done(function(response){ //
+            response = JSON.parse(response);
+            if(response.result){
+                if(actionType == "add"){
+                    alert("등록 되었습니다.");
+                }else{
+                    alert("수정 되었습니다.");
                 }
+                getList();
+                $("#dialog").dialog( "close" );
             }
         });
-        $("#registerForm").submit();
-        return false;
 
     });
-
     // 삭제
     $("body").on("click",".btn-delete",function(){
         if(confirm("삭제시 모든 매입처정보가 삭제됩니다. 정말 삭제하시겠습니까?")){
-            var mb_seq = $(this).data("seq");
+            var c_seq = $(this).data("seq");
             var url = "/api/clientDelete/";
             $.ajax({
                 url : url,
@@ -334,6 +357,9 @@ $(function(){
                         alert("오류가 발생했습니다.");
                         return false;
                     }
+                },
+                error:function(error){
+                    console.log(error);
                 }
             });
         }
@@ -480,10 +506,10 @@ var getList = function(){
                         var c_payment_type = "기타";
                     }
                     var fileinfo = "";
-                    if(response.list[i].c_file1 != ""){
+                    if(response.list[i].c_file1 != "" && response.list[i].c_file1 !== null ){
                         fileinfo += "<i class='fas fa-save fileDownload' data-filename='"+response.list[i].c_file1+"' data-originname='"+response.list[i].c_origin_file1+"' data-folder='client_file'></i> ";
                     }
-                    if(response.list[i].c_file2 != ""){
+                    if(response.list[i].c_file2 != "" && response.list[i].c_file2 !== null){
                         fileinfo += "<i class='fas fa-save fileDownload' data-filename='"+response.list[i].c_file2+"' data-originname='"+response.list[i].c_origin_file2+"' data-folder='client_file'></i> ";
                     }
                     html += '<tr>\
@@ -528,6 +554,8 @@ var getList = function(){
     });
     return false;
 }
+
+
 
 // 다음 우편번호 호출
 function daumApi() {

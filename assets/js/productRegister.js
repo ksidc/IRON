@@ -1,5 +1,5 @@
 $(function(){
-    getList();
+    // getList();
     getItemList();
 
     $("#all").click(function(){
@@ -96,6 +96,10 @@ $(function(){
             success:function(response){
                 $('#dialogCategory').dialog('close');
                 getTabInfo();
+                // getList();
+            },
+            error:function(error){
+                console.log(error);
             }
         });
     })
@@ -120,18 +124,19 @@ $(function(){
     $("body").on("click",".editCategory",function(){
         // console.log($(this).parent().children("td").eq(1).children("input").length);
         if($(this).parent().children("td").eq(2).children("input").length > 0){
-            var url = "/api/productCategoryUpdate/"+$(this).data("seq");
-            $.ajax({
-                url : url,
-                type : 'POST',
-                dataType : 'JSON',
-                data : "pc_name="+$(this).parent().children("td").eq(2).children("input").val(),
-                success:function(response){
-                    getTabInfo();
-                }
-            });
+            // var url = "/api/productCategoryUpdate/"+$(this).data("seq");
+            // $.ajax({
+            //     url : url,
+            //     type : 'POST',
+            //     dataType : 'JSON',
+            //     data : "pc_name="+$(this).parent().children("td").eq(2).children("input").val(),
+            //     success:function(response){
+            //         getTabInfo();
+            //     }
+            // });
+            $(this).parent().children("td").eq(2).html($(this).data("name"));
         }else{
-            $(this).parent().children("td").eq(2).html("<input type='text' name='mode_name' value='"+$(this).data("name")+"'>");
+            $(this).parent().children("td").eq(2).html("<input type='text' name='m_pc_name[]' value='"+$(this).data("name")+"'><input type='hidden' name='m_pc_seq[]' value='"+$(this).data("seq")+"'>");
         }
 
     });
@@ -218,24 +223,25 @@ $(function(){
     $("body").on("click",".editDiv",function(){
         // console.log($(this).parent().children("td").eq(1).children("input").length);
         if($(this).parent().children("td").eq(1).children("input").length > 0){
-            var url = "/api/productDivUpdate/"+$(this).data("seq");
-            var pd_name = $(this).parent().children("td").eq(1).children("input").val();
-            var that = $(this);
-            $.ajax({
-                url : url,
-                type : 'POST',
-                dataType : 'JSON',
-                data : "pd_name="+pd_name,
-                success:function(response){
-                    if(response.result == true){
-                        alert("수정되었습니다.");
-                        that.parent().children("td").eq(1).html(pd_name);
-                    }
-                    // getTabInfo();
-                }
-            });
+            // var url = "/api/productDivUpdate/"+$(this).data("seq");
+            // var pd_name = $(this).parent().children("td").eq(1).children("input").val();
+            // var that = $(this);
+            // $.ajax({
+            //     url : url,
+            //     type : 'POST',
+            //     dataType : 'JSON',
+            //     data : "pd_name="+pd_name,
+            //     success:function(response){
+            //         if(response.result == true){
+            //             alert("수정되었습니다.");
+            //             that.parent().children("td").eq(1).html(pd_name);
+            //         }
+            //         // getTabInfo();
+            //     }
+            // });
+            $(this).parent().children("td").eq(1).html($(this).data("name"));
         }else{
-            $(this).parent().children("td").eq(1).html("<input type='text' name='mode_name' value='"+$(this).data("name")+"'>");
+            $(this).parent().children("td").eq(1).html("<input type='text' name='m_pd_name[]' value='"+$(this).data("name")+"'><input type='hidden' name='m_pd_seq[]' value='"+$(this).data("seq")+"'>");
         }
 
     });
@@ -284,7 +290,10 @@ $(function(){
 
     $("body").on("click",".addSubDiv",function(){
         var $viewSub = $(this).parent().parent().children("td").eq(1).children("i");
-        $viewSub.trigger("click");
+
+        if($(".children_div_"+$(this).data("pdseq")).length == 0)
+            $viewSub.trigger("click");
+
         var pd_seq = $(this).data("pdseq");
         var html = '<tr>\
         <td></td>\
@@ -294,7 +303,10 @@ $(function(){
         <td></td>\
         <input type="hidden" name="add_ps_pd_seq[]" value="'+pd_seq+'">\
         </tr>';
-        $("#parent_div_"+pd_seq).after(html);
+        if($(".children_div_"+$(this).data("pdseq")).length == 0)
+            $("#parent_div_"+pd_seq).after(html);
+        else
+            $(".children_div_"+pd_seq).last().after(html);
     })
 
     $(".btn-div-sub-save").click(function(){
@@ -318,6 +330,7 @@ $(function(){
                 console.log(error);
             }
         });
+        return false;
     });
 
     $("body").on("click",".deleteDivSub",function(){
@@ -340,19 +353,20 @@ $(function(){
     $("body").on("click",".editDivSub",function(){
         // console.log($(this).parent().children("td").eq(1).children("input").length);
         if($(this).parent().children("td").eq(1).children("input").length > 0){
-            var url = "/api/productDivSubUpdate/"+$(this).data("seq");
-            $.ajax({
-                url : url,
-                type : 'POST',
-                dataType : 'JSON',
-                data : "ps_name="+$(this).parent().children("td").eq(1).children("input").val(),
-                success:function(response){
-                    console.log(response);
-                    // getTabInfo();
-                }
-            });
+            // var url = "/api/productDivSubUpdate/"+$(this).data("seq");
+            // $.ajax({
+            //     url : url,
+            //     type : 'POST',
+            //     dataType : 'JSON',
+            //     data : "ps_name="+$(this).parent().children("td").eq(1).children("input").val(),
+            //     success:function(response){
+            //         console.log(response);
+            //         // getTabInfo();
+            //     }
+            // });
+            $(this).parent().children("td").eq(1).html($(this).data("name"));
         }else{
-            $(this).parent().children("td").eq(1).html("<input type='text' name='mode_name' value='"+$(this).data("name")+"'>");
+            $(this).parent().children("td").eq(1).html("<input type='text' name='m_ps_name[]' value='"+$(this).data("name")+"'><input type='hidden' name='m_ps_seq[]' value='"+$(this).data("seq")+"'>");
         }
 
     });
@@ -445,9 +459,11 @@ function getTabInfo(){
         dataType : 'JSON',
         success:function(response){
             var html = '<ul>';
+            var current_seq = "1";
             for(var i =0;i<response.length;i++){
                 if(i == 0){
                     var addClass = "active";
+                    current_seq = response[i].pc_seq;
                 }else{
                     var addClass = "";
                 }
@@ -457,6 +473,8 @@ function getTabInfo(){
             html += '<li class="content-tab-item add"><i class="fa fa-cog" aria-hidden="true"></i> 탭 설정</li>\
             </ul>';
             $(".content-tab").html(html);
+            $("#pc_seq").val(current_seq);
+            getList();
         }
     });
 }
@@ -516,7 +534,7 @@ function getList(){
                     getList();
                 })
             }else{
-                html += '<tr><td colspan="12" style="text-align:center">상품이 없습니다.</td></tr>';
+                html += '<tr><td colspan="13" style="text-align:center">상품이 없습니다.</td></tr>';
                 $(".pagination-html").html("");
             }
             $("#tbody-list").html(html);

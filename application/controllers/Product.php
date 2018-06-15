@@ -82,10 +82,10 @@ class Product extends CI_Controller {
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;ㄴ '.$row2["ps_name"].'</td>
                 <input type="hidden" name="prs_seq[]" value="'.$row2["prs_seq"].'">
                 <input type="hidden" name="prs_use_type[]" class="prs_use_type" value="">
-                <td><input type="text" name="prs_price[]" value="'.$row2["prs_price"].'" style="width:80px;ime-mode:disabled" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)">원</td>
+                <td><input type="text" name="prs_price[]" value="'.number_format($row2["prs_price"]).'" style="width:80px;ime-mode:disabled" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)">원</td>
                 <td style="text-align:left;padding-left:5px"><input type="radio" name="prs_div['.$i.']" value="1" '.($row2["prs_div"] == "1" ? "checked":"").'>구매<br><input type="radio" name="prs_div['.$i.']" value="2" '.($row2["prs_div"] == "2" ? "checked":"").'>월</td>
-                <td><input type="text" name="prs_one_price[]" value="'.$row2["prs_one_price"].'" style="width:80px;ime-mode:disabled" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)">원</td>
-                <td><input type="text" name="prs_month_price[]" value="'.$row2["prs_month_price"].'" style="width:80px;ime-mode:disabled" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)">원</td>
+                <td><input type="text" name="prs_one_price[]" value="'.number_format($row2["prs_one_price"]).'" style="width:80px;ime-mode:disabled" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)">원</td>
+                <td><input type="text" name="prs_month_price[]" value="'.number_format($row2["prs_month_price"]).'" style="width:80px;ime-mode:disabled" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)">원</td>
                 <td><input type="checkbox" name="prs_use_type_str[]" class="prs_use_type_str" value="1" '.($row2["prs_use_type"] == "1" ? "checked":"").'></td>
                 <td><input type="text" name="prs_msg[]" value="'.$row2["prs_msg"].'" style="width:140px"></td>
                 </tr>

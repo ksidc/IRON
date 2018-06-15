@@ -95,13 +95,21 @@ $(function(){
             }
         })
         var datas = $("#listForm").serialize();
+        // console.log(datas);
+        // return false;
         $.ajax({
             url : "/api/productItemSubRegister",
             type : 'POST',
             dataType : 'JSON',
             data : datas,
             success:function(response){
-                console.log(response);
+                if(response.result){
+                    alert("수정 완료");
+                    document.location.reload();
+                }
+            },
+            error : function(error){
+                console.log(error);
             }
         });
     });
@@ -132,42 +140,50 @@ $(function(){
     $("body").on("click",".btn-modify",function(){
         var pi_seq = $(this).data("seq");
         if($(this).parent().children("td").eq(1).children("input").length > 0){
-            var query = {};
-            query.pi_seq = pi_seq;
-            query.pi_name = $(this).parent().children("td").eq(1).children("input").val();
-            var sub = $(this).parent().children("td").eq(2).children("div");
-            query.sub = [];
-            sub.each(function(){
-                var pis_c_seq = $(this).parent().parent().children("td").eq(3).children("div").children("div").children("select").val();
+            // var query = {};
+            // query.pi_seq = pi_seq;
+            // query.pi_name = $(this).parent().children("td").eq(1).children("input").val();
+            // var sub = $(this).parent().children("td").eq(2).children("div");
+            // query.sub = [];
+            // sub.each(function(){
+            //     var pis_c_seq = $(this).parent().parent().children("td").eq(3).children("div").children("div").children("select").val();
 
-                var subitem = {
-                    pis_name : $(this).children("input").val(),
-                    pis_c_seq : pis_c_seq,
-                    pis_seq : $(this).data("pisseq")
-                }
-                query.sub.push(subitem);
-            })
+            //     var subitem = {
+            //         pis_name : $(this).children("input").val(),
+            //         pis_c_seq : pis_c_seq,
+            //         pis_seq : $(this).data("pisseq")
+            //     }
+            //     query.sub.push(subitem);
+            // })
 
-            $.ajax({
-                url : "/api/productItemUpdate",
-                type : 'POST',
-                dataType : 'JSON',
-                data : query,
-                success:function(response){
-                    if(response.result == true){
-                        alert("수정 되었습니다.");
-                        document.location.reload();
-                    }
-                },error: function(error){
-                    console.log(error);
-                }
-            });
-
-        }else{
-            $(this).parent().children("td").eq(1).html("<input type='text' name='mode_name' value='"+$(this).parent().children("td").eq(1).data("name")+"' style='width:90%'>");
+            // $.ajax({
+            //     url : "/api/productItemUpdate",
+            //     type : 'POST',
+            //     dataType : 'JSON',
+            //     data : query,
+            //     success:function(response){
+            //         if(response.result == true){
+            //             alert("수정 되었습니다.");
+            //             document.location.reload();
+            //         }
+            //     },error: function(error){
+            //         console.log(error);
+            //     }
+            // });
+            $(this).parent().children("td").eq(1).html($(this).parent().children("td").eq(1).data("name"));
             var subitem = $(this).parent().children("td").eq(2).children("div");
             subitem.each(function(){
-                $(this).html("<input type='text' name='mode_name' value='"+$(this).data("name")+"' style='width:90%'>");
+                $(this).html($(this).data("name"));
+            });
+            var subclient = $(this).parent().children("td").eq(3).children("div");
+            subclient.each(function(){
+                $(this).html($(this).data("name"));
+            });
+        }else{
+            $(this).parent().children("td").eq(1).html("<input type='text' name='m_pi_name[]' value='"+$(this).parent().children("td").eq(1).data("name")+"' style='width:90%'><input type='hidden' name='m_pi_seq[]' value='"+pi_seq+"'>");
+            var subitem = $(this).parent().children("td").eq(2).children("div");
+            subitem.each(function(){
+                $(this).html("<input type='text' name='m_pis_name[]' value='"+$(this).data("name")+"' style='width:90%'><input type='hidden' name='m_pis_seq[]' value='"+$(this).data("pisseq")+"' style='width:90%'>");
             });
             var that = $(this);
             $.ajax({
@@ -181,7 +197,7 @@ $(function(){
                     subclient.each(function(){
                         var html = '<div class="selectbox" style="width:90%">';
                         html += '<label for="pis_c_select_'+$(".selectbox").length+'" style="top:1.5px;padding:.1em .5em">'+$(this).data("name")+'</label>';
-                        html += '<select id="pis_c_select_'+$(".selectbox").length+'" name="add_pis_c_seq[]" style="padding:.2em .5em">';
+                        html += '<select id="pis_c_select_'+$(".selectbox").length+'" name="m_pis_c_seq[]" style="padding:.2em .5em">';
                         html += '<option value="" selected>매입처 선택</option>';
                         for(var i = 0; i< response.length;i++){
                             if($(this).data("name") == response[i].c_name){

@@ -38,7 +38,7 @@ class Product_model extends CI_Model {
         // }
         $this->db->order_by("ps_seq asc");
         $query = $this->db->get();
-
+        // echo $this->db->last_query();
         return $query->result_array();
     }
 
@@ -76,8 +76,11 @@ class Product_model extends CI_Model {
         $result = $query->row_array();
 
         $pr_code = $result["pr_code"];
-        $pr_num = substr($result["pr_code"],-4);
 
+        $pr_num = (int)substr($result["pr_code"],-4);
+        if($pr_num == ""){
+            $pr_num = 0;
+        }
         return $pr_num+1;
     }
 }

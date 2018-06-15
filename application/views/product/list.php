@@ -185,7 +185,7 @@
         </div>
     </div>
     </form>
-    <div style="text-align:center;margin:10px auto"><button class="btn btn-black btn-div-sub-save">저장</button> <button class="btn btn-default" onclick="$('#dialogDiv').dialog('close')">닫기</button></div>
+    <div style="text-align:center;margin:10px auto"><button class="btn btn-black btn-div-sub-save" type="button">저장</button> <button class="btn btn-default" onclick="$('#dialogDiv').dialog('close')">닫기</button></div>
 </div>
 <input type="hidden" id="start" value=1>
 <input type="hidden" id="pc_seq" value="1">

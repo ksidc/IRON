@@ -1,4 +1,6 @@
-
+<script>
+var category = '<?=json_encode($category)?>';
+</script>
 <!-- uniform 최신 jquery 오류 처리 include 파일 -->
 <script src="//code.jquery.com/jquery-migrate-1.2.1.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
@@ -16,18 +18,20 @@
             <div class="search1">
                 <div class="form-group">
                     <div class="selectbox">
-                        <label for="searchDepth1">대분류</label>
+                        <label for="searchDepth1">서비스 종류</label>
                         <select id="searchDepth1" name="searchDepth1">
-                            <option value="" selected>대분류</option>
-
+                            <option value="" selected>서비스 종류</option>
+                            <?php foreach($category as $row): ?>
+                            <option value="<?=$row["pc_seq"]?>"><?=$row["pc_name"]?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="selectbox">
-                        <label for="searchDepth2">소분류</label>
+                        <label for="searchDepth2" id="searchDepth2Str">상품명</label>
                         <select id="searchDepth2" name="searchDepth2">
-                            <option value="">소분류</option>
+                            <option value="">상품명</option>
                         </select>
                     </div>
                 </div>
@@ -239,24 +243,27 @@
         <div class="modal-field depth-area">
             <div class="depth-item">
                 <div class="modal-field-input">
-                    <div class="label">대분류</div>
+                    <div class="label">서비스 종류</div>
                     <div class="input">
+                        <input type="hidden" name="ed_seq[]" value="">
                         <div class="selectbox">
-                            <label for="es_depth1" style="top:1.5px;padding:.1em .5em">분류선택</label>
-                            <select id="es_depth1" name="es_depth1[]" style="padding:.2em .5em">
-                                <option value="" selected>분류선택</option>
-
+                            <label for="es_depth1_1" style="top:1.5px;padding:.1em .5em">서비스 종류 선택</label>
+                            <select id="es_depth1_1" name="es_depth1[]" class="es_depth1" data-index="1" data-childvalue="" style="padding:.2em .5em">
+                                <option value="" selected>서비스 종류 선택</option>
+                                <?php foreach($category as $row): ?>
+                                <option value="<?=$row["pc_seq"]?>"><?=$row["pc_name"]?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-field-input">
-                    <div class="label">소분류</div>
+                    <div class="label">상품명</div>
                     <div class="input">
                         <div class="selectbox">
-                            <label for="es_depth2" style="top:1.5px;padding:.1em .5em">분류선택</label>
-                            <select id="es_depth2" name="es_depth2[]" style="padding:.2em .5em">
-                                <option value="" selected>분류선택</option>
+                            <label for="es_depth2_1" id="es_depth2_1_str" style="top:1.5px;padding:.1em .5em">상품명 선택</label>
+                            <select id="es_depth2_1" name="es_depth2[]" style="padding:.2em .5em">
+                                <option value="" selected>상품명 선택</option>
 
                             </select>
                         </div>
@@ -279,7 +286,7 @@
             <div class="modal-field-input">
                 <div class="label">END User</div>
                 <input type="hidden" name="es_end_user" id="es_end_user">
-                <div class="input"><input type="text" name="es_end_user_name" id="es_end_user_name" class="width-button"><button class="btn btn-brown btn-small btn-number-duple" type="button" onclick='getEndUserNextNumber();$( "#dialogEndSearch" ).dialog("open");$("#dialogEndSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
+                <div class="input"><input type="text" name="es_end_user_name" id="es_end_user_name" class="width-button" readonly><button class="btn btn-brown btn-small btn-number-duple" type="button" onclick='getEndUserNextNumber();$( "#dialogEndSearch" ).dialog("open");$("#dialogEndSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
             </div>
         </div>
 

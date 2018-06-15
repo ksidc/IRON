@@ -58,7 +58,7 @@
     </form>
     </div>
 </div>
-<div style="text-align:center;margin:15px auto 5px auto"><button class="btn btn-black btn-item-sub-save">저장</button> <button class="btn btn-default" onclick="self.close()">닫기</button></div>
+<div style="text-align:center;margin:15px auto 5px auto"><button class="btn btn-black btn-item-sub-save" type="button">저장</button> <button class="btn btn-default" onclick="self.close()">닫기</button></div>
 <input type="hidden" id="start" value=1>
 <input type="hidden" id="pc_seq" value="<?=$pc_seq?>">
 

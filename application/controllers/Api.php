@@ -215,9 +215,21 @@ class Api extends CI_Controller {
         // $start = ($start-1)*$end;
         $total = $this->api_model->countEstimate();
         $list = $this->api_model->fetchEstimate($start,$end);
+        $new_list = [];
+        foreach($list as $row){
+            $row["depth1"] = array();
+            $row["depth2"] = array();
+            $row_depth = $this->api_model->fetchEstimateDepth($row["es_seq"]);
+
+            foreach($row_depth as $row2){
+                array_push($row["depth1"],$row2["pc_name"]);
+                array_push($row["depth2"],$row2["pr_name"]);
+            }
+            array_push($new_list,$row);
+        }
         $result = [
             "total" => $total,
-            "list" => $list
+            "list" => $new_list
         ];
 
         echo json_encode($result);
@@ -230,11 +242,13 @@ class Api extends CI_Controller {
         $files = $this->api_model->fetchEstimateFiles($es_seq);
         $basicfiles = $this->api_model->fetchEstimateBasicFile();
         $addfiles = $this->api_model->estimateEmailFileList($es_seq);
+        $depths = $this->api_model->fetchEstimateDepth($es_seq);
         $result = array(
             "info" => $info,
             "files" => $files,
             "basicfiles" => $basicfiles,
-            "addfiles" => $addfiles
+            "addfiles" => $addfiles,
+            "depths" => $depths
         );
         echo json_encode($result);
     }
@@ -617,11 +631,11 @@ class Api extends CI_Controller {
     }
 
     // 상품 등록 - 분류 업데이트
-    public function productDivUpdate($pd_seq){
-        $result = $this->api_model->productDivUpdate($pd_seq);
-        $arr = array("result"=>$result);
-        echo json_encode($arr);
-    }
+    // public function productDivUpdate($pd_seq){
+    //     $result = $this->api_model->productDivUpdate($pd_seq);
+    //     $arr = array("result"=>$result);
+    //     echo json_encode($arr);
+    // }
 
     // 상품 등록 - 분류 삭제
     public function productDivDelete($pd_seq){
@@ -650,6 +664,28 @@ class Api extends CI_Controller {
             $this->api_model->productDivSubRegister($pd_seq[$i],$ps_name[$i]);
         }
 
+
+        $m_ps_seq = $this->input->post("m_ps_seq");
+        $m_ps_name = $this->input->post("m_ps_name");
+
+        if($m_ps_seq == ""){
+            $m_ps_seq = [];
+        }
+        for($i = 0; $i < count($m_ps_seq);$i++){
+            $this->api_model->productDivSubUpdate($m_ps_seq[$i],$m_ps_name[$i]);
+        }
+
+        $m_pd_seq = $this->input->post("m_pd_seq");
+        $m_pd_name = $this->input->post("m_pd_name");
+
+        if($m_pd_seq == ""){
+            $m_pd_seq = [];
+        }
+
+        for($i = 0; $i < count($m_pd_seq);$i++){
+            $this->api_model->productDivUpdate($m_pd_seq[$i],$m_pd_name[$i]);
+        }
+
         $this->api_model->productDivSort($parent_pd_seq);
 
         $result = array("result"=>true);
@@ -657,11 +693,11 @@ class Api extends CI_Controller {
     }
 
     // 상품 등록 - 분류 서브 업데이트
-    public function productDivSubUpdate($ps_seq){
-        $result = $this->api_model->productDivSubUpdate($ps_seq);
-        $arr = array("result"=>$result);
-        echo json_encode($arr);
-    }
+    // public function productDivSubUpdate($ps_seq){
+    //     $result = $this->api_model->productDivSubUpdate($ps_seq);
+    //     $arr = array("result"=>$result);
+    //     echo json_encode($arr);
+    // }
 
     // 상품 등록 - 분류 서브 삭제
     public function productDivSubDelete($ps_seq){
@@ -723,11 +759,11 @@ class Api extends CI_Controller {
     }
 
     // 상품 등록 - 제품군 업데이트
-    public function productItemUpdate(){
-        $result = $this->api_model->productItemUpdate($_POST);
-        $arr = array("result"=>$result);
-        echo json_encode($arr);
-    }
+    // public function productItemUpdate(){
+    //     $result = $this->api_model->productItemUpdate($_POST);
+    //     $arr = array("result"=>$result);
+    //     echo json_encode($arr);
+    // }
 
     // 상품 등록 - 제품군 삭제
     public function productItemDelete($pi_seq){
@@ -738,12 +774,30 @@ class Api extends CI_Controller {
 
     // 상품 등록 - 제품 서브 등록
     public function productItemSubRegister(){
-        $pi_seq = $this->input->post("add_pis_pi_seq");
-        $pis_name = $this->input->post("add_pis_name");
-        $pis_c_seq = $this->input->post("add_pis_c_seq");
-        for($i = 0; $i < count($pis_name);$i++){
+        if($this->input->post("add_pis_name") != ""){
+            $pi_seq = $this->input->post("add_pis_pi_seq");
+            $pis_name = $this->input->post("add_pis_name");
+            $pis_c_seq = $this->input->post("add_pis_c_seq");
+            for($i = 0; $i < count($pis_name);$i++){
 
-            $this->api_model->productItemSubRegister($pi_seq[$i],$pis_name[$i],$pis_c_seq[$i]);
+                $this->api_model->productItemSubRegister($pi_seq[$i],$pis_name[$i],$pis_c_seq[$i]);
+            }
+        }
+        if($this->input->post("m_pi_name") != ""){
+            $m_pi_name = $this->input->post("m_pi_name");
+            $m_pi_seq = $this->input->post("m_pi_seq");
+            for($i = 0; $i < count($m_pi_seq);$i++){
+                $this->api_model->productItemUpdate($m_pi_seq[$i],$m_pi_name[$i]);
+            }
+        }
+
+        if($this->input->post("m_pis_name") != ""){
+            $m_pis_name = $this->input->post("m_pis_name");
+            $m_pis_seq = $this->input->post("m_pis_seq");
+            $m_pis_c_seq = $this->input->post("m_pis_c_seq");
+            for($i = 0; $i < count($m_pis_seq);$i++){
+                $this->api_model->productItemSubUpdate($m_pis_seq[$i],$m_pis_name[$i],$m_pis_c_seq[$i]);
+            }
         }
         $result = array("result"=>true);
         echo json_encode($result);
@@ -985,6 +1039,11 @@ class Api extends CI_Controller {
             "list" => $html
         ];
 
+        echo json_encode($result);
+    }
+
+    public function productSearch($pc_seq){
+        $result = $this->api_model->productSearch($pc_seq);
         echo json_encode($result);
     }
 

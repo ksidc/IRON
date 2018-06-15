@@ -90,7 +90,7 @@
 <input type="hidden" id="start" value=1>
 
 <div id="dialog" class="dialog">
-    <form name="registerForm" id="registerForm" method="post">
+    <form name="registerForm" id="registerForm" method="post" >
         <input type="hidden" name="c_seq" id="c_seq">
         <input type="hidden" name="dupleIdYn" id="dupleIdYn" value="N">
         <input type="hidden" name="dupleNumberYn" id="dupleNumberYn" value="N">

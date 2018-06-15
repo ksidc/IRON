@@ -352,6 +352,8 @@ class Api_model extends CI_Model {
         $start = ($start - 1)*$limit;
         $this->db->select("*, ifnull((select group_concat(concat(ef_seq,',',ef_file,',',ef_origin_file) separator '|') as file_seq from estimate_files where ef_es_seq = a.es_seq group by ef_es_seq),'') as file_seq ");
         $this->db->from("estimates a");
+        $this->db->join("estimate_depth b","a.es_seq = b.ed_es_seq","left");
+
 
         if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
             $this->db->where("date_format(es_regdate,'%Y-%m-%d') >= '".$this->input->get("startDate")."' and date_format(es_regdate,'%Y-%m-%d') <= '".$this->input->get("endDate")."' ");
@@ -371,17 +373,39 @@ class Api_model extends CI_Model {
             $this->db->where_in("es_status",array("0","1"));
         }
 
+        if($this->input->get("searchDepth1") != ""){
+            $this->db->where("b.ed_depth1",$this->input->get("searchDepth1"));
+        }
+
+        if($this->input->get("searchDepth2") != ""){
+            $this->db->where("b.ed_depth2",$this->input->get("searchDepth2"));
+        }
+
         $this->db->limit($limit,$start);
         $this->db->order_by("es_seq desc");
+        $this->db->group_by("es_seq");
         $query = $this->db->get();
 
         return $query->result_array();
     }
 
+    public function fetchEstimateDepth($es_seq){
+        $this->db->select("a.*,b.pc_name,c.pr_name");
+        $this->db->from("estimate_depth a");
+        $this->db->join("product_category b","a.ed_depth1 = b.pc_seq","left");
+        $this->db->join("product c","a.ed_depth2 = c.pr_seq","left");
+        $this->db->where("ed_es_seq",$es_seq);
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
     // 견적 row
     public function selectEstimate($es_seq){
-        $this->db->select("*");
-        $this->db->from("estimates ");
+        $this->db->select("a.*,b.ct_name,c.eu_name");
+        $this->db->from("estimates a");
+        $this->db->join("company_type b","a.es_company_type = b.ct_seq","left");
+        $this->db->join("end_users c","a.es_end_user = c.eu_seq","left");
 
         $this->db->where("es_seq",$es_seq);
         $query = $this->db->get();
@@ -430,6 +454,53 @@ class Api_model extends CI_Model {
 
         $this->db->where("ef_es_code",$this->input->post("es_number1")."-".$this->input->post("es_number2"));
         $this->db->delete("estimate_files_tmp");
+
+        $insert_data = array(
+            "insert_yn" => "N"
+        );
+        $this->db->where("ed_es_seq",$es_seq);
+        $this->db->update("estimate_depth",$insert_data);
+
+        $data_depth_update = array();
+        $data_depth_insert = array();
+
+        $depth1 = $this->input->post("es_depth1");
+        $depth2 = $this->input->post("es_depth2");
+        $ed_seq = $this->input->post("ed_seq");
+        for($i = 0; $i < count($depth1);$i++){
+            if($depth1[$i] != ""){
+                if($ed_seq[$i] == ""){
+                    $data = array(
+                        "ed_es_seq" => $es_seq,
+                        "ed_depth1" => $depth1[$i],
+                        "ed_depth2" => $depth2[$i]
+                    );
+                    array_push($data_depth_insert,$data);
+                }else{
+                    $udata = array(
+                        "ed_seq" => $ed_seq[$i],
+                        "ed_depth1" => $depth1[$i],
+                        "ed_depth2" => $depth2[$i],
+                        "insert_yn" => "Y"
+                    );
+                    array_push($data_depth_update,$udata);
+                }
+
+
+            }
+        }
+
+        if(count($data_depth_insert) > 0){
+            $this->db->insert_batch("estimate_depth",$data_depth_insert);
+        }
+
+        if(count($data_depth_update) > 0){
+            $this->db->update_batch("estimate_depth",$data_depth_update,"ed_seq");
+        }
+
+        $this->db->where("insert_yn","N");
+        $this->db->where("ed_es_seq",$es_seq);
+        $this->db->delete("estimate_depth");
 
         $data = array(
             "es_name" => $this->input->post("es_name"),
@@ -1105,6 +1176,15 @@ class Api_model extends CI_Model {
             $sql = "update product_category set pc_sort = ".($i+1)." where pc_seq = '".$pc_seq[$i]."' ";
             $this->db->query($sql);
         }
+        if($this->input->post("m_pc_name") != ""){
+            $m_pc_seq = $this->input->post("m_pc_seq");
+            $m_pc_name = $this->input->post("m_pc_name");
+
+            for($i = 0;$i < count($m_pc_seq);$i++){
+                $sql = "update product_category set pc_name = '".$m_pc_name[$i]."' where pc_seq = '".$m_pc_seq[$i]."' ";
+                $this->db->query($sql);
+            }
+        }
         return true;
     }
 
@@ -1138,9 +1218,9 @@ class Api_model extends CI_Model {
         return $this->db->insert("product_div",$data);
     }
 
-    public function productDivUpdate($pd_seq){
+    public function productDivUpdate($pd_seq,$pd_name){
         $data = array(
-            "pd_name" => $this->input->post("pd_name")
+            "pd_name" => $pd_name
         );
         $this->db->where("pd_seq",$pd_seq);
 
@@ -1188,9 +1268,9 @@ class Api_model extends CI_Model {
             $this->db->query($sql);
         }
     }
-    public function productDivSubUpdate($ps_seq){
+    public function productDivSubUpdate($ps_seq,$ps_name){
         $data = array(
-            "ps_name" => $this->input->post("ps_name")
+            "ps_name" => $ps_name
         );
         $this->db->where("ps_seq",$ps_seq);
 
@@ -1222,29 +1302,29 @@ class Api_model extends CI_Model {
         return $this->db->insert("product_items",$data);
     }
 
-    public function productItemUpdate($data){
+    public function productItemUpdate($pi_seq,$pi_name){
 
-        foreach($data["sub"] as $row){
-            if($row["pis_seq"] != ""){
-                $idata = array(
-                    "pis_name" => $row["pis_name"],
-                    "pis_c_seq" => $row["pis_c_seq"]
-                );
-                $this->db->where("pis_seq",$row["pis_seq"]);
-                $this->db->update("product_item_sub",$idata);
-            }else{
-                $idata = array(
-                    "pis_name" => $row["pis_name"],
-                    "pis_c_seq" => $row["pis_c_seq"],
-                    "pis_pi_seq" => $data["pi_seq"]
-                );
-                $this->db->insert("product_item_sub",$idata);
-            }
-        }
+        // foreach($data["sub"] as $row){
+        //     if($row["pis_seq"] != ""){
+        //         $idata = array(
+        //             "pis_name" => $row["pis_name"],
+        //             "pis_c_seq" => $row["pis_c_seq"]
+        //         );
+        //         $this->db->where("pis_seq",$row["pis_seq"]);
+        //         $this->db->update("product_item_sub",$idata);
+        //     }else{
+        //         $idata = array(
+        //             "pis_name" => $row["pis_name"],
+        //             "pis_c_seq" => $row["pis_c_seq"],
+        //             "pis_pi_seq" => $data["pi_seq"]
+        //         );
+        //         $this->db->insert("product_item_sub",$idata);
+        //     }
+        // }
         $idata = array(
-            "pi_name" => $data["pi_name"]
+            "pi_name" => $pi_name
         );
-        $this->db->where("pi_seq",$data["pi_seq"]);
+        $this->db->where("pi_seq",$pi_seq);
 
         return $this->db->update("product_items",$idata);
     }
@@ -1265,6 +1345,16 @@ class Api_model extends CI_Model {
             "pis_c_seq" => $pis_c_seq
         );
         return $this->db->insert("product_item_sub",$data);
+    }
+
+    public function productItemSubUpdate($pis_seq,$pis_name,$pis_c_seq){
+        $data = array(
+            "pis_name" => $pis_name,
+            "pis_c_seq" => $pis_c_seq
+        );
+
+        $this->db->where("pis_seq",$pis_seq);
+        return $this->db->update("product_item_sub",$data);
     }
 
     // 제품군 list count
@@ -1388,20 +1478,24 @@ class Api_model extends CI_Model {
             "c_bank_input_number" => $this->input->post("c_bank_input_number"),
             "c_payment_type" => $this->input->post("c_payment_type")
         );
-        if($_FILES['file1']["size"] > 0){
-            $ext = substr(strrchr(basename($_FILES['file1']["name"]), '.'), 1);
-            $file_name = time()."_".rand(1111,9999).".".$ext;
-            move_uploaded_file($_FILES["file1"]['tmp_name'],$_SERVER["DOCUMENT_ROOT"].'/uploads/client_file/'.$file_name);
-            $data["c_file1"] = $file_name;
-            $data["c_origin_file1"] = $_FILES['file1']["name"];
+        if(isset($_FILES['file1'])){
+            if($_FILES['file1']["size"] > 0){
+                $ext = substr(strrchr(basename($_FILES['file1']["name"]), '.'), 1);
+                $file_name = time()."_".rand(1111,9999).".".$ext;
+                move_uploaded_file($_FILES["file1"]['tmp_name'],$_SERVER["DOCUMENT_ROOT"].'/uploads/client_file/'.$file_name);
+                $data["c_file1"] = $file_name;
+                $data["c_origin_file1"] = $_FILES['file1']["name"];
+            }
         }
 
-        if($_FILES['file2']["size"] > 0){
-            $ext = substr(strrchr(basename($_FILES['file2']["name"]), '.'), 1);
-            $file_name = time()."_".rand(1111,9999).".".$ext;
-            move_uploaded_file($_FILES["file2"]['tmp_name'],$_SERVER["DOCUMENT_ROOT"].'/uploads/client_file/'.$file_name);
-            $data["c_file2"] = $file_name;
-            $data["c_origin_file2"] = $_FILES['file2']["name"];
+        if(isset($_FILES['file2'])){
+            if($_FILES['file2']["size"] > 0){
+                $ext = substr(strrchr(basename($_FILES['file2']["name"]), '.'), 1);
+                $file_name = time()."_".rand(1111,9999).".".$ext;
+                move_uploaded_file($_FILES["file2"]['tmp_name'],$_SERVER["DOCUMENT_ROOT"].'/uploads/client_file/'.$file_name);
+                $data["c_file2"] = $file_name;
+                $data["c_origin_file2"] = $_FILES['file2']["name"];
+            }
         }
         // ci 이용 디비 인서트
         return $this->db->insert("clients",$data);
@@ -1622,10 +1716,10 @@ class Api_model extends CI_Model {
             "prs_pr_seq" => $pr_seq,
             "prs_pd_seq" => $prs_pd_seq,
             "prs_ps_seq" => $prs_ps_seq,
-            "prs_price" => $prs_price,
+            "prs_price" => str_replace(",","",$prs_price),
             "prs_div" => $prs_div,
-            "prs_one_price" => $prs_one_price,
-            "prs_month_price" => $prs_month_price,
+            "prs_one_price" => str_replace(",","",$prs_one_price),
+            "prs_month_price" => str_replace(",","",$prs_month_price),
             "prs_use_type" => $prs_use_type,
             "prs_msg" => $prs_msg
         );
@@ -1682,6 +1776,15 @@ class Api_model extends CI_Model {
         return $query->result_array();
     }
 
+    public function productSearch($pc_seq){
+        $this->db->select("a.pr_name , a.pr_seq");
+        $this->db->from("product a");
+        $this->db->where("pr_pc_seq" , $pc_seq);
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
     public function selectProduct($pr_seq){
         $this->db->select("*");
         $this->db->from("product");
@@ -1707,10 +1810,10 @@ class Api_model extends CI_Model {
         $data_sub = array(
             "prs_pd_seq" => $prs_pd_seq,
             "prs_ps_seq" => $prs_ps_seq,
-            "prs_price" => $prs_price,
+            "prs_price" => str_replace(",","",$prs_price),
             "prs_div" => $prs_div,
-            "prs_one_price" => $prs_one_price,
-            "prs_month_price" => $prs_month_price,
+            "prs_one_price" => str_replace(",","",$prs_one_price),
+            "prs_month_price" => str_replace(",","",$prs_month_price),
             "prs_use_type" => $prs_use_type,
             "prs_msg" => $prs_msg
         );

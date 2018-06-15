@@ -355,7 +355,7 @@ $(function(){
                 if(!response.es_part){
                     response.es_part = "영업팀";
                 }
-                console.log(response.es_part);
+
                 $("#es_seq").val(response.info.es_seq);
                 $("#es_part").val(response.info.es_part);
                 $("#es_register").val(response.info.es_register);
@@ -376,8 +376,10 @@ $(function(){
                 $("#es_fax").val(response.info.es_fax);
                 $("#es_type").val(response.info.es_type);
                 $("#es_company_type").val(response.info.es_company_type);
+                $("#es_company_type_name").val(response.info.ct_name);
                 $("#es_shot").val(response.info.es_shot);
                 $("#es_end_user").val(response.info.es_end_user);
+                $("#es_end_user_name").val(response.info.eu_name);
                 $("#es_memo").val(response.info.es_memo);
 
                 var estimateNumber = response.info.es_number.split("-");
@@ -397,6 +399,50 @@ $(function(){
                             </div>';
                 }
                 $(".upload-item").html(html);
+                var categoryInfo = JSON.parse(category);
+                if(response.depths.length > 0){
+                    $(".depth-area").html("");
+
+                    for(var i = 0; i < response.depths.length;i++){
+                        var depthLength = $(".depth-item").length;
+                        var add_html = '<div class="depth-item" style="padding-top:5px">\
+                                <div class="modal-field-input">\
+                                    <div class="label">서비스 종류</div>\
+                                    <div class="input">\
+                                        <input type="hidden" name="ed_seq[]" value="'+response.depths[i].ed_seq+'">\
+                                        <div class="selectbox">\
+                                            <label for="es_depth1_'+(depthLength+1)+'" style="top:1.5px;padding:.1em .5em">서비스 종류 선택</label>\
+                                            <select id="es_depth1_'+(depthLength+1)+'" name="es_depth1[]" class="es_depth1" data-index="'+(depthLength+1)+'" data-childvalue="'+response.depths[i].ed_depth2+'" style="padding:.2em .5em">\
+                                                <option value="" selected>서비스 종류 선택</option>';
+                                                for(var j = 0; j < categoryInfo.length;j++){
+                                                    add_html += '<option value="'+categoryInfo[j].pc_seq+'">'+categoryInfo[j].pc_name+'</option>';
+                                                }
+                                            add_html += '</select>\
+                                        </div>\
+                                    </div>\
+                                </div>\
+                                <div class="modal-field-input">\
+                                    <div class="label">상품명</div>\
+                                    <div class="input">\
+                                        <div class="selectbox">\
+                                            <label for="es_depth2_'+(depthLength+1)+'" id="es_depth2_'+(depthLength+1)+'_str" style="top:1.5px;padding:.1em .5em">상품명 선택</label>\
+                                            <select id="es_depth2_'+(depthLength+1)+'" name="es_depth2[]" style="padding:.2em .5em">\
+                                                <option value="" selected>상품명 선택</option>\
+                                            </select>\
+                                        </div>\
+                                    </div>\
+                                </div>\
+                            </div>';
+                        $(".depth-area").append(add_html);
+                        $("#es_depth1_"+(depthLength+1)).val(response.depths[i].ed_depth1).trigger("change");
+                        $(".es_depth1").each(function(){
+
+                            if($(this).attr("id") == "es_depth1_"+(depthLength+1)){
+                                $(this).trigger("change");
+                            }
+                        })
+                    }
+                }
 
                 $('#dialog').dialog({
                     title: '견적 수정',
@@ -651,6 +697,7 @@ $(function(){
 
     $("body").on("click",".deleteEnd",function(){
         if(confirm("삭제하시겠습니까?")){
+            var that = $(this);
             var url = "/api/endUserDelete/"+$(this).data("seq");
             $.ajax({
                 url : url,
@@ -658,33 +705,40 @@ $(function(){
                 dataType : 'JSON',
                 success:function(response){
                     // typeGetList();
+                    alert("삭제되었습니다.");
+                    that.parent().remove();
                 }
             });
         }
     });
 
     $(".depthAdd").click(function(){
+        var categoryInfo = JSON.parse(category);
         var depthLength = $(".depth-item").length;
 
         var add_html = '<div class="depth-item" style="padding-top:5px">\
                 <div class="modal-field-input">\
-                    <div class="label">대분류</div>\
+                    <div class="label">서비스 종류</div>\
                     <div class="input">\
+                    <input type="hidden" name="ed_seq[]" value="">\
                         <div class="selectbox">\
-                            <label for="es_depth1" style="top:1.5px;padding:.1em .5em">분류선택</label>\
-                            <select id="es_depth1" name="es_depth1" style="padding:.2em .5em">\
-                                <option value="" selected>분류선택</option>\
-                            </select>\
+                            <label for="es_depth1_'+(depthLength+1)+'" style="top:1.5px;padding:.1em .5em">서비스 종류 선택</label>\
+                            <select id="es_depth1_'+(depthLength+1)+'" name="es_depth1[]" class="es_depth1" data-index="'+(depthLength+1)+'" data-childvalue="" style="padding:.2em .5em">\
+                                <option value="" selected>서비스 종류 선택</option>';
+                                for(var i = 0; i < categoryInfo.length;i++){
+                                    add_html += '<option value="'+categoryInfo[i].pc_seq+'">'+categoryInfo[i].pc_name+'</option>';
+                                }
+                            add_html += '</select>\
                         </div>\
                     </div>\
                 </div>\
                 <div class="modal-field-input">\
-                    <div class="label">소분류</div>\
+                    <div class="label">상품명</div>\
                     <div class="input">\
                         <div class="selectbox">\
-                            <label for="es_depth2" style="top:1.5px;padding:.1em .5em">분류선택</label>\
-                            <select id="es_depth2" name="es_depth2" style="padding:.2em .5em">\
-                                <option value="" selected>분류선택</option>\
+                            <label for="es_depth2_'+(depthLength+1)+'" id="es_depth2_'+(depthLength+1)+'_str" style="top:1.5px;padding:.1em .5em">상품명 선택</label>\
+                            <select id="es_depth2_'+(depthLength+1)+'" name="es_depth2[]" style="padding:.2em .5em">\
+                                <option value="" selected>상품명 선택</option>\
                             </select>\
                         </div>\
                     </div>\
@@ -1051,6 +1105,61 @@ $(function(){
         });
 
         $("#dialogMailPreview").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
+    });
+
+    $("#searchDepth1").change(function(){
+        if($(this).val() != ""){
+            var url = "/api/productSearch/"+$(this).val();
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                success:function(response){
+                    $('select[name="searchDepth2"]').empty().append('<option value="">상품명 선택</option>');
+                    $("#searchDepth2Str").html("상품명 선택");
+                    for(var i in response){
+                        $('select[name="searchDepth2"]').append('<option value="'+response[i].pr_seq+'" >'+response[i].pr_name+'</option>');
+                    }
+                }
+
+            });
+        }else{
+
+        }
+    })
+
+    $("body").on("change",".es_depth1",function(){
+        // console.log(1);
+        if($(this).val() != ""){
+            var index = $(this).data("index");
+            var url = "/api/productSearch/"+$(this).val();
+            var target = $("#es_depth2_"+index);
+            var childvalue = $(this).data("childvalue");
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                success:function(response){
+                    target.empty().append('<option value="">상품명 선택</option>');
+                    $("#es_depth2_"+index+"_str").html("상품명 선택");
+                    var selected_yn = false;
+                    for(var i in response){
+                        var selected = "";
+                        if(childvalue == response[i].pr_seq){
+                            selected = "selected";
+                            selected_yn = true;
+                        }
+                        target.append('<option value="'+response[i].pr_seq+'" '+selected+'>'+response[i].pr_name+'</option>');
+                    }
+                    if(selected_yn){
+                        target.trigger("change");
+                    }
+                }
+
+            });
+        }else{
+
+        }
     })
 });
 
@@ -1059,7 +1168,7 @@ var getList = function(){
     var end = 5;
     var url = "/api/estimateList/"+start+"/"+end;
     var searchForm = $("#searchForm").serialize();
-    console.log(searchForm);
+    // console.log(searchForm);
     // console.log(url);
     $.ajax({
         url : url,
@@ -1067,20 +1176,18 @@ var getList = function(){
         dataType : 'JSON',
         data : searchForm,
         success:function(response){
-
+            // console.log(response);
             var html = "";
             if(response.list.length > 0){
                 for(var i = 0; i < response.list.length;i++){
                     var num = response.total - ((start-1)*end) - i;
-
-
                     html += '<tr>\
                                 <td><input type="checkbox" class="listCheck" name="es_seq[]" value="'+response.list[i].es_seq+'"></td>\
                                 <td>'+num+'</td>\
                                 <td>'+response.list[i].es_number+'</td>\
                                 <td>'+response.list[i].es_name+'</td>\
-                                <td></td>\
-                                <td></td>\
+                                <td>'+response.list[i].depth1.join("<br>")+'</td>\
+                                <td>'+response.list[i].depth2.join("<br>")+'</td>\
                                 <td>'+response.list[i].es_shot+'</td>\
                                 <td>'+response.list[i].es_charger+'</td>\
                                 <td>'+response.list[i].es_tel+'</td>\

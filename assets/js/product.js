@@ -43,7 +43,7 @@ $(function(){
             success:function(response){
                 var html = "";
                 for(var i =0 ; i < response.length;i++){
-                    html = '<tr>\
+                    html += '<tr>\
                     <td class="pi_click" data-seq="'+response[i].pi_seq+'" data-name="'+response[i].pi_name+'">'+response[i].pi_name+'</td>\
                     </tr>;'
                 };
@@ -169,7 +169,7 @@ $(function(){
 
 function onlyNumDecimalInput(obj){
     var code = window.event.keyCode;
-    // console.log(code);
+
     if ((code >= 48 && code <= 57)  || code == 190 || code == 8 || code == 9 || code == 13 || code == 46 || code == 44){
         // console.log(code);
         window.event.returnValue = true;
@@ -180,8 +180,8 @@ function onlyNumDecimalInput(obj){
 }
 
 function fn_press_han(obj){
-    // console.log(event.keyCode);
-    if(event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 32 || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 190) return;
+    console.log(event.keyCode);
+    if(event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 32 || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 190) return;
     obj.value = obj.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');
     obj.value = obj.value.replace(/\D/g, '')
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
