@@ -127,7 +127,7 @@
                         <th>일회성 요금 <i class="fas fa-info-circle" title="등록 상품에 대한 분류별 초기 청구 요금(구매, 설치비 등)입니다.<br>서비스 등록 시 서비스 건 별로 수정할 수 있습니다." rel="tooltip"></i></th>
                         <th>월 요금 <i class="fas fa-info-circle" title="등록 상품에 대한 분류별 월 청구 요금입니다.<br>서비스 등록 시 서비스 건 별로 수정할 수 있습니다." rel="tooltip"></i></th>
                         <th>사용 구분 <i class="fas fa-info-circle" title="분류 등록으로 등록된 소분류 항목에 대해서<br>등록 상품에 적용할 지 여부를 선택할 수 있습니다." rel="tooltip"></i></th>
-                        <th>비고 <i class="fas fa-info-circle"></i></th>
+                        <th>비고 </th>
                     </tr>
                 </thead>
                 <tbody>

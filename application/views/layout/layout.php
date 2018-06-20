@@ -18,7 +18,7 @@
     <script type="text/javascript" src="//code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="/assets/js/summernote-lite.js"></script>
-
+    <script src="/assets/js/moment.js"></script>
 </head>
 
 <body>

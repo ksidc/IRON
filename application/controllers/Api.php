@@ -208,6 +208,14 @@ class Api extends CI_Controller {
         echo json_encode($arr);
     }
 
+    // 견적번호 중복체크 - get
+    public function estimateNumberCheck()
+    {
+        $result = $this->api_model->estimateNumberCheck();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
     // 견적 리스트 - get
     public function estimateList($start,$end)
     {
@@ -306,49 +314,63 @@ class Api extends CI_Controller {
         $objPHPExcel->setActiveSheetIndex(0);
         $objPHPExcel->getActiveSheet()->setTitle('견적');
         $objPHPExcel->getActiveSheet()->setCellValue('A1', '견적번호');
-        $objPHPExcel->getActiveSheet()->setCellValue('B1', '부서');
-        $objPHPExcel->getActiveSheet()->setCellValue('C1', '등록자');
-        $objPHPExcel->getActiveSheet()->setCellValue('D1', '상태');
-        $objPHPExcel->getActiveSheet()->setCellValue('E1', '상호/이름');
-        $objPHPExcel->getActiveSheet()->setCellValue('F1', '담당자');
-        $objPHPExcel->getActiveSheet()->setCellValue('G1', '전화번호');
-        $objPHPExcel->getActiveSheet()->setCellValue('H1', '휴대폰번호');
-        $objPHPExcel->getActiveSheet()->setCellValue('I1', '이메일');
-        $objPHPExcel->getActiveSheet()->setCellValue('J1', '팩스');
-        $objPHPExcel->getActiveSheet()->setCellValue('K1', '신규/기존');
-        $objPHPExcel->getActiveSheet()->setCellValue('L1', '업체 분류');
-        $objPHPExcel->getActiveSheet()->setCellValue('M1', '견적요약');
-        $objPHPExcel->getActiveSheet()->setCellValue('N1', 'END User');
-
+        $objPHPExcel->getActiveSheet()->setCellValue('B1', '상호/이름');
+        $objPHPExcel->getActiveSheet()->setCellValue('C1', 'End User');
+        $objPHPExcel->getActiveSheet()->setCellValue('D1', '업체 분류');
+        $objPHPExcel->getActiveSheet()->setCellValue('E1', '서비스 종류');
+        $objPHPExcel->getActiveSheet()->setCellValue('F1', '상품명');
+        $objPHPExcel->getActiveSheet()->setCellValue('G1', '견적요약');
+        $objPHPExcel->getActiveSheet()->setCellValue('H1', '담당자');
+        $objPHPExcel->getActiveSheet()->setCellValue('I1', '전화번호');
+        $objPHPExcel->getActiveSheet()->setCellValue('J1', '휴대푠번호');
+        $objPHPExcel->getActiveSheet()->setCellValue('K1', '이메일');
+        $objPHPExcel->getActiveSheet()->setCellValue('L1', '팩스');
+        $objPHPExcel->getActiveSheet()->setCellValue('M1', '등록자');
+        $objPHPExcel->getActiveSheet()->setCellValue('N1', '등록일');
+        $objPHPExcel->getActiveSheet()->setCellValue('O1', '상태');
 
 
         $estimate_list = $this->api_model->estimateExport();
 
-        for($i = 0;$i<count($estimate_list);$i++){
-            $objPHPExcel->getActiveSheet()->setCellValue('A'.($i+2), $estimate_list[$i]['es_number']);
-            $objPHPExcel->getActiveSheet()->setCellValue('B'.($i+2), $estimate_list[$i]['es_part']);
-            $objPHPExcel->getActiveSheet()->setCellValue('C'.($i+2), $estimate_list[$i]['es_register']);
-            if($estimate_list[$i]['es_status'] == "0"){
-                $objPHPExcel->getActiveSheet()->setCellValue('D'.($i+2), "등록");
-            }else{
-                $objPHPExcel->getActiveSheet()->setCellValue('D'.($i+2), "신청완료");
-            }
+        $new_list = [];
+        foreach($estimate_list as $row){
+            $row["depth1"] = array();
+            $row["depth2"] = array();
+            $row_depth = $this->api_model->fetchEstimateDepth($row["es_seq"]);
 
-            $objPHPExcel->getActiveSheet()->setCellValue('E'.($i+2), $estimate_list[$i]['es_name']);
-            $objPHPExcel->getActiveSheet()->setCellValue('F'.($i+2), $estimate_list[$i]['es_charger']);
-            $objPHPExcel->getActiveSheet()->setCellValue('G'.($i+2), $estimate_list[$i]['es_tel']);
-            $objPHPExcel->getActiveSheet()->setCellValue('H'.($i+2), $estimate_list[$i]['es_phone']);
-            $objPHPExcel->getActiveSheet()->setCellValue('I'.($i+2), $estimate_list[$i]['es_email']);
-            $objPHPExcel->getActiveSheet()->setCellValue('J'.($i+2), $estimate_list[$i]['es_fax']);
-            if($estimate_list[$i]['es_type'] == "0"){
-                $objPHPExcel->getActiveSheet()->setCellValue('K'.($i+2), "신규");
-            }else{
-                $objPHPExcel->getActiveSheet()->setCellValue('K'.($i+2), "기존");
+            foreach($row_depth as $row2){
+                array_push($row["depth1"],$row2["pc_name"]);
+                array_push($row["depth2"],$row2["pr_name"]);
             }
+            array_push($new_list,$row);
+        }
 
-            $objPHPExcel->getActiveSheet()->setCellValue('L'.($i+2), $estimate_list[$i]['es_company_type']);
-            $objPHPExcel->getActiveSheet()->setCellValue('M'.($i+2), $estimate_list[$i]['es_shot']);
-            $objPHPExcel->getActiveSheet()->setCellValue('N'.($i+2), $estimate_list[$i]['es_end_user']);
+
+        for($i = 0;$i<count($new_list);$i++){
+            $objPHPExcel->getActiveSheet()->setCellValue('A'.($i+2), $new_list[$i]['es_number']);
+            $objPHPExcel->getActiveSheet()->setCellValue('B'.($i+2), $new_list[$i]['es_name']);
+            $objPHPExcel->getActiveSheet()->setCellValue('C'.($i+2), $new_list[$i]['eu_name']);
+
+
+            $objPHPExcel->getActiveSheet()->setCellValue('D'.($i+2), $new_list[$i]['ct_name']);
+            $objPHPExcel->getActiveSheet()->setCellValue('E'.($i+2), implode("\n",$new_list[$i]['depth1']));
+            $objPHPExcel->getActiveSheet()->getStyle('E'.($i+2))->getAlignment()->setWrapText(true);
+            $objPHPExcel->getActiveSheet()->setCellValue('F'.($i+2), implode("\n",$new_list[$i]['depth2']));
+            $objPHPExcel->getActiveSheet()->getStyle('F'.($i+2))->getAlignment()->setWrapText(true);
+            $objPHPExcel->getActiveSheet()->setCellValue('G'.($i+2), $new_list[$i]['es_shot']);
+            $objPHPExcel->getActiveSheet()->setCellValue('H'.($i+2), $new_list[$i]['es_charger']);
+            $objPHPExcel->getActiveSheet()->setCellValue('I'.($i+2), $new_list[$i]['es_tel']);
+            $objPHPExcel->getActiveSheet()->setCellValue('J'.($i+2), $new_list[$i]['es_phone']);
+
+            $objPHPExcel->getActiveSheet()->setCellValue('K'.($i+2), $new_list[$i]['es_email']);
+            $objPHPExcel->getActiveSheet()->setCellValue('L'.($i+2), $new_list[$i]['es_fax']);
+            $objPHPExcel->getActiveSheet()->setCellValue('M'.($i+2), $new_list[$i]['es_register']);
+            $objPHPExcel->getActiveSheet()->setCellValue('N'.($i+2), $new_list[$i]['es_regdate']);
+            if($new_list[$i]['es_status'] == "0"){
+                $objPHPExcel->getActiveSheet()->setCellValue('O'.($i+2), "등록");
+            }else{
+                $objPHPExcel->getActiveSheet()->setCellValue('O'.($i+2), "신청완료");
+            }
         }
 
         $filename='견적_'.date('Y_m_d').'.xlsx'; //save our workbook as this file name
@@ -361,6 +383,7 @@ class Api extends CI_Controller {
     }
 
     public function estimateNextCode(){
+        $this->api_model->estimateFilesTmpDeleteSession($this->input->get("ef_sessionkey"));
         $last_code = explode("-",$this->api_model->estimateNextCode());
 
         $code_first = substr($last_code[0],0,1);
@@ -410,8 +433,15 @@ class Api extends CI_Controller {
     public function companyTypeAdd()
     {
 
-        $result = $this->api_model->companyTypeAdd();
-        $arr = array('result'=>$result);
+        $dupleCount = $this->api_model->selectCompanyType();
+        if($dupleCount == 0){
+            $result = $this->api_model->companyTypeAdd();
+            $msg = "";
+        }else{
+            $result = false;
+            $msg = "코드 또는 분류명이 중복입니다.";
+        }
+        $arr = array('result'=>$result,'msg'=>$msg);
         echo json_encode($arr);
     }
 
@@ -449,8 +479,15 @@ class Api extends CI_Controller {
     // End user 입력 - post
     public function endUserAdd()
     {
-        $result = $this->api_model->endUserAdd();
-        $arr = array('result'=>$result);
+        $dupleCount = $this->api_model->selectEndUser();
+        if($dupleCount == 0){
+            $result = $this->api_model->endUserAdd();
+            $msg = "";
+        }else{
+            $result = false;
+            $msg = "코드 혹은 End User명이 중복입니다.";
+        }
+        $arr = array('result'=>$result,"msg"=>$msg);
         echo json_encode($arr);
     }
 
@@ -1172,5 +1209,28 @@ class Api extends CI_Controller {
 
         $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save('php://output');
+    }
+
+    public function basicPolicySetting(){
+        $bank = $this->api_model->fetchPolicyBank();
+        $card = $this->api_model->fetchPolicyCard();
+        $cms = $this->api_model->fetchPolicyCms();
+
+        $policy = $this->api_model->fetchPolicy();
+
+        $result = array(
+            "bank" => $bank,
+            "card" => $card,
+            "cms" => $cms,
+            "policy" => $policy
+        );
+
+        echo json_encode($result);
+    }
+
+    public function basicPolicyEdit(){
+        $result = $this->api_model->basicPolicyEdit();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
     }
 }

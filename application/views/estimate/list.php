@@ -18,9 +18,9 @@ var category = '<?=json_encode($category)?>';
             <div class="search1">
                 <div class="form-group">
                     <div class="selectbox">
-                        <label for="searchDepth1">서비스 종류</label>
+                        <label for="searchDepth1">서비스 종류 선택</label>
                         <select id="searchDepth1" name="searchDepth1">
-                            <option value="" selected>서비스 종류</option>
+                            <option value="" selected>서비스 종류 선택</option>
                             <?php foreach($category as $row): ?>
                             <option value="<?=$row["pc_seq"]?>"><?=$row["pc_name"]?></option>
                             <?php endforeach; ?>
@@ -29,17 +29,17 @@ var category = '<?=json_encode($category)?>';
                 </div>
                 <div class="form-group">
                     <div class="selectbox">
-                        <label for="searchDepth2" id="searchDepth2Str">상품명</label>
+                        <label for="searchDepth2" id="searchDepth2Str">상품명 선택</label>
                         <select id="searchDepth2" name="searchDepth2">
-                            <option value="">상품명</option>
+                            <option value="">상품명 선택</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <input type="checkbox" name="es_status[]" id="es_status1" value="0"> 등록
+                    <input type="checkbox" name="es_status[]" id="es_status1" value="0"> <span style="color:#0070C0">등록</span>
                 </div>
                 <div class="form-group">
-                    <input type="checkbox" name="es_status[]" id="es_status2" value="1"> 신청완료
+                    <input type="checkbox" name="es_status[]" id="es_status2" value="1"> <span style="color:#FF0000">신청완료</span>
                 </div>
             </div>
             <div class="search2">
@@ -90,8 +90,8 @@ var category = '<?=json_encode($category)?>';
                         <th>No</th>
                         <th>견적번호</th>
                         <th>상호/이름(ID)</th>
-                        <th>대분류</th>
-                        <th>소분류</th>
+                        <th>서비스 종류</th>
+                        <th>상품명</th>
                         <th>견적요약</th>
                         <th>담당자</th>
                         <th>연락처</th>
@@ -133,6 +133,8 @@ var category = '<?=json_encode($category)?>';
 <div id="dialog" class="dialog">
     <form name="registerForm" id="registerForm" method="post" action="/api/estimateAdd">
         <input type="hidden" name="es_seq" id="es_seq">
+        <input type="hidden" name="es_mb_seq" id="es_mb_seq">
+        <input type="hidden" name="dupleNumberYn" id="dupleNumberYn" value="">
         <div class="modal-title">
             <div class="modal-title-text">등록자 정보</div>
         </div>
@@ -181,7 +183,7 @@ var category = '<?=json_encode($category)?>';
             <div class="modal-title-text" style="display:inline-block">고객 정보</div>
             <div style="display:inline-block">
                 <div class="label" style="display:inline-block">회원 아이디</div>
-                <div class="input"  style="display:inline-block;"><input type="text" name="mb_id" id="mb_id" style="border:1px solid #ddd;height:15px"></div>
+                <div class="input"  style="display:inline-block;"><input type="text" name="mb_id" id="mb_id" style="border:1px solid #ddd;height:15px" readonly></div>
             </div>
         </div>
         <div class="modal-field">
@@ -230,7 +232,7 @@ var category = '<?=json_encode($category)?>';
             <div class="modal-field-input">
                 <div class="label">업체 분류</div>
                 <input type="hidden" name="es_company_type" id="es_company_type">
-                <div class="input"><input type="text" class="width-button" name="es_company_type_name" id="es_company_type_name" readonly><button class="btn btn-brown btn-small btn-number-duple" type="button" onclick='typeGetList();$( "#dialogTypeSearch" ).dialog("open");$("#dialogTypeSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
+                <div class="input"><input type="text" class="width-button" name="es_company_type_name" id="es_company_type_name" readonly><button class="btn btn-brown btn-small" type="button" onclick='typeGetList();$( "#dialogTypeSearch" ).dialog("open");$("#dialogTypeSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
             </div>
         </div>
         <div class="modal-title">
@@ -286,7 +288,7 @@ var category = '<?=json_encode($category)?>';
             <div class="modal-field-input">
                 <div class="label">END User</div>
                 <input type="hidden" name="es_end_user" id="es_end_user">
-                <div class="input"><input type="text" name="es_end_user_name" id="es_end_user_name" class="width-button" readonly><button class="btn btn-brown btn-small btn-number-duple" type="button" onclick='getEndUserNextNumber();$( "#dialogEndSearch" ).dialog("open");$("#dialogEndSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
+                <div class="input"><input type="text" name="es_end_user_name" id="es_end_user_name" class="width-button" readonly><button class="btn btn-brown btn-small" type="button" onclick='getEndUserNextNumber();$( "#dialogEndSearch" ).dialog("open");$("#dialogEndSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
             </div>
         </div>
 
@@ -313,6 +315,7 @@ var category = '<?=json_encode($category)?>';
     </form>
     <form name="fileTmpUpload" id="fileTmpUpload" method="post">
         <input type="hidden" name="ef_es_code" id="ef_es_code">
+        <input type="hidden" name="ef_sessionkey" id="ef_sessionkey" value="<?=session_id()?>">
         <input type="file" name="es_file[]" id="es_file" style="border:0;display:none;width:0;height:0" multiple visbility="hidden">
     </form>
 </div>
@@ -346,7 +349,7 @@ var category = '<?=json_encode($category)?>';
         <div class="modal-field">
             <div class="modal-field-input full" >
                 <div class="label"><input type="checkbox" name="sms_yn" id="sms_yn" value="Y"> SMS 발송 | 내용</div>
-                <div class="input"><input type="text" name="sms" id="sms" style="width:70%"> 0byte / 80byte</div>
+                <div class="input"><input type="text" name="sms" id="sms" style="width:70%" onkeyup="smsByteChk(this);" onkeydown="smsByteChk(this);"> <span id="bytecheck">0</span>byte / 80byte</div>
             </div>
         </div>
         <div class="modal-field">
@@ -459,7 +462,7 @@ var category = '<?=json_encode($category)?>';
             <input type="hidden" name="bf_sort[]" id="bf_sort4" value="4" class="bf_sort">
         </div>
         <div class="modal-field-input" style="width:38%">
-            <div class="file_name3"></div>
+            <div class="file_name4"></div>
             <input type="hidden" name="bf_seq[]" id="bf_seq4" value="" class="bf_seq">
         </div>
     </div>
@@ -493,7 +496,7 @@ var category = '<?=json_encode($category)?>';
         </ul>
     </div>
     </form>
-    <div class="modal_search_list" style="height:300px">
+    <div class="modal_search_list" style="height:300px;overflow:auto">
         <table class="table">
             <thead>
             <tr>
@@ -525,7 +528,7 @@ var category = '<?=json_encode($category)?>';
         </ul>
     </div>
     </form>
-    <div class="modal_search_list" style="height:230px">
+    <div class="modal_search_list" style="height:230px;overflow:auto">
         <table class="table" >
             <thead>
             <tr>
@@ -569,7 +572,7 @@ var category = '<?=json_encode($category)?>';
         </ul>
     </div>
     </form>
-    <div class="modal_search_list" style="height:230px">
+    <div class="modal_search_list" style="height:230px;overflow:auto">
         <table class="table">
             <thead>
             <tr>

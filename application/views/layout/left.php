@@ -27,8 +27,16 @@
                 <?php else: ?>
                 <a href="/service/estimate"><p >견적 관리</p></a>
                 <?php endif; ?>
-                <a href="#"><p >서비스 등록</p></a>
-                <a href="#"><p ">서비스 관리</p></a>
+                <?php if(substr_count($this->input->server("REQUEST_URI"),"/service/register") > 0): ?>
+                <a href="/service/register" class="active"><p >서비스 등록</p></a>
+                <?php else: ?>
+                <a href="/service/register"><p >서비스 등록</p></a>
+                <?php endif; ?>
+                <?php if(substr_count($this->input->server("REQUEST_URI"),"/service/list") > 0): ?>
+                <a href="/service/list" class="active"><p >서비스 관리</p></a>
+                <?php else: ?>
+                <a href="/service/list"><p >서비스 관리</p></a>
+                <?php endif; ?>
             </div>
         </li>
         <?php else: ?>
@@ -37,8 +45,8 @@
             <div class="left-icon">+</div>
             <div class="sub-menu">
                 <a href="/service/estimate"><p >견적 관리</p></a>
-                <a href="#"><p >서비스 등록</p></a>
-                <a href="#"><p ">서비스 관리</p></a>
+                <a href="/service/register"><p >서비스 등록</p></a>
+                <a href="/service/list"><p ">서비스 관리</p></a>
             </div>
         </li>
         <?php endif; ?>

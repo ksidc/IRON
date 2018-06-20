@@ -24,6 +24,7 @@ $(function(){
             url : url,
             type : 'GET',
             dataType : 'JSON',
+            data : "ef_sessionkey="+$("#ef_sessionkey").val(),
             success:function(response){
                 var es_number = response.split("-");
                 $("#es_number1").val(es_number[0]);
@@ -103,6 +104,8 @@ $(function(){
                     }
 
                     $(".es_file").html(html);
+                }else{
+                    $(".es_file").html("");
                 }
 
                 if(response.basicfiles.length > 0){
@@ -147,6 +150,7 @@ $(function(){
             type : 'GET',
             dataType : 'JSON',
             success:function(response){
+                console.log(response);
                 for(var i =0 ; i < response.list.length;i++){
                     // 기본 4 이상
                     if(i > 3){
@@ -164,7 +168,7 @@ $(function(){
                         $("#fileForm").append(add_html);
 
                     }
-                    $(".file_name"+response.list[i].bf_sort).html(response.list[i].bf_origin_file+" <a href='javascript:void(0)' class='btn-file-delete' data-seq='"+response.list[i].bf_seq+"'>X</a>");
+                    $(".file_name"+response.list[i].bf_sort).html("<a href='/api/fileDownload/basic_file?filename="+response.list[i].bf_file+"&originname="+response.list[i].bf_origin_file+"'>"+response.list[i].bf_origin_file+"</a> <a href='javascript:void(0)' class='btn-file-delete' data-seq='"+response.list[i].bf_seq+"' data-sort='"+response.list[i].bf_sort+"'>X</a>");
                     $("#bf_sort"+response.list[i].bf_sort).val(response.list[i].bf_sort);
                     $("#bf_seq"+response.list[i].bf_sort).val(response.list[i].bf_seq);
 
@@ -187,6 +191,17 @@ $(function(){
     });
 
     $(".btn-register").click(function(){
+        var PT_email = /[a-z0-9_]{2,}@[a-z0-9-]{2,}\.[a-z0-9]{2,}/i;
+        if($("#dupleNumberYn").val() == ""){
+            alert("견적번호 중복체크를 진행해 주시기 바랍니다.");
+            return false;
+        }
+
+        if($("#dupleNumberYn").val() == "N"){
+            alert("견적번호가 중복입니다.");
+            return false;
+        }
+
         if($("#es_name").val() == ""){
             alert("상호/이름을 입력해주시기 바랍니다.");
             return false;
@@ -207,13 +222,36 @@ $(function(){
             return false;
         }
 
-        if($("#es_company_type").val() == ""){
-            alert("업체분류를 입력해주시기 바랍니다.");
+        if($("#es_shot").val() == ""){
+            alert("견적요약을 입력해주시기 바랍니다.");
             return false;
         }
 
-        if($("#es_end_user").val() == ""){
-            alert("End User를 입력해주시기 바랍니다.");
+        // if($("#es_end_user").val() == ""){
+        //     alert("End User를 입력해주시기 바랍니다.");
+        //     return false;
+        // }
+
+        $(".emailCheck").each(function(){
+            if($(this).val() != ""){
+                if (!PT_email.test($(this).val())){
+                    alert("이메일 형식이 맞지 않습니다.");
+                    return false;
+                    // $(this).focus();
+                }
+            }else{
+                alert("이메일을 입력해 주세요");
+                return false;
+            }
+        });
+
+        if($("#es_depth1_1").val() == ""){
+            alert("서비스종류를 선택해 주세요");
+            return false;
+        }
+
+        if($("#es_depth2_1").val() == ""){
+            alert("상품명을 선택해 주세요");
             return false;
         }
 
@@ -222,6 +260,7 @@ $(function(){
         }else{
             var url = "/api/estimateUpdate/"+$("#es_seq").val();
         }
+
 
         $("#registerForm").ajaxForm({ // submit 액션 생성
             url : url, // url 입력
@@ -262,7 +301,7 @@ $(function(){
             enctype : "multipart/form-data", // 파일 업로드 처리
             dataType : "json", // 전송 타입 및 리턴 타입 설정
             error : function(xhr,option,error){ // 에러 처리
-                console.log(error);
+                console.log(xhr);
             },
             success : function(data){ // 성공 처리
                 $(".basic_file").each(function(i){
@@ -283,12 +322,17 @@ $(function(){
     $("body").on("click",".btn-file-delete", function(){
         if(confirm("파일을 삭제 하시겠습니까?")){
             var url = "/api/estimateBasicFileDelete/"+$(this).data("seq");
+            var sort = $(this).data("sort");
             $.ajax({
                 url : url,
                 type : 'GET',
                 dataType : 'JSON',
                 success:function(response){
-
+                    if(response.result){
+                        alert("삭제 되었습니다.");
+                        $(".file_name"+sort).html("");
+                        $(".file_name"+sort).next().remove();
+                    }
                 }
             });
         }
@@ -448,7 +492,7 @@ $(function(){
                     title: '견적 수정',
                     modal: true,
                     width: '40%',
-                    draggable: false
+                    draggable: true
                 });
             }
         });
@@ -508,10 +552,10 @@ $(function(){
                 }else{
                     for(var i = 0; i < response.length;i++){
                         html += '<tr>\
-                                    <td><a href="javascript:void(0)" class="clickMember" data-name="'+response[i].mb_name+'" data-contractname="'+response[i].mb_contract_name+'" data-id="'+response[i].mb_id+'" data-tel="'+response[i].mb_tel+'" data-phone="'+response[i].mb_phone+'" data-email="'+response[i].mb_email+'" data-fax="'+response[i].mb_fax+'">'+response[i].mb_name+'('+response[i].mb_id+')</a></td>\
+                                    <td><a href="javascript:void(0)" class="clickMember" data-name="'+response[i].mb_name+'" data-contractname="'+response[i].mb_contract_name+'" data-id="'+response[i].mb_id+'" data-tel="'+response[i].mb_tel+'" data-phone="'+response[i].mb_phone+'" data-email="'+response[i].mb_email+'" data-fax="'+response[i].mb_fax+'" data-seq="'+response[i].mb_seq+'">'+response[i].mb_name+'('+response[i].mb_id+')</a></td>\
                                     <td>'+response[i].mb_contract_name+'</td>\
                                     <td>'+response[i].mb_number+'</td>\
-                                    <td>'+response[i].mb_phone+'</td>\
+                                    <td>'+response[i].mb_tel+'<br>'+response[i].mb_phone+'</td>\
                                     <td>'+response[i].mb_email+'</td>\
                                 </tr>\
                         ';
@@ -531,6 +575,7 @@ $(function(){
         var mb_phone = $(this).data("phone");
         var mb_email = $(this).data("email");
         var mb_fax = $(this).data("fax");
+        var mb_seq = $(this).data("seq");
         $("#mb_id").val(mb_id);
         $("#es_name").val(mb_name);
         $("#es_charger").val(mb_contract_name);
@@ -538,6 +583,7 @@ $(function(){
         $("#es_phone").val(mb_phone);
         $("#es_email").val(mb_email);
         $("#es_fax").val(mb_fax);
+        $("#es_mb_seq").val(mb_seq);
         $('#dialogUserSearch').dialog('close');
     });
 
@@ -559,7 +605,15 @@ $(function(){
             dataType : 'JSON',
             data : datas,
             success:function(response){
-                typeGetList();
+                console.log(response);
+                if(response.result){
+                    alert("저장되었습니다.");
+                    typeGetList();
+                }else{
+                    alert(response.msg);
+
+                }
+
             }
         });
         return false;
@@ -622,8 +676,12 @@ $(function(){
             data : datas,
             success:function(response){
                 // typeGetList();
-                alert("등록되었습니다.");
-                getEndUserNextNumber();
+                if(response.result){
+                    alert("등록되었습니다.");
+                    getEndUserNextNumber();
+                }else{
+                    alert(response.msg);
+                }
             }
         });
         return false;
@@ -859,7 +917,7 @@ $(function(){
     });
 
     $("body").on("click",".btn-tmp-upload-del",function(){
-        if(configm("삭제 하시겠습니까?")){
+        if(confirm("삭제 하시겠습니까?")){
             var url = "/api/estimateFilesTmpDelete/"+$(this).data("seq");
             var that = $(this);
             $.ajax({
@@ -867,6 +925,7 @@ $(function(){
                 type : 'GET',
                 dataType : 'JSON',
                 success:function(response){
+                    alert("삭제되었습니다.");
                     that.parent().parent().parent().remove();
                 }
 
@@ -1039,34 +1098,43 @@ $(function(){
     });
 
     $(".btn-addfile-delete").click(function(){
-        if(confirm("삭제 하시겠습니까?")){
-            var checkSeq = [];
-            $(".add_file").each(function(){
-                if($(this).prop("checked") == true){
-                    var valueArray = $(this).val().split("|");
+        if($(".add_file").length > 0){
+            if(confirm("삭제 하시겠습니까?")){
+                var checkSeq = [];
+                $(".add_file").each(function(){
+                    if($(this).prop("checked") == true){
+                        var valueArray = $(this).val().split("|");
 
-                    checkSeq.push(valueArray[0]);
-                }
-            })
-            var url = "/api/estimateEmailFileDelete";
-            $.ajax({
-                url : url,
-                type : 'GET',
-                dataType : 'JSON',
-                data : "checkSeq="+checkSeq.join(","),
-                success:function(response){
-                    // console.log(response);
-                    if(response.result){
-                        alert("삭제 완료");
-                        // getList();
-                    }else{
-                        alert("오류가 발생했습니다.");
+                        checkSeq.push(valueArray[0]);
+                    }
+                })
+                var url = "/api/estimateEmailFileDelete";
+                $.ajax({
+                    url : url,
+                    type : 'GET',
+                    dataType : 'JSON',
+                    data : "checkSeq="+checkSeq.join(","),
+                    success:function(response){
+                        // console.log(response);
+                        if(response.result){
+                            alert("삭제 완료");
+                            $(".add_file").each(function(){
+                                if($(this).prop("checked") == true){
+                                    $(this).parent().remove();
+                                }
+                            })
+                        }else{
+                            alert("오류가 발생했습니다.");
+                        }
+
+                    },
+                    error : function(error){
+                        console.log(error);
                     }
 
-                }
+                });
 
-            });
-
+            }
         }
     });
 
@@ -1100,7 +1168,7 @@ $(function(){
         $('#dialogMailPreview').dialog({
             title: '',
             modal: true,
-            width: '600px',
+            width: '800px',
             draggable: true
         });
 
@@ -1124,7 +1192,8 @@ $(function(){
 
             });
         }else{
-
+            $('select[name="searchDepth2"]').empty().append('<option value="">상품명 선택</option>');
+            $("#searchDepth2Str").html("상품명 선택");
         }
     })
 
@@ -1160,7 +1229,99 @@ $(function(){
         }else{
 
         }
+    });
+
+    $(".btn-number-duple").click(function(){
+        if($("#es_number1").val() == ""){
+            alert("견적번호를 입력해 주세요");
+            return false;
+        }
+
+        if($("#es_number2").val() == ""){
+            alert("견적번호를 입력해 주세요");
+            return false;
+        }
+        var url = "/api/estimateNumberCheck";
+        $.ajax({
+            url : url,
+            type : 'GET',
+            dataType : 'JSON',
+            data : "es_number="+$("#es_number1").val()+"-"+$("#es_number2").val(),
+            success:function(response){
+                if(response.result == true){
+                    alert("견적번호가 존재 합니다. 다른 견적번호로 설정해주시기 바랍니다.");
+                    $("#dupleNumberYn").val("N");
+                    return false;
+                }else{
+                    alert("사용가능한 견적번호 입니다.");
+                    $("#dupleNumberYn").val("Y");
+                    return false;
+                }
+            }
+        });
+    });
+
+    $("#typeSearchWord").autocomplete({
+        source : function (request, response) {
+            // $.post('http://'+$('#apiHost').val()+':'+$('#apiPort').val()+'/products/_search/1/limit/20', request, response);
+            $.ajax( {
+                method : "GET",
+                url: '/api/companyTypeList',
+                dataType: "json",
+                data: {
+                    typeSearchWord: request.term
+                },
+                success: function( data ) {
+                    response( data.list );
+                }
+            });
+        },
+        minLength: 1,
+        focus: function( event, ui ) {
+            $( "#typeSearchWord" ).val( ui.item.ct_name );
+            return false;
+        },
+        select : function(event,ui){
+            $( "#typeSearchWord" ).val( ui.item.ct_name );
+            return false;
+        }
     })
+    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+        return $( "<li>" )
+            .append( item.ct_name )
+            .appendTo( ul );
+    };
+
+    $("#endSearchWord").autocomplete({
+        source : function (request, response) {
+            // $.post('http://'+$('#apiHost').val()+':'+$('#apiPort').val()+'/products/_search/1/limit/20', request, response);
+            $.ajax( {
+                method : "GET",
+                url: '/api/endUserList',
+                dataType: "json",
+                data: {
+                    endSearchWord: request.term
+                },
+                success: function( data ) {
+                    response( data.list );
+                }
+            });
+        },
+        minLength: 1,
+        focus: function( event, ui ) {
+            $( "#endSearchWord" ).val( ui.item.eu_name );
+            return false;
+        },
+        select : function(event,ui){
+            $( "#endSearchWord" ).val( ui.item.eu_name );
+            return false;
+        }
+    })
+    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+        return $( "<li>" )
+            .append( item.eu_name )
+            .appendTo( ul );
+    };
 });
 
 var getList = function(){
@@ -1181,26 +1342,31 @@ var getList = function(){
             if(response.list.length > 0){
                 for(var i = 0; i < response.list.length;i++){
                     var num = response.total - ((start-1)*end) - i;
+                    if(response.list[i].mb_id !== null){
+                        var mb_seq_str = "("+response.list[i].mb_id+")";
+                    }else{
+                        var mb_seq_str = "";
+                    }
                     html += '<tr>\
                                 <td><input type="checkbox" class="listCheck" name="es_seq[]" value="'+response.list[i].es_seq+'"></td>\
                                 <td>'+num+'</td>\
                                 <td>'+response.list[i].es_number+'</td>\
-                                <td>'+response.list[i].es_name+'</td>\
+                                <td>'+response.list[i].es_name+mb_seq_str+'</td>\
                                 <td>'+response.list[i].depth1.join("<br>")+'</td>\
                                 <td>'+response.list[i].depth2.join("<br>")+'</td>\
                                 <td>'+response.list[i].es_shot+'</td>\
                                 <td>'+response.list[i].es_charger+'</td>\
-                                <td>'+response.list[i].es_tel+'</td>\
+                                <td>'+response.list[i].es_tel+'<br>'+response.list[i].es_phone+'</td>\
                                 <td>'+response.list[i].es_email+'</td>\
                                 <td>'+(response.list[i].es_register ? response.list[i].es_register:"")+'</td>\
-                                <td>'+response.list[i].es_regdate+'</td>\
-                                <td>'+(response.list[i].es_status == 0 ? "<span class='statusEdit' style='cursor:pointer' data-seq='"+response.list[i].es_seq+"'>등록</span>":"신청완료")+'</td>\
+                                <td>'+moment(response.list[i].es_regdate).format("YYYY-MM-DD")+'</td>\
+                                <td>'+(response.list[i].es_status == 0 ? "<span class='statusEdit' style='cursor:pointer;color:#0070C0' data-seq='"+response.list[i].es_seq+"'>등록</span>":"<span style='color:#FF0000'>신청완료</span>")+'</td>\
                                 <td>';
                                 if(response.list[i].file_seq != ""){
                                     var file_seq = response.list[i].file_seq.split("|");
                                     for(var j =0; j < file_seq.length;j++){
                                         var file_info = file_seq[j].split(", ");
-                                        html += "<i class='fas fa-save fileDownload' data-filename='"+file_info[1]+"' data-originname='"+file_info[2]+"' data-folder='estimate_file'></i>";
+                                        html += " <i class='fas fa-save fileDownload' data-filename='"+file_info[1]+"' data-originname='"+file_info[2]+"' data-folder='estimate_file' alt='"+file_info[2]+"' title='"+file_info[2]+"'></i>";
                                     }
                                 }
                                 html += '</td>\
@@ -1310,3 +1476,46 @@ var formatBytes = function(bytes) {
     else if(bytes < 1073741824) return(bytes / 1048576).toFixed(2) + " MB";
     else return(bytes / 1073741824).toFixed(2) + " GB";
 };
+
+function smsByteChk(content)
+{
+    var temp_str = content.value;
+    $("#bytecheck").html(getByte(temp_str));
+    // remain.value = getByte(temp_str);
+    //남은 바이트수를 표시 하기
+    if(parseInt($("#bytecheck").html()) > 80)
+    {
+        alert(80 + "Bytes를 초과할 수 없습니다.");
+
+        content.focus();
+    }
+
+}
+
+function getByte(str)
+{
+    var resultSize = 0;
+    if(str == null)
+    {
+        return 0;
+    }
+
+    for(var i=0; i<str.length; i++)
+    {
+        var c = escape(str.charAt(i));
+        if(c.length == 1)//기본 아스키코드
+        {
+            resultSize ++;
+        }
+        else if(c.indexOf("%u") != -1)//한글 혹은 기타
+        {
+            resultSize += 2;
+        }
+        else
+        {
+            resultSize ++;
+        }
+    }
+
+    return resultSize;
+}

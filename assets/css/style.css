@@ -33,6 +33,11 @@ table {
     border-collapse: collapse;
 }
 
+ul {
+    list-style:none;
+    padding:0;
+    margin:0;
+}
 input[type="text"] {
     height:20px;
 }
@@ -43,6 +48,9 @@ textarea:focus, input:focus{
 
 i {cursor:pointer;}
 
+.dib {
+    display:inline-block;
+}
 /*select {
     width:150px;
     padding: .5em .5em;
@@ -665,4 +673,69 @@ nav ul li.active {
     color:#fff;
     background-color:#6e5645;
     height:20px;
+}
+
+.w35 {
+    width:35%;
+}
+
+.modal-field.service {
+    padding-top:0px;
+    padding-bottom:0px
+}
+
+.modal-field-input.full > .label.service {
+    width:36.3%;
+    vertical-align:top;
+    padding-top:10px
+}
+
+.input.service {
+    width:63%;
+    border-left:2px solid #ddd
+}
+
+.modal-service-left {
+    border-bottom:2px solid #ddd;
+    padding-top:10px
+}
+.service-label {
+    display:inline-block;
+    width:20%;
+    padding-left:10px;
+    vertical-align:top;
+    padding-top:10px;
+}
+
+.sb_add, .sc_add, .cms {
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:inline-block;
+    width:70%
+}
+
+.btn-service-label {
+    padding-left:110px;
+    padding-top:3px
+}
+
+.service-type {
+    list-style:none;
+    margin:0;
+    padding-left:10px;
+    padding-top:5px;
+    padding-bottom:5px;
+}
+
+.detail-price {
+    font-size:12px;
+
+}
+
+.price-label {
+    background:#ddd;
+    border-right:1px solid #fff;
+    width:100%;
+    padding:5px 0px;
 }

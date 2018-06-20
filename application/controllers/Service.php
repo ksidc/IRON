@@ -23,4 +23,28 @@ class Service extends CI_Controller {
         $this->load->view('layout/layout',$layout);
     }
 
+    public function register()
+    {
+        $layout["header"] = $this->load->view("layout/header", '',true);
+        $layout["left"] = $this->load->view("layout/left", '',true);
+        $layout["content"] = $this->load->view("service/register", '',true);
+        $layout["footer"] = $this->load->view("layout/footer", '',true);
+        $this->load->view('layout/layout',$layout);
+    }
+
+    public function list()
+    {
+        $layout["header"] = $this->load->view("layout/header", '',true);
+        $layout["left"] = $this->load->view("layout/left", '',true);
+        $layout["content"] = $this->load->view("service/list", '',true);
+        $layout["footer"] = $this->load->view("layout/footer", '',true);
+        $this->load->view('layout/layout',$layout);
+    }
+
+    public function make(){
+
+        $layout["content"] = $this->load->view("service/make", '',true);
+        $this->load->view('layout/layout_popup',$layout);
+    }
+
 }

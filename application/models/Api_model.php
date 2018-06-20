@@ -350,9 +350,10 @@ class Api_model extends CI_Model {
     // 견적 list select
     public function fetchEstimate($start,$limit){
         $start = ($start - 1)*$limit;
-        $this->db->select("*, ifnull((select group_concat(concat(ef_seq,',',ef_file,',',ef_origin_file) separator '|') as file_seq from estimate_files where ef_es_seq = a.es_seq group by ef_es_seq),'') as file_seq ");
+        $this->db->select("a.*,b.*, ifnull((select group_concat(concat(ef_seq,',',ef_file,',',ef_origin_file) separator '|') as file_seq from estimate_files where ef_es_seq = a.es_seq group by ef_es_seq),'') as file_seq ,c.mb_id ");
         $this->db->from("estimates a");
         $this->db->join("estimate_depth b","a.es_seq = b.ed_es_seq","left");
+        $this->db->join("members c","a.es_mb_seq = c.mb_seq","left");
 
 
         if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
@@ -504,6 +505,7 @@ class Api_model extends CI_Model {
 
         $data = array(
             "es_name" => $this->input->post("es_name"),
+            "es_mb_seq"=>$this->input->post("es_mb_seq"),
             "es_charger" => $this->input->post("es_charger"),
             "es_tel" => $this->input->post("es_tel"),
             "es_phone" => $this->input->post("es_phone"),
@@ -743,10 +745,11 @@ class Api_model extends CI_Model {
     }
 
     public function estimateExport(){
-        $this->db->select("*");
-        $this->db->from("estimates");
+        $this->db->select("a.*,b.eu_name,c.ct_name");
+        $this->db->from("estimates a ");
+        $this->db->join("end_users b","a.es_end_user = b.eu_seq","left");
+        $this->db->join("company_type c","a.es_company_type = c.ct_seq","left");
         $this->db->where_in("es_seq",$this->input->post("es_seq"));
-
         $query = $this->db->get();
 
         return $query->result_array();
@@ -760,50 +763,50 @@ class Api_model extends CI_Model {
 
         $bf_seq = $this->input->post("bf_seq");
         $bf_sort = $this->input->post("bf_sort");
+        if(isset($_FILES["basic_file"])){
+            for($i = 0; $i < count($_FILES["basic_file"]["name"]);$i++){
+                if($_FILES["basic_file"]["size"][$i] > 0){
+                    if($bf_seq[$i] != ""){
+                        $this->db->select("*");
+                        $this->db->from("estimate_basic_files");
+                        $this->db->where("bf_seq",$bf_seq[$i]);
+                        $query = $this->db->get();
 
-        for($i = 0; $i < count($_FILES["basic_file"]["name"]);$i++){
-            if($_FILES["basic_file"]["size"][$i] > 0){
-                if($bf_seq[$i] != ""){
-                    $this->db->select("*");
-                    $this->db->from("estimate_basic_files");
-                    $this->db->where("bf_seq",$bf_seq[$i]);
-                    $query = $this->db->get();
+                        $row = $query->row_array();
+                        $bf_file = $row["bf_file"];
 
-                    $row = $query->row_array();
-                    $bf_file = $row["bf_file"];
+                        unlink($_SERVER["DOCUMENT_ROOT"]."/uploads/basic_file/".$bf_file);
 
-                    unlink($_SERVER["DOCUMENT_ROOT"]."/uploads/basic_file/".$bf_file);
+                        $ext = substr(strrchr(basename($_FILES['basic_file']["name"][$i]), '.'), 1);
+                        $file_name = time()."_".rand(1111,9999).".".$ext;
+                        move_uploaded_file($_FILES["basic_file"]['tmp_name'][$i],$_SERVER["DOCUMENT_ROOT"].'/uploads/basic_file/'.$file_name);
 
-                    $ext = substr(strrchr(basename($_FILES['basic_file']["name"][$i]), '.'), 1);
-                    $file_name = time()."_".rand(1111,9999).".".$ext;
-                    move_uploaded_file($_FILES["basic_file"]['tmp_name'][$i],$_SERVER["DOCUMENT_ROOT"].'/uploads/basic_file/'.$file_name);
+                        $data = array(
+                            "bf_seq" => $bf_seq[$i],
+                            "bf_file" => $file_name,
+                            "bf_origin_file" => $_FILES['basic_file']["name"][$i],
+                            "bf_file_size" => $_FILES['basic_file']["size"][$i],
+                            "bf_sort" => $bf_sort[$i]
+                        );
+                        // print_r($data);
+                        array_push($data_update_array,$data);
+                    }else{
+                        $ext = substr(strrchr(basename($_FILES['basic_file']["name"][$i]), '.'), 1);
+                        $file_name = time()."_".rand(1111,9999).".".$ext;
+                        move_uploaded_file($_FILES["basic_file"]['tmp_name'][$i],$_SERVER["DOCUMENT_ROOT"].'/uploads/basic_file/'.$file_name);
+                        $data = array(
+                            "bf_file" => $file_name,
+                            "bf_origin_file" => $_FILES['basic_file']["name"][$i],
+                            "bf_file_size" => $_FILES['basic_file']["size"][$i],
+                            "bf_sort" => $bf_sort[$i]
+                        );
 
-                    $data = array(
-                        "bf_seq" => $bf_seq[$i],
-                        "bf_file" => $file_name,
-                        "bf_origin_file" => $_FILES['basic_file']["name"][$i],
-                        "bf_file_size" => $_FILES['basic_file']["size"][$i],
-                        "bf_sort" => $bf_sort[$i]
-                    );
-                    // print_r($data);
-                    array_push($data_update_array,$data);
-                }else{
-                    $ext = substr(strrchr(basename($_FILES['basic_file']["name"][$i]), '.'), 1);
-                    $file_name = time()."_".rand(1111,9999).".".$ext;
-                    move_uploaded_file($_FILES["basic_file"]['tmp_name'][$i],$_SERVER["DOCUMENT_ROOT"].'/uploads/basic_file/'.$file_name);
-                    $data = array(
-                        "bf_file" => $file_name,
-                        "bf_origin_file" => $_FILES['basic_file']["name"][$i],
-                        "bf_file_size" => $_FILES['basic_file']["size"][$i],
-                        "bf_sort" => $bf_sort[$i]
-                    );
+                        array_push($data_insert_array,$data);
+                    }
 
-                    array_push($data_insert_array,$data);
                 }
-
             }
         }
-
         if(count($data_insert_array) > 0){
             $this->db->insert_batch("estimate_basic_files",$data_insert_array);
         }
@@ -861,6 +864,16 @@ class Api_model extends CI_Model {
 
     }
 
+    // 업체 구분 중복 체크
+    public function selectCompanyType(){
+        $this->db->select("*");
+        $this->db->from("company_type");
+        $this->db->where(" (ct_code = '".$this->input->post("addType")."' or ct_name = '".$this->input->post("ct_name")."') ");
+
+        $query = $this->db->get();
+
+        return $query->num_rows();
+    }
     // 업체 구분 insert
     public function companyTypeAdd(){
         // data array
@@ -879,8 +892,8 @@ class Api_model extends CI_Model {
         $this->db->select("*");
         $this->db->from("company_type");
 
-        if($this->input->get("searchWord") != ""){
-            $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+        if($this->input->get("typeSearchWord") != ""){
+            $this->db->like("ct_name",$this->input->get("typeSearchWord"),'both');
         }
 
         $this->db->order_by("ct_code");
@@ -908,6 +921,17 @@ class Api_model extends CI_Model {
         // ci 이용 디비 삭제
         return $this->db->delete("company_type");
 
+    }
+
+    // End User 중복 체크
+    public function selectEndUser(){
+        $this->db->select("*");
+        $this->db->from("end_users");
+        $this->db->where(" (eu_code = '".$this->input->post("addEnd")."' or eu_name = '".$this->input->post("eu_name")."') ");
+
+        $query = $this->db->get();
+
+        return $query->num_rows();
     }
 
     // End User insert
@@ -1007,7 +1031,8 @@ class Api_model extends CI_Model {
                     "ef_es_code" => $this->input->post("ef_es_code"),
                     "ef_file" => $file_name,
                     "ef_origin_file" => $_FILES['es_file']["name"][$i],
-                    "ef_file_size" => $_FILES['es_file']["size"][$i]
+                    "ef_file_size" => $_FILES['es_file']["size"][$i],
+                    "ef_sessionkey" => $this->input->post("ef_sessionkey")
                 );
 
                 array_push($data_insert_array,$data);
@@ -1027,12 +1052,28 @@ class Api_model extends CI_Model {
         $this->db->select("*");
         $this->db->from("estimate_files_tmp");
         $this->db->where("ef_es_code",$this->input->post("ef_es_code"));
-
+        $this->db->where("ef_sessionkey",$this->input->post("ef_sessionkey"));
         $this->db->order_by("ef_seq");
 
         $query = $this->db->get();
 
         return $query->result_array();
+    }
+
+    public function estimateFilesTmpDeleteSession($ef_sessionkey){
+        $this->db->select("*");
+        $this->db->from("estimate_files_tmp");
+        $this->db->where("ef_sessionkey",$ef_sessionkey);
+
+        $query = $this->db->get();
+
+        foreach($query->result_array() as $row){
+            unlink($_SERVER["DOCUMENT_ROOT"]."/uploads/estimate_file/".$row["ef_file"]);
+        }
+
+        $this->db->where("ef_sessionkey",$ef_sessionkey);
+
+        return $this->db->delete("estimate_files_tmp");
     }
 
     public function estimateFilesTmpDelete($ef_seq){
@@ -1117,7 +1158,7 @@ class Api_model extends CI_Model {
         $query = $this->db->get();
 
         foreach($query->result_array() as $row){
-            unlink($_SERVER["DOCUMENT_ROOT"]."/uploads/estimate_email_file/".$row["ef_file"]);
+            @unlink($_SERVER["DOCUMENT_ROOT"]."/uploads/estimate_email_file/".$row["em_file"]);
         }
 
         $this->db->where_in("em_seq",$em_seq);
@@ -1887,6 +1928,158 @@ class Api_model extends CI_Model {
         $query = $this->db->get();
 
         return $query->result_array();
+    }
+
+    public function fetchPolicyBank(){
+        $this->db->select("*");
+        $this->db->from("service_basic_bank");
+        $this->db->order_by("sb_seq");
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function fetchPolicyCard(){
+        $this->db->select("*");
+        $this->db->from("service_basic_card");
+        $this->db->order_by("sc_seq");
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function fetchPolicyCms(){
+        $this->db->select("*");
+        $this->db->from("service_basic_cms");
+
+
+        $query = $this->db->get();
+
+        return $query->row_array();
+    }
+
+    public function fetchPolicy(){
+        $this->db->select("*");
+        $this->db->from("service_basic_policy");
+
+        $query = $this->db->get();
+
+        return $query->row_array();
+    }
+
+    public function estimateNumberCheck(){
+        $this->db->select("*");
+        $this->db->from("estimates");
+
+        $this->db->where("es_number",$this->input->get("es_number"));
+        $query = $this->db->get();
+
+        if($query->num_rows() > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function basicPolicyEdit(){
+        $sb_seq = $this->input->post("sb_seq");
+        $sb_min_month = $this->input->post("sb_min_month");
+        $sb_max_month = $this->input->post("sb_max_month");
+        $sb_discount = $this->input->post("sb_discount");
+
+        $sb_data_insert = array();
+        $sb_data_update = array();
+
+        $sb_data["insert_yn"] = "N";
+        $this->db->update("service_basic_bank",$sb_data);
+
+        for($i = 0; $i < count($sb_seq);$i++){
+            if($sb_seq[$i] == ""){
+                $sb_insert = array(
+                    "sb_min_month" => $sb_min_month[$i],
+                    "sb_max_month" => $sb_max_month[$i],
+                    "sb_discount" => $sb_discount[$i],
+                    "insert_yn" => "Y"
+                );
+                array_push($sb_data_insert,$sb_insert);
+            }else{
+                $sb_update = array(
+                    "sb_seq" => $sb_seq[$i],
+                    "sb_min_month" => $sb_min_month[$i],
+                    "sb_max_month" => $sb_max_month[$i],
+                    "sb_discount" => $sb_discount[$i],
+                    "insert_yn" => "Y"
+                );
+                array_push($sb_data_update,$sb_update);
+            }
+        }
+        if(count($sb_data_insert) > 0){
+            $this->db->insert_batch("service_basic_bank",$sb_data_insert);
+        }
+        if(count($sb_data_update) > 0){
+            $this->db->update_batch("service_basic_bank",$sb_data_update,"sb_seq");
+        }
+
+        $this->db->where("insert_yn","N");
+        $this->db->delete("service_basic_bank");
+
+        $sc_seq = $this->input->post("sc_seq");
+        $sc_min_month = $this->input->post("sc_min_month");
+        $sc_max_month = $this->input->post("sc_max_month");
+        $sc_discount = $this->input->post("sc_discount");
+
+        $sc_data_insert = array();
+        $sc_data_update = array();
+
+        $sc_data["insert_yn"] = "N";
+        $this->db->update("service_basic_card",$sc_data);
+
+        for($i = 0; $i < count($sc_seq);$i++){
+            if($sc_seq[$i] == ""){
+                $sc_insert = array(
+                    "sc_min_month" => $sc_min_month[$i],
+                    "sc_max_month" => $sc_max_month[$i],
+                    "sc_discount" => $sc_discount[$i],
+                    "insert_yn" => "Y"
+                );
+                array_push($sc_data_insert,$sc_insert);
+            }else{
+                $sc_update = array(
+                    "sc_seq" => $sc_seq[$i],
+                    "sc_min_month" => $sc_min_month[$i],
+                    "sc_max_month" => $sc_max_month[$i],
+                    "sc_discount" => $sc_discount[$i],
+                    "insert_yn" => "Y"
+                );
+                array_push($sc_data_update,$sc_update);
+            }
+        }
+        if(count($sc_data_insert) > 0){
+            $this->db->insert_batch("service_basic_card",$sc_data_insert);
+        }
+        if(count($sc_data_update) > 0){
+            $this->db->update_batch("service_basic_card",$sc_data_update,"sc_seq");
+        }
+
+        $this->db->where("insert_yn","N");
+        $this->db->delete("service_basic_card");
+
+        $cms_data = array(
+            "discount" => $this->input->post("discount")
+        );
+        $this->db->replace("service_basic_cms",$cms_data);
+
+        $basic_data = array(
+            "sp_basic_type" => $this->input->post("sp_basic_type"),
+            "sp_policy" => $this->input->post("sp_policy"),
+            "sp_pay_start_day" => $this->input->post("sp_pay_start_day"),
+            "sp_pay_format" => $this->input->post("sp_pay_format"),
+            "sp_pay_format_policy" => $this->input->post("sp_pay_format_policy")
+        );
+
+        return $this->db->update("service_basic_policy",$basic_data);
     }
 }
 
