@@ -25,6 +25,8 @@ $(function(){
                 }else{
                     alert("등록되었습니다.");
                 }
+                opener.document.location.reload();
+                self.close();
                 // console.log(response);
             },
             error:function(error){
@@ -44,7 +46,7 @@ $(function(){
                 var html = "";
                 for(var i =0 ; i < response.length;i++){
                     html += '<tr>\
-                    <td class="pi_click" data-seq="'+response[i].pi_seq+'" data-name="'+response[i].pi_name+'">'+response[i].pi_name+'</td>\
+                    <td class="pi_click" data-seq="'+response[i].pi_seq+'" data-name="'+response[i].pi_name+'" style="cursor:pointer;text-decoration:underline;text-align:left;padding-left:10px">'+response[i].pi_name+'</td>\
                     </tr>;'
                 };
                 $("#modalSearchItem").html(html);
@@ -92,10 +94,10 @@ $(function(){
         $("#dialogClientSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
     })
     $("#clientSearchForm").submit(function(){
-        if($("#clientSearchWord").val() == ""){
-            alert("매입처 명을 입력해 주시기 바랍니다.");
-            return false;
-        }
+        // if($("#clientSearchWord").val() == ""){
+        //     alert("매입처 명을 입력해 주시기 바랍니다.");
+        //     return false;
+        // }
         var url = "/api/clientSearchList";
         var datas = $("#clientSearchForm").serialize();
         $.ajax({
@@ -106,8 +108,8 @@ $(function(){
             success:function(response){
                 var html = "";
                 for(var i =0 ; i < response.length;i++){
-                    html = '<tr>\
-                    <td class="c_click" data-seq="'+response[i].c_seq+'" data-name="'+response[i].c_name+'">'+response[i].c_id+'</td>\
+                    html += '<tr>\
+                    <td class="c_click" data-seq="'+response[i].c_seq+'" data-name="'+response[i].c_name+'" style="cursor:pointer;text-decoration:underline">'+response[i].c_id+'</td>\
                     <td>'+response[i].c_name+'</td>\
                     </tr>;'
                 };

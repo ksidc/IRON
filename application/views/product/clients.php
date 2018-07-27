@@ -17,19 +17,19 @@
                     <label>등록일</label>
                     <input type="text" style="width:80px" name="startDate" id="startDate" class="datepicker" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker" value="<?=date('Y-m-d')?>">
                 </div>
-                <div class="form-group ml15">
-                    <div class="selectbox">
-                        <label for="searchType">매입처명</label>
-                        <select id="searchType" name="searchType">
+                <div class="form-group ml15" style="text-align:left">
+
+                        <select id="searchType" name="searchType" class="select2" style="width:140px">
                             <option value="c_name" selected>매입처명</option>
                             <option value="c_ceo">대표자</option>
                             <option value="c_contract_name">기본담당자</option>
                             <option value="c_payment_name">요금담당자</option>
                             <option value="c_contract_tel">전화번호</option>
                             <option value="c_contract_phone">휴대폰번호</option>
+                            <option value="c_email">이메일</option>
                             <option value="c_number">사업자번호</option>
                         </select>
-                    </div>
+
                     <input type="text" name="searchWord" id="searchWord">
                     <button class="btn btn-search btn-form-search" type="submit">검색</button>
                 </div>
@@ -100,7 +100,7 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">매입처 아이디(코드)</div>
+                <div class="label">회원 아이디(코드)</div>
                 <div class="input write"><input type="text" name="c_id" id="c_id" class="width-button"><button class="btn btn-brown btn-small btn-id-duple" type="button">중복확인</button></div>
                 <div class="input edit c-id-str"></div>
             </div>
@@ -156,7 +156,7 @@
             </div>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text">계약 담당자 정보</div>
+            <div class="modal-title-text">기본 담당자 정보</div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -231,21 +231,21 @@
             <div class="modal-field-input">
                 <div class="label">지급 기준</div>
                 <div class="input">계산서 발행 후
-                    <div class="selectbox" style="width:40%">
-                        <label for="c_payment_type_select" style="top:1.5px;padding:.1em .5em" id="c_payment_type_select_str">당월</label>
-                        <select name="c_payment_type_select" id="c_payment_type_select" style="padding:.2em .5em">
+
+
+                        <select name="c_payment_type_select" id="c_payment_type_select" class="select2" style="width:30%">
                             <option selected value="1">당월</option>
                             <option value="2">익월</option>
                             <option value="3">익익월</option>
                             <option value="4">기타</option>
                         </select>
-                    </div> 지급
+                     지급
                 </div>
             </div>
 
         </div>
         <div class="modal-title">
-            <div class="modal-title-text">파일 조건</div>
+            <div class="modal-title-text">파일 첨부</div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">

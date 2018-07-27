@@ -295,6 +295,14 @@ $(function(){
         //     alert("팩스를 입력해 주세요");
         //     return false;
         // }
+        if($("#mb_email").val() != ""){
+            if (!PT_email.test($("#mb_email").val())){
+                alert("이메일 형식이 맞지 않습니다.");
+                return false;
+                // $(this).focus();
+            }
+        }
+
         if($("#mb_type").val() == "0"){
             if($("#mb_business_conditions").val() == ""){
                 alert("업태를 입력해 주세요");
@@ -307,14 +315,21 @@ $(function(){
             }
         }
 
-        $(".emailCheck").each(function(){
-            if($(this).val() != ""){
-                if (!PT_email.test($(this).val())){
-                    alert("이메일 형식이 맞지 않습니다.");
-                    // $(this).focus();
-                }
+        if($("#mb_contract_email").val() != ""){
+            if (!PT_email.test($("#mb_contract_email").val())){
+                alert("이메일 형식이 맞지 않습니다.");
+                return false;
+                // $(this).focus();
             }
-        })
+        }
+
+        if($("#mb_payment_email").val() != ""){
+            if (!PT_email.test($("#mb_payment_email").val())){
+                alert("이메일 형식이 맞지 않습니다.");
+                return false;
+                // $(this).focus();
+            }
+        }
 
         // 회원 키값이 빈값이므로 등록 판단
         if($("#mb_seq").val() == ""){

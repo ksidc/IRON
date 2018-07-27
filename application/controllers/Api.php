@@ -399,6 +399,8 @@ class Api extends CI_Controller {
         echo json_encode($result);
     }
 
+
+
     // 기본 첨부파일 입력 & 수정 - post
     public function estimateBasicFileAdd()
     {
@@ -625,10 +627,18 @@ class Api extends CI_Controller {
 
     // 상품 등록 - 탭 등록
     public function productCategoryRegister(){
-        $sort = $this->api_model->productCategoryMaxSort();
+        $duple = $this->api_model->dupleProductCategory();
+        if($duple > 0){
+            $result = false;
+            $msg = "이미 등록되어 있습니다.";
+        }else{
+            $sort = $this->api_model->productCategoryMaxSort();
 
-        $result = $this->api_model->productCategoryRegister($sort["max_sort"]+1);
-        echo json_encode($result);
+            $result = $this->api_model->productCategoryRegister($sort["max_sort"]+1);
+            $msg = "";
+        }
+        $arr = array("result"=>$result,"msg"=>$msg);
+        echo json_encode($arr);
     }
 
     // 상품 등록 - 탭 업데이트
@@ -660,10 +670,17 @@ class Api extends CI_Controller {
 
     // 상품 등록 - 분류 등록
     public function productDivRegister($pc_seq){
-        $sort = $this->api_model->productDivMaxSort($pc_seq);
+        $duple = $this->api_model->dupleProductDiv($pc_seq);
+        if($duple > 0){
+            $result = false;
+            $msg = "이미 등록되어 있습니다.";
+        }else{
+            $sort = $this->api_model->productDivMaxSort($pc_seq);
 
-        $result = $this->api_model->productDivRegister($pc_seq,$sort["max_sort"]+1);
-        $arr = array("result"=>$result);
+            $result = $this->api_model->productDivRegister($pc_seq,$sort["max_sort"]+1);
+            $msg = "";
+        }
+        $arr = array("result"=>$result,"msg"=>$msg);
         echo json_encode($arr);
     }
 
@@ -756,15 +773,15 @@ class Api extends CI_Controller {
             $subItemClientHtml = "";
             foreach($sub as $row2){
                 $subItemHtml .= '<div class="subItem_'.$row["pi_seq"].'" data-name="'.$row2["pis_name"].'" data-pisseq="'.$row2["pis_seq"].'">'.$row2["pis_name"].'</div>';
-                $subItemClientHtml .= '<div class="subItem_'.$row["pi_seq"].'" data-name="'.$row2["c_name"].'" data-pisseq="'.$row2["pis_seq"].'">'.$row2["c_name"].'</div>';
+                $subItemClientHtml .= '<div class="subItem_'.$row["pi_seq"].'" data-name="'.$row2["c_name"].'" data-pisseq="'.$row2["pis_seq"].'" data-cseq="'.$row2["pis_c_seq"].'">'.$row2["c_name"].'</div>';
             }
 
             $html .= '<tr>
                         <td>'.($key+1).'</td>
-                        <td class="item_'.$row["pi_seq"].'" data-name="'.$row["pi_name"].'" data-piseq="'.$row["pi_seq"].'">'.$row["pi_name"].'</td>
-                        <td style="line-height:28px">'.$subItemHtml.'</td>
-                        <td style="line-height:28px">'.$subItemClientHtml.'</td>
-                        <td><i class="fas fa-plus addSubItem" data-piseq="'.$row["pi_seq"].'"></i></td>
+                        <td style="text-align:left" class="item_'.$row["pi_seq"].'" data-name="'.$row["pi_name"].'" data-piseq="'.$row["pi_seq"].'">'.$row["pi_name"].'</td>
+                        <td style="line-height:28px;text-align:left">'.$subItemHtml.'</td>
+                        <td style="line-height:28px;text-align:left">'.$subItemClientHtml.'</td>
+                        <td><i class="fas fa-plus addSubItem" data-piseq="'.$row["pi_seq"].'" title="부가 항목 추가"></i></td>
                         <td class="btn-modify" data-seq="'.$row["pi_seq"].'" style="cursor:pointer"><i class="fas fa-edit"></i></td>
                         <td class="btn-delete" data-seq="'.$row["pi_seq"].'" style="cursor:pointer"><i class="fas fa-trash"></i></td>
                     </tr>';
@@ -788,10 +805,18 @@ class Api extends CI_Controller {
 
     // 상품 등록 - 제품군 등록
     public function productItemRegister($pc_seq){
-        $sort = $this->api_model->productItemMaxSort($pc_seq);
+        $duple = $this->api_model->dupleProductItemName($pc_seq);
+        if($duple > 0){
+            $result = false;
+            $msg = "이미 등록되어 있습니다.";
+        }else{
+            $sort = $this->api_model->productItemMaxSort($pc_seq);
 
-        $result = $this->api_model->productItemRegister($pc_seq,$sort["max_sort"]+1);
-        $arr = array("result"=>$result);
+            $result = $this->api_model->productItemRegister($pc_seq,$sort["max_sort"]+1);
+            $msg = "";
+        }
+
+        $arr = array("result"=>$result,"msg"=>$msg);
         echo json_encode($arr);
     }
 
@@ -1058,9 +1083,9 @@ class Api extends CI_Controller {
                                     if($b_pr_seq != $row["pr_seq"]){
                                         $html .= '<td rowspan="'.(count($sub)).'" style="width:16%">'.$row["c_name"].'</td>';
                                     }
-                                    $html .= '<td style="width:16%">'.number_format($row2["prs_price"]).'원</td>
-                                    <td style="width:16%">'.number_format($row2["prs_one_price"]).'원</td>
-                                    <td style="width:16%">'.number_format($row2["prs_month_price"]).'원</td>
+                                    $html .= '<td style="width:16%;text-align:right">'.number_format($row2["prs_price"]).'원'.($row2["prs_div"] == "2" ? "/월":"").'</td>
+                                    <td style="width:16%;text-align:right">'.number_format($row2["prs_one_price"]).'원</td>
+                                    <td style="width:16%;text-align:right">'.number_format($row2["prs_month_price"]).'원/월</td>
                                 </tr>';
                             $b_pr_seq = $row["pr_seq"];
                         }
@@ -1228,9 +1253,185 @@ class Api extends CI_Controller {
         echo json_encode($result);
     }
 
+    public function basicPolicyDetail($type){
+        if($type == "1"){
+            $info = $this->api_model->fetchPolicyBank();
+        }else if($type == "2"){
+            $info = $this->api_model->fetchPolicyCard();
+        }else{
+            $info = $this->api_model->fetchPolicyCms();
+        }
+
+        echo json_encode(array("result"=>$info));
+    }
+
     public function basicPolicyEdit(){
         $result = $this->api_model->basicPolicyEdit();
         $arr = array('result'=>$result);
         echo json_encode($arr);
+    }
+
+    public function serviceRegister(){
+        $result = $this->api_model->serviceRegister();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceRegisterEdit($sr_seq){
+        $result = $this->api_model->serviceRegisterEdit($sr_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceRegisterDelete($sr_seq){
+        $result = $this->api_model->serviceRegisterDelete($sr_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceRegisterCopy($sr_seq){
+        $data = $this->api_model->selectServiceRegister($sr_seq);
+
+        $code = $data["sr_code"];
+        $code = explode("-",$code);
+
+        $new_code = substr($code[1],-6);
+        $new_srcode = (int)$new_code+1;
+
+        $data["sr_code"] = $code[0]."-".sprintf("%06d",$new_srcode)."-".$code[2];
+        $result = $this->api_model->serviceRegisterCopy($data);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceRegisterReCopy($sr_seq){
+        $data = $this->api_model->selectServiceRegister($sr_seq);
+
+        $code = $data["sr_code"];
+        $code = explode("-",$code);
+
+        $new_srcode = (int)$code[2]+1;
+
+        $data["sr_code"] = $code[0]."-".$code[1]."-".sprintf("%02d",$new_srcode);
+        $result = $this->api_model->serviceRegisterCopy($data);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceRegisterList($start,$end){
+        $total = $this->api_model->countServiceRegister();
+        $list = $this->api_model->fetchServiceRegister($start,$end);
+        $result = [
+            "total" => $total,
+            "list" => $list
+        ];
+
+        echo json_encode($result);
+    }
+
+    public function productSubDepth1Search($pr_seq){
+        $result = $this->api_model->productSubDepth1Search($pr_seq);
+        echo json_encode($result);
+    }
+
+    public function productSubDepth2Search($pr_seq,$pd_seq){
+        $result = $this->api_model->productSubDepth2Search($pr_seq,$pd_seq);
+        echo json_encode($result);
+    }
+
+    public function productItemSub($pi_seq){
+        $result = $this->api_model->fetchProductItemSub($pi_seq);
+        echo json_encode($result);
+    }
+
+    // 계약번호 중복체크 - get
+    public function serviceNumberCheck()
+    {
+        $result = $this->api_model->serviceNumberCheck();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function productDivSearch($pc_seq)
+    {
+        $result = $this->api_model->fetchProductDiv($pc_seq);
+        echo json_encode($result);
+    }
+
+    public function productDivSubSearch($pd_seq)
+    {
+        $result = $this->api_model->fetchProductDivSub($pd_seq);
+        echo json_encode($result);
+    }
+
+
+    public function memberUpdate1($mb_seq)
+    {
+        $result = $this->api_model->memberUpdate1($mb_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function memberUpdate2($mb_seq)
+    {
+        $result = $this->api_model->memberUpdate2($mb_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function memberUpdate3($mb_seq)
+    {
+        $result = $this->api_model->memberUpdate3($mb_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function memberUpdate4($mb_seq)
+    {
+        $result = $this->api_model->memberUpdate4($mb_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function memberUpdate5($mb_seq)
+    {
+        $result = $this->api_model->memberUpdate5($mb_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function memberUpdate6($mb_seq)
+    {
+        $result = $this->api_model->memberUpdate6($mb_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceMake($sr_seq){
+        $this->api_model->updateServiceStatus($sr_seq);
+        $sv_seq = $this->api_model->selectInsertService($sr_seq);
+
+
+        $this->api_model->selectInsertServicePrice($sv_seq,$sr_seq);
+        $result = $this->api_model->selectInsertServiceOption($sv_seq,$sr_seq);
+
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceList($start,$end){
+        $total = $this->api_model->countService();
+        $list = $this->api_model->fetchService($start,$end);
+        $result = [
+            "total" => $total,
+            "list" => $list
+        ];
+
+        echo json_encode($result);
+    }
+
+    public function serviceAddList($sv_seq){
+        $result = $this->api_model->fetchServiceAdd($sv_seq);
+        echo json_encode($result);
     }
 }

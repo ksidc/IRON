@@ -13,12 +13,9 @@
                     <input type="checkbox" name="serviceYn" id="serviceYn" value="Y"> 서비스 이용 중인 회원만 표시
                 </div>
                 <div class="form-group">
-                    <div class="selectbox">
-                        <label for="searchSelect">서비스 전체</label>
-                        <select id="searchSelect" name="searchSelect">
-                            <option value="0" selected>서비스 전체</option>
-                        </select>
-                    </div>
+                    <select id="searchSelect" name="searchSelect" class="select2" style="width:150px">
+                        <option value="0" selected>서비스 전체</option>
+                    </select>
                 </div>
             </div>
             <div class="search2">
@@ -26,20 +23,20 @@
                     <label>등록일</label>
                     <input type="text" style="width:80px" name="startDate" id="startDate" class="datepicker" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker" value="<?=date('Y-m-d')?>">
                 </div>
-                <div class="form-group ml15">
-                    <div class="selectbox">
-                        <label for="searchType">회원명</label>
-                        <select id="searchType" name="searchType">
-                            <option value="mb_name" selected>회원명</option>
-                            <option value="mb_id">회원아이디</option>
-                            <option value="mb_ceo">대표자</option>
-                            <option value="mb_charger">사내담당자</option>
-                            <option value="mb_tel">대표전화</option>
-                            <option value="mb_contract_name">계약담당자</option>
-                            <option value="mb_payment_name">요금담당자</option>
-                            <option value="mb_number">사업자번호</option>
-                        </select>
-                    </div>
+                <div class="form-group ml15" style="text-align:left">
+
+                    <select id="searchType" name="searchType" class="select2" style="width:120px;">
+                        <option value="mb_name" selected>회원명</option>
+                        <option value="mb_id">회원아이디</option>
+                        <option value="mb_ceo">대표자</option>
+                        <option value="mb_charger">사내담당자</option>
+                        <option value="mb_tel">대표전화</option>
+                        <option value="mb_email">이메일</option>
+                        <option value="mb_contract_name">계약담당자</option>
+                        <option value="mb_payment_name">요금담당자</option>
+                        <option value="mb_number">사업자번호</option>
+                    </select>
+
                     <input type="text" name="searchWord" id="searchWord">
                     <button class="btn btn-search btn-form-search" type="submit">검색</button>
                 </div>
@@ -119,14 +116,13 @@
             <div class="modal-field-input">
                 <div class="label">회원구분</div>
                 <div class="input">
-                    <div class="selectbox" style="width:92%">
-                        <label for="mb_type" style="top:1.5px;padding:.1em .5em" id="mb_type_text">사업자</label>
-                        <select name="mb_type" id="mb_type" style="padding:.2em .5em">
-                            <option value="0" selected>사업자</option>
-                            <option value="1">개인</option>
 
-                        </select>
-                    </div>
+                    <select name="mb_type" id="mb_type" class="select2" style="width:90%">
+                        <option value="0" selected>사업자</option>
+                        <option value="1">개인</option>
+
+                    </select>
+
                 </div>
             </div>
             <div class="modal-field-input">
@@ -166,7 +162,7 @@
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label">이메일</div>
-                <div class="input"><input type="text" name="mb_email" id="mb_email" class="emailCheck"></div>
+                <div class="input"><input type="text" name="mb_email" id="mb_email" ></div>
             </div>
             <div class="modal-field-input">
                 <div class="label">팩스(-포함)</div>
@@ -259,32 +255,30 @@
             <div class="modal-field-input">
                 <div class="label">청구 기준</div>
                 <div class="input">이용 월의
-                    <div class="selectbox" style="width:40%">
-                        <label for="mb_payment_type" style="top:1.5px;padding:.1em .5em">전월</label>
-                        <select name="mb_payment_type" id="mb_payment_type" style="padding:.2em .5em">
-                            <option selected value="0">전월</option>
-                            <option value="1">당월</option>
-                            <option value="2">익월</option>
-                        </select>
-                    </div> 청구
+
+                    <select name="mb_payment_type" id="mb_payment_type" class="select2" style="width:40%">
+                        <option selected value="0">전월</option>
+                        <option value="1">당월</option>
+                        <option value="2">익월</option>
+                    </select>
+                     청구
                 </div>
             </div>
             <div class="modal-field-input">
                 <div class="label">자동 청구일</div>
                 <div class="input">
-                    <div class="selectbox" style="width:60%">
-                        <label for="mb_auto_payment" style="top:1.5px;padding:.1em .5em">25일</label>
-                        <select name="mb_auto_payment" id="mb_auto_payment" style="padding:.2em .5em">
-                            <?php for($i = 1; $i < 32; $i++): ?>
-                                <?php if($i == 25): ?>
-                                    <option selected value="<?=$i?>"><?=$i?>일</option>
-                                <?php else: ?>
-                                    <option value="<?=$i?>"><?=$i?>일</option>
-                                <?php endif; ?>
-                            <?php endfor; ?>
-                            <option value="32">말일</option>
-                        </select>
-                    </div>
+
+                    <select name="mb_auto_payment" id="mb_auto_payment" class="select2" style="width:90%">
+                        <?php for($i = 1; $i < 32; $i++): ?>
+                            <?php if($i == 25): ?>
+                                <option selected value="<?=$i?>"><?=$i?>일</option>
+                            <?php else: ?>
+                                <option value="<?=$i?>"><?=$i?>일</option>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+                        <option value="32">말일</option>
+                    </select>
+
                 </div>
             </div>
         </div>
@@ -292,36 +286,33 @@
             <div class="modal-field-input">
                 <div class="label">계산서 발행</div>
                 <div class="input">
-                    <div class="selectbox" style="width:40%">
-                        <label for="mb_payment_publish" style="top:1.5px;padding:.1em .5em">발행</label>
-                        <select  name="mb_payment_publish" id="mb_payment_publish" style="padding:.2em .5em">
-                            <option selected value="0">발행</option>
-                            <option value="1">미발행</option>
 
-                        </select>
-                    </div>
-                    <div class="selectbox" style="width:40%">
-                        <label for="mb_payment_publish_type" style="top:1.5px;padding:.1em .5em">영수 발행</label>
-                        <select name="mb_payment_publish_type" id="mb_payment_publish_type" style="padding:.2em .5em">
-                            <option selected value="0">영수 발행</option>
-                            <option value="1">청구 발행</option>
+                    <select  name="mb_payment_publish" id="mb_payment_publish" class="select2" style="width:30%">
+                        <option selected value="0">발행</option>
+                        <option value="1">미발행</option>
 
-                        </select>
-                    </div>
+                    </select>
+
+
+                    <select name="mb_payment_publish_type" id="mb_payment_publish_type" class="select2" style="width:40%">
+                        <option selected value="0">영수 발행</option>
+                        <option value="1">청구 발행</option>
+
+                    </select>
+
                 </div>
             </div>
             <div class="modal-field-input">
                 <div class="label">결제일</div>
                 <div class="input">청구일로부터
-                    <div class="selectbox" style="width:30%">
-                        <label for="select" style="top:1.5px;padding:.1em .5em">입력</label>
-                        <select name="mb_payment_day_select" id="mb_payment_day_select" style="padding:.2em .5em">
+
+                        <select name="mb_payment_day_select" id="mb_payment_day_select" class="select2" style="width:30%">
                             <option selected value="etc">입력</option>
                             <option value="30">30</option>
                             <option value="60">60</option>
                             <option value="90">90</option>
                         </select>
-                    </div> <input type="text" style="width:15%" name="mb_payment_day" id="mb_payment_day"> 일 후
+                     <input type="text" style="width:15%" name="mb_payment_day" id="mb_payment_day"> 일 후
                 </div>
             </div>
         </div>

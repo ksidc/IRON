@@ -5,7 +5,16 @@
             <div class="left-item">회원</div>
             <div class="left-icon">-</div>
             <div class="sub-menu" style="display:block">
-                <a href="/member" class="active"><p class="active">회원 관리</p></a>
+                <?php if(substr_count($this->input->server("REQUEST_URI"),"/member/lists") > 0): ?>
+                <a href="/member/lists" class="active"><p class="active">회원 관리</p></a>
+                <?php else: ?>
+                <a href="/member/lists"><p >회원 관리</p></a>
+                <?php endif; ?>
+                <?php if(substr_count($this->input->server("REQUEST_URI"),"/member/setting") > 0): ?>
+                <a href="/member/setting" class="active"><p class="active">분류 및 END User 관리</p></a>
+                <?php else: ?>
+                <a href="/member/setting"><p >분류 및 END User 관리</p></a>
+                <?php endif; ?>
             </div>
         </li>
         <?php else: ?>
@@ -14,6 +23,7 @@
             <div class="left-icon">+</div>
             <div class="sub-menu ">
                 <a href="/member/lists"><p >회원 관리</p></a>
+                <a href="/member/setting"><p >분류 및 END User 관리</p></a>
             </div>
         </li>
         <?php endif; ?>

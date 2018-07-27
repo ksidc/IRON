@@ -77,8 +77,13 @@ $(function(){
             dataType : 'JSON',
             data : datas,
             success:function(response){
-                $('#dialogCategory').dialog('close');
-                getTabInfo();
+                if(!response.result){
+                    alert(response.msg);
+                }else{
+                    $('#dialogCategory').dialog('close');
+                    getTabInfo();
+                }
+
             }
         });
         return false;
@@ -124,17 +129,13 @@ $(function(){
     $("body").on("click",".editCategory",function(){
         // console.log($(this).parent().children("td").eq(1).children("input").length);
         if($(this).parent().children("td").eq(2).children("input").length > 0){
-            // var url = "/api/productCategoryUpdate/"+$(this).data("seq");
-            // $.ajax({
-            //     url : url,
-            //     type : 'POST',
-            //     dataType : 'JSON',
-            //     data : "pc_name="+$(this).parent().children("td").eq(2).children("input").val(),
-            //     success:function(response){
-            //         getTabInfo();
-            //     }
-            // });
-            $(this).parent().children("td").eq(2).html($(this).data("name"));
+            if($(this).data("name") != $(this).parent().children("td").eq(2).children("input").first().val()){
+                alert("변경된 값으로 저장하려면 아래의 저장 버튼을 클릭하세요.");
+                return false;
+            }else{
+                $(this).parent().children("td").eq(2).html($(this).data("name"));
+            }
+
         }else{
             $(this).parent().children("td").eq(2).html("<input type='text' name='m_pc_name[]' value='"+$(this).data("name")+"'><input type='hidden' name='m_pc_seq[]' value='"+$(this).data("seq")+"'>");
         }
@@ -153,8 +154,8 @@ $(function(){
                     html += '<table class="table">';
                     html += '<tr id="parent_div_'+response[i].pd_seq+'">\
                     <td style="width:50px">'+response[i].pd_sort+'<input type="hidden" name="pd_seq[]" value="'+response[i].pd_seq+'"></td>\
-                    <td><i class="fas fa-caret-down fa-2x viewSubDiv" style="vertical-align:middle" data-pdseq="'+response[i].pd_seq+'" data-clicktype="1"></i> '+response[i].pd_name+'</td>\
-                    <td style="width:10%"><i class="fas fa-plus addSubDiv" data-pdseq="'+response[i].pd_seq+'"></i></td>\
+                    <td style="text-align:left;padding-left:10px"><i class="fas fa-caret-down fa-2x viewSubDiv" style="vertical-align:middle" data-pdseq="'+response[i].pd_seq+'" data-clicktype="1"></i> (대분류) <span id="input_'+response[i].pd_seq+'">'+response[i].pd_name+'</span></td>\
+                    <td style="width:10%"><i class="fas fa-plus addSubDiv" data-pdseq="'+response[i].pd_seq+'" title="소분류 추가"></i></td>\
                     <td style="width:10%" class="editDiv" data-seq="'+response[i].pd_seq+'" data-name="'+response[i].pd_name+'"><i class="fas fa-edit"></i></td>\
                     <td style="width:10%" class="deleteDiv" data-seq="'+response[i].pd_seq+'"><i class="fas fa-trash"></i></td>\
                     </tr>';
@@ -194,6 +195,8 @@ $(function(){
                     alert("추가 되었습니다.");
 
                     $("#dialogDiv").dialog("close")
+                }else{
+                    alert(response.msg);
                 }
                 // $('#dialogDiv').dialog('close');
                 // getTabInfo();
@@ -222,26 +225,16 @@ $(function(){
 
     $("body").on("click",".editDiv",function(){
         // console.log($(this).parent().children("td").eq(1).children("input").length);
-        if($(this).parent().children("td").eq(1).children("input").length > 0){
-            // var url = "/api/productDivUpdate/"+$(this).data("seq");
-            // var pd_name = $(this).parent().children("td").eq(1).children("input").val();
-            // var that = $(this);
-            // $.ajax({
-            //     url : url,
-            //     type : 'POST',
-            //     dataType : 'JSON',
-            //     data : "pd_name="+pd_name,
-            //     success:function(response){
-            //         if(response.result == true){
-            //             alert("수정되었습니다.");
-            //             that.parent().children("td").eq(1).html(pd_name);
-            //         }
-            //         // getTabInfo();
-            //     }
-            // });
-            $(this).parent().children("td").eq(1).html($(this).data("name"));
+        if($(this).parent().children("td").eq(1).children("span").children("input").length > 0){
+
+            if($(this).data("name") != $(this).parent().children("td").eq(1).children("span").children("input").first().val()){
+                alert("변경된 값으로 저장하려면 아래의 저장 버튼을 클릭하세요.");
+                return false;
+            }else{
+                $(this).parent().children("td").eq(1).children("span").html($(this).data("name"));
+            }
         }else{
-            $(this).parent().children("td").eq(1).html("<input type='text' name='m_pd_name[]' value='"+$(this).data("name")+"'><input type='hidden' name='m_pd_seq[]' value='"+$(this).data("seq")+"'>");
+            $(this).parent().children("td").eq(1).children("span").html("<input type='text' name='m_pd_name[]' value='"+$(this).data("name")+"'><input type='hidden' name='m_pd_seq[]' value='"+$(this).data("seq")+"'>");
         }
 
     });
@@ -272,7 +265,7 @@ $(function(){
                     for(var i =0;i< response.length;i++){
                         html += '<tr class="children_div_'+response[i].ps_pd_seq+' " >\
                         <td></td>\
-                        <td>ㄴ '+response[i].ps_name+'</td>\
+                        <td style="text-align:left;padding-left:30px">ㄴ (소분류) <span id="input_childred_'+response[i].ps_seq+'">'+response[i].ps_name+'</span></td>\
                         <td></td>\
                         <td class="editDivSub" data-seq="'+response[i].ps_seq+'" data-name="'+response[i].ps_name+'"><i class="fas fa-edit"></i></td>\
                         <td class="deleteDivSub" data-seq="'+response[i].ps_seq+'"><i class="fas fa-trash"></i></td>\
@@ -297,7 +290,7 @@ $(function(){
         var pd_seq = $(this).data("pdseq");
         var html = '<tr>\
         <td></td>\
-        <td>ㄴ <span class="clearable"><input type="text" name="add_ps_name[]" ><i class="clearable__clear">&times;</i></span></td>\
+        <td style="text-align:left;padding-left:30px">ㄴ <span class="clearable"><input type="text" name="add_ps_name[]" placeholder="소분류 명을 입력하세요"><i class="clearable__clear">&times;</i></span></td>\
         <td></td>\
         <td></td>\
         <td></td>\
@@ -318,7 +311,7 @@ $(function(){
             dataType : 'JSON',
             data : datas,
             success:function(response){
-                console.log(response);
+                // console.log(response);
                 if(response.result == true){
                     alert("저장되었습니다.");
                     $('#dialogDiv').dialog('close');
@@ -352,45 +345,41 @@ $(function(){
 
     $("body").on("click",".editDivSub",function(){
         // console.log($(this).parent().children("td").eq(1).children("input").length);
-        if($(this).parent().children("td").eq(1).children("input").length > 0){
-            // var url = "/api/productDivSubUpdate/"+$(this).data("seq");
-            // $.ajax({
-            //     url : url,
-            //     type : 'POST',
-            //     dataType : 'JSON',
-            //     data : "ps_name="+$(this).parent().children("td").eq(1).children("input").val(),
-            //     success:function(response){
-            //         console.log(response);
-            //         // getTabInfo();
-            //     }
-            // });
-            $(this).parent().children("td").eq(1).html($(this).data("name"));
+        if($(this).parent().children("td").eq(1).children("span").children("input").length > 0){
+
+             if($(this).data("name") != $(this).parent().children("td").eq(1).children("span").children("input").first().val()){
+                alert("변경된 값으로 저장하려면 아래의 저장 버튼을 클릭하세요.");
+                return false;
+            }else{
+                $(this).parent().children("td").eq(1).children("span").html($(this).data("name"));
+            }
+            // $(this).parent().children("td").eq(1).html($(this).data("name"));
         }else{
-            $(this).parent().children("td").eq(1).html("<input type='text' name='m_ps_name[]' value='"+$(this).data("name")+"'><input type='hidden' name='m_ps_seq[]' value='"+$(this).data("seq")+"'>");
+            $(this).parent().children("td").eq(1).children("span").html("<input type='text' name='m_ps_name[]' value='"+$(this).data("name")+"'><input type='hidden' name='m_ps_seq[]' value='"+$(this).data("seq")+"'>");
         }
 
     });
 
     $(".btn-item-register").click(function(){
-        var specs = "left=10,top=10,width=800,height=600";
+        var specs = "left=10,top=10,width=1000,height=600";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=no";
         window.open("/product/item/"+$("#pc_seq").val(), 'item', specs);
     });
 
     $(".btn-product-register").click(function(){
-        var specs = "left=10,top=10,width=850,height=600";
+        var specs = "left=10,top=10,width=1000,height=600";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=no";
         window.open("/product/make/"+$("#pc_seq").val(), 'make', specs);
     })
 
     $("body").on("click",".btn-modify",function(){
-        var specs = "left=10,top=10,width=850,height=600";
+        var specs = "left=10,top=10,width=1000,height=600";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=no";
         window.open("/product/make/"+$("#pc_seq").val()+"/"+$(this).data("seq"), 'make', specs);
     })
 
     $("body").on("click",".btn-delete",function(){
-        if(confirm("삭제 하시겠습니까?")){
+        if(confirm("정말 삭제 하시겠습니까?")){
             var url = "/api/productDelete";
             $.ajax({
                 url : url,
@@ -416,7 +405,19 @@ $(function(){
 
 
     $(".btn-copy").click(function(){
-        if(confirm("상품을 복사 하시겠습니까?")){
+        var checkCount = 0;
+        var checkSeq = [];
+        $(".listCheck").each(function(){
+            if($(this).is(":checked")){
+                checkCount++;
+                checkSeq.push($(this).val());
+            }
+        });
+        if(checkCount == 0){
+            alert("상품을 선택해 주시기 바랍니다.");
+            return false;
+        }
+        if(confirm("해당 상품 내용과 동일하게 복사하겠습니까?")){
             var url = "/api/productCopy";
             var datas = $("#listForm").serialize();
             $.ajax({
@@ -432,6 +433,46 @@ $(function(){
             });
         }
     });
+
+    $("#searchWord").autocomplete({
+        source : function (request, response) {
+            if($("#searchType").val() == "pr_name"){
+                var url = "/api/productSearch/"+$("#pc_seq").val();
+            }else if($("#searchType").val() == "pi_name"){
+                var url = "/api/productItemSearch/"+$("#pc_seq").val();
+            }else if($("#searchType").val() == "c_name"){
+                var url = "/api/clientSearchList";
+            }
+            // $.post('http://'+$('#apiHost').val()+':'+$('#apiPort').val()+'/products/_search/1/limit/20', request, response);
+            $.ajax( {
+                method : "GET",
+                url: url,
+                dataType: "json",
+                data: {
+                    searchType : $("#searchType").val(),
+                    searchWord: request.term
+                },
+                success: function( data ) {
+
+                    response( data );
+                }
+            });
+        },
+        minLength: 1,
+        focus: function( event, ui ) {
+            $( "#searchWord" ).val( ui.item.name );
+            return false;
+        },
+        select : function(event,ui){
+            $( "#searchWord" ).val( ui.item.name );
+            return false;
+        }
+    })
+    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+        return $( "<li>" )
+            .append( item.name )
+            .appendTo( ul );
+    };
 
     $(".btn-check-excel").click(function(){
         var down = false;

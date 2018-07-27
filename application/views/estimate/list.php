@@ -17,23 +17,21 @@ var category = '<?=json_encode($category)?>';
         <form name="searchForm" id="searchForm" onsubmit="return getList();">
             <div class="search1">
                 <div class="form-group">
-                    <div class="selectbox">
-                        <label for="searchDepth1">서비스 종류 선택</label>
-                        <select id="searchDepth1" name="searchDepth1">
+
+                        <select id="searchDepth1" name="searchDepth1" class="select2" style="width:140px">
                             <option value="" selected>서비스 종류 선택</option>
                             <?php foreach($category as $row): ?>
                             <option value="<?=$row["pc_seq"]?>"><?=$row["pc_name"]?></option>
                             <?php endforeach; ?>
                         </select>
-                    </div>
+
                 </div>
                 <div class="form-group">
-                    <div class="selectbox">
-                        <label for="searchDepth2" id="searchDepth2Str">상품명 선택</label>
-                        <select id="searchDepth2" name="searchDepth2">
-                            <option value="">상품명 선택</option>
-                        </select>
-                    </div>
+
+                    <select id="searchDepth2" name="searchDepth2" class="select2" style="width:140px">
+                        <option value="">상품명 선택</option>
+                    </select>
+
                 </div>
                 <div class="form-group">
                     <input type="checkbox" name="es_status[]" id="es_status1" value="0"> <span style="color:#0070C0">등록</span>
@@ -47,20 +45,19 @@ var category = '<?=json_encode($category)?>';
                     <label>등록일</label>
                     <input type="text" style="width:80px" name="startDate" id="startDate" class="datepicker" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker" value="<?=date('Y-m-d')?>">
                 </div>
-                <div class="form-group ml15">
-                    <div class="selectbox">
-                        <label for="searchType">상호/이름</label>
-                        <select id="searchType" name="searchType">
-                            <option value="es_name" selected>상호/이름</option>
-                            <option value="es_number">견적번호</option>
-                            <option value="es_mb_id">회원아이디</option>
-                            <option value="es_charger">담당자</option>
-                            <option value="es_tel">전화번호</option>
-                            <option value="es_phone">휴대폰번호</option>
-                            <option value="es_email">이메일</option>
-                            <option value="es_register">등록자</option>
-                        </select>
-                    </div>
+                <div class="form-group ml15" style="text-align:left">
+
+                    <select id="searchType" name="searchType" class="select2" style="width:140px">
+                        <option value="es_name" selected>상호/이름</option>
+                        <option value="es_number">견적번호</option>
+                        <option value="es_mb_id">회원아이디</option>
+                        <option value="es_charger">담당자</option>
+                        <option value="es_tel">전화번호</option>
+                        <option value="es_phone">휴대폰번호</option>
+                        <option value="es_email">이메일</option>
+                        <option value="es_register">등록자</option>
+                    </select>
+
                     <input type="text" name="searchWord" id="searchWord">
                     <button class="btn btn-search btn-form-search" type="submit">검색</button>
                 </div>
@@ -135,6 +132,7 @@ var category = '<?=json_encode($category)?>';
         <input type="hidden" name="es_seq" id="es_seq">
         <input type="hidden" name="es_mb_seq" id="es_mb_seq">
         <input type="hidden" name="dupleNumberYn" id="dupleNumberYn" value="">
+        <input type="hidden" name="b_es_number" id="b_es_number">
         <div class="modal-title">
             <div class="modal-title-text">등록자 정보</div>
         </div>
@@ -142,25 +140,19 @@ var category = '<?=json_encode($category)?>';
             <div class="modal-field-input">
                 <div class="label">부서</div>
                 <div class="input">
-                    <div class="selectbox">
-                        <label for="es_part" id="es_part_str" style="top:1.5px;padding:.1em .5em">영업팀</label>
-                        <select id="es_part" name="es_part" style="padding:.2em .5em">
-                            <option value="영업팀" selected>영업팀</option>
-                            <option value="기술팀">기술팀</option>
-                        </select>
-                    </div>
+                    <select id="es_part" name="es_part" class="select2" style="width:140px">
+                        <option value="영업팀" selected>영업팀</option>
+                        <option value="기술팀">기술팀</option>
+                    </select>
                 </div>
             </div>
             <div class="modal-field-input">
                 <div class="label">등록자</div>
                 <div class="input">
-                    <div class="selectbox">
-                        <label for="es_register" id="es_register_str" style="top:1.5px;padding:.1em .5em">김지훈</label>
-                        <select id="es_register" name="es_register" style="padding:.2em .5em">
-                            <option value="김지훈" selected>김지훈</option>
-                            <option value="노성민">노성민</option>
-                        </select>
-                    </div>
+                    <select id="es_register" name="es_register" class="select2" style="width:140px">
+                        <option value="김지훈" selected>김지훈</option>
+                        <option value="노성민">노성민</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -168,13 +160,10 @@ var category = '<?=json_encode($category)?>';
             <div class="modal-field-input">
                 <div class="label">상태</div>
                 <div class="input">
-                    <div class="selectbox">
-                        <label for="es_status" id="es_status_str" style="top:1.5px;padding:.1em .5em">등록</label>
-                        <select id="es_status" name="es_status" style="padding:.2em .5em">
-                            <option value="0" selected>등록</option>
-                            <option value="1">신청완료</option>
-                        </select>
-                    </div>
+                    <select id="es_status" name="es_status" class="select2" style="width:140px">
+                        <option value="0" selected>등록</option>
+                        <option value="1">신청완료</option>
+                    </select>
                 </div>
             </div>
 
@@ -189,7 +178,7 @@ var category = '<?=json_encode($category)?>';
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label">상호/이름</div>
-                <div class="input"><input type="text" class="width-button" name="es_name" id="es_name"><button class="btn btn-brown btn-small btn-number-duple" type="button" onclick='$( "#dialogUserSearch" ).dialog("open");$("#dialogUserSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
+                <div class="input"><input type="text" class="width-button" name="es_name" id="es_name"><button class="btn btn-brown btn-small" type="button" onclick='$( "#dialogUserSearch" ).dialog("open");$("#dialogUserSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
             </div>
             <div class="modal-field-input">
                 <div class="label">담당자</div>
@@ -220,13 +209,10 @@ var category = '<?=json_encode($category)?>';
             <div class="modal-field-input">
                 <div class="label">신규/기존</div>
                 <div class="input">
-                    <div class="selectbox">
-                        <label for="es_type" id="es_type_str" style="top:1.5px;padding:.1em .5em">신규</label>
-                        <select id="es_type" name="es_type" style="padding:.2em .5em">
-                            <option value="0" selected>신규</option>
-                            <option value="1">기존</option>
-                        </select>
-                    </div>
+                    <select id="es_type" name="es_type" class="select2" style="width:140px">
+                        <option value="0" selected>신규</option>
+                        <option value="1">기존</option>
+                    </select>
                 </div>
             </div>
             <div class="modal-field-input">
@@ -248,27 +234,24 @@ var category = '<?=json_encode($category)?>';
                     <div class="label">서비스 종류</div>
                     <div class="input">
                         <input type="hidden" name="ed_seq[]" value="">
-                        <div class="selectbox">
-                            <label for="es_depth1_1" style="top:1.5px;padding:.1em .5em">서비스 종류 선택</label>
-                            <select id="es_depth1_1" name="es_depth1[]" class="es_depth1" data-index="1" data-childvalue="" style="padding:.2em .5em">
-                                <option value="" selected>서비스 종류 선택</option>
-                                <?php foreach($category as $row): ?>
-                                <option value="<?=$row["pc_seq"]?>"><?=$row["pc_name"]?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+
+                        <select id="es_depth1_1" name="es_depth1[]" class="es_depth1 select2" data-index="1" data-childvalue="" style="width:140px">
+                            <option value="" selected>서비스 종류 선택</option>
+                            <?php foreach($category as $row): ?>
+                            <option value="<?=$row["pc_seq"]?>"><?=$row["pc_name"]?></option>
+                            <?php endforeach; ?>
+                        </select>
+
                     </div>
                 </div>
                 <div class="modal-field-input">
                     <div class="label">상품명</div>
                     <div class="input">
-                        <div class="selectbox">
-                            <label for="es_depth2_1" id="es_depth2_1_str" style="top:1.5px;padding:.1em .5em">상품명 선택</label>
-                            <select id="es_depth2_1" name="es_depth2[]" style="padding:.2em .5em">
-                                <option value="" selected>상품명 선택</option>
 
-                            </select>
-                        </div>
+                        <select id="es_depth2_1" name="es_depth2[]" class="select2" style="width:140px">
+                            <option value="" selected>상품명 선택</option>
+
+                        </select>
                     </div>
                 </div>
             </div>
@@ -349,7 +332,7 @@ var category = '<?=json_encode($category)?>';
         <div class="modal-field">
             <div class="modal-field-input full" >
                 <div class="label"><input type="checkbox" name="sms_yn" id="sms_yn" value="Y"> SMS 발송 | 내용</div>
-                <div class="input"><input type="text" name="sms" id="sms" style="width:70%" onkeyup="smsByteChk(this);" onkeydown="smsByteChk(this);"> <span id="bytecheck">0</span>byte / 80byte</div>
+                <div class="input"><input type="text" name="sms" id="sms" style="width:70%" > <span class="bytes">0</span>byte / 80byte</div>
             </div>
         </div>
         <div class="modal-field">

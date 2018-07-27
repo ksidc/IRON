@@ -7,6 +7,12 @@ class Member extends CI_Controller {
      * 회원 컨트롤러
      *
      */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model("api_model");
+
+    }
     public function index(){
         header("Location: /member/lists");
     }
@@ -16,6 +22,26 @@ class Member extends CI_Controller {
         $layout["header"] = $this->load->view("layout/header", '',true);
         $layout["left"] = $this->load->view("layout/left", '',true);
         $layout["content"] = $this->load->view("member/list", '',true);
+        $layout["footer"] = $this->load->view("layout/footer", '',true);
+        $this->load->view('layout/layout',$layout);
+    }
+
+    public function setting()
+    {
+        $layout["header"] = $this->load->view("layout/header", '',true);
+        $layout["left"] = $this->load->view("layout/left", '',true);
+        $layout["content"] = $this->load->view("member/setting", '',true);
+        $layout["footer"] = $this->load->view("layout/footer", '',true);
+        $this->load->view('layout/layout',$layout);
+    }
+
+    public function view($mb_seq)
+    {
+        $layout["header"] = $this->load->view("layout/header", '',true);
+        $layout["left"] = $this->load->view("layout/left", '',true);
+
+        $data["info"] = $this->api_model->selectMember($mb_seq);
+        $layout["content"] = $this->load->view("member/view", $data,true);
         $layout["footer"] = $this->load->view("layout/footer", '',true);
         $this->load->view('layout/layout',$layout);
     }

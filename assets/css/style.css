@@ -39,7 +39,12 @@ ul {
     margin:0;
 }
 input[type="text"] {
-    height:20px;
+    height:22px;
+    padding:0px 5px;
+}
+
+input[type="text"].right {
+    text-align:right;
 }
 
 textarea:focus, input:focus{
@@ -510,7 +515,7 @@ nav ul li.active {
 }
 
 .modal-field-input > .input > input[type="text"] {
-    height:15px;
+    height:22px;
     width:90%;
 }
 
@@ -653,7 +658,7 @@ nav ul li.active {
     padding-right: 24px;
     width: 100%;
     box-sizing: border-box;
-    height:20px;
+    height:22px;
 }
 .clearable__clear{
     /*display: none;*/
@@ -676,7 +681,7 @@ nav ul li.active {
 }
 
 .w35 {
-    width:35%;
+    width:30%;
 }
 
 .modal-field.service {
@@ -685,13 +690,13 @@ nav ul li.active {
 }
 
 .modal-field-input.full > .label.service {
-    width:36.3%;
+    width:31.2%;
     vertical-align:top;
     padding-top:10px
 }
 
 .input.service {
-    width:63%;
+    width:66%;
     border-left:2px solid #ddd
 }
 
@@ -738,4 +743,35 @@ nav ul li.active {
     border-right:1px solid #fff;
     width:100%;
     padding:5px 0px;
+}
+
+.select2-results__option {
+    font-size:12px;
+}
+
+.searchStep1 {
+    padding-left:15px;
+    padding-top:5px;
+    padding-bottom:5px;
+
+}
+
+.searchStep2 {
+    padding-left:15px;
+    padding-top:5px;
+    padding-bottom:5px;
+    width:45%;
+    display:inline-block;
+}
+
+.searchStep3 {
+    padding-left:15px;
+    padding-top:5px;
+    padding-bottom:5px;
+}
+
+.searchStep4 {
+    padding-left:15px;
+    padding-top:5px;
+    padding-bottom:5px;
 }

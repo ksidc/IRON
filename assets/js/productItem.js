@@ -18,6 +18,8 @@ $(function(){
                 if(response.result == true){
                     alert("추가 되었습니다.");
                     getList();
+                }else{
+                    alert(response.msg);
                 }
                 // $('#dialogDiv').dialog('close');
                 // getTabInfo();
@@ -42,6 +44,8 @@ $(function(){
                 if(response.result == true){
                     alert("추가 되었습니다.");
                     getList();
+                }else{
+                    alert(response.msg);
                 }
                 // $('#dialogDiv').dialog('close');
                 // getTabInfo();
@@ -59,28 +63,28 @@ $(function(){
             success:function(response){
                 var client_html = "";
                 // console.log(response);
-                client_html = '<div class="selectbox" style="width:90%">';
-                client_html += '<label for="pis_c_select_'+$(".selectbox").length+'" style="top:1.5px;padding:.1em .5em">매입처선택</label>';
-                client_html += '<select id="pis_c_select_'+$(".selectbox").length+'" name="add_pis_c_seq[]" style="padding:.2em .5em">';
+
+
+                client_html = '<select id="pis_c_select_'+$(".subitemlist").length+'" name="add_pis_c_seq[]" class="subitemlist select2" style="width:90%">';
                 client_html += '<option value="" selected>매입처 선택</option>';
                 for(var i = 0; i< response.length;i++){
                     client_html += '<option value="'+response[i].c_seq+'">'+response[i].c_name+'</option>';
                 }
                 client_html += '</select>';
-                client_html += '</div>';
 
                 var pi_seq = that.data("piseq");
                 var target = that.parent().parent().children("td").eq(2);
                 var nexttarget = that.parent().parent().children("td").eq(3);
 
                 if(target.html() == ""){
-                    target.html('<div class="div_'+(target.children("div").length+1)+'"><span class="clearable"><input type="text" name="add_pis_name[]" class="subItemName"><i class="clearable__clear" data-type="item">&times;</i></span><input type="hidden" name="add_pis_pi_seq[]" value="'+pi_seq+'"></div>');
+                    target.html('<div class="div_'+(target.children("div").length+1)+'"><span class="clearable"><input type="text" name="add_pis_name[]" class="subItemName" placeholder="부가 항목을 입력하세요"><i class="clearable__clear" data-type="item">&times;</i></span><input type="hidden" name="add_pis_pi_seq[]" value="'+pi_seq+'"></div>');
 
                     nexttarget.html('<div class="div_'+(target.children("div").length)+'">'+client_html+'</div>');
                 }else{
-                    target.append('<div class="div_'+(target.children("div").length+1)+'"><span class="clearable"><input type="text" name="add_pis_name[]" class="subItemName"><i class="clearable__clear" data-type="item">&times;</i></span><input type="hidden" name="add_pis_pi_seq[]" value="'+pi_seq+'"></div>');
+                    target.append('<div class="div_'+(target.children("div").length+1)+'"><span class="clearable"><input type="text" name="add_pis_name[]" class="subItemName" placeholder="부가 항목을 입력하세요"><i class="clearable__clear" data-type="item">&times;</i></span><input type="hidden" name="add_pis_pi_seq[]" value="'+pi_seq+'"></div>');
                     nexttarget.append('<div class="div_'+(target.children("div").length)+'">'+client_html+"</div>");
                 }
+                $(".select2").select2();
             }
         });
 
@@ -170,15 +174,39 @@ $(function(){
             //         console.log(error);
             //     }
             // });
-            $(this).parent().children("td").eq(1).html($(this).parent().children("td").eq(1).data("name"));
+            var editYn = false;
             var subitem = $(this).parent().children("td").eq(2).children("div");
-            subitem.each(function(){
-                $(this).html($(this).data("name"));
-            });
             var subclient = $(this).parent().children("td").eq(3).children("div");
-            subclient.each(function(){
-                $(this).html($(this).data("name"));
+
+            if($(this).parent().children("td").eq(1).data("name") != $(this).parent().children("td").eq(1).children("input").first().val()){
+                editYn = true;
+            }
+
+            subitem.each(function(){
+                if($(this).data("name") != $(this).children("input").first().val()){
+                    editYn = true;
+                }
             });
+
+            subclient.each(function(){
+                if($(this).data("cseq") != $(this).children("div").children("select").first().val()){
+                    editYn = true;
+                }
+            });
+
+            if(!editYn){
+                $(this).parent().children("td").eq(1).html($(this).parent().children("td").eq(1).data("name"));
+                subitem.each(function(){
+                    $(this).html($(this).data("name"));
+                });
+
+                subclient.each(function(){
+                    $(this).html($(this).data("name"));
+                });
+            }else{
+                alert("변경된 값으로 저장하려면 아래의 저장 버튼을 클릭하세요.");
+                return false;
+            }
         }else{
             $(this).parent().children("td").eq(1).html("<input type='text' name='m_pi_name[]' value='"+$(this).parent().children("td").eq(1).data("name")+"' style='width:90%'><input type='hidden' name='m_pi_seq[]' value='"+pi_seq+"'>");
             var subitem = $(this).parent().children("td").eq(2).children("div");
@@ -194,10 +222,10 @@ $(function(){
                     // console.log(response);
                     var subclient = that.parent().children("td").eq(3).children("div");
                     // console.log(subclient.length);
-                    subclient.each(function(){
-                        var html = '<div class="selectbox" style="width:90%">';
-                        html += '<label for="pis_c_select_'+$(".selectbox").length+'" style="top:1.5px;padding:.1em .5em">'+$(this).data("name")+'</label>';
-                        html += '<select id="pis_c_select_'+$(".selectbox").length+'" name="m_pis_c_seq[]" style="padding:.2em .5em">';
+                    subclient.each(function(i){
+
+
+                        var html = '<select id="pis_c_select_'+($(".subitemlist").length+i)+'" name="m_pis_c_seq[]" class="select2 subitemlist" style="width:90%">';
                         html += '<option value="" selected>매입처 선택</option>';
                         for(var i = 0; i< response.length;i++){
                             if($(this).data("name") == response[i].c_name){
@@ -205,12 +233,13 @@ $(function(){
                             }else{
                                 html += '<option value="'+response[i].c_seq+'">'+response[i].c_name+'</option>';
                             }
-
                         }
                         html += '</select>';
-                        html += '</div>';
+
                         $(this).html(html);
+                        $(".select2").select2();
                     });
+
                 }
             });
 
@@ -220,43 +249,15 @@ $(function(){
 
 function getList(){
     var start = $("#start").val();
-    var end = 5;
+    var end = 10;
     var url = "/api/productItemList/"+$("#pc_seq").val()+"/"+start+"/"+end;
-    console.log(url);
+    // console.log(url);
     $.ajax({
         url : url,
         type : 'GET',
         dataType : 'JSON',
         success:function(response){
-            console.log(response);
-            // var html = "";
-            // for(var i = 0; i < response.list.length;i++){
-            //     if(response.list[i].sub_item !== null){
-            //         var subItem = response.list[i].sub_item.split("|");
-            //         subItemName = subItem[0].split(",");
-            //         subItemClient = subItem[1].split(",");
-            //     }else{
-            //         subItemName = [];
-            //         subItemClient = [];
-            //     }
-            //     var subItemHtml = "";
-            //     var subItemClientHtml = "";
-            //     subItemName.forEach(function(one){
-            //         subItemHtml += '<div class="subItem_'+response.list[i].pi_seq+'" data-name="'+one+'">'+one+'</div>';
-            //     });
-            //     subItemClient.forEach(function(one){
-            //         subItemClientHtml += '<div class="subItem_'+response.list[i].pi_seq+'" data-name="'+one+'">'+one+'</div>';
-            //     });
-            //     html += '<tr>\
-            //                 <td>'+(i+1)+'</td>\
-            //                 <td class="item_'+response.list[i].pi_seq+'" data-name="'+response.list[i].pi_name+'">'+response.list[i].pi_name+'</td>\
-            //                 <td style="line-height:28px">'+subItemHtml+'</td>\
-            //                 <td style="line-height:28px">'+subItemClientHtml+'</td>\
-            //                 <td><i class="fas fa-plus addSubItem" data-piseq="'+response.list[i].pi_seq+'"></i></td>\
-            //                 <td class="btn-modify" data-seq="'+response.list[i].pi_seq+'" style="cursor:pointer"><i class="fas fa-edit"></i></td>\
-            //                 <td class="btn-delete" data-seq="'+response.list[i].pi_seq+'" style="cursor:pointer"><i class="fas fa-trash"></i></td>\
-            //             </tr>';
-            // }
+
             $("#tbody-list").html(response.list);
         }
     });

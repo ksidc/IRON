@@ -235,14 +235,20 @@ class Api_model extends CI_Model {
             "es_email" => $this->input->post("es_email"),
             "es_fax" => $this->input->post("es_fax"),
             "es_type" => $this->input->post("es_type"),
-            "es_company_type" => $this->input->post("es_company_type"),
             "es_shot" => $this->input->post("es_shot"),
-            "es_end_user" => $this->input->post("es_end_user"),
             "es_memo" => $this->input->post("es_memo"),
             "es_part" => $this->input->post("es_part"),
             "es_register" => $this->input->post("es_register"),
             "es_status" => $this->input->post("es_status")
         );
+
+        if($this->input->post("es_company_type") != ""){
+            $data["es_company_type"] = $this->input->post("es_company_type");
+        }
+
+        if($this->input->post("es_end_user") != ""){
+            $data["es_end_user"] = $this->input->post("es_end_user");
+        }
 
         // ci 이용 디비 인서트
         $result = $this->db->insert("estimates",$data);
@@ -512,14 +518,22 @@ class Api_model extends CI_Model {
             "es_email" => $this->input->post("es_email"),
             "es_fax" => $this->input->post("es_fax"),
             "es_type" => $this->input->post("es_type"),
-            "es_company_type" => $this->input->post("es_company_type"),
             "es_shot" => $this->input->post("es_shot"),
-            "es_end_user" => $this->input->post("es_end_user"),
             "es_memo" => $this->input->post("es_memo"),
             "es_part" => $this->input->post("es_part"),
             "es_register" => $this->input->post("es_register"),
-            "es_status" => $this->input->post("es_status")
+            "es_status" => $this->input->post("es_status"),
+            "es_regdate" => date('Y-m-d H:i:s')
         );
+
+        if($this->input->post("es_company_type") != ""){
+            $data["es_company_type"] = $this->input->post("es_company_type");
+        }
+
+        if($this->input->post("es_end_user") != ""){
+            $data["es_end_user"] = $this->input->post("es_end_user");
+        }
+
         $this->db->where("es_seq",$es_seq);
         // ci 이용 디비 인서트
         return $this->db->update("estimates",$data);
@@ -1018,6 +1032,25 @@ class Api_model extends CI_Model {
 
     }
 
+    public function serviceNextCode(){
+        $this->db->select("sr_code");
+        $this->db->from("service_register");
+        $this->db->limit(1);
+
+        $this->db->order_by("sr_code desc");
+
+        $query = $this->db->get();
+        if($query->num_rows() == 0){
+            return "AW100001-01";
+        }else{
+            $row = $query->row_array();
+            // $es_number = explode("-",$row["es_number"]);
+
+            return $row["sr_code"];
+        }
+
+    }
+
     public function estimateFilesTmp(){
         $data_insert_array = array();
 
@@ -1196,6 +1229,16 @@ class Api_model extends CI_Model {
         return $this->db->insert("product_category",$data);
     }
 
+    public function dupleProductCategory(){
+        $this->db->select("*");
+        $this->db->from("product_category");
+
+        $this->db->where("pc_code = '".$this->input->post("pc_code")."' or pc_name = '".$this->input->post("pc_name")."'  ");
+        $query = $this->db->get();
+
+        return $query->num_rows();
+    }
+
     public function productCategoryUpdate($pc_seq){
         $data = array(
             "pc_name" => $this->input->post("pc_name")
@@ -1257,6 +1300,16 @@ class Api_model extends CI_Model {
             "pd_sort" => $sort
         );
         return $this->db->insert("product_div",$data);
+    }
+
+    public function dupleProductDiv($pc_seq){
+        $this->db->select("*");
+        $this->db->from("product_div");
+
+        $this->db->where("pd_pc_seq = '".$pc_seq."' and pd_name = '".$this->input->post("pd_name")."'  ");
+        $query = $this->db->get();
+
+        return $query->num_rows();
     }
 
     public function productDivUpdate($pd_seq,$pd_name){
@@ -1431,10 +1484,12 @@ class Api_model extends CI_Model {
     }
 
     public function fetchProductItemSub($pi_seq){
-        $this->db->select("a.*,b.c_name");
+        $this->db->select("a.*,b.c_name,c.pi_name");
         $this->db->from("product_item_sub a");
         $this->db->join("clients b","a.pis_c_seq = b.c_seq","left");
+        $this->db->join("product_items c","a.pis_pi_seq = c.pi_seq","left");
         $this->db->where("pis_pi_seq",$pi_seq);
+
         $this->db->order_by("pis_seq");
 
         $query = $this->db->get();
@@ -1443,7 +1498,7 @@ class Api_model extends CI_Model {
     }
 
     public function fetchProductSearch($pc_seq){
-        $this->db->select("*");
+        $this->db->select("*,pi_name as name");
         $this->db->from("product_items");
         $this->db->where("pi_pc_seq",$pc_seq);
 
@@ -1456,6 +1511,18 @@ class Api_model extends CI_Model {
         $query = $this->db->get();
 
         return $query->result_array();
+    }
+
+    public function dupleProductItemName($pc_seq){
+        $this->db->select("*");
+        $this->db->from("product_items");
+        $this->db->where("pi_pc_seq",$pc_seq);
+        $this->db->where("pi_name" ,$this->input->post("pi_name"));
+
+
+        $query = $this->db->get();
+
+        return $query->num_rows();
     }
 
     // 매입처 아이디 중복체크
@@ -1553,7 +1620,15 @@ class Api_model extends CI_Model {
         }
 
         if($this->input->get("searchWord") != ""){
-            $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+            if($this->input->get("searchType") == "c_email"){
+                $tthis->db->where(" (c_email LIKE '%".$this->input->get("searchWord")."%' or c_contract_email LIKE '%".$this->input->get("searchWord")."%' or c_payment_email LIKE '%".$this->input->get("searchWord")."%' )");
+            }else if($this->input->get("searchType") == "c_contract_tel"){
+                $tthis->db->where(" (c_contract_tel LIKE '%".$this->input->get("searchWord")."%' or c_payment_tel LIKE '%".$this->input->get("searchWord")."%'  )");
+            }else if($this->input->get("searchType") == "c_contract_phone"){
+                $tthis->db->where(" (c_contract_phone LIKE '%".$this->input->get("searchWord")."%' or c_payment_phone LIKE '%".$this->input->get("searchWord")."%'  )");
+            }else{
+                $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+            }
         }
 
         $query = $this->db->get();
@@ -1587,7 +1662,7 @@ class Api_model extends CI_Model {
     // 매입처 list select no paging
     public function fetchSearchClient(){
 
-        $this->db->select("c_seq, c_name,c_id");
+        $this->db->select("c_seq, c_name,c_id, c_name as name");
         $this->db->from("clients");
 
         if($this->input->get("searchWord") != ""){
@@ -1772,7 +1847,9 @@ class Api_model extends CI_Model {
     // 매입처 list count
     public function countProduct($pc_seq){
         $this->db->select("count(*) as total");
-        $this->db->from("product");
+        $this->db->from("product a");
+        $this->db->join("product_items b","a.pr_pi_seq = b.pi_seq","left");
+        $this->db->join("clients c", "a.pr_c_seq = c.c_seq","left");
 
         $this->db->where("pr_pc_seq",$pc_seq);
 
@@ -1818,9 +1895,17 @@ class Api_model extends CI_Model {
     }
 
     public function productSearch($pc_seq){
-        $this->db->select("a.pr_name , a.pr_seq");
+        $this->db->select("a.pr_name , a.pr_seq ,a.pr_name as name");
         $this->db->from("product a");
         $this->db->where("pr_pc_seq" , $pc_seq);
+        if($this->input->get("pi_seq") != ""){
+            $this->db->where("pr_pi_seq",$this->input->get("pi_seq"));
+        }
+
+        if($this->input->get("searchWord") != ""){
+            $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+        }
+
         $query = $this->db->get();
 
         return $query->result_array();
@@ -1886,10 +1971,12 @@ class Api_model extends CI_Model {
     }
 
     public function fetchProductSub($pr_seq){
-        $this->db->select("*,(select pd_name from product_div where prs_pd_seq = pd_seq) as pd_name, (select ps_name from product_sub_div where prs_ps_seq = ps_seq) as ps_name ");
-        $this->db->from("product_sub");
+        $this->db->select("a.*,(select pd_name from product_div where prs_pd_seq = pd_seq) as pd_name, (select ps_name from product_sub_div where prs_ps_seq = ps_seq) as ps_name ");
+        $this->db->from("product_sub a");
+        $this->db->join("product_div b","a.prs_pd_seq = b.pd_seq","inner");
         $this->db->where("prs_pr_seq",$pr_seq);
-        $this->db->order_by("prs_seq");
+        $this->db->where("prs_use_type","1");
+        $this->db->order_by("b.pd_sort asc , a.prs_seq asc");
 
         $query = $this->db->get();
 
@@ -1924,30 +2011,47 @@ class Api_model extends CI_Model {
         $this->db->join("product_sub_div f","d.prs_ps_seq = f.ps_seq","left");
 
         $this->db->where_in("pr_seq",$this->input->post("pr_seq"));
-
+        $this->db->where("d.prs_use_type = 1");
         $query = $this->db->get();
 
         return $query->result_array();
     }
 
     public function fetchPolicyBank(){
-        $this->db->select("*");
+        $this->db->select("*,sb_discount as discount");
         $this->db->from("service_basic_bank");
+
+        if($this->input->get("period") != ""){
+            $this->db->where("sb_min_month <= '".$this->input->get("period")."' and sb_max_month > '".$this->input->get("period")."' ");
+        }
         $this->db->order_by("sb_seq");
 
         $query = $this->db->get();
 
-        return $query->result_array();
+        if($this->input->get("period") != ""){
+            return $query->row_array();
+        }else{
+            return $query->result_array();
+        }
     }
 
     public function fetchPolicyCard(){
-        $this->db->select("*");
+        $this->db->select("*,sc_discount as discount");
         $this->db->from("service_basic_card");
+
+        if($this->input->get("period") != ""){
+            $this->db->where("sc_min_month <= '".$this->input->get("period")."' and sc_max_month > '".$this->input->get("period")."' ");
+        }
+
         $this->db->order_by("sc_seq");
 
         $query = $this->db->get();
 
-        return $query->result_array();
+        if($this->input->get("period") != ""){
+            return $query->row_array();
+        }else{
+            return $query->result_array();
+        }
     }
 
     public function fetchPolicyCms(){
@@ -2069,7 +2173,7 @@ class Api_model extends CI_Model {
         $cms_data = array(
             "discount" => $this->input->post("discount")
         );
-        $this->db->replace("service_basic_cms",$cms_data);
+        $this->db->update("service_basic_cms",$cms_data);
 
         $basic_data = array(
             "sp_basic_type" => $this->input->post("sp_basic_type"),
@@ -2080,6 +2184,837 @@ class Api_model extends CI_Model {
         );
 
         return $this->db->update("service_basic_policy",$basic_data);
+    }
+
+    public function serviceRegister(){
+        $data = array(
+            "sr_mb_seq" => $this->input->post("sr_mb_seq"),
+            "sr_eu_seq" => $this->input->post("sr_eu_seq"),
+            "sr_ct_seq" => $this->input->post("sr_ct_seq"),
+            "sr_code" => $this->input->post("sr_code1")."-".$this->input->post("sr_code2"),
+            "sr_part" => $this->input->post("sr_part"),
+            "sr_charger" => $this->input->post("sr_charger"),
+            "sr_contract_type" => $this->input->post("sr_contract_type"),
+            "sr_contract_start" => $this->input->post("sr_contract_start"),
+            "sr_contract_end" => $this->input->post("sr_contract_end"),
+            "sr_auto_extension" => $this->input->post("sr_auto_extension"),
+            "sr_auto_extension_month" => $this->input->post("sr_auto_extension_month"),
+            "sr_register_discount" => $this->input->post("sr_register_discount"),
+            "sr_payment_type" => $this->input->post("sr_payment_type"),
+            "sr_payment_period" => $this->input->post("sr_payment_period"),
+            "sr_pay_type" => $this->input->post("sr_pay_type"),
+            "sr_pay_day" => $this->input->post("sr_pay_day"),
+            "sr_pay_publish" => $this->input->post("sr_pay_publish"),
+            "sr_pay_publish_type" => $this->input->post("sr_pay_publish_type"),
+            "sr_payment_day" => $this->input->post("sr_payment_day"),
+            "sr_account_policy" => $this->input->post("sr_account_policy"),
+            "sr_account_start" => $this->input->post("sr_account_start"),
+            "sr_account_end" => $this->input->post("sr_account_end"),
+            "sr_account_type" => $this->input->post("sr_account_type"),
+            "sr_account_start_day" => $this->input->post("sr_account_start_day"),
+            "sr_account_format" => $this->input->post("sr_account_format"),
+            "sr_account_format_policy" => $this->input->post("sr_account_format_policy"),
+            "sr_pc_seq" => $this->input->post("sr_pc_seq"),
+            "sr_pi_seq" => $this->input->post("sr_pi_seq"),
+            "sr_pr_seq" => $this->input->post("sr_pr_seq"),
+            "sr_pd_seq" => $this->input->post("sr_pd_seq"),
+            "sr_ps_seq" => $this->input->post("sr_ps_seq"),
+            "sr_claim_name" => $this->input->post("sr_claim_name"),
+            "sr_rental" => $this->input->post("sr_rental"),
+            "sr_bill_name" => $this->input->post("sr_bill_name"),
+            "sr_once_price" => $this->input->post("sr_once_price"),
+            "sr_month_price" => $this->input->post("sr_month_price"),
+            "sr_c_seq" => $this->input->post("sr_c_seq"),
+            "sr_input_price" => $this->input->post("sr_input_price"),
+            "sr_rental_type" => $this->input->post("sr_rental_type"),
+            "sr_rental_date" => $this->input->post("sr_rental_date"),
+            "sr_after_price" => $this->input->post("sr_after_price")
+        );
+
+        $this->db->insert("service_register",$data);
+
+        $sr_seq = $this->db->insert_id();
+
+        $data_price = array(
+            "sp_sr_seq" => $sr_seq,
+            "sp_ps_seq" => $this->input->post("sr_ps_seq"),
+            "sp_once_price" => $this->input->post("sr_once_price"),
+            "sp_once_dis_price" => $this->input->post("sp_once_dis_price"),
+            "sp_once_dis_msg" => $this->input->post("sp_once_dis_msg"),
+            "sp_month_price" => $this->input->post("sp_month_price"),
+            "sp_month_dis_price" => $this->input->post("sp_month_dis_price"),
+            "sp_month_dis_msg" => $this->input->post("sp_month_dis_msg"),
+            "sp_discount_yn" => $this->input->post("sp_discount_yn"),
+            "sp_discount_price" => $this->input->post("sp_discount_price")
+        );
+
+        $this->db->insert("service_register_price",$data_price);
+
+        $sa_name = $this->input->post("sa_name");
+        $sa_c_seq = $this->input->post("sa_c_seq");
+        $sa_input_price = $this->input->post("sa_input_price");
+        $sa_input_unit = $this->input->post("sa_input_unit");
+        $sa_input_date = $this->input->post("sa_input_date");
+        $sa_claim_name = $this->input->post("sa_claim_name");
+        $sa_bill_name = $this->input->post("sa_bill_name");
+        $sa_once_price = $this->input->post("sa_once_price");
+        $sa_month_price = $this->input->post("sa_month_price");
+        $sa_pay_day = $this->input->post("sa_pay_day");
+        $pis_yn = $this->input->post("pis_yn");
+        $etc_yn = $this->input->post("etc_yn");
+        $sa_pis_seq = $this->input->post("sa_pis_seq");
+
+        for($i = 0; $i < count($pis_yn); $i++){
+            // if($pis_yn[$i] == "Y"){
+            $data_addoption = array(
+                "sa_name" => $sa_name[$i],
+                "sa_sr_seq" => $sr_seq,
+                "sa_pr_seq" => $this->input->post("sr_pr_seq"),
+                "sa_pis_seq" => $pis_yn[$i],
+                "sa_c_seq" => $sa_c_seq[$i],
+                "sa_input_price" => $sa_input_price[$i],
+                "sa_input_unit" => $sa_input_unit[$i],
+                "sa_input_date" => $sa_input_date[$i],
+                "sa_claim_name" => $sa_claim_name[$i],
+                "sa_bill_name" => $sa_bill_name[$i],
+                "sa_once_price" => $sa_once_price[$i],
+                "sa_month_price" => $sa_month_price[$i],
+                "sa_pay_day" => $sa_pay_day[$i]
+            );
+
+            $this->db->insert("service_register_addoption",$data_addoption);
+            // }
+        }
+        if($this->input->post("sp_once_price_add") != ""){
+            $sp_once_price_add = $this->input->post("sp_once_price_add");
+            $sp_once_dis_price_add = $this->input->post("sp_once_dis_price_add");
+            $sp_once_dis_msg_add = $this->input->post("sp_once_dis_msg_add");
+            $sp_discount_yn_add = $this->input->post("sp_discount_yn_add");
+            $sp_month_price_add = $this->input->post("sp_month_price_add");
+            $sp_month_dis_price_add = $this->input->post("sp_month_dis_price_add");
+            $sp_month_dis_msg_add = $this->input->post("sp_month_dis_msg_add");
+            $sp_discount_price_add = $this->input->post("sp_discount_price_add");
+            $pis_seq_add = $this->input->post("pis_seq_add");
+            $sp_register_discount_add = $this->input->post("sr_register_discount_add");
+            for($i = 0; $i < count($sp_once_price_add);$i++){
+                $this->db->select("*");
+                $this->db->from("service_register_addoption");
+                $this->db->where("sa_pis_seq",$pis_seq_add[$i]);
+                $query = $this->db->get();
+                $row = $query->row_array();
+
+                $data_addoption_price = array(
+                    "sap_sa_seq" => $row["sa_seq"],
+                    "sap_once_price" => $sp_once_price_add[$i],
+                    "sap_once_dis_price" => $sp_once_dis_price_add[$i],
+                    "sap_once_dis_msg" => $sp_once_dis_msg_add[$i],
+                    "sap_month_price" => $sp_month_price_add[$i],
+                    "sap_month_dis_price" => $sp_month_dis_price_add[$i],
+                    "sap_month_dis_msg" => $sp_month_dis_msg_add[$i],
+                    "sap_discount_yn" => $sp_discount_yn_add[$i],
+                    "sap_discount_price" => $sp_discount_price_add[$i],
+                    "sap_register_discount" => $sp_register_discount_add[$i]
+                );
+
+                $this->db->insert("service_register_addoption_price",$data_addoption_price);
+            }
+        }
+
+        return true;
+    }
+
+    public function serviceRegisterEdit($sr_seq){
+        $data = array(
+            "sr_mb_seq" => $this->input->post("sr_mb_seq"),
+            "sr_eu_seq" => $this->input->post("sr_eu_seq"),
+            "sr_ct_seq" => $this->input->post("sr_ct_seq"),
+            "sr_code" => $this->input->post("sr_code1")."-".$this->input->post("sr_code2"),
+            "sr_part" => $this->input->post("sr_part"),
+            "sr_charger" => $this->input->post("sr_charger"),
+            "sr_contract_type" => $this->input->post("sr_contract_type"),
+            "sr_contract_start" => $this->input->post("sr_contract_start"),
+            "sr_contract_end" => $this->input->post("sr_contract_end"),
+            "sr_auto_extension" => $this->input->post("sr_auto_extension"),
+            "sr_auto_extension_month" => $this->input->post("sr_auto_extension_month"),
+            "sr_register_discount" => $this->input->post("sr_register_discount"),
+            "sr_payment_type" => $this->input->post("sr_payment_type"),
+            "sr_payment_period" => $this->input->post("sr_payment_period"),
+            "sr_pay_type" => $this->input->post("sr_pay_type"),
+            "sr_pay_day" => $this->input->post("sr_pay_day"),
+            "sr_pay_publish" => $this->input->post("sr_pay_publish"),
+            "sr_pay_publish_type" => $this->input->post("sr_pay_publish_type"),
+            "sr_payment_day" => $this->input->post("sr_payment_day"),
+            "sr_account_policy" => $this->input->post("sr_account_policy"),
+            "sr_account_start" => $this->input->post("sr_account_start"),
+            "sr_account_end" => $this->input->post("sr_account_end"),
+            "sr_account_type" => $this->input->post("sr_account_type"),
+            "sr_account_start_day" => $this->input->post("sr_account_start_day"),
+            "sr_account_format" => $this->input->post("sr_account_format"),
+            "sr_account_format_policy" => $this->input->post("sr_account_format_policy"),
+            "sr_pc_seq" => $this->input->post("sr_pc_seq"),
+            "sr_pi_seq" => $this->input->post("sr_pi_seq"),
+            "sr_pr_seq" => $this->input->post("sr_pr_seq"),
+            "sr_pd_seq" => $this->input->post("sr_pd_seq"),
+            "sr_ps_seq" => $this->input->post("sr_ps_seq"),
+            "sr_claim_name" => $this->input->post("sr_claim_name"),
+            "sr_rental" => $this->input->post("sr_rental"),
+            "sr_bill_name" => $this->input->post("sr_bill_name"),
+            "sr_once_price" => $this->input->post("sr_once_price"),
+            "sr_month_price" => $this->input->post("sr_month_price"),
+            "sr_c_seq" => $this->input->post("sr_c_seq"),
+            "sr_input_price" => $this->input->post("sr_input_price"),
+            "sr_rental_type" => $this->input->post("sr_rental_type"),
+            "sr_rental_date" => $this->input->post("sr_rental_date"),
+            "sr_after_price" => $this->input->post("sr_after_price")
+        );
+
+        $this->db->where("sr_seq",$sr_seq);
+        $this->db->update("service_register",$data);
+
+        $data_price = array(
+            "sp_ps_seq" => $this->input->post("sr_ps_seq"),
+            "sp_once_price" => $this->input->post("sr_once_price"),
+            "sp_once_dis_price" => $this->input->post("sp_once_dis_price"),
+            "sp_once_dis_msg" => $this->input->post("sp_once_dis_msg"),
+            "sp_month_price" => $this->input->post("sp_month_price"),
+            "sp_month_dis_price" => $this->input->post("sp_month_dis_price"),
+            "sp_month_dis_msg" => $this->input->post("sp_month_dis_msg"),
+            "sp_discount_yn" => $this->input->post("sp_discount_yn"),
+            "sp_discount_price" => $this->input->post("sp_discount_price")
+        );
+        $this->db->where("sp_sr_seq",$sr_seq);
+        $this->db->update("service_register_price",$data_price);
+
+        $data_insertyn["insert_yn"] = "N";
+        $this->db->where("sa_sr_seq",$sr_seq);
+        $this->db->update("service_register_addoption",$data_insertyn);
+
+        $sa_seq = $this->input->post("sa_seq");
+        $sa_name = $this->input->post("sa_name");
+        $sa_c_seq = $this->input->post("sa_c_seq");
+        $sa_input_price = $this->input->post("sa_input_price");
+        $sa_input_unit = $this->input->post("sa_input_unit");
+        $sa_input_date = $this->input->post("sa_input_date");
+        $sa_claim_name = $this->input->post("sa_claim_name");
+        $sa_bill_name = $this->input->post("sa_bill_name");
+        $sa_once_price = $this->input->post("sa_once_price");
+        $sa_month_price = $this->input->post("sa_month_price");
+        $sa_pay_day = $this->input->post("sa_pay_day");
+        $pis_yn = $this->input->post("pis_yn");
+        $etc_yn = $this->input->post("etc_yn");
+        $sa_pis_seq = $this->input->post("sa_pis_seq");
+
+        for($i = 0; $i < count($pis_yn); $i++){
+            if($sa_seq[$i] == ""){
+                $data_addoption = array(
+                    "sa_name" => $sa_name[$i],
+                    "sa_sr_seq" => $sr_seq,
+                    "sa_pr_seq" => $this->input->post("sr_pr_seq"),
+                    "sa_pis_seq" => $pis_yn[$i],
+                    "sa_c_seq" => $sa_c_seq[$i],
+                    "sa_input_price" => $sa_input_price[$i],
+                    "sa_input_unit" => $sa_input_unit[$i],
+                    "sa_input_date" => $sa_input_date[$i],
+                    "sa_claim_name" => $sa_claim_name[$i],
+                    "sa_bill_name" => $sa_bill_name[$i],
+                    "sa_once_price" => $sa_once_price[$i],
+                    "sa_month_price" => $sa_month_price[$i],
+                    "sa_pay_day" => $sa_pay_day[$i],
+                    "insert_yn" => "Y"
+                );
+
+                $this->db->insert("service_register_addoption",$data_addoption);
+            }else{
+                $data_addoption = array(
+                    "sa_name" => $sa_name[$i],
+                    "sa_sr_seq" => $sr_seq,
+                    "sa_pr_seq" => $this->input->post("sr_pr_seq"),
+                    "sa_pis_seq" => $pis_yn[$i],
+                    "sa_c_seq" => $sa_c_seq[$i],
+                    "sa_input_price" => $sa_input_price[$i],
+                    "sa_input_unit" => $sa_input_unit[$i],
+                    "sa_input_date" => $sa_input_date[$i],
+                    "sa_claim_name" => $sa_claim_name[$i],
+                    "sa_bill_name" => $sa_bill_name[$i],
+                    "sa_once_price" => $sa_once_price[$i],
+                    "sa_month_price" => $sa_month_price[$i],
+                    "sa_pay_day" => $sa_pay_day[$i],
+                    "insert_yn" => "Y"
+                );
+                $this->db->where("sa_seq",$sa_seq[$i]);
+                $this->db->update("service_register_addoption",$data_addoption);
+            }
+        }
+
+        $this->db->where("sa_sr_seq",$sr_seq);
+        $this->db->where("insert_yn","N");
+        $this->db->delete("service_register_addoption");
+
+        if($this->input->post("sp_once_price_add") != ""){
+
+            $data_insertyn["insert_yn"] = "N";
+            $this->db->where("sap_sr_seq",$sr_seq);
+            $this->db->update("service_register_addoption_price",$data_insertyn);
+
+            $sap_seq = $this->input->post("sap_seq");
+            $sp_once_price_add = $this->input->post("sp_once_price_add");
+            $sp_once_dis_price_add = $this->input->post("sp_once_dis_price_add");
+            $sp_once_dis_msg_add = $this->input->post("sp_once_dis_msg_add");
+            $sp_discount_yn_add = $this->input->post("sp_discount_yn_add");
+            $sp_month_price_add = $this->input->post("sp_month_price_add");
+            $sp_month_dis_price_add = $this->input->post("sp_month_dis_price_add");
+            $sp_month_dis_msg_add = $this->input->post("sp_month_dis_msg_add");
+            $sp_discount_price_add = $this->input->post("sp_discount_price_add");
+            $pis_seq_add = $this->input->post("pis_seq_add");
+            $sp_register_discount_add = $this->input->post("sr_register_discount_add");
+
+            for($i = 0; $i < count($sp_once_price_add);$i++){
+                if($sap_seq[$i] == ""){
+                    $this->db->select("*");
+                    $this->db->from("service_register_addoption");
+                    $this->db->where("sa_pis_seq",$pis_seq_add[$i]);
+                    $this->db->where("sa_sr_seq",$sr_seq);
+                    $query = $this->db->get();
+                    $row = $query->row_array();
+
+                    $data_addoption_price = array(
+                        "sap_sa_seq" => $row["sa_seq"],
+                        "sap_sr_seq" => $sr_seq,
+                        "sap_once_price" => $sp_once_price_add[$i],
+                        "sap_once_dis_price" => $sp_once_dis_price_add[$i],
+                        "sap_once_dis_msg" => $sp_once_dis_msg_add[$i],
+                        "sap_month_price" => $sp_month_price_add[$i],
+                        "sap_month_dis_price" => $sp_month_dis_price_add[$i],
+                        "sap_month_dis_msg" => $sp_month_dis_msg_add[$i],
+                        "sap_discount_yn" => $sp_discount_yn_add[$i],
+                        "sap_discount_price" => $sp_discount_price_add[$i],
+                        "sap_register_discount" => $sp_register_discount_add[$i],
+                        "insert_yn" => "Y"
+                    );
+
+                    $this->db->insert("service_register_addoption_price",$data_addoption_price);
+                }else{
+                    $data_addoption_price = array(
+                        "sap_once_price" => $sp_once_price_add[$i],
+                        "sap_once_dis_price" => $sp_once_dis_price_add[$i],
+                        "sap_once_dis_msg" => $sp_once_dis_msg_add[$i],
+                        "sap_month_price" => $sp_month_price_add[$i],
+                        "sap_month_dis_price" => $sp_month_dis_price_add[$i],
+                        "sap_month_dis_msg" => $sp_month_dis_msg_add[$i],
+                        "sap_discount_yn" => $sp_discount_yn_add[$i],
+                        "sap_discount_price" => $sp_discount_price_add[$i],
+                        "sap_register_discount" => $sp_register_discount_add[$i],
+                        "insert_yn" => "Y"
+                    );
+                    $this->db->where("sap_seq",$sap_seq[$i]);
+                    $this->db->update("service_register_addoption_price",$data_addoption_price);
+                }
+            }
+            $this->db->where("sap_sr_seq",$sr_seq);
+            $this->db->where("insert_yn","N");
+            $this->db->delete("service_register_addoption_price");
+        }
+
+        return true;
+    }
+
+    public function serviceRegisterDelete($sr_seq){
+        $this->db->where("sr_seq",$sr_seq);
+
+        return $this->db->delete("service_register");
+    }
+
+    public function selectServiceRegister($sr_seq){
+        $this->db->select("*");
+        $this->db->from("service_register");
+        $this->db->where("sr_seq",$sr_seq);
+
+        $query = $this->db->get();
+
+        return $query->row_array();
+
+    }
+
+    public function serviceRegisterCopy($data){
+        $new_data = array(
+            "sr_mb_seq" => $data["sr_mb_seq"],
+            "sr_eu_seq" => $data["sr_eu_seq"],
+            "sr_ct_seq" => $data["sr_ct_seq"],
+            "sr_code" => $data["sr_code"],
+            "sr_part" => $data["sr_part"],
+            "sr_charger" => $data["sr_charger"],
+            "sr_contract_type" => $data["sr_contract_type"],
+            "sr_contract_start" => $data["sr_contract_start"],
+            "sr_contract_end" => $data["sr_contract_end"],
+            "sr_auto_extension" => $data["sr_auto_extension"],
+            "sr_auto_extension_month" => $data["sr_auto_extension_month"],
+            "sr_register_discount" => $data["sr_register_discount"],
+            "sr_payment_type" => $data["sr_payment_type"],
+            "sr_payment_period" => $data["sr_payment_period"],
+            "sr_pay_type" => $data["sr_pay_type"],
+            "sr_pay_day" => $data["sr_pay_day"],
+            "sr_pay_publish" => $data["sr_pay_publish"],
+            "sr_pay_publish_type" => $data["sr_pay_publish_type"],
+            "sr_payment_day" => $data["sr_payment_day"],
+            "sr_account_start" => $data["sr_account_start"],
+            "sr_account_end" => $data["sr_account_end"],
+            "sr_account_type" => $data["sr_account_type"],
+            "sr_account_start_day" => $data["sr_account_start_day"],
+            "sr_account_format" => $data["sr_account_format"],
+            "sr_account_format_policy" => $data["sr_account_format_policy"],
+            "sr_pc_seq" => $data["sr_pc_seq"],
+            "sr_pi_seq" => $data["sr_pi_seq"],
+            "sr_pr_seq" => $data["sr_pr_seq"],
+            "sr_pd_seq" => $data["sr_pd_seq"],
+            "sr_ps_seq" => $data["sr_ps_seq"],
+            "sr_claim_name" => $data["sr_claim_name"],
+            "sr_rental" => $data["sr_rental"],
+            "sr_bill_name" => $data["sr_bill_name"],
+            "sr_once_price" => $data["sr_once_price"],
+            "sr_month_price" => $data["sr_month_price"],
+            "sr_c_seq" => $data["sr_c_seq"],
+            "sr_input_price" => $data["sr_input_price"],
+            "sr_rental_type" => $data["sr_rental_type"],
+            "sr_rental_date" => $data["sr_rental_date"],
+            "sr_after_price" => $data["sr_after_price"]
+        );
+
+        return $this->db->insert("service_register",$new_data);
+    }
+
+    public function countServiceRegister(){
+        $this->db->select("count(*) as total");
+        $this->db->from("service_register a");
+        $this->db->join("members b","a.sr_mb_seq = b.mb_seq","left");
+        $this->db->join("end_users c","a.sr_eu_seq = c.eu_seq","left");
+        $this->db->join("product d","a.sr_pr_seq = d.pr_seq","left");
+
+        if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
+            $this->db->where("date_format(sr_regdate,'%Y-%m-%d') >= '".$this->input->get("startDate")."' and date_format(sr_regdate,'%Y-%m-%d') <= '".$this->input->get("endDate")."' ");
+        }
+
+        if($this->input->get("searchWord") != ""){
+            $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+        }
+
+        if($this->input->get("sr_status") != ""){
+            if(count($this->input->get("sr_status")) == 1){
+                $this->db->where("sr_status",$this->input->get("sr_status")[0]);
+            }else{
+                $this->db->where_in("sr_status",array("0","1"));
+            }
+        }else{
+            $this->db->where_in("sr_status",array("0","1"));
+        }
+
+        $query = $this->db->get();
+
+        $row = $query->row_array();
+
+        return $row["total"];
+    }
+
+    public function fetchServiceRegister($start,$end){
+        $this->db->select("*");
+        $this->db->from("service_register a");
+        $this->db->join("members b","a.sr_mb_seq = b.mb_seq","left");
+        $this->db->join("end_users c","a.sr_eu_seq = c.eu_seq","left");
+        $this->db->join("product d","a.sr_pr_seq = d.pr_seq","left");
+        $this->db->join("product_category e","a.sr_pc_seq = e.pc_seq","left");
+        $this->db->join("product_sub_div f","a.sr_ps_seq = f.ps_seq","left");
+
+
+        if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
+            $this->db->where("date_format(sr_regdate,'%Y-%m-%d') >= '".$this->input->get("startDate")."' and date_format(sr_regdate,'%Y-%m-%d') <= '".$this->input->get("endDate")."' ");
+        }
+
+        if($this->input->get("searchWord") != ""){
+            $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+        }
+
+        if($this->input->get("sr_status") != ""){
+            if(count($this->input->get("sr_status")) == 1){
+                $this->db->where("sr_status",$this->input->get("sr_status")[0]);
+            }else{
+                $this->db->where_in("sr_status",array("0","1"));
+            }
+        }else{
+            $this->db->where_in("sr_status",array("0","1"));
+        }
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function productSubDepth1Search($pr_seq){
+        $this->db->select("b.pd_seq, b.pd_name");
+        $this->db->from("product_sub a");
+        $this->db->join("product_div b","a.prs_pd_seq = b.pd_seq","inner");
+        $this->db->where("prs_pr_seq",$pr_seq);
+        $this->db->where("prs_use_type","1");
+        $this->db->group_by("prs_pd_seq");
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    public function productSubDepth2Search($pr_seq,$prs_pd_seq){
+        $this->db->select("b.ps_seq, b.ps_name,a.*");
+        $this->db->from("product_sub a");
+        $this->db->join("product_sub_div b","a.prs_ps_seq = b.ps_seq","inner");
+        $this->db->where("prs_pr_seq",$pr_seq);
+        $this->db->where("prs_pd_seq",$prs_pd_seq);
+        $this->db->where("prs_use_type","1");
+
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    // 계약번호 중복체크
+    public function serviceNumberCheck(){
+        $this->db->select("*");
+        $this->db->where("sr_code" , $this->input->get("sr_code"));
+        $this->db->from("service_register");
+
+        $query = $this->db->get();
+        // 회원 사업자 or 생년월일이 중복일경우 true
+        if($query->num_rows() > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function fetchProductDiv($pc_seq){
+        $this->db->select("*");
+        $this->db->where("pd_pc_seq",$pc_seq);
+        $this->db->from("product_div");
+        $this->db->order_by("pd_sort");
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function fetchProductDivSub($pd_seq)
+    {
+        $this->db->select("*");
+        $this->db->where("ps_pd_seq",$pd_seq);
+        $this->db->from("product_sub_div");
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function memberUpdate1($mb_seq)
+    {
+        $data = array(
+            "mb_type"=>$this->input->post("mb_type"),
+            "mb_name" => $this->input->post("mb_name"),
+            "mb_zipcode" => $this->input->post("mb_zipcode"),
+            "mb_address" => $this->input->post("mb_address"),
+            "mb_detail_address" => $this->input->post("mb_detail_address"),
+            "mb_tel" => $this->input->post("mb_tel"),
+            "mb_email" => $this->input->post("mb_email"),
+            "mb_number" => $this->input->post("mb_number"),
+            "mb_ceo" => $this->input->post("mb_ceo"),
+            "mb_phone" => $this->input->post("mb_phone"),
+            "mb_fax" => $this->input->post("mb_fax")
+        );
+
+        $this->db->where("mb_seq",$mb_seq);
+
+        return $this->db->update("members",$data);
+    }
+
+    public function memberUpdate2($mb_seq)
+    {
+        $data = array(
+            "mb_bank"=>$this->input->post("mb_bank"),
+            "mb_bank_name" => $this->input->post("mb_bank_name"),
+            "mb_bank_name_relationship" => $this->input->post("mb_bank_name_relationship"),
+            "mb_bank_input_number" => $this->input->post("mb_bank_input_number"),
+            "mb_bank_number" => $this->input->post("mb_bank_number")
+        );
+
+        $this->db->where("mb_seq",$mb_seq);
+
+        return $this->db->update("members",$data);
+    }
+
+    public function memberUpdate4($mb_seq)
+    {
+        $data = array(
+            "mb_contract_name"=>$this->input->post("mb_contract_name"),
+            "mb_contract_email" => $this->input->post("mb_contract_email"),
+            "mb_contract_team" => $this->input->post("mb_contract_team"),
+            "mb_contract_position" => $this->input->post("mb_contract_position"),
+            "mb_contract_phone" => $this->input->post("mb_contract_phone"),
+            "mb_contract_tel" => $this->input->post("mb_contract_tel")
+        );
+
+        $this->db->where("mb_seq",$mb_seq);
+
+        return $this->db->update("members",$data);
+    }
+
+    public function memberUpdate5($mb_seq)
+    {
+        $data = array(
+            "mb_contract_name"=>$this->input->post("mb_service_name"),
+            "mb_contract_email" => $this->input->post("mb_service_email"),
+            "mb_contract_team" => $this->input->post("mb_service_team"),
+            "mb_contract_position" => $this->input->post("mb_service_position"),
+            "mb_contract_phone" => $this->input->post("mb_service_phone"),
+            "mb_contract_tel" => $this->input->post("mb_service_tel")
+        );
+
+        $this->db->where("mb_seq",$mb_seq);
+
+        return $this->db->update("members",$data);
+    }
+
+    public function memberUpdate6($mb_seq)
+    {
+        $data = array(
+            "mb_contract_name"=>$this->input->post("mb_payment_name"),
+            "mb_contract_email" => $this->input->post("mb_payment_email"),
+            "mb_contract_team" => $this->input->post("mb_payment_team"),
+            "mb_contract_position" => $this->input->post("mb_payment_position"),
+            "mb_contract_phone" => $this->input->post("mb_payment_phone"),
+            "mb_contract_tel" => $this->input->post("mb_payment_tel")
+        );
+
+        $this->db->where("mb_seq",$mb_seq);
+
+        return $this->db->update("members",$data);
+    }
+
+    public function selectInsertService($sr_seq){
+        $this->db->select("*");
+        $this->db->from("service_register");
+
+        $this->db->where("sr_seq",$sr_seq);
+
+        $query = $this->db->get();
+        $row = $query->row_array();
+
+        $new_data = array(
+            "sv_sr_seq" => $sr_seq,
+            "sv_mb_seq" => $row["sr_mb_seq"],
+            "sv_eu_seq" => $row["sr_eu_seq"],
+            "sv_ct_seq" => $row["sr_ct_seq"],
+            "sv_code" => $row["sr_code"],
+            "sv_part" => $row["sr_part"],
+            "sv_charger" => $row["sr_charger"],
+            "sv_contract_type" => $row["sr_contract_type"],
+            "sv_contract_start" => $row["sr_contract_start"],
+            "sv_contract_end" => $row["sr_contract_end"],
+            "sv_auto_extension" => $row["sr_auto_extension"],
+            "sv_auto_extension_month" => $row["sr_auto_extension_month"],
+            "sv_register_discount" => $row["sr_register_discount"],
+            "sv_payment_type" => $row["sr_payment_type"],
+            "sv_payment_period" => $row["sr_payment_period"],
+            "sv_pay_type" => $row["sr_pay_type"],
+            "sv_pay_day" => $row["sr_pay_day"],
+            "sv_pay_publish" => $row["sr_pay_publish"],
+            "sv_pay_publish_type" => $row["sr_pay_publish_type"],
+            "sv_payment_day" => $row["sr_payment_day"],
+            "sv_account_start" => $row["sr_account_start"],
+            "sv_account_end" => $row["sr_account_end"],
+            "sv_account_type" => $row["sr_account_type"],
+            "sv_account_start_day" => $row["sr_account_start_day"],
+            "sv_account_format" => $row["sr_account_format"],
+            "sv_account_format_policy" => $row["sr_account_format_policy"],
+            "sv_pc_seq" => $row["sr_pc_seq"],
+            "sv_pi_seq" => $row["sr_pi_seq"],
+            "sv_pr_seq" => $row["sr_pr_seq"],
+            "sv_pd_seq" => $row["sr_pd_seq"],
+            "sv_ps_seq" => $row["sr_ps_seq"],
+            "sv_claim_name" => $row["sr_claim_name"],
+            "sv_rental" => $row["sr_rental"],
+            "sv_bill_name" => $row["sr_bill_name"],
+            "sv_once_price" => $row["sr_once_price"],
+            "sv_month_price" => $row["sr_month_price"],
+            "sv_c_seq" => $row["sr_c_seq"],
+            "sv_input_price" => $row["sr_input_price"],
+            "sv_rental_type" => $row["sr_rental_type"],
+            "sv_rental_date" => $row["sr_rental_date"],
+            "sv_after_price" => $row["sr_after_price"]
+        );
+
+        $this->db->insert("service",$new_data);
+
+        $sv_seq = $this->db->insert_id();
+
+        return $sv_seq;
+    }
+
+    public function selectInsertServicePrice($sv_seq,$sr_seq){
+        $this->db->select("*");
+        $this->db->from("service_register_price");
+        $this->db->where("sp_sr_seq",$sr_seq);
+        $query = $this->db->get();
+
+        $row = $query->row_array();
+
+        $data_price = array(
+            "svp_sv_seq" => $sv_seq,
+            "svp_ps_seq" => $row["sp_ps_seq"],
+            "svp_once_price" => $row["sp_once_price"],
+            "svp_once_dis_price" => $row["sp_once_dis_price"],
+            "svp_once_dis_msg" => $row["sp_once_dis_msg"],
+            "svp_month_price" => $row["sp_month_price"],
+            "svp_month_dis_price" => $row["sp_month_dis_price"],
+            "svp_month_dis_msg" => $row["sp_month_dis_msg"],
+            "svp_discount_yn" => $row["sp_discount_yn"],
+            "svp_discount_price" => $row["sp_discount_price"]
+        );
+
+        $this->db->insert("service_price",$data_price);
+    }
+
+    public function selectInsertServiceOption($sv_seq,$sr_seq){
+        $this->db->select("*");
+        $this->db->from("service_register_addoption");
+        $this->db->where("sa_sr_seq",$sr_seq);
+        $query = $this->db->get();
+
+        foreach($query->result_array() as $row){
+            $data_addoption = array(
+                "sva_name" => $row["sa_name"],
+                "sva_sv_seq" => $sv_seq,
+                "sva_pr_seq" => $row["sa_pr_seq"],
+                "sva_pis_seq" => $row["sa_pis_seq"],
+                "sva_c_seq" => $row["sa_c_seq"],
+                "sva_input_price" => $row["sa_input_price"],
+                "sva_input_unit" => $row["sa_input_date"],
+                "sva_input_date" => $row["sa_input_date"],
+                "sva_claim_name" => $row["sa_claim_name"],
+                "sva_bill_name" => $row["sa_bill_name"],
+                "sva_once_price" => $row["sa_once_price"],
+                "sva_month_price" => $row["sa_month_price"],
+                "sva_pay_day" => $row["sa_pay_day"]
+            );
+            // print_r($data_addoption);
+            $this->db->insert("service_addoption",$data_addoption);
+            // echo $this->db->last_query();
+            $sva_seq = $this->db->insert_id();
+
+            $this->db->select("*");
+            $this->db->from("service_register_addoption_price");
+            $this->db->where("sap_sr_seq",$sr_seq);
+            $this->db->where("sap_sa_seq",$row["sa_seq"]);
+            $query = $this->db->get();
+
+            foreach($query->result_array() as $row2){
+                $data_addoption_price = array(
+                    "svp_sv_seq" => $sv_seq,
+                    "svp_sva_seq" => $sva_seq,
+                    "svp_once_price" => $row2["sap_once_price"],
+                    "svp_once_dis_price" => $row2["sap_once_dis_price"],
+                    "svp_once_dis_msg" => $row2["sap_once_dis_msg"],
+                    "svp_month_price" => $row2["sap_month_price"],
+                    "svp_month_dis_price" => $row2["sap_month_dis_price"],
+                    "svp_month_dis_msg" => $row2["sap_month_dis_msg"],
+                    "svp_discount_yn" => $row2["sap_discount_yn"],
+                    "svp_discount_price" => $row2["sap_discount_price"],
+                    "svp_register_discount" => $row2["sap_register_discount"]
+                );
+
+                $this->db->insert("service_addoption_price",$data_addoption_price);
+            }
+        }
+
+        return true;
+    }
+
+    public function updateServiceStatus($sr_seq){
+        $data["sr_status"] = "1";
+        $this->db->where("sr_seq",$sr_seq);
+
+        return $this->db->update("service_register",$data);
+    }
+
+    public function countService(){
+        $this->db->select("count(*) as total");
+        $this->db->from("service a");
+        $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
+        $this->db->join("end_users c","a.sv_eu_seq = c.eu_seq","left");
+        $this->db->join("product d","a.sv_pr_seq = d.pr_seq","left");
+
+        if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
+            $this->db->where("date_format(sv_regdate,'%Y-%m-%d') >= '".$this->input->get("startDate")."' and date_format(sv_regdate,'%Y-%m-%d') <= '".$this->input->get("endDate")."' ");
+        }
+
+        if($this->input->get("searchWord") != ""){
+            $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+        }
+
+        if($this->input->get("sv_status") != ""){
+            if(count($this->input->get("sv_status")) == 1){
+                $this->db->where("sv_status",$this->input->get("sv_status")[0]);
+            }else{
+                $this->db->where_in("sv_status",array("0","1"));
+            }
+        }else{
+            $this->db->where_in("sv_status",array("0","1"));
+        }
+
+        $query = $this->db->get();
+
+        $row = $query->row_array();
+
+        return $row["total"];
+    }
+
+    public function fetchService($start,$end){
+        $this->db->select("*");
+        $this->db->from("service a");
+        $this->db->join("service_price ap","a.sv_seq=ap.svp_sv_seq","left" );
+        $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
+        $this->db->join("end_users c","a.sv_eu_seq = c.eu_seq","left");
+        $this->db->join("product d","a.sv_pr_seq = d.pr_seq","left");
+        $this->db->join("product_category e","a.sv_pc_seq = e.pc_seq","left");
+        $this->db->join("product_items ei","a.sv_pi_seq = ei.pi_seq","left");
+        $this->db->join("product_div pd","a.sv_pd_seq = pd.pd_seq","left");
+        $this->db->join("product_sub_div f","a.sv_ps_seq = f.ps_seq","left");
+        $this->db->join("clients cl","a.sv_c_seq = cl.c_seq","left");
+
+
+        if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
+            $this->db->where("date_format(sv_regdate,'%Y-%m-%d') >= '".$this->input->get("startDate")."' and date_format(sv_regdate,'%Y-%m-%d') <= '".$this->input->get("endDate")."' ");
+        }
+
+        if($this->input->get("searchWord") != ""){
+            $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+        }
+
+        if($this->input->get("sv_status") != ""){
+            if(count($this->input->get("sv_status")) == 1){
+                $this->db->where("sv_status",$this->input->get("sv_status")[0]);
+            }else{
+                $this->db->where_in("sv_status",array("0","1"));
+            }
+        }else{
+            $this->db->where_in("sv_status",array("0","1"));
+        }
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function fetchServiceAdd($sv_seq){
+        $this->db->select("*");
+        $this->db->from("service_addoption a");
+        $this->db->join("service_addoption_price b","a.sva_seq = b.svp_sva_seq","inner");
+        $this->db->where("sva_sv_seq",$sv_seq);
+
+        $query = $this->db->get();
+
+        return $query->result_array();
     }
 }
 

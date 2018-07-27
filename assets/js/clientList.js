@@ -65,8 +65,8 @@ $(function(){
 
     // 아이디 중복 체크
     $(".btn-id-duple").click(function(){
-        if($("#mb_id").val() == ""){
-            alert("매입처 아이디(코드)를 입력해 주세요");
+        if($("#c_id").val() == ""){
+            alert("회원 아이디(코드)를 입력해 주세요");
             return false;
         }
         var url = "/api/clientIdCheck";
@@ -157,11 +157,11 @@ $(function(){
                 $("#c_payment_type").val(response.c_payment_type);
                 $("#c_zipcode").val(response.c_zipcode);
                 $("#c_seq").val(response.c_seq);
-                if(response.c_origin_file1 != ""){
-                    $(".file_name1").html(response.c_origin_file1+" <i class='fileDelete' data-seq='"+response.c_seq+"' data-type='1'>x</i>");
+                if(response.c_origin_file1 != "" && response.c_origin_file1 !== null){
+                    $(".file_name1").html("<a href='javascript:void(0)' data-filename='"+response.c_file1+"' data-originname='"+response.c_origin_file1+"' data-folder='client_file' class='fileDownload'>"+response.c_origin_file1+"</a> <i class='fileDelete' data-seq='"+response.c_seq+"' data-type='1'>x</i>");
                 }
-                if(response.c_origin_file2 != ""){
-                    $(".file_name2").html(response.c_origin_file2+" <i class='fileDelete' data-seq='"+response.c_seq+"' data-type='2'>x</i>");
+                if(response.c_origin_file2 != "" && response.c_origin_file2 !== null){
+                    $(".file_name2").html("<a href='javascript:void(0)' data-filename='"+response.c_file2+"' data-originname='"+response.c_origin_file2+"' data-folder='client_file' class='fileDownload'>"+response.c_origin_file2+"</a> <i class='fileDelete' data-seq='"+response.c_seq+"' data-type='2'>x</i>");
                 }
                 $("#c_item").val(response.c_item);
                 if(response.c_payment_type == "1"){
@@ -254,6 +254,14 @@ $(function(){
             return false;
         }
 
+        if($("#c_email").val() != ""){
+            if (!PT_email.test($("#c_email").val())){
+                alert("이메일 형식이 맞지 않습니다.");
+                return false;
+                // $(this).focus();
+            }
+        }
+
         // if($("#mb_fax").val() == ""){
         //     alert("팩스를 입력해 주세요");
         //     return false;
@@ -269,15 +277,34 @@ $(function(){
             return false;
         }
 
+        if($("#c_payment_name").val() == ""){
+            alert("요금 담당자를 입력해 주세요");
+            return false;
+        }
 
-        $(".emailCheck").each(function(){
-            if($(this).val() != ""){
-                if (!PT_email.test($(this).val())){
-                    alert("이메일 형식이 맞지 않습니다.");
-                    // $(this).focus();
-                }
+        if($("#c_payment_tel").val() == ""){
+            alert("요금 담당자 전화번호를 입력해 주세요");
+            return false;
+        }
+
+        if($("#c_payment_phone").val() == ""){
+            alert("요금 담당자 휴대폰번호를 입력해 주세요");
+            return false;
+        }
+
+        if($("#c_payment_email").val() == ""){
+            alert("요금 담당자 이메일을 입력해 주세요");
+            return false;
+        }
+
+        if($("#c_payment_email").val() != ""){
+            if (!PT_email.test($("#c_payment_email").val())){
+                alert("요금 담당자 이메일 형식이 맞지 않습니다.");
+                return false;
+                // $(this).focus();
             }
-        })
+        }
+
 
         // 회원 키값이 빈값이므로 등록 판단
         if($("#c_seq").val() == ""){
@@ -507,10 +534,10 @@ var getList = function(){
                     }
                     var fileinfo = "";
                     if(response.list[i].c_file1 != "" && response.list[i].c_file1 !== null ){
-                        fileinfo += "<i class='fas fa-save fileDownload' data-filename='"+response.list[i].c_file1+"' data-originname='"+response.list[i].c_origin_file1+"' data-folder='client_file'></i> ";
+                        fileinfo += "<i class='fas fa-save fileDownload' data-filename='"+response.list[i].c_file1+"' data-originname='"+response.list[i].c_origin_file1+"' data-folder='client_file' title='"+response.list[i].c_origin_file1+"'></i> ";
                     }
                     if(response.list[i].c_file2 != "" && response.list[i].c_file2 !== null){
-                        fileinfo += "<i class='fas fa-save fileDownload' data-filename='"+response.list[i].c_file2+"' data-originname='"+response.list[i].c_origin_file2+"' data-folder='client_file'></i> ";
+                        fileinfo += "<i class='fas fa-save fileDownload' data-filename='"+response.list[i].c_file2+"' data-originname='"+response.list[i].c_origin_file2+"' data-folder='client_file' title='"+response.list[i].c_origin_file2+"'></i> ";
                     }
                     html += '<tr>\
                                 <td><input type="checkbox" class="listCheck" name="c_seq[]" value="'+response.list[i].c_seq+'"></td>\
@@ -518,10 +545,10 @@ var getList = function(){
                                 <td>'+response.list[i].c_id+'</td>\
                                 <td>'+response.list[i].c_name+'</td>\
                                 <td>'+response.list[i].c_number+'</td>\
-                                <td>'+response.list[i].c_contract_name+'</td>\
-                                <td>'+response.list[i].c_contract_email+'</td>\
-                                <td>'+response.list[i].c_contract_tel+'</td>\
-                                <td>'+response.list[i].c_contract_phone+'</td>\
+                                <td>'+response.list[i].c_contract_name+'(기본)<br>'+response.list[i].c_payment_name+'(요금)</td>\
+                                <td>'+response.list[i].c_contract_email+'<br>'+response.list[i].c_payment_email+'</td>\
+                                <td>'+response.list[i].c_contract_tel+'<br>'+response.list[i].c_payment_tel+'</td>\
+                                <td>'+response.list[i].c_contract_phone+'<br>'+response.list[i].c_payment_phone+'</td>\
                                 <td>'+response.list[i].c_item+'</td>\
                                 <td>'+c_payment_type+'</td>\
                                 <td>'+fileinfo+'</td>\

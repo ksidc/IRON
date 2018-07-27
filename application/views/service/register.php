@@ -27,19 +27,17 @@
                     <label>등록일</label>
                     <input type="text" style="width:80px" name="startDate" id="startDate" class="datepicker" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker" value="<?=date('Y-m-d')?>">
                 </div>
-                <div class="form-group ml15">
-                    <div class="selectbox">
-                        <label for="searchType">회원명</label>
-                        <select id="searchType" name="searchType">
-                            <option value="es_name" selected>회원명</option>
-                            <option value="es_number">회원아이디</option>
-                            <option value="es_mb_id">End User</option>
-                            <option value="es_charger">계약번호</option>
-                            <option value="es_tel">상품명</option>
-                            <option value="es_phone">사내담당자</option>
+                <div class="form-group ml15" style="text-align:left">
+                    <select id="searchType" name="searchType" class="select2" style="width:140px">
+                        <option value="es_name" selected>회원명</option>
+                        <option value="es_number">회원아이디</option>
+                        <option value="es_mb_id">End User</option>
+                        <option value="es_charger">계약번호</option>
+                        <option value="es_tel">상품명</option>
+                        <option value="es_phone">사내담당자</option>
 
-                        </select>
-                    </div>
+                    </select>
+
                     <input type="text" name="searchWord" id="searchWord">
                     <button class="btn btn-search btn-form-search" type="submit">검색</button>
                 </div>
@@ -110,7 +108,7 @@
 
 
 
-<div id="dialogPolicy" class="dialog">
+<div id="dialogPolicy" class="dialog" >
     <form name="policyForm" id="policyForm">
         <div class="modal-title">
             <div class="modal-title-text w35">요금 납부 방법 / 결제 주기 할인율</div>
@@ -149,44 +147,39 @@
             <div class="modal-field-input full" >
                 <div class="label service" >서비스 등록 시 기본값</div>
                 <div class="input service" >
-                    <div class="modal-service-left" style="border-bottom:0px">
-                        <ul class="service-type">
+                    <div class="modal-service-left" style="border-bottom:0px;padding-bottom:10px">
+                        <ul >
                             <li style="display:inline-block;width:30%"><input type="radio" name="sp_basic_type" id="sp_basic_type_1" value="1">일할 계산</li>
                             <li style="display:inline-block"><input type="radio" name="sp_basic_type" id="sp_basic_type_2" value="2">과금 시작일 기준 결제 주기로 처리</li>
                         </ul>
                         <ul class="service-type">
                             <li style="display:inline-block;width:30%"><input type="radio" name="sp_policy" id="sp_policy_1" value="1">당월분 일할 계산</li>
                             <li style="display:inline-block"><input type="radio" name="sp_policy" id="sp_policy_2" value="2">
-                                <div class="selectbox" style="width:70px">
-                                    <label for="sp_pay_start_day" id="sp_pay_start_day_str" style="top:1.5px;padding:.1em .5em">15일</label>
-                                    <select id="sp_pay_start_day" name="sp_pay_start_day" style="padding:.2em .5em">
+
+                                    <select id="sp_pay_start_day" name="sp_pay_start_day" class="select2" style="width:70px">
                                         <?php for($i = 1; $i < 32;$i++): ?>
                                         <option value="<?=$i?>" <?=($i == 15 ? "selected":"")?>><?=$i?>일</option>
                                         <?php endfor; ?>
                                     </select>
-                                </div>
                                 일 (과금 시작) 이후 건 익월분 통합
                             </li>
                         </ul>
                         <ul class="service-type">
                             <li style="display:inline-block;width:70%">
-                                <div class="selectbox" style="width:150px">
-                                    <label for="sp_pay_format" id="sp_pay_format_str" style="top:1.5px;padding:.1em .5em">10의 자리</label>
-                                    <select id="sp_pay_format" name="sp_pay_format" style="padding:.2em .5em">
-                                        <option value="1">1의 자리</option>
-                                        <option value="2" selected>10의 자리</option>
-                                        <option value="3">100의 자리</option>
-                                        <option value="4">1000의 자리</option>
-                                    </select>
-                                </div>
-                                <div class="selectbox" style="width:80px">
-                                    <label for="sp_pay_format_policy" id="sp_pay_format_policy_str" style="top:1.5px;padding:.1em .5em">버림</label>
-                                    <select id="sp_pay_format_policy" name="sp_pay_format_policy" style="padding:.2em .5em">
-                                        <option value="1" selected>버림</option>
-                                        <option value="2">올림</option>
-                                        <option value="3">반올림</option>
-                                    </select>
-                                </div>
+
+                                <select id="sp_pay_format" name="sp_pay_format" class="select2" style="width:140px">
+                                    <option value="1">1의 자리</option>
+                                    <option value="2" selected>10의 자리</option>
+                                    <option value="3">100의 자리</option>
+                                    <option value="4">1000의 자리</option>
+                                </select>
+
+                                <select id="sp_pay_format_policy" name="sp_pay_format_policy" class="select2" style="width:100px">
+                                    <option value="1" selected>버림</option>
+                                    <option value="2">올림</option>
+                                    <option value="3">반올림</option>
+                                </select>
+
                             </li>
                         </ul>
                     </div>

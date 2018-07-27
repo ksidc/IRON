@@ -31,12 +31,12 @@
                 <thead>
                     <tr>
                         <th style="width:50px">순서</th>
-                        <th >제품군 명</th>
-                        <th style="width:15%">부가항목</th>
-                        <th style="width:15%">부가항목 매입처</th>
+                        <th style="text-align:left">제품군 명</th>
+                        <th style="width:50%;text-align:left">부가항목</th>
+                        <th style="width:15%;text-align:left">부가항목 매입처</th>
                         <th style="width:5%"></th>
-                        <th style="width:10%">수정</th>
-                        <th style="width:10%">삭제</th>
+                        <th style="width:5%">수정</th>
+                        <th style="width:5%">삭제</th>
                     </tr>
                 </thead>
                 <tbody id="tbody-list">

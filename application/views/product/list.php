@@ -16,21 +16,20 @@
     </div>
     <div class="search" style="margin-top:10px">
         <form name="searchForm" id="searchForm" onsubmit="return getList();">
-            <div class="search1">
+            <div class="search1" style="width:60%">
                 <label>제품군 : </label>
                 <div class="search1_detail" style="display:inline-block"></div>
             </div>
-            <div class="search2">
+            <div class="search2" style="width:39%">
 
-                <div class="form-group ml15">
-                    <div class="selectbox">
-                        <label for="searchType">상품군</label>
-                        <select id="searchType" name="searchType">
-                            <option value="pr_name" selected>상품군</option>
-                            <option value="pi_name">제품군</option>
-                            <option value="c_name">매입처</option>
-                        </select>
-                    </div>
+                <div class="form-group ml15" style="text-align:left">
+
+                    <select id="searchType" name="searchType" class="select2" style="width:140px">
+                        <option value="pr_name" selected>상품명</option>
+                        <option value="pi_name">제품군</option>
+                        <option value="c_name">매입처</option>
+                    </select>
+
                     <input type="text" name="searchWord" id="searchWord">
                     <button class="btn btn-search btn-form-search" type="submit">검색</button>
                 </div>
@@ -75,9 +74,9 @@
                         <th>대분류</th>
                         <th>소분류</th>
                         <th>기본 매입처</th>
-                        <th>기본 매입가</th>
-                        <th>일회성 요금</th>
-                        <th>월 요금</th>
+                        <th style=";text-align:right">기본 매입가</th>
+                        <th style=";text-align:right">일회성 요금</th>
+                        <th style=";text-align:right">월 요금</th>
                         <th>수정</th>
                         <th>삭제</th>
                     </tr>

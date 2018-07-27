@@ -11,6 +11,7 @@
     text-transform: uppercase;
     box-shadow: 0 0 0px black;
     width:auto;
+    background-color:rgba(0,0,0,0.8);
   }
   .arrow {
     width: 60px;
@@ -138,7 +139,7 @@
         </form>
     </div>
 </div>
-<div style="text-align:center;margin:10px auto"><button class="btn btn-black btn-product-save">저장</button> <button class="btn btn-default" onclick="self.close()">닫기</button></div>
+<div style="text-align:center;margin:10px auto"><button class="btn btn-black btn-product-save"><?=$btn_name?></button> <button class="btn btn-default" onclick="self.close()">닫기</button></div>
 <div id="dialogItemSearch" class="dialog">
     <form name="itemSearchForm" id="itemSearchForm" method="get">
         <input type="hidden" name="searchType" value="pi_name">
@@ -153,7 +154,7 @@
         </ul>
     </div>
     </form>
-    <div class="modal_search_list" style="height:150px">
+    <div class="modal_search_list" style="height:200px;overflow:auto">
         <table class="table">
             <thead>
             <tr>
@@ -161,7 +162,7 @@
 
             </tr>
             </thead>
-            <tbody style="height:150px" id="modalSearchItem">
+            <tbody style="height:200px" id="modalSearchItem">
 
             </tbody>
         </table>
@@ -183,7 +184,7 @@
         </ul>
     </div>
     </form>
-    <div class="modal_search_list" style="height:150px">
+    <div class="modal_search_list" style="height:200px;overflow:auto">
         <table class="table">
             <thead>
             <tr>
@@ -191,7 +192,7 @@
                 <th>매입처 명</th>
             </tr>
             </thead>
-            <tbody style="height:150px" id="modalSearchClient">
+            <tbody style="height:200px" id="modalSearchClient">
 
             </tbody>
         </table>

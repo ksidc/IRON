@@ -51,6 +51,7 @@ $(function(){
                 $("#es_shot").val("");
                 $("#es_end_user").val("");
                 $("#es_memo").val("");
+                $("#b_es_number").val("");
 
 
                 $('#dialog').dialog({
@@ -192,14 +193,31 @@ $(function(){
 
     $(".btn-register").click(function(){
         var PT_email = /[a-z0-9_]{2,}@[a-z0-9-]{2,}\.[a-z0-9]{2,}/i;
-        if($("#dupleNumberYn").val() == ""){
-            alert("견적번호 중복체크를 진행해 주시기 바랍니다.");
-            return false;
-        }
 
-        if($("#dupleNumberYn").val() == "N"){
-            alert("견적번호가 중복입니다.");
-            return false;
+
+
+        if($("#es_seq").val() == ""){
+            if($("#dupleNumberYn").val() == ""){
+                alert("견적번호 중복체크를 진행해 주시기 바랍니다.");
+                return false;
+            }
+            if($("#dupleNumberYn").val() == "N"){
+                alert("견적번호가 중복입니다.");
+                return false;
+            }
+        }else{
+
+            if($("#b_es_number").val() != $("#es_number1").val()+"-"+$("#es_number2").val()){
+                if($("#dupleNumberYn").val() == ""){
+                    alert("견적번호 중복체크를 진행해 주시기 바랍니다.");
+                    return false;
+                }
+
+                if($("#dupleNumberYn").val() == "N"){
+                    alert("견적번호가 중복입니다.");
+                    return false;
+                }
+            }
         }
 
         if($("#es_name").val() == ""){
@@ -232,18 +250,19 @@ $(function(){
         //     return false;
         // }
 
-        $(".emailCheck").each(function(){
-            if($(this).val() != ""){
-                if (!PT_email.test($(this).val())){
-                    alert("이메일 형식이 맞지 않습니다.");
-                    return false;
-                    // $(this).focus();
-                }
-            }else{
-                alert("이메일을 입력해 주세요");
+        if($("#es_email").val() == ""){
+            alert("이메일을 입력해 주세요");
                 return false;
+        }
+
+        if($("#es_email").val() == ""){
+            if (!PT_email.test($("#es_email").val())){
+                alert("이메일 형식이 맞지 않습니다.");
+                return false;
+                // $(this).focus();
             }
-        });
+        }
+
 
         if($("#es_depth1_1").val() == ""){
             alert("서비스종류를 선택해 주세요");
@@ -395,7 +414,7 @@ $(function(){
             type : 'GET',
             dataType : 'JSON',
             success:function(response){
-                console.log(response);
+                // console.log(response);
                 if(!response.es_part){
                     response.es_part = "영업팀";
                 }
@@ -425,6 +444,7 @@ $(function(){
                 $("#es_end_user").val(response.info.es_end_user);
                 $("#es_end_user_name").val(response.info.eu_name);
                 $("#es_memo").val(response.info.es_memo);
+                $("#b_es_number").val(response.info.es_number);
 
                 var estimateNumber = response.info.es_number.split("-");
                 $("#es_number1").val(estimateNumber[0]);
@@ -434,7 +454,7 @@ $(function(){
                     html += '<div class="modal-field">\
                                 <div class="modal-field-input">\
                                     <div class="label"></div>\
-                                    <div class="input">'+response.files[i].ef_origin_file+'</div>\
+                                    <div class="input"><a href="/api/fileDownload/estimate_file/?filename='+response.files[i].ef_file+'&originname='+response.files[i].ef_origin_file+'">'+response.files[i].ef_origin_file+'</a></div>\
                                 </div>\
                                 <div class="modal-field-input">\
                                     <div class="label"><button class="btn btn-black btn-upload-del" type="button" data-seq="'+response.files[i].ef_seq+'">삭제</button></div>\
@@ -454,26 +474,20 @@ $(function(){
                                     <div class="label">서비스 종류</div>\
                                     <div class="input">\
                                         <input type="hidden" name="ed_seq[]" value="'+response.depths[i].ed_seq+'">\
-                                        <div class="selectbox">\
-                                            <label for="es_depth1_'+(depthLength+1)+'" style="top:1.5px;padding:.1em .5em">서비스 종류 선택</label>\
-                                            <select id="es_depth1_'+(depthLength+1)+'" name="es_depth1[]" class="es_depth1" data-index="'+(depthLength+1)+'" data-childvalue="'+response.depths[i].ed_depth2+'" style="padding:.2em .5em">\
-                                                <option value="" selected>서비스 종류 선택</option>';
-                                                for(var j = 0; j < categoryInfo.length;j++){
-                                                    add_html += '<option value="'+categoryInfo[j].pc_seq+'">'+categoryInfo[j].pc_name+'</option>';
-                                                }
-                                            add_html += '</select>\
-                                        </div>\
+                                        <select id="es_depth1_'+(depthLength+1)+'" name="es_depth1[]" class="es_depth1 select2" data-index="'+(depthLength+1)+'" data-childvalue="'+response.depths[i].ed_depth2+'" style="width:140px">\
+                                            <option value="" selected>서비스 종류 선택</option>';
+                                            for(var j = 0; j < categoryInfo.length;j++){
+                                                add_html += '<option value="'+categoryInfo[j].pc_seq+'">'+categoryInfo[j].pc_name+'</option>';
+                                            }
+                                        add_html += '</select>\
                                     </div>\
                                 </div>\
                                 <div class="modal-field-input">\
                                     <div class="label">상품명</div>\
                                     <div class="input">\
-                                        <div class="selectbox">\
-                                            <label for="es_depth2_'+(depthLength+1)+'" id="es_depth2_'+(depthLength+1)+'_str" style="top:1.5px;padding:.1em .5em">상품명 선택</label>\
-                                            <select id="es_depth2_'+(depthLength+1)+'" name="es_depth2[]" style="padding:.2em .5em">\
-                                                <option value="" selected>상품명 선택</option>\
-                                            </select>\
-                                        </div>\
+                                        <select id="es_depth2_'+(depthLength+1)+'" name="es_depth2[]" class="select2" style="width:140px">\
+                                            <option value="" selected>상품명 선택</option>\
+                                        </select>\
                                     </div>\
                                 </div>\
                             </div>';
@@ -485,6 +499,7 @@ $(function(){
                                 $(this).trigger("change");
                             }
                         })
+                        $(".select2").select2();
                     }
                 }
 
@@ -689,10 +704,10 @@ $(function(){
 
     $("#endSearchForm").submit(function(event){
 
-        if($("#endSearchWord").val() == ""){
-            alert("검색어를 입력해주세요");
-            return false;
-        }
+        // if($("#endSearchWord").val() == ""){
+        //     alert("검색어를 입력해주세요");
+        //     return false;
+        // }
 
         var url = "/api/endUserList";
         var endSearchForm = $("#endSearchForm").serialize();
@@ -779,31 +794,25 @@ $(function(){
                     <div class="label">서비스 종류</div>\
                     <div class="input">\
                     <input type="hidden" name="ed_seq[]" value="">\
-                        <div class="selectbox">\
-                            <label for="es_depth1_'+(depthLength+1)+'" style="top:1.5px;padding:.1em .5em">서비스 종류 선택</label>\
-                            <select id="es_depth1_'+(depthLength+1)+'" name="es_depth1[]" class="es_depth1" data-index="'+(depthLength+1)+'" data-childvalue="" style="padding:.2em .5em">\
-                                <option value="" selected>서비스 종류 선택</option>';
-                                for(var i = 0; i < categoryInfo.length;i++){
-                                    add_html += '<option value="'+categoryInfo[i].pc_seq+'">'+categoryInfo[i].pc_name+'</option>';
-                                }
-                            add_html += '</select>\
-                        </div>\
+                        <select id="es_depth1_'+(depthLength+1)+'" name="es_depth1[]" class="es_depth1 select2" data-index="'+(depthLength+1)+'" data-childvalue="" style="width:140px">\
+                            <option value="" selected>서비스 종류 선택</option>';
+                            for(var i = 0; i < categoryInfo.length;i++){
+                                add_html += '<option value="'+categoryInfo[i].pc_seq+'">'+categoryInfo[i].pc_name+'</option>';
+                            }
+                        add_html += '</select>\
                     </div>\
                 </div>\
                 <div class="modal-field-input">\
                     <div class="label">상품명</div>\
                     <div class="input">\
-                        <div class="selectbox">\
-                            <label for="es_depth2_'+(depthLength+1)+'" id="es_depth2_'+(depthLength+1)+'_str" style="top:1.5px;padding:.1em .5em">상품명 선택</label>\
-                            <select id="es_depth2_'+(depthLength+1)+'" name="es_depth2[]" style="padding:.2em .5em">\
-                                <option value="" selected>상품명 선택</option>\
-                            </select>\
-                        </div>\
+                        <select id="es_depth2_'+(depthLength+1)+'" name="es_depth2[]" class="select2" style="width:140px">\
+                            <option value="" selected>상품명 선택</option>\
+                        </select>\
                     </div>\
                 </div>\
             </div>';
         $(".depth-area").append(add_html);
-
+        $(".select2").select2();
     });
 
     $(".depthMinus").click(function(){
@@ -934,7 +943,7 @@ $(function(){
     });
 
     $("body").on("click",".btn-upload-del",function(){
-        if(configm("삭제 하시겠습니까?")){
+        if(confirm("삭제 하시겠습니까?")){
             var url = "/api/estimateFilesDelete/"+$(this).data("seq");
             var that = $(this);
             $.ajax({
@@ -1322,6 +1331,18 @@ $(function(){
             .append( item.eu_name )
             .appendTo( ul );
     };
+
+    $('#sms').keyup(function(){
+        cut_80(this);
+    });
+
+    $('#sms').click(function(){
+        var str_length = getTextLength($('#sms').val());
+        if(str_length > 80){
+            alert("문자는 80바이트 이하로 적어 주세요.");
+            return false;
+        }
+    });
 });
 
 var getList = function(){
@@ -1359,7 +1380,7 @@ var getList = function(){
                                 <td>'+response.list[i].es_tel+'<br>'+response.list[i].es_phone+'</td>\
                                 <td>'+response.list[i].es_email+'</td>\
                                 <td>'+(response.list[i].es_register ? response.list[i].es_register:"")+'</td>\
-                                <td>'+moment(response.list[i].es_regdate).format("YYYY-MM-DD")+'</td>\
+                                <td>'+moment(response.list[i].es_regdate).format("YYYY-MM-DD HH:mm")+'</td>\
                                 <td>'+(response.list[i].es_status == 0 ? "<span class='statusEdit' style='cursor:pointer;color:#0070C0' data-seq='"+response.list[i].es_seq+"'>등록</span>":"<span style='color:#FF0000'>신청완료</span>")+'</td>\
                                 <td>';
                                 if(response.list[i].file_seq != ""){
@@ -1477,45 +1498,24 @@ var formatBytes = function(bytes) {
     else return(bytes / 1073741824).toFixed(2) + " GB";
 };
 
-function smsByteChk(content)
-{
-    var temp_str = content.value;
-    $("#bytecheck").html(getByte(temp_str));
-    // remain.value = getByte(temp_str);
-    //남은 바이트수를 표시 하기
-    if(parseInt($("#bytecheck").html()) > 80)
-    {
-        alert(80 + "Bytes를 초과할 수 없습니다.");
-
-        content.focus();
+function getTextLength(str) {
+    var len = 0;
+    for (var i = 0; i < str.length; i++) {
+        if (escape(str.charAt(i)).length == 6) {
+            len++;
+        }
+        len++;
     }
-
+    return len;
 }
 
-function getByte(str)
-{
-    var resultSize = 0;
-    if(str == null)
-    {
-        return 0;
+function cut_80(obj){
+    var text = $(obj).val();
+    var leng = text.length;
+    while(getTextLength(text) > 80){
+        leng--;
+        text = text.substring(0, leng);
     }
-
-    for(var i=0; i<str.length; i++)
-    {
-        var c = escape(str.charAt(i));
-        if(c.length == 1)//기본 아스키코드
-        {
-            resultSize ++;
-        }
-        else if(c.indexOf("%u") != -1)//한글 혹은 기타
-        {
-            resultSize += 2;
-        }
-        else
-        {
-            resultSize ++;
-        }
-    }
-
-    return resultSize;
+    $(obj).val(text);
+    $('.bytes').text(getTextLength(text));
 }
