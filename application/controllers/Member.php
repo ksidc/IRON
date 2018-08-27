@@ -41,8 +41,21 @@ class Member extends CI_Controller {
         $layout["left"] = $this->load->view("layout/left", '',true);
 
         $data["info"] = $this->api_model->selectMember($mb_seq);
+        $data["service_list"] = $this->api_model->fetchMemberService($mb_seq);
+        $data["payment_list"] = $this->api_model->fetchMemberPayment($mb_seq);
+        $data["claim_list"] = $this->api_model->fetchPayment($mb_seq);
+        // $data["basic_policy"] = $this->api_model->fetchPolicy();
         $layout["content"] = $this->load->view("member/view", $data,true);
         $layout["footer"] = $this->load->view("layout/footer", '',true);
         $this->load->view('layout/layout',$layout);
+    }
+
+    public function payment_setting($mb_seq){
+        $data["payment_list"] = $this->api_model->fetchMemberPayment($mb_seq);
+        $data["member_view"] = $this->api_model->selectMember($mb_seq);
+        $data["claim_list"] = $this->api_model->fetchClaim($mb_seq);
+        $data["mb_seq"] = $mb_seq;
+        $layout["content"] = $this->load->view("member/payment_setting", $data,true);
+        $this->load->view('layout/layout_popup',$layout);
     }
 }

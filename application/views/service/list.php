@@ -195,6 +195,8 @@
 
         $(".btn-basic-view").click(function(){
             $(".basic").show();
+            $(".addcol").attr("colspan",13);
+            $(".addcol2").attr("colspan",14);
         })
 
         $(".btn-payment-view").click(function(){
@@ -203,46 +205,72 @@
 
         $("body").on("click",".option_extend",function(){
             var seq = $(this).data("seq");
-            $("#child_add_"+seq).show();
-            var url = "/api/serviceAddList/"+seq;
-            if($(".child_add_content_"+seq).length > 0){
-                $(".child_add_content_"+seq).show();
-            }else{
-                $.ajax({
-                    url : url,
-                    type : 'GET',
-                    dataType : 'JSON',
-                    success:function(response){
-                        console.log(response);
-                        var html = "";
-                        for(var i = 0; i < response.length;i++){
-                            html += '<tr class="child_add_content_'+seq+'" style="border:0px">\
-                                        <td colspan=10></td>\
-                                        <th style="border-bottom: 1px solid #d9d9d9">'+response[i].sva_name+'</th>\
-                                        <th class="basic" style="border-bottom: 1px solid #d9d9d9"></th>\
-                                        <td style="border-bottom: 1px solid #d9d9d9"></td>\
-                                        <td style="border-bottom: 1px solid #d9d9d9"></td>\
-                                        <td style="border-bottom: 1px solid #d9d9d9">서비스번호</td>\
-                                        <td class="payment" style="border-bottom: 1px solid #d9d9d9" >청구명</td>\
-                                        <td class="payment" style="border-bottom: 1px solid #d9d9d9">초기일회성</td>\
-                                        <td class="payment" style="border-bottom: 1px solid #d9d9d9">월(기준)요금</td>\
-                                        <td class="payment" style="border-bottom: 1px solid #d9d9d9">결제주기</td>\
-                                        <td class="payment" style="border-bottom: 1px solid #d9d9d9">매입가</td>\
-                                        <td class="payment" style="border-bottom: 1px solid #d9d9d9">매입 단위</td>\
-                                        <td class="payment" style="border-bottom: 1px solid #d9d9d9">매입처</td>\
-                                        <td style="border-bottom: 1px solid #d9d9d9">서비스신청일<br>서비스개시일</td>\
-                                        <td style="border-bottom: 1px solid #d9d9d9" class="basic">제품출고일</td>\
-                                        <td style="border-bottom: 1px solid #d9d9d9">서비스상태</td>\
-                                        <td style="border-bottom: 1px solid #d9d9d9">과금시작일<br>과금만료일</td>\
-                                        <td style="border-bottom: 1px solid #d9d9d9">결제상태</td>\
-                                        <td style="border-bottom: 1px solid #d9d9d9">문서</td>\
-                                    </tr>';
+            // console.log($(this).text());
+            if($(this).text() == " + "){
+                $("#child_add_"+seq).show();
+                $(this).text(" - ");
+                var oneprice = $(this).parent().find(".oneprice").data("oneprice");
+                var monthprice = $(this).parent().find(".monthprice").data("oneprice");
+                $(this).parent().find(".oneprice").html(oneprice);
+                $(this).parent().find(".monthprice").html(monthprice);
+                var url = "/api/serviceAddList/"+seq;
+                if($(".child_add_content_"+seq).length > 0){
+                    $(".child_add_content_"+seq).show();
+                }else{
+                    $.ajax({
+                        url : url,
+                        type : 'GET',
+                        dataType : 'JSON',
+                        success:function(response){
+                            console.log(response);
+                            var html = "";
+                            if($(".basic").css("display") != "none"){
+                                var col = "14";
 
+                            }else{
+                                var col = "10";
+
+                            }
+                            for(var i = 0; i < response.length;i++){
+                                html += '<tr class="child_add_content_'+seq+'" style="border:0px">\
+                                            <td colspan='+col+' class="addcol2"></td>\
+                                            <td style="border-bottom: 1px solid #d9d9d9">'+response[i].sva_name+'</td>\
+                                            <td class="basic" style="border-bottom: 1px solid #d9d9d9"></td>\
+                                            <td style="border-bottom: 1px solid #d9d9d9"></td>\
+                                            <td style="border-bottom: 1px solid #d9d9d9"></td>\
+                                            <td style="border-bottom: 1px solid #d9d9d9">'+response[i].sva_number+'</td>\
+                                            <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9" >'+response[i].sva_claim_name+'</td>\
+                                            <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+response[i].svp_first_price+'</td>\
+                                            <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+(response[i].svp_month_price-response[i].svp_month_dis_price-response[i].svp_discount_price)+'</td>\
+                                            <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+response[i].sva_pay_day+'</td>\
+                                            <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+response[i].sva_input_price+'</td>\
+                                            <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+response[i].sva_input_unit+'</td>\
+                                            <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+response[i].c_name+'</td>\
+                                            <td style="border-bottom: 1px solid #d9d9d9">'+moment(response[i].sv_regdate).format("YYYY-MM-DD")+'<br></td>\
+                                            <td style="border-bottom: 1px solid #d9d9d9" class="basic">'+response[i].sva_input_date+'</td>\
+                                            <td style="border-bottom: 1px solid #d9d9d9">등록</td>\
+                                            <td style="border-bottom: 1px solid #d9d9d9">'+moment(response[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
+                                            <td style="border-bottom: 1px solid #d9d9d9"></td>\
+                                            <td style="border-bottom: 1px solid #d9d9d9"></td>\
+                                        </tr>';
+                            }
+                            $("#child_add_"+seq).after(html);
+                            if($(".payment1").css("display") != "none"){
+                                $(".payment2").show();
+                            }
                         }
-                        $("#child_add_"+seq).after(html);
-                    }
-                });
+                    });
+                }
+            }else{
+                $("#child_add_"+seq).hide();
+                $(".child_add_content_"+seq).hide();
+                $(this).text(" + ");
+                var oneprice = $(this).parent().find(".oneprice").data("allprice");
+                var monthprice = $(this).parent().find(".monthprice").data("allprice");
+                $(this).parent().find(".oneprice").html(oneprice);
+                $(this).parent().find(".monthprice").html(monthprice);
             }
+
 
         })
     })
@@ -289,6 +317,11 @@
                             var sr_auto = "-";
                             var sr_auto_end = response.list[i].sv_contract_end;
                         }
+                        var priceinfo = response.list[i].priceinfo.split("|");
+                        var firstPrice = priceinfo[0];
+                        var monthPrice = parseInt(priceinfo[1])-parseInt(priceinfo[2])-parseInt(priceinfo[3]);
+
+
                         html += '<tr>\
                                     <td><input type="checkbox" class="listCheck" name="sr_seq[]" value="'+response.list[i].sv_seq+'"></td>\
                                     <td>'+num+'</td>\
@@ -303,15 +336,15 @@
                                     <td class="basic">'+sr_auto_end+'</td>\
                                     <td>'+response.list[i].pc_name+'</td>\
                                     <td>'+response.list[i].pi_name+'</td>\
-                                    <td class="option_extend" data-seq="'+response.list[i].sv_seq+'"> + </td>\
+                                    <td class="option_extend" data-seq="'+response.list[i].sv_seq+'" style="width:30px;height:30px;background:#414860;font-size:16px;color:#fff;margin:2px"> + </td>\
                                     <td>'+response.list[i].pr_name+'</td>\
                                     <td class="basic">'+response.list[i].pd_name+'</td>\
                                     <td>'+response.list[i].ps_name+'</td>\
                                     <td>'+sr_rental+'</td>\
-                                    <td></td>\
+                                    <td>'+response.list[i].sv_number+'</td>\
                                     <td class="payment">'+response.list[i].sv_claim_name+'</td>\
-                                    <td class="payment">초기일회성</td>\
-                                    <td class="payment">월요금</td>\
+                                    <td class="payment oneprice" data-oneprice="'+response.list[i].svp_first_price+'" data-allprice="'+firstPrice+'">'+firstPrice+'</td>\
+                                    <td class="payment monthprice" data-oneprice="'+(response.list[i].svp_month_price-response.list[i].svp_month_dis_price-response.list[i].svp_discount_price)+'" data-allprice="'+monthPrice+'">'+monthPrice+'</td>\
                                     <td class="payment">'+response.list[i].sv_payment_period+'개월</td>\
                                     <td class="payment">'+response.list[i].sv_input_price+'</td>\
                                     <td class="payment"></td>\
@@ -324,19 +357,19 @@
                                     <td></td>\
                                 </tr>\
                                 <tr style="border-bottom:0px;display:none" id="child_add_'+response.list[i].sv_seq+'">\
-                                    <td colspan=10 ></td>\
-                                    <th style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9;">부가항목명</th>\
+                                    <td colspan=9 class="addcol"></td>\
+                                    <th style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9;" colspan=2>부가항목명</th>\
                                     <th class="basic" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></th>\
                                     <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
                                     <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
                                     <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스번호</td>\
-                                    <td class="payment" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">청구명</td>\
-                                    <td class="payment" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">초기일회성</td>\
-                                    <td class="payment" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">월(기준)요금</td>\
-                                    <td class="payment" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제주기</td>\
-                                    <td class="payment" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입가</td>\
-                                    <td class="payment" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입 단위</td>\
-                                    <td class="payment" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입처</td>\
+                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">청구명</td>\
+                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">초기일회성</td>\
+                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">월(기준)요금</td>\
+                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제주기</td>\
+                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입가</td>\
+                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입 단위</td>\
+                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입처</td>\
                                     <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스신청일<br>서비스개시일</td>\
                                     <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9" class="basic">제품출고일</td>\
                                     <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스상태</td>\

@@ -149,7 +149,7 @@ $(function(){
                 }
                 $(".md-id-str").html(response.mb_id);
                 $("#mb_address").val(response.mb_address);
-                $("#mb_auto_payment").val(response.mb_auto_payment);
+                $("#mb_auto_payment").val(response.mb_auto_payment).trigger("change");
                 $("#mb_bank").val(response.mb_bank);
                 $("#mb_bank_input_number").val(response.mb_bank_input_number);
                 $("#mb_bank_name").val(response.mb_bank_name);
@@ -171,10 +171,10 @@ $(function(){
                 $("#mb_payment_email").val(response.mb_payment_email);
                 $("#mb_payment_name").val(response.mb_payment_name);
                 $("#mb_payment_phone").val(response.mb_payment_phone);
-                $("#mb_payment_publish").val(response.mb_payment_publish);
-                $("#mb_payment_publish_type").val(response.mb_payment_publish_type);
+                $("#mb_payment_publish").val(response.mb_payment_publish).trigger("change");
+                $("#mb_payment_publish_type").val(response.mb_payment_publish_type).trigger("change");
                 $("#mb_payment_tel").val(response.mb_payment_tel);
-                $("#mb_payment_type").val(response.mb_payment_type);
+                $("#mb_payment_type").val(response.mb_payment_type).trigger("change");
                 $("#mb_phone").val(response.mb_phone);
                 $("#mb_tel").val(response.mb_tel);
                 $("#mb_type").val(response.mb_type);
@@ -502,7 +502,7 @@ var getList = function(){
                     html += '<tr>\
                                 <td><input type="checkbox" class="listCheck" name="mb_seq[]" value="'+response.list[i].mb_seq+'"></td>\
                                 <td>'+num+'</td>\
-                                <td>'+response.list[i].mb_id+'</td>\
+                                <td><a href="/member/view/'+response.list[i].mb_seq+'">'+response.list[i].mb_id+'</a></td>\
                                 <td>'+response.list[i].mb_name+'</td>\
                                 <td></td>\
                                 <td>'+response.list[i].mb_tel+'</td>\

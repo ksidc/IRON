@@ -5,7 +5,7 @@
 <head>
     <!-- Meta -->
     <meta charset="utf-8">
-    <title>아이원시큐리티</title>
+    <title>아이온시큐리티</title>
     <meta name="viewport" content="width=1200px">
     <!-- Web Fonts -->
     <link rel='stylesheet' type='text/css' href='//cdn.jsdelivr.net/font-nanum/1.0/nanumbarungothic/nanumbarungothic.css'>

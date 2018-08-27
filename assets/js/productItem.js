@@ -65,7 +65,7 @@ $(function(){
                 // console.log(response);
 
 
-                client_html = '<select id="pis_c_select_'+$(".subitemlist").length+'" name="add_pis_c_seq[]" class="subitemlist select2" style="width:90%">';
+                client_html = '<select id="pis_c_select_'+that.data("piseq")+'_'+$(".subitemlist").length+'" name="add_pis_c_seq[]" class="subitemlist select2" style="width:90%">';
                 client_html += '<option value="" selected>매입처 선택</option>';
                 for(var i = 0; i< response.length;i++){
                     client_html += '<option value="'+response[i].c_seq+'">'+response[i].c_name+'</option>';
@@ -225,7 +225,7 @@ $(function(){
                     subclient.each(function(i){
 
 
-                        var html = '<select id="pis_c_select_'+($(".subitemlist").length+i)+'" name="m_pis_c_seq[]" class="select2 subitemlist" style="width:90%">';
+                        var html = '<select id="pis_c_select_'+pi_seq+'_'+($(".subitemlist").length+i)+'" name="m_pis_c_seq[]" class="select2 subitemlist" style="width:90%">';
                         html += '<option value="" selected>매입처 선택</option>';
                         for(var i = 0; i< response.length;i++){
                             if($(this).data("name") == response[i].c_name){

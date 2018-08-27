@@ -881,7 +881,7 @@ $(function(){
                                 </div>\
                             </div>';
                 }
-                $(".upload-item").html(html);
+                $(".upload-item").append(html);
 
             }
         });

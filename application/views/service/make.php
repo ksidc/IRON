@@ -233,7 +233,9 @@
                     <div class="input"><span id="policy_text" style="display:none"><span id="policy_text1">당월분 일할 계산</span> (<span id="policy_text2"><?=$text_format?> <?=$text_format2?></span>)</span> <span id="policy_text_2">과금 시작일 기준 결제 주기로 처리</span> <button class="btn btn-brown" type="button" onclick='$( "#dialogFirstSetting" ).dialog("open");$("#dialogFirstSetting").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>변경</button></div>
                     <?php endif; ?>
                 </div>
-
+                <input type="hidden" name="sp_first_price" id="sp_first_price" value=0>
+                <input type="hidden" name="sp_first_start" id="sp_first_start">
+                <input type="hidden" name="sp_first_end" id="sp_first_end">
             </div>
             <div class="modal-title">
                 <div class="modal-title-text" style="display:inline-block">기본 서비스 정보 </div>
@@ -349,8 +351,8 @@
                         </li>
 
                         <li class="dib" style="padding-left:194px">상품 매입가 <i class="fas fa-info-circle"></i></li>
-                        <li class="dib" style="padding:0px 56px 0px 10px">
-                            <input type="text" style="width:180px" name="sr_input_price" id="sr_input_price" class="right">원
+                        <li class="dib" style="padding:0px 40px 0px 10px">
+                            <input type="text" style="width:180px" name="sr_input_price" id="sr_input_price" class="right"><span id="sr_input_price_text">원<span style='color:transparent'>/월</span></span>
                         </li>
                     </ul>
                 </div>

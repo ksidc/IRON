@@ -775,3 +775,25 @@ nav ul li.active {
     padding-top:5px;
     padding-bottom:5px;
 }
+
+
+.border_tit {font-family:굴림, verdana, arial; font-size: 11px;color: #000000;}
+
+.border_up {font-family:굴림, verdana, arial; font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#f4ce42; border-top-style:solid; border-left-style:none; border-right-style:solid; border-bottom-style:none;}
+
+.border_all {font-family:굴림, verdana, arial; font-size: 11px;color: #000000; border-top-width:2; border-right-width:2; border-bottom-width:2; border-left-width:2; border-color:#f4ce42; border-top-style:solid; border-left-style:solid; border-right-style:solid; border-bottom-style:solid; }
+
+.border_both {font-family:굴림, verdana, arial; font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#f4ce42; border-top-style:none; border-left-style:solid; border-right-style:solid; border-bottom-style:none;}
+
+.border_top {font-family:굴림, verdana, arial; font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#f4ce42; border-top-style:solid; border-left-style:none; border-right-style:none; border-bottom-style:none;}
+
+.border_back {font-family:굴림, verdana, arial; font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#f4ce42; border-top-style:solid; border-left-style:solid; border-right-style:solid; border-bottom-style:none;}
+
+.border-no {
+    border:0px;
+}
+
+.width90 {
+    width:85%;
+    padding:0;
+}

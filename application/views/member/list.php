@@ -269,14 +269,14 @@
                 <div class="input">
 
                     <select name="mb_auto_payment" id="mb_auto_payment" class="select2" style="width:90%">
-                        <?php for($i = 1; $i < 32; $i++): ?>
+                        <?php for($i = 1; $i < 29; $i++): ?>
                             <?php if($i == 25): ?>
                                 <option selected value="<?=$i?>"><?=$i?>일</option>
                             <?php else: ?>
                                 <option value="<?=$i?>"><?=$i?>일</option>
                             <?php endif; ?>
                         <?php endfor; ?>
-                        <option value="32">말일</option>
+                        <option value="29">말일</option>
                     </select>
 
                 </div>

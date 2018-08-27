@@ -765,7 +765,7 @@ class Api extends CI_Controller {
 
         // $start = ($start-1)*$end;
         $total = $this->api_model->countProductItem($pc_seq);
-        $list = $this->api_model->fetchProductItem($pc_seq,$start,$end);
+        $list = $this->api_model->fetchProductItem($pc_seq);
         $html = "";
         foreach($list as $key => $row){
             $sub = $this->api_model->fetchProductItemSub($row["pi_seq"]);
@@ -1412,11 +1412,16 @@ class Api extends CI_Controller {
         $sv_seq = $this->api_model->selectInsertService($sr_seq);
 
 
-        $this->api_model->selectInsertServicePrice($sv_seq,$sr_seq);
+        // $this->api_model->selectInsertServicePrice($sv_seq,$sr_seq);
         $result = $this->api_model->selectInsertServiceOption($sv_seq,$sr_seq);
 
         $arr = array('result'=>$result);
         echo json_encode($arr);
+    }
+
+    public function serviceUpdate(){
+        $result = $this->api_model->serviceUpdate();
+        echo json_encode($result);
     }
 
     public function serviceList($start,$end){
@@ -1433,5 +1438,111 @@ class Api extends CI_Controller {
     public function serviceAddList($sv_seq){
         $result = $this->api_model->fetchServiceAdd($sv_seq);
         echo json_encode($result);
+    }
+
+    public function memberPaymentView($ap_seq){
+        $result = $this->api_model->memberPaymentView($ap_seq);
+        echo json_encode($result);
+    }
+
+    public function paymentView($pm_seq){
+        $result = $this->api_model->paymentView($pm_seq);
+        echo json_encode($result);
+    }
+
+    public function paymentMemoAdd(){
+        $result = $this->api_model->paymentMemoAdd();
+        echo json_encode($result);
+    }
+
+    public function paymentMemoList($po_pm_seq){
+        $list = $this->api_model->fetchPaymentMemo($po_pm_seq);
+        $result = [
+            "list" => $list
+        ];
+
+        echo json_encode($result);
+    }
+
+    public function paymentMemoUpdate($po_seq){
+        $result = $this->api_model->paymentMemoUpdate($po_seq);
+        echo json_encode($result);
+    }
+
+    public function paymentAdd(){
+        $result = $this->api_model->paymentAdd();
+        echo json_encode($result);
+    }
+
+    public function paymentUpdate(){
+        $result = $this->api_model->paymentUpdate();
+        echo json_encode($result);
+    }
+
+    public function paymentDelete(){
+        $pm_seq = $this->input->get("pm_seq");
+        $pm_seq_array = explode(",",$pm_seq);
+
+        $result = $this->api_model->paymentDelete($pm_seq_array);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function paymentList($pm_mb_seq){
+        $list = $this->api_model->fetchPayment($pm_mb_seq);
+        $result = [
+            "list" => $list
+        ];
+
+        echo json_encode($result);
+    }
+
+    public function paymentOnceAdd(){
+        $result = $this->api_model->paymentOnceAdd();
+        echo json_encode($result);
+    }
+
+    public function paymentOnceUpdate($pn_seq){
+        $result = $this->api_model->paymentOnceUpdate($pn_seq);
+        echo json_encode($result);
+    }
+
+    public function paymentOnceView($pn_seq){
+        $result = $this->api_model->selectPaymentOnce($pn_seq);
+        echo json_encode($result);
+    }
+
+    public function inputDateUpdate($pm_seq){
+        $result = $this->api_model->inputDateUpdate($pm_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function claimAdd($mb_seq){
+        $result = $this->api_model->inputClaimAdd($mb_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function paymentClaim(){
+        $result = $this->api_model->paymentClaim($pm_seq);
+        echo json_encode($result);
+    }
+    public function paymentClaimAdd(){
+        $result = $this->api_model->paymentClaimAdd();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function paymentClaimUpdate(){
+        $result = $this->api_model->paymentClaimUpdate();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function paymentInput(){
+        $result = $this->api_model->paymentInput();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
     }
 }

@@ -272,13 +272,16 @@ $(function(){
                                         </li>\
                                         <li class="dib" style="padding-left:174px">부가 항목 매입 시작일 <i class="fas fa-info-circle"></i></li>\
                                         <li class="dib" style="padding:0px 66px 0px 10px">\
-                                            <input type="text" style="width:180px" name="sa_input_date[]" id="sa_input_date_'+response[i].pis_seq+'" class="sa_input_date">\
+                                            <input type="text" style="width:180px" name="sa_input_date[]" id="sa_input_date_'+response[i].pis_seq+'" class="sa_input_date datepicker3">\
                                         </li>\
                                     </ul>\
                                 </div>\
                             </div>';
                     }
                     $(".addoption").html(addoption);
+                    $( ".datepicker3" ).datepicker({
+                        "dateFormat" : "yy-mm-dd"
+                    });
                 }
 
             });
@@ -357,9 +360,11 @@ $(function(){
             if($(this).find(':selected').data('prsdiv') == "1"){
                 $("#sr_month_price_str").html("원<span style='color:transparent'>/월</span>");
                 $("#sr_after_price_str").html("원<span style='color:transparent'>/월</span>");
+                $("#sr_input_price_text").html("원<span style='color:transparent'>/월</span>");
             }else{
                 $("#sr_month_price_str").html("원/월");
                 $("#sr_after_price_str").html("원/월");
+                $("#sr_input_price_text").html("원/월");
             }
         }
 
@@ -380,7 +385,7 @@ $(function(){
             var seq = $(this).data("seq");
             var pi_name = $(this).data("piname");
             var pis_name = $(this).data("name");
-            var addoptionprice = '<div style="clear:both;width:100%;border-top:1px solid #ddd" id="addoptionprice_'+seq+'" class="addoptionprice" data-seq="'+seq+'"><input type="hidden" name="sap_seq[]" id="sap_seq_'+seq+'"><input type="hidden" name="etc_yn_v[]" id="etc_yn_v_'+seq+'"><input type="hidden" name="pis_seq_add[]" id="pis_seq_add_'+seq+'" value="'+seq+'"><input type="hidden" name="sp_discount_yn_add[]" id="sp_discount_yn_add'+seq+'" value="N">\
+            var addoptionprice = '<div style="clear:both;width:100%;border-top:1px solid #ddd" id="addoptionprice_'+seq+'" class="addoptionprice" data-seq="'+seq+'"><input type="hidden" name="sap_seq[]" id="sap_seq_'+seq+'"><input type="hidden" name="etc_yn_v[]" id="etc_yn_v_'+seq+'"><input type="hidden" name="pis_seq_add[]" id="pis_seq_add_'+seq+'" value="'+seq+'"><input type="hidden" name="sp_discount_yn_add[]" id="sp_discount_yn_add'+seq+'" value="N"><input type="hidden" name="sap_first_price_add[]" id="sap_first_price_'+seq+'" value=0><input type="hidden" name="sap_first_start_add[]" id="sap_first_start_'+seq+'"><input type="hidden" name="sap_first_end_add[]" id="sap_first_end_'+seq+'">\
                     <div style="width:10%;float:left;vertical-align:top; ">\
                         <p style="text-align:center;padding-top:100px">부가'+num+'</p>\
                     </div>\
@@ -540,7 +545,7 @@ $(function(){
         $("#sr_pay_type").val($(this).data("mbpaymenttype")).trigger("change");
         $("#sr_pay_publish").val($(this).data("mbpaymentpublish")).trigger("change");
         $("#sr_pay_publish_type").val($(this).data("mbpaymentpublishtype")).trigger("change");
-        $("#sr_pay_day").val($(this).data("mbautopayment"));
+        $("#sr_pay_day").val($(this).data("mbautopayment")).trigger("change");
         if($(this).data("mbpaymentday") == 32){
             var mbpaymentday = "말일";
         }else{
@@ -1305,7 +1310,7 @@ var calculateAddPrice = function(seq){
     var sp_once_total_price = parseInt($("#sp_once_total_price_add"+seq).val() || 0);
     var sp_month_total_price = parseInt($("#sp_month_total_price_add"+seq).val() || 0);
     $("#total_str_add_"+seq).html($.number(sp_once_total_price+sp_month_total_price));
-
+    $("#sap_first_price_"+seq).val(sp_once_total_price+sp_month_total_price);
     contractPriceDateInfoAdd(seq);
     calculateTotalPrice();
 
@@ -1590,15 +1595,24 @@ function priceInfoDate(){
 
         $("#view_add").hide();
     }
-    console.log(basic_date_info);
+    // console.log(basic_date_info);
     // console.log(start_str[0]);
     // var month = moment(selectedDate).add(period,'months').format("YYYY-MM-DD");
     $("#sr_account_end").val(end_date);
     $("#start_date_str_0_1").html(moment(start_str[0]).format("YYYY년 MM월 DD일"));
     $("#end_date_str_0_1").html(end_str[0]+" ("+end_period[0]+")");
+    $("#sp_first_start").val(start_str[0]);
 
     $("#start_date_str_0_2").html(start_str[1]);
     $("#end_date_str_0_2").html(end_str[1]+" ("+end_period[1]+")");
+
+    if(basic_date_info.length > 1){
+        $("#sp_first_end").val(basic_date_info[1].end_date);
+        console.log(start_str[0]+"::"+basic_date_info[0].end_date+"::"+basic_date_info[1].end_date);
+    }else{
+        $("#sp_first_end").val(basic_date_info[0].end_date);
+        console.log(start_str[0]+"::"+basic_date_info[0].end_date);
+    }
 
     contractPriceDateInfo();
 }
@@ -1735,6 +1749,7 @@ function contractPriceDateInfo(){
     }
 
     $("#total_str0").data("price",totalprice);
+    $("#sp_first_price").val(totalprice);
     $("#total_str0").html($.number(totalprice));
 
 
@@ -1878,6 +1893,7 @@ function contractPriceDateInfoAdd(seq){
         totalprice = parseInt(totalprice) + parseInt(basic_date_info_add[seq][i].price);
     }
     $("#total_str_add_"+seq).data("price",totalprice);
+    $("#sap_first_price_"+seq).val(totalprice);
     $("#total_str_add_"+seq).html($.number(totalprice));
 }
 
@@ -2083,7 +2099,16 @@ function priceInfoDateAdd(pis_seq){
 
     $("#start_date_str_add_0_2_"+pis_seq).html(start_str[1]);
     $("#end_date_str_add_0_2_"+pis_seq).html(end_str[1]+" ("+end_period[1]+")");
-    console.log(basic_date_info_add);
+    $("#sap_first_start_"+pis_seq).val(start_str[0]);
+    if(basic_date_info_add[pis_seq].length > 1){
+        $("#sap_first_end_"+pis_seq).val(basic_date_info_add[pis_seq][1].end_date);
+        console.log(start_str[0]+"::"+basic_date_info_add[pis_seq][0].end_date+"::"+basic_date_info_add[pis_seq][1].end_date);
+    }else{
+        $("#sap_first_end_"+pis_seq).val(basic_date_info_add[pis_seq][0].end_date);
+        console.log(start_str[0]+"::"+basic_date_info_add[pis_seq][0].end_date);
+    }
+
+    // console.log(basic_date_info_add);
     // contractPriceDateInfo();
     contractPriceDateInfoAdd(pis_seq);
 }

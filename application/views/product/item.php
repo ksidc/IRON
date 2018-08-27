@@ -25,7 +25,7 @@
             </div>
         </div>
         </form>
-        <div class="table-list" style="height:400px">
+        <div class="table-list" style="height:400px;overflow:auto">
             <form id="listForm" method="POST" >
             <table class="table" >
                 <thead>
