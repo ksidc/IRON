@@ -10,6 +10,11 @@ class Api extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
+        $this->load->database();
+
+        // 추가 연결
+        // $adddb = $this->load->database("group_name");
+        // $adddb->query(query);
         $this->load->model("api_model");
         $this->load->library('PHPExcel');
     }

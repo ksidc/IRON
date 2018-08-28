@@ -954,7 +954,7 @@
                                     청구발행
                                 <?php endif; ?>
                             </td>
-                            <td class="detailPView" data-seq="<?=$row["pm_seq"]?>">수정</td>
+                            <td><i class="fas fa-edit detailPView" data-seq="<?=$row["pm_seq"]?>"></i></td>
                             <td></td>
                         </tr>
                         <?php endforeach; ?>
