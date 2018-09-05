@@ -79,9 +79,121 @@ $(function(){
 
     })
 
+    $( "#dialogTypeSearch" ).dialog({
+        autoOpen: false,
+        modal: true,
+        width:'500px',
+        height : 450
+    });
+
+    $( "#dialogEndSearch" ).dialog({
+        autoOpen: false,
+        modal: true,
+        width:'500px',
+        height : 450
+    });
+
+    $("#endSearchForm").submit(function(event){
+
+        // if($("#endSearchWord").val() == ""){
+        //     alert("검색어를 입력해주세요");
+        //     return false;
+        // }
+
+        var url = "/api/endUserList";
+        var endSearchForm = $("#endSearchForm").serialize();
+        // console.log(userSearchForm);
+        $.ajax({
+            url : url,
+            type : 'GET',
+            dataType : 'JSON',
+            data : endSearchForm,
+            success:function(response){
+                // console.log(response);
+                var html ="";
+                if(response.length == 0){
+                    html += "<tr><td colspan=4 align=center>검색결과가 없습니다.</td></tr>";
+                }else{
+                    for(var i = 0; i < response.list.length;i++){
+                        html += '<tr>\
+                                    <td><a href="javascript:void(0)" class="clickEnd" data-name="'+response.list[i].eu_name+'" data-seq="'+response.list[i].eu_seq+'">'+response.list[i].eu_code+'</a></td>\
+                                    <td>'+response.list[i].eu_name+'</td>\
+                                    <td class="editEnd" data-name="'+response.list[i].eu_name+'" data-seq="'+response.list[i].eu_seq+'"><i class="fas fa-edit"></i></td>\
+                                    <td class="deleteEnd" data-seq="'+response.list[i].eu_seq+'"><i class="fas fa-trash"></i></td>\
+                                </tr>\
+                        ';
+                    }
+                }
+                $("#modalSearchEnd").html(html);
+            }
+        });
+        return false;
+    });
+
+    $("#clientSearchForm").submit(function(){
+        // if($("#clientSearchWord").val() == ""){
+        //     alert("매입처 명을 입력해 주시기 바랍니다.");
+        //     return false;
+        // }
+        var url = "/api/clientSearchList";
+        var datas = $("#clientSearchForm").serialize();
+        $.ajax({
+            url : url,
+            type : 'GET',
+            dataType : 'JSON',
+            data : datas,
+            success:function(response){
+                console.log(response);
+                var html = "";
+                for(var i =0 ; i < response.length;i++){
+                    html = '<tr>\
+                    <td class="c_click" data-seq="'+response[i].c_seq+'" data-name="'+response[i].c_name+'" style="cursor:pointer;text-decoration:underline">'+response[i].c_id+'</td>\
+                    <td>'+response[i].c_name+'</td>\
+                    </tr>;'
+                };
+                $("#modalSearchClient").html(html);
+            }
+        });
+        return false;
+    });
+    $(".datepicker3").datepicker({
+        "dateFormat" : "yy-mm-dd"
+    })
 });
 
 function pad(n, width) {
   n = n + '';
   return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+}
+
+var typeGetList = function(){
+    // alert(1);
+    var url = "/api/companyTypeList";
+    var typeSearchForm = $("#typeSearchForm").serialize();
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        data : typeSearchForm,
+        success:function(response){
+            var html ="";
+            if(response.list.length == 0){
+                html += "<tr><td colspan=4 align=center>검색결과가 없습니다.</td></tr>";
+            }else{
+                for(var i = 0; i < response.list.length;i++){
+                    html += '<tr>\
+                                <td><a href="javascript:void(0)" class="clickType" data-seq="'+response.list[i].ct_seq+'" data-name="'+response.list[i].ct_name+'">'+response.list[i].ct_code+'</a></td>\
+                                <td>'+response.list[i].ct_name+'</td>\
+                                <td class="editType" data-name="'+response.list[i].ct_name+'" data-seq="'+response.list[i].ct_seq+'"><i class="fas fa-edit"></i></td>\
+                                <td class="deleteType" data-seq="'+response.list[i].ct_seq+'"><i class="fas fa-trash"></i></td>\
+                            </tr>\
+                    ';
+                }
+            }
+            $("#modalSearchType").html(html);
+            $("#addType").val(pad(response.nextCode,3));
+            // $("#ct_name").val("");
+        }
+    });
+    return false;
 }

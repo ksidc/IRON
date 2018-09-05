@@ -2862,6 +2862,7 @@ class Api_model extends CI_Model {
             "sv_account_start" => $row["sr_account_start"],
             "sv_account_end" => $row["sr_account_end"],
             "sv_account_type" => $row["sr_account_type"],
+            "sv_account_policy" => $row["sr_account_policy"],
             "sv_account_start_day" => $row["sr_account_start_day"],
             "sv_account_format" => $row["sr_account_format"],
             "sv_account_format_policy" => $row["sr_account_format_policy"],
@@ -3484,19 +3485,22 @@ class Api_model extends CI_Model {
         $cd_num = $this->input->post("cd_num");
         $cd_main = $this->input->post("cd_main");
         $cd_name = $this->input->post("cd_name");
-        $cd_ap_seq = $this->input->post("cd_ap_seq");
+        $cd_svp_seq = $this->input->post("cd_svp_seq");
         for($i =0;$i < count($cd_num);$i++){
             $data_detail = array(
                 "cd_cl_seq" => $cl_seq,
                 "cd_num" => $cd_num[$i],
                 "cd_main" => $cd_main[$i],
                 "cd_name" => $cd_name[$i],
-                "cd_ap_seq" => $cd_ap_seq[$i]
+                "cd_svp_seq" => $cd_svp_seq[$i]
             );
 
             $this->db->insert("claim_detail",$data_detail);
-        }
 
+            $data_svp["svp_cl_seq"] = $cl_seq;
+            $this->db->where("svp_seq",$cd_svp_seq[$i]);
+            $this->db->update("service_price",$data_svp);
+        }
         return true;
     }
 
@@ -3512,16 +3516,18 @@ class Api_model extends CI_Model {
             "sv_account_start" => $this->input->post("sv_account_start"),
             "sv_account_end" => $this->input->post("sv_account_end"),
             "sv_account_type" => $this->input->post("sv_account_type"),
+            "sv_account_policy" => $this->input->post("sv_account_policy"),
             "sv_account_start_day" => $this->input->post("sv_account_start_day"),
             "sv_account_format" => $this->input->post("sv_account_format"),
             "sv_account_format_policy" => $this->input->post("sv_account_format_policy"),
             "sv_claim_name" => $this->input->post("sv_claim_name"),
             "sv_bill_name" => $this->input->post("sv_bill_name"),
-            "sv_once_price" => $this->input->post("sv_once_price"),
-            "sv_month_price" => $this->input->post("sv_month_price"),
+            "sv_once_price" => $this->input->post("svp_once_price"),
+            "sv_month_price" => $this->input->post("svp_month_price"),
             "sv_c_seq" => $this->input->post("sv_c_seq"),
             "sv_input_price" => $this->input->post("sv_input_price"),
-            "sv_input_start" => $this->input->post("sv_input_start")
+            "sv_input_start" => $this->input->post("sv_input_start"),
+            "sv_input_unit" => $this->input->post("sv_input_unit")
         );
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
         $this->db->update("service",$new_data);
@@ -3546,9 +3552,9 @@ class Api_model extends CI_Model {
             "svp_month_dis_msg" => $this->input->post("svp_month_dis_msg"),
             "svp_discount_yn" => $this->input->post("svp_discount_yn"),
             "svp_discount_price" => $this->input->post("svp_discount_price"),
-            "svp_first_price" => $this->input->post("svp_first_price")
+            "svp_register_discount" => $this->input->post("svp_register_discount")
         );
-        $this->db->where("svp_sv_seq",$this->input->post("sv_seq"));
+        $this->db->where("svp_sv_seq",$this->input->post("svp_seq"));
         return $this->db->update("service_price",$data_price);
     }
 
@@ -3783,6 +3789,221 @@ class Api_model extends CI_Model {
         $seq = explode(",",$this->input->post("pm_seq"));
         $this->db->where("pm_seq",$seq);
         return $this->db->update("payment",$data);
+    }
+
+    public function updateServiceOutInfo(){
+        $data = array(
+            "sv_out_date" => $this->input->post("sv_out_date"),
+            "sv_out_type" => $this->input->post("sv_out_type"),
+            "sv_out_serial" => $this->input->post("sv_out_serial"),
+            "sv_out_memo" => $this->input->post("sv_out_memo")
+        );
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        return $this->db->update("service",$data);
+    }
+
+    public function updateServiceCharger(){
+        $data = array(
+            "sv_engineer_part" => $this->input->post("sv_engineer_part"),
+            "sv_engineer_charger" => $this->input->post("sv_engineer_charger")
+        );
+
+        if($this->input->post("sv_status") != ""){
+            $data["sv_status"] = $this->input->post("sv_status");
+        }
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        return $this->db->update("service",$data);
+    }
+
+    public function updateServiceOpen(){
+        $data["sv_status"] = 3;
+        $data["sv_service_start"] = date("Y-m-d H:i:s");
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        return $this->db->update("service",$data);
+    }
+
+    public function updateServiceOpenTime(){
+        $data["sv_service_start"] = $this->input->post("service_open");
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        return $this->db->update("service",$data);
+    }
+
+    public function updateServiceStop(){
+        $data["sv_service_stop"] = $this->input->post("sv_service_stop");
+        $data["sv_service_restart"] = $this->input->post("sv_service_restart");
+        $data["sv_service_stop_msg"] = $this->input->post("sv_service_stop_msg");
+        $data["sv_status"] = 4;
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        return $this->db->update("service",$data);
+    }
+
+    public function updateServiceEnd(){
+        $data["sv_service_end"] = $this->input->post("sv_service_stop");
+        // $data["sv_service_restart"] = $this->input->post("sv_service_restart")
+        if($this->input->post("sv_service_end_msg") == "기타"){
+            $data["sv_service_end_msg"] = $this->input->post("sv_service_end_msg_etc");
+        }else{
+            $data["sv_service_end_msg"] = $this->input->post("sv_service_stop_msg");
+        }
+
+        $data["sv_status"] = 5;
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        return $this->db->update("service",$data);
+    }
+
+    public function updateServiceForceStop(){
+        $data["sv_status"] = 6;
+        $data["sv_service_stop"] = date("Y-m-d H:i:s");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        return $this->db->update("service",$data);
+    }
+
+    public function updateServiceForceEnd(){
+        $data["sv_status"] = 7;
+        $data["sv_service_end"] = date("Y-m-d H:i:s");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        return $this->db->update("service",$data);
+    }
+
+    public function updateServiceRestart(){
+        $data["sv_status"] = 3;
+        $data["sv_service_restart"] = date("Y-m-d H:i:s");
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        return $this->db->update("service",$data);
+    }
+
+    public function serviceFileAdd(){
+        $data_insert_array = [];
+        if(isset($_FILES["file"])){
+            for($i = 0; $i < count($_FILES["file"]["name"]);$i++){
+                if($_FILES["file"]["size"][$i] > 0){
+
+                    $ext = substr(strrchr(basename($_FILES['file']["name"][$i]), '.'), 1);
+                    $file_name = time()."_".rand(1111,9999).".".$ext;
+                    move_uploaded_file($_FILES["file"]['tmp_name'][$i],$_SERVER["DOCUMENT_ROOT"].'/uploads/service_file/'.$file_name);
+                    $data = array(
+                        "sf_file" => $file_name,
+                        "sf_sv_seq" => $this->input->post("sv_seq"),
+                        "sf_origin_file" => $_FILES['file']["name"][$i],
+                        "sf_file_size" => $_FILES['file']["size"][$i],
+                        "sf_type" => $this->input->post("sf_type")
+                    );
+
+                    array_push($data_insert_array,$data);
+
+
+                }
+            }
+        }
+        if(count($data_insert_array) > 0){
+            $this->db->insert_batch("service_files",$data_insert_array);
+        }
+        return true;
+    }
+
+    public function serviceFileFetch($sv_seq,$type){
+        $this->db->select("*");
+        $this->db->from("service_files");
+        $this->db->where("sf_sv_seq",$sv_seq);
+        $this->db->where("sf_type",$type);
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+
+    }
+
+    public function serviceFileDelete($sf_seq){
+        // data array
+        $this->db->select("*");
+        $this->db->from("service_files");
+        $this->db->where("sf_seq",$sf_seq);
+        $query = $this->db->get();
+
+        $row = $query->row_array();
+        $sf_file = $row["sf_file"];
+
+        unlink($_SERVER["DOCUMENT_ROOT"]."/uploads/service_file/".$sf_file);
+
+        $this->db->where("sf_seq",$sf_seq);
+
+        return $this->db->delete("service_files");
+    }
+
+    public function serviceMemoAdd(){
+        $data = array(
+            "sm_sv_seq" => $this->input->post("sv_seq"),
+            "sm_charger" => $this->input->post("sm_chager"),
+            "sm_regdate" => date("Y-m-d H:i:s"),
+            "sm_msg" => $this->input->post("sm_msg")
+        );
+
+        return $this->db->insert("service_memo",$data);
+    }
+
+    public function serviceMemoModify(){
+        $data = array(
+            "sm_charger" => $this->input->post("sm_chager"),
+            "sm_msg" => $this->input->post("sm_msg")
+        );
+        $this->db->where("sm_seq",$this->input->post("sm_seq"));
+        return $this->db->update("service_memo",$data);
+    }
+
+    public function serviceMemoDelete(){
+        $this->db->where("sm_seq",$this->input->post("sm_seq"));
+        return $this->db->delete("service_memo");
+    }
+
+    public function countServiceMemo(){
+        $this->db->select("count(*) as total");
+        $this->db->from("service_memo");
+        $this->db->where("sm_sv_seq",$this->input->get("sv_seq"));
+
+        $query = $this->db->get();
+
+        $row = $query->row_array();
+
+        return $row["total"];
+    }
+
+    public function serviceMemoFetch(){
+        $this->db->select("*");
+        $this->db->from("service_memo");
+        $this->db->where("sm_sv_seq",$this->input->get("sv_seq"));
+
+        $this->db->limit($this->input->get("end"),$this->input->get("start"));
+        $query = $this->db->get();
+
+        return $query->result_array();
+
+        // return $row["total"];
+    }
+
+    public function serviceHistoryAdd(){
+        $data = array(
+            "sh_sv_code" => $this->input->post("sv_code"),
+            "sh_type" => $this->input->post("sh_type"),
+            "sh_date" => date("Y-m-d H:i:s"),
+            "sh_service_start" => $this->input->post("sh_service_start"),
+            "sh_service_end" => $this->input->post("sh_service_end"),
+            "sh_link" => $this->input->post("sh_link")
+        );
+
+        return $this->db->insert("service_history",$data);
     }
 }
 

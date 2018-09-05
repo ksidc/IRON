@@ -341,7 +341,7 @@
                                     <td class="basic">'+response.list[i].pd_name+'</td>\
                                     <td>'+response.list[i].ps_name+'</td>\
                                     <td>'+sr_rental+'</td>\
-                                    <td>'+response.list[i].sv_number+'</td>\
+                                    <td><a href="/service/view/'+response.list[i].sv_seq+'">'+response.list[i].sv_number+'</a></td>\
                                     <td class="payment">'+response.list[i].sv_claim_name+'</td>\
                                     <td class="payment oneprice" data-oneprice="'+response.list[i].svp_first_price+'" data-allprice="'+firstPrice+'">'+firstPrice+'</td>\
                                     <td class="payment monthprice" data-oneprice="'+(response.list[i].svp_month_price-response.list[i].svp_month_dis_price-response.list[i].svp_discount_price)+'" data-allprice="'+monthPrice+'">'+monthPrice+'</td>\

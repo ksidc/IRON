@@ -58,4 +58,16 @@ class Member extends CI_Controller {
         $layout["content"] = $this->load->view("member/payment_setting", $data,true);
         $this->load->view('layout/layout_popup',$layout);
     }
+
+    public function payment_view($svp_seq){
+        $data["info"] = $this->api_model->memberPaymentView($svp_seq);
+        $layout["content"] = $this->load->view("member/payment_view", $data,true);
+        $this->load->view('layout/layout_popup',$layout);
+    }
+
+    public function claim_view($pm_seq){
+        $data["info"] = $this->api_model->paymentView($pm_seq);
+        $layout["content"] = $this->load->view("member/claim_view", $data,true);
+        $this->load->view('layout/layout_popup',$layout);
+    }
 }

@@ -32,7 +32,7 @@
                 <div class="modal-field-input">
                     <div class="label">상호/이름(*)</div>
                     <div class="input">
-                        <input type="text" class="width-button" name="mb_name" id="mb_name" value="<?=$service["mb_name"]?>" readonly><button class="btn btn-brown btn-number-duple" type="button" onclick='$( "#dialogUserSearch" ).dialog("open");$("#dialogUserSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
+                        <input type="text" class="width-button" name="mb_name" id="mb_name" value="<?=$service["mb_name"]?>" readonly><button class="btn btn-brown " type="button" onclick='$( "#dialogUserSearch" ).dialog("open");$("#dialogUserSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
                     </div>
                 </div>
                 <div class="modal-field-input">
@@ -46,13 +46,13 @@
                 <div class="modal-field-input">
                     <div class="label">End User(*)</div>
                     <div class="input">
-                        <input type="text" class="width-button" name="eu_name" id="eu_name" value="<?=$service["eu_name"]?>" readonly><button class="btn btn-brown  btn-number-duple" type="button" onclick='$( "#dialogEndSearch" ).dialog("open");$("#dialogEndSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
+                        <input type="text" class="width-button" name="eu_name" id="eu_name" value="<?=$service["eu_name"]?>" readonly><button class="btn btn-brown " type="button" onclick='$( "#dialogEndSearch" ).dialog("open");$("#dialogEndSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
                     </div>
                 </div>
                 <div class="modal-field-input">
                     <div class="label">업체 분류</div>
                     <div class="input">
-                        <input type="text" class="width-button" name="ct_name" id="ct_name" value="<?=$service["ct_name"]?>" readonly><button class="btn btn-brown  btn-number-duple" type="button" onclick='$( "#dialogTypeSearch" ).dialog("open");$("#dialogTypeSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
+                        <input type="text" class="width-button" name="ct_name" id="ct_name" value="<?=$service["ct_name"]?>" readonly><button class="btn btn-brown " type="button" onclick='$( "#dialogTypeSearch" ).dialog("open");$("#dialogTypeSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
                     </div>
                 </div>
             </div>
@@ -117,7 +117,8 @@
             <div class="modal-title">
                 <div class="modal-title-text" style="display:inline-block">기본 결제 조건 </div>
                 <div style="display:inline-block;text-align:right;width:78%">
-                    <div style="text-align:right"><span class="btn btn-brown " style="cursor:default">등록 할인율 (변경 가능)</span><input type="text" name="sr_register_discount" id="sr_register_discount" style="width:40px;border:1px solid #ddd;height:22px" value="<?=$service["sr_register_discount"]?>" class="price_cal">% </div>
+                    <!-- <div style="text-align:right"><span class="btn btn-brown " style="cursor:default">등록 할인율 (변경 가능)</span><input type="text" name="sr_register_discount" id="sr_register_discount" style="width:40px;border:1px solid #ddd;height:22px" value="<?=$service["sr_register_discount"]?>" class="price_cal">% </div> -->
+                    <input type="hidden" name="sr_register_discount" id="sr_register_discount" value="<?=$service["sr_register_discount"]?>" class="price_cal">
                 </div>
             </div>
             <div class="modal-field depth-area">
@@ -384,7 +385,7 @@
                             <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:160px" name="sp_once_price" id="sp_once_price" value="<?=$service_price["sp_once_price"]?>" class="price_cal2" readonly> 원</li>
                             <li style="line-height:35px;padding-left:5px;color:red;border-left:1px solid #ddd"> - <input type="text" style="width:160px" name="sp_once_dis_price" id="sp_once_dis_price" value="<?=$service_price["sp_once_dis_price"]?>" class="price_cal2"> 원</li>
                             <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:160px" name="sp_once_dis_msg" value="<?=$service_price["sp_once_dis_msg"]?>"></li>
-                            <li style="line-height:35px;font-size:11px;padding-left:12px"><input type="checkbox" name="sp_discount_yn" value="Y" <?=($service_price["sp_discount_yn"] == "Y" ? "checked":"")?>> 요금 납부 방법 및 결제 주기 할인 적용</li>
+                            <li style="line-height:35px;font-size:11px;padding-left:12px"><input type="checkbox" name="sp_discount_yn" id="sp_discount_yn" value="Y" <?=($service_price["sp_discount_yn"] == "Y" ? "checked":"")?>> 할인적용(<span id="sr_register_discount_str"><?=$service["sr_register_discount"]?></span>%)</li>
                             <li style="line-height:35px;background:#eee;padding-left:5px;border-bottom:1px solid #ddd;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:160px" name="sp_once_total_price" id="sp_once_total_price" class="price_cal4" readonly> 원</li>
                         </ul>
                     </div>
@@ -773,7 +774,7 @@ function getPr(){
                                         </li>\
                                         <li class="dib" style="padding-left:174px">부가 항목 매입 시작일 <i class="fas fa-info-circle"></i></li>\
                                         <li class="dib" style="padding:0px 66px 0px 10px">\
-                                            <input type="text" style="width:180px" name="sa_input_date[]" id="sa_input_date_'+response[i].pis_seq+'">\
+                                            <input type="text" style="width:180px" name="sa_input_date[]" class="datepicker3" id="sa_input_date_'+response[i].pis_seq+'">\
                                         </li>\
                                     </ul>\
                                 </div>\
@@ -781,7 +782,9 @@ function getPr(){
 
             }
             $(".addoption").html(addoption);
-
+            $( ".datepicker3" ).datepicker({
+                "dateFormat" : "yy-mm-dd"
+            });
             <?php foreach($service_option as $row): ?>
                 $("#pis_yn_<?=$row["sa_pis_seq"]?>").trigger("click");
                 $("#sa_claim_name_<?=$row["sa_pis_seq"]?>").val('<?=$row["sa_claim_name"]?>');
@@ -810,8 +813,11 @@ function getPr(){
                     $("#sp_month_dis_msg_add<?=$row["sa_pis_seq"]?>").val('<?=$row["sap_month_dis_msg"]?>');
                     $("#sap_seq_<?=$row["sa_pis_seq"]?>").val('<?=$row["sap_seq"]?>');
                     $("#sp_discount_yn_add<?=$row["sa_pis_seq"]?>").val('<?=$row["sap_discount_yn"]?>');
+                    $("#sr_register_discount_<?=$row["sa_pis_seq"]?>").val('<?=$row["sap_register_discount"]?>');
+                    $("#sr_register_discount_str_<?=$row["sa_pis_seq"]?>").html('<?=$row["sap_register_discount"]?>');
                     <?php if($row["sap_discount_yn"] == "Y"): ?>
                         $("#sp_discount_yn_add_check<?=$row["sa_pis_seq"]?>").attr("checked",true);
+
                     <?php endif; ?>
                     calculateAddPrice('<?=$row["sa_pis_seq"]?>');
                     priceInfoDateAdd('<?=$row["sa_pis_seq"]?>');

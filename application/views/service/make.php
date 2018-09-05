@@ -330,7 +330,7 @@
 
                         <li class="dib" style="padding-left:235px">월 요금(*) <i class="fas fa-info-circle"></i></li>
                         <li class="dib" style="padding:0px 40px 0px 10px">
-                            <input type="text" style="width:180px" name="sr_month_price" id="sr_month_price" class="price_cal right"><span id="sr_month_price_str">원/월</span>
+                            <input type="text" style="width:180px" name="sr_month_price" id="sr_month_price" class="price_cal right"><span>원</span>
                         </li>
                     </ul>
                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px;display:none" class="rental_yn">

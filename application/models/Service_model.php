@@ -61,4 +61,68 @@ class Service_model extends CI_Model {
 
         return $query->result_array();
     }
+
+    public function selectService($sv_seq){
+        $this->db->select("*",true);
+        $this->db->from("service a");
+        $this->db->join("service_price ap","a.sv_seq=ap.svp_sv_seq","left" );
+        $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
+        $this->db->join("end_users c","a.sv_eu_seq = c.eu_seq","left");
+        $this->db->join("company_type cc","a.sv_ct_seq = cc.ct_seq","left");
+        $this->db->join("product d","a.sv_pr_seq = d.pr_seq","left");
+        $this->db->join("product_category e","a.sv_pc_seq = e.pc_seq","left");
+        $this->db->join("product_items ei","a.sv_pi_seq = ei.pi_seq","left");
+        $this->db->join("product_div pd","a.sv_pd_seq = pd.pd_seq","left");
+        $this->db->join("product_sub_div f","a.sv_ps_seq = f.ps_seq","left");
+        $this->db->join("clients cl","a.sv_c_seq = cl.c_seq","left");
+
+        $this->db->where("sv_seq",$sv_seq);
+
+        $query = $this->db->get();
+        // echo $this->db->last_query();
+
+        return $query->row_array();
+    }
+
+    public function selectPaymentLast($sv_seq){
+        $this->db->select("*, (select count(*) from payment where pm_sv_seq = '".$sv_seq."' and pm_status = 0 and date_format(NOW(),'%Y-%m-%d') >= pm_end_date) as leftCount",true);
+        $this->db->from("payment");
+        $this->db->where("pm_sv_seq" , $sv_seq);
+        $this->db->order_by("pm_date desc");
+        $this->db->limit(1);
+        $query = $this->db->get();
+
+        return $query->row_array();
+    }
+
+    public function serviceFileAllFetch($sv_seq){
+        $this->db->select("*");
+        $this->db->from("service_files");
+        $this->db->where("sf_sv_seq",$sv_seq);
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function fetchServiceCode($sv_code){
+        $this->db->select("*");
+        $this->db->from("service a");
+        $this->db->join("service_price ap","a.sv_seq=ap.svp_sv_seq","left" );
+        $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
+        $this->db->join("end_users c","a.sv_eu_seq = c.eu_seq","left");
+        $this->db->join("company_type cc","a.sv_ct_seq = cc.ct_seq","left");
+        $this->db->join("product d","a.sv_pr_seq = d.pr_seq","left");
+        $this->db->join("product_category e","a.sv_pc_seq = e.pc_seq","left");
+        $this->db->join("product_items ei","a.sv_pi_seq = ei.pi_seq","left");
+        $this->db->join("product_div pd","a.sv_pd_seq = pd.pd_seq","left");
+        $this->db->join("product_sub_div f","a.sv_ps_seq = f.ps_seq","left");
+        $this->db->join("clients cl","a.sv_c_seq = cl.c_seq","left");
+
+        $this->db->where("sv_code like '".$sv_code."-%' ");
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
 }

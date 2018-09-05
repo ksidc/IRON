@@ -1550,4 +1550,111 @@ class Api extends CI_Controller {
         $arr = array('result'=>$result);
         echo json_encode($arr);
     }
+
+    public function updateServiceOutInfo(){
+        $result = $this->api_model->updateServiceOutInfo();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function updateServiceCharger(){
+        $result = $this->api_model->updateServiceCharger();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function updateServiceOpen(){
+        $result = $this->api_model->updateServiceOpen();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function updateServiceOpenTime(){
+        $result = $this->api_model->updateServiceOpenTime();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function updateServiceStop(){
+        $result = $this->api_model->updateServiceStop();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function updateServiceEnd(){
+        $result = $this->api_model->updateServiceEnd();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function updateServiceForceStop(){
+        $result = $this->api_model->updateServiceForceStop();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function updateServiceForceEnd(){
+        $result = $this->api_model->updateServiceForceEnd();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function updateServiceRestart(){
+        $result = $this->api_model->updateServiceRestart();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceFileAdd(){
+        $this->api_model->serviceFileAdd();
+        $arr = $this->api_model->serviceFileFetch($this->input->post("sv_seq"),$this->input->post("sf_type"));
+        echo json_encode($arr);
+    }
+
+    public function serviceFileAllFetch(){
+        // $this->api_model->serviceFileAdd();
+        $arr = $this->api_model->serviceFileAllFetch($this->input->post("sv_seq"));
+        echo json_encode($arr);
+    }
+
+    public function serviceFileDelete(){
+        $result = $this->api_model->serviceFileDelete($this->input->post("sf_seq"));
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceMemoAdd(){
+        $result = $this->api_model->serviceMemoAdd();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceMemoModify(){
+        $result = $this->api_model->serviceMemoModify();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceMemoDelete(){
+        $result = $this->api_model->serviceMemoDelete();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceMemoFetch(){
+        $total = $this->api_model->countServiceMemo();
+        $list = $this->api_model->serviceMemoFetch();
+        $result = [
+            "total" => $total,
+            "list" => $list
+        ];
+
+        echo json_encode($result);
+    }
+
+    public function serviceHistoryAdd(){
+        $result = $this->api_model->serviceHistoryAdd();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
 }
