@@ -4,17 +4,15 @@
 .payment-basic {
     display:none;
 }
-.modal-field-input {
-    height:25px;
-}
+
 
 .claim_payment {display:none;}
 </style>
 
 <div class="content">
-    <div style="border:1px solid #eee;background:#fff;border-radius:6px;height:450px;margin-top:20px">
+    <div style="border:1px solid #eee;background:#fff;border-radius:6px;height:550px;margin-top:20px">
         <form id="update1">
-            <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
+            <input type="hidden" name="mb_seq" id="mb_seq" value="<?=$info["mb_seq"]?>">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left">회원정보</div>
             <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate1()"></i> <i class=""></i></div>
@@ -24,8 +22,8 @@
                 <div style="width:100%">
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">회원구분</div>
-                            <div class="input">
+                            <div class="label padd"><div>회원구분</div></div>
+                            <div class="input padd">
                                 <select name="mb_type" id="mb_type" class="select2" style="width:90%">
                                     <option value="0" <?=($info["mb_type"] == "0" ? "selected":"")?>>사업자</option>
                                     <option value="1" <?=($info["mb_type"] == "1" ? "selected":"")?>>개인</option>
@@ -36,80 +34,80 @@
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">상호/이름</div>
-                            <div class="input">
+                            <div class="label padd"><div>상호/이름</div></div>
+                            <div class="input padd">
                                 <input type="text" name="mb_name" id="mb_name" class="width-button" value="<?=$info["mb_name"]?>">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">거래처 코드</div>
-                            <div class="input">
+                            <div class="label padd"><div>거래처 코드</div></div>
+                            <div class="input padd">
                                 <input type="text" class="width-button" name="c_code" id="c_code" readonly><button class="btn btn-brown " type="button" >거래처 등록</button>
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">회원 아이디(코드)</div>
-                            <div class="input">
+                            <div class="label padd"><div>회원 아이디(코드)</div></div>
+                            <div class="input padd">
                                 <?=$info["mb_id"]?>
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">주소</div>
-                            <div class="input">
+                            <div class="label padd"><div>주소</div></div>
+                            <div class="input padd">
                                 <input type="text" class="width-button" name="mb_zipcode" id="mb_zipcode" readonly value="<?=$info["mb_zipcode"]?>"><button class="btn btn-brown " type="button" onclick="daumApi()">검색</button>
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label"></div>
-                            <div class="input">
+                            <div class="label padd"><div></div></div>
+                            <div class="input padd">
                                 <input type="text" class="width-button" name="mb_address" id="mb_address" readonly value="<?=$info["mb_address"]?>">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label"></div>
-                            <div class="input">
+                            <div class="label padd"><div></div></div>
+                            <div class="input padd">
                                 <input type="text" class="width-button" name="mb_detail_address" id="mb_detail_address" value="<?=$info["mb_detail_address"]?>">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">업태</div>
-                            <div class="input">
+                            <div class="label padd"><div>업태</div></div>
+                            <div class="input padd">
                                 <input type="text" class="width-button" name="mb_uptae" id="mb_uptae" value="">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">전화번호</div>
-                            <div class="input">
+                            <div class="label padd"><div>전화번호</div></div>
+                            <div class="input padd">
                                 <input type="text" class="width-button" name="mb_tel" id="mb_tel" value="<?=$info["mb_tel"]?>">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">이메일</div>
-                            <div class="input">
+                            <div class="label padd"><div>이메일</div></div>
+                            <div class="input padd">
                                 <input type="text" name="mb_email" id="mb_email" class="width-button" value="<?=$info["mb_email"]?>">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">수신동의</div>
-                            <div class="input">
+                            <div class="label padd"><div>수신동의</div></div>
+                            <div class="input padd">
                                 <input type="checkbox" name="emailYn" value="Y"> 이메일 <input type="checkbox" name="smsYn" value="N"> SMS
                             </div>
                         </div>
@@ -120,8 +118,8 @@
                 <div style="width:100%">
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">등급</div>
-                            <div class="input">
+                            <div class="label padd"><div>등급</div></div>
+                            <div class="input padd">
                                 <select name="mb_level" id="mb_level" class="select2" style="width:90%">
                                     <option value="1" selected>1</option>
                                     <option value="2">2</option>
@@ -132,80 +130,80 @@
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">사업자번호/생년월일</div>
-                            <div class="input">
+                            <div class="label padd"><div>사업자번호/생년월일</div></div>
+                            <div class="input padd">
                                 <input type="text" class="width-button" name="mb_number" id="mb_number" value="<?=$info["mb_number"]?>">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">대표자</div>
-                            <div class="input">
+                            <div class="label padd"><div>대표자</div></div>
+                            <div class="input padd">
                                 <input type="text" name="mb_ceo" id="mb_ceo" class="width-button" value="<?=$info["mb_ceo"]?>">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">패스워드</div>
-                            <div class="input">
+                            <div class="label padd"><div>패스워드</div></div>
+                            <div class="input padd">
                                 <button class="btn btn-brown " type="button" >임시 패스워드 발급</button>
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">주소(영문)</div>
-                            <div class="input">
+                            <div class="label padd"><div>주소(영문)</div></div>
+                            <div class="input padd">
                                 <input type="text" class="width-button" name="zipcode_eng" id="zipcode_eng" readonly>
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label"></div>
-                            <div class="input">
+                            <div class="label padd"><div></div></div>
+                            <div class="input padd">
                                 <input type="text" class="width-button" name="mb_address_eng" id="mb_address_eng">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label"></div>
-                            <div class="input">
+                            <div class="label padd"><div></div></div>
+                            <div class="input padd">
                                 <input type="text" class="width-button" name="mb_detail_address_eng" id="mb_detail_address_eng" >
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">종목</div>
-                            <div class="input">
+                            <div class="label padd"><div>종목</div></div>
+                            <div class="input padd">
                                 <input type="text" class="width-button" name="mb_jongmok" id="mb_jongmok" value="">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">휴대폰번호</div>
-                            <div class="input">
+                            <div class="label padd"><div>휴대폰번호</div></div>
+                            <div class="input padd">
                                 <input type="text" name="mb_phone" id="mb_phone" class="width-button" value="<?=$info["mb_phone"]?>"> <input type="checkbox">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">팩스</div>
-                            <div class="input">
+                            <div class="label padd"><div>팩스</div></div>
+                            <div class="input padd">
                                 <input type="text" name="mb_fax" id="mb_fax" class="width-button" value="<?=$info["mb_fax"]?>">
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">알게된 경로</div>
-                            <div class="input">
+                            <div class="label padd"><div>알게된 경로</div></div>
+                            <div class="input padd">
                                 <select name="" id="" class="select2" style="width:90%">
                                     <option value="1" selected>주위소개</option>
                                     <option value="2">2</option>
@@ -220,40 +218,40 @@
                 <div style="width:100%">
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">회원가입일</div>
-                            <div class="input">
+                            <div class="label padd"><div>회원가입일</div></div>
+                            <div class="input padd">
                                 <?=$info["mb_regdate"]?>
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">최근 접속일</div>
-                            <div class="input">
+                            <div class="label padd"><div>최근 접속일</div></div>
+                            <div class="input padd">
                                 0000-00-00 00:00:00
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">최근 접속 IP</div>
-                            <div class="input">
+                            <div class="label padd"><div>최근 접속 IP</div></div>
+                            <div class="input padd">
                                 111.111.111.111
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label">인증 구분</div>
-                            <div class="input">
+                            <div class="label padd"><div>인증 구분</div></div>
+                            <div class="input padd">
                                 (향후연동)
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label" style="vertical-align:top">메모</div>
-                            <div class="input">
+                            <div class="label padd" style="vertical-align:top"><div>메모</div></div>
+                            <div class="input padd">
                                 <textarea name="memo" style="width:90%;height:200px"></textarea>
                             </div>
                         </div>
@@ -276,34 +274,34 @@
             <div style="width:100%">
                 <div class="modal-field">
                     <div class="modal-field-input" style="width:33%">
-                        <div class="label">은행명</div>
-                        <div class="input">
+                        <div class="label padd"><div>은행명</div></div>
+                        <div class="input padd">
                             <input type="text" name="mb_bank" id="mb_bank" value="<?=$info["mb_bank"]?>">
                         </div>
                     </div>
                     <div class="modal-field-input" style="width:33%">
-                        <div class="label">예금주</div>
-                        <div class="input">
+                        <div class="label padd"><div>예금주</div></div>
+                        <div class="input padd">
                             <input type="text" style="width:38.7%" name="mb_bank_name" id="mb_bank_name" value="<?=$info["mb_bank_name"]?>">
                         </div>
                     </div>
                     <div class="modal-field-input" style="width:33%">
-                        <div class="label">예금주와의 관계</div>
-                        <div class="input">
+                        <div class="label padd" ><div>예금주와의 관계</div></div>
+                        <div class="input padd">
                             <input type="text" style="width:30%" name="mb_bank_name_relationship" id="mb_bank_name_relationship" value="<?=$info["mb_bank_name_relationship"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input">
-                        <div class="label">계좌번호(-포함)</div>
-                        <div class="input">
+                        <div class="label padd"><div>계좌번호(-포함)</div></div>
+                        <div class="input padd">
                             <input type="text" name="mb_bank_input_number" id="mb_bank_input_number" value="<?=$info["mb_bank_input_number"]?>">
                         </div>
                     </div>
                     <div class="modal-field-input">
-                        <div class="label">사업자번호/생년월일</div>
-                        <div class="input">
+                        <div class="label padd"><div>사업자번호/생년월일</div></div>
+                        <div class="input padd">
                             <input type="text" name="mb_bank_number" id="mb_bank_number" value="<?=$info["mb_bank_number"]?>">
                         </div>
                     </div>
@@ -326,14 +324,14 @@
             <div style="width:100%">
                 <div class="modal-field">
                     <div class="modal-field-input">
-                        <div class="label">은행명</div>
-                        <div class="input" style="width:59%">
+                        <div class="label padd"><div>은행명</div></div>
+                        <div class="input padd" style="width:59%">
                             <input type="text" class="width-button" name="mb_bank2" id="mb_bank2">
                         </div>
                     </div>
                     <div class="modal-field-input">
-                        <div class="label">예금주</div>
-                        <div class="input" style="width:59%">
+                        <div class="label padd"><div>예금주</div></div>
+                        <div class="input padd" style="width:59%">
                             <input type="text" class="width-button" name="mb_bank_name2" id="mb_bank_name2" readonly>
                         </div>
                     </div>
@@ -341,8 +339,8 @@
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">계좌번호(-포함)</div>
-                        <div class="input">
+                        <div class="label padd"><div>계좌번호(-포함)</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_bank_input_number2" id="mb_bank_input_number2" readonly>
                         </div>
                     </div>
@@ -358,7 +356,7 @@
         <form id="update4">
             <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left">계약 담당자</div>
+            <div style="float:left"><div>계약 담당자</div></div>
             <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate4()"></i> <i class=""></i></div>
         </div>
         <div class="view-body" style="clear:both;width:100%">
@@ -366,40 +364,40 @@
             <div style="width:100%">
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">이름</div>
-                        <div class="input">
+                        <div class="label padd"><div>이름</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_contract_name" id="mb_contract_name" value="<?=$info["mb_contract_name"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">이메일</div>
-                        <div class="input">
+                        <div class="label padd"><div>이메일</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_contract_email" id="mb_contract_email" value="<?=$info["mb_contract_email"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">부서</div>
-                        <div class="input">
+                        <div class="label padd"><div>부서</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_contract_team" id="mb_contract_team" value="<?=$info["mb_contract_team"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">직위/직책</div>
-                        <div class="input">
+                        <div class="label padd"><div>직위/직책</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_contract_position" id="mb_contract_position" value="<?=$info["mb_contract_position"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">휴대폰번호</div>
-                        <div class="input">
+                        <div class="label padd"><div>휴대폰번호</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_contract_phone" id="mb_contract_phone" value="<?=$info["mb_contract_phone"]?>">
                         </div>
                     </div>
@@ -407,8 +405,8 @@
 
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">전화번호</div>
-                        <div class="input">
+                        <div class="label padd"><div>전화번호</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_contract_tel" id="mb_contract_tel" value="<?=$info["mb_contract_tel"]?>">
                         </div>
                     </div>
@@ -430,40 +428,40 @@
             <div style="width:100%">
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">이름</div>
-                        <div class="input">
+                        <div class="label padd"><div>이름</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_service_name" id="mb_service_name" value="<?=$info["mb_service_name"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">이메일</div>
-                        <div class="input">
+                        <div class="label padd"><div>이메일</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_service_email" id="mb_service_email" value="<?=$info["mb_service_email"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">부서</div>
-                        <div class="input">
+                        <div class="label padd"><div>부서</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_service_team" id="mb_service_team" value="<?=$info["mb_service_team"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">직위/직책</div>
-                        <div class="input">
+                        <div class="label padd"><div>직위/직책</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_service_position" id="mb_service_position" value="<?=$info["mb_service_position"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">휴대폰번호</div>
-                        <div class="input">
+                        <div class="label padd"><div>휴대폰번호</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_service_phone" id="mb_service_phone" value="<?=$info["mb_service_phone"]?>">
                         </div>
                     </div>
@@ -471,8 +469,8 @@
 
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">전화번호</div>
-                        <div class="input">
+                        <div class="label padd"><div>전화번호</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_service_tel" id="mb_service_tel" value="<?=$info["mb_service_tel"]?>">
                         </div>
                     </div>
@@ -494,40 +492,40 @@
             <div style="width:100%">
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">이름</div>
-                        <div class="input">
+                        <div class="label padd"><div>이름</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_payment_name" id="mb_payment_name" value="<?=$info["mb_payment_name"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">이메일</div>
-                        <div class="input">
+                        <div class="label padd"><div>이메일</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_payment_email" id="mb_payment_email" value="<?=$info["mb_payment_email"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">부서</div>
-                        <div class="input">
+                        <div class="label padd"><div>부서</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_payment_team" id="mb_payment_team" value="<?=$info["mb_payment_team"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">직위/직책</div>
-                        <div class="input">
+                        <div class="label padd"><div>직위/직책</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_payment_position" id="mb_payment_position" value="<?=$info["mb_payment_position"]?>">
                         </div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">휴대폰번호</div>
-                        <div class="input">
+                        <div class="label padd"><div>휴대폰번호</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_payment_phone" id="mb_payment_phone" value="<?=$info["mb_payment_phone"]?>">
                         </div>
                     </div>
@@ -535,8 +533,8 @@
 
                 <div class="modal-field">
                     <div class="modal-field-input full">
-                        <div class="label">전화번호</div>
-                        <div class="input">
+                        <div class="label padd"><div>전화번호</div></div>
+                        <div class="input padd">
                             <input type="text" class="width-button" name="mb_payment_tel" id="mb_payment_tel" value="<?=$info["mb_payment_tel"]?>">
                         </div>
                     </div>
@@ -599,6 +597,7 @@
                         </tr>
                     </thead>
                     <tbody id="tbody-list">
+                        <?php if(count($service_list) >0): ?>
                         <?php foreach($service_list as $row): ?>
                             <?php
                             // $num = parseInt(response.total) - ((start-1)*end) - i;
@@ -681,6 +680,11 @@
                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">문서</td>
                             </tr>
                         <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="19" style="text-align:center">서비스가 없습니다.</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
                 </form>
@@ -696,7 +700,7 @@
             <div style="float:left">요금 정보</div>
             <div style="float:right">
                 <input type="checkbox" id="service_display" > 서비스 요금 0원 숨기기
-                <button class="btn btn-black btn-add btn-payment-setting" onclick="openPopup()" type="button">계산서 설정</button>
+                <button class="btn btn-black btn-add btn-payment-setting" onclick="openPopup('<?=$info["mb_seq"]?>')" type="button">계산서 설정</button>
 
 
             </div>
@@ -736,6 +740,7 @@
                         </tr>
                     </thead>
                     <tbody id="payment-tbody-list">
+                    <?php if(count($payment_list) > 0): ?>
                     <?php foreach($payment_list as $row): ?>
                         <?php $once_price = ($row["svp_once_price"]-$row["svp_once_dis_price"]) ?>
                         <?php $price = ($row["svp_month_price"]-$row["svp_month_dis_price"]-$row["svp_discount_price"]); ?>
@@ -818,6 +823,11 @@
                             <td></td>
                         </tr>
                     <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                                <td colspan="19" style="text-align:center">요금 정보가 없습니다.</td>
+                            </tr>
+                    <?php endif;?>
                     </tbody>
                 </table>
                 </form>
@@ -857,7 +867,7 @@
     </div>
     <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:40px">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left">청구 내역</div>
+            <div style="float:left">청구 내역 <img src="/images/Picture2.png" class="memo"> <img src="/images/Picture2.png" class=""></div>
             <div style="float:right">
                 <input type="checkbox" name=""> 서비스 비용 자동 청구
                 <input type="checkbox" name=""> 메일 자동 발송
@@ -905,9 +915,11 @@
                         </tr>
                     </thead>
                     <tbody id="tbody-list">
+                        <?php if(count($claim_list) > 0): ?>
+                            <?php $b_pm_ca_seq = ""?>
                         <?php foreach($claim_list as $row): ?>
                         <tr>
-                            <td><input type="checkbox" class="claim_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_price"]?>" data-price5="<?=$row["pm_service_price"]?>" data-price6="<?=$row["pm_service_dis_price"]?>" data-price7="<?=$row["pm_payment_dis_price"]?>" data-price8="" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$row["pm_total_price"]?>" data-price11="<?=$row["pm_surtax_price"]?>" data-price12="<?=$row["pm_total_price"]+$row["pm_surtax_price"]?>"></td>
+                            <td><input type="checkbox" class="claim_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]?>" data-price6="<?=$row["pm_service_dis_price"]?>" data-price7="<?=$row["pm_payment_dis_price"]?>" data-price8="" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$row["pm_total_price"]?>" data-price11="<?=$row["pm_surtax_price"]?>" data-price12="<?=$row["pm_total_price"]+$row["pm_surtax_price"]?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
                             <td>1</td>
                             <td><?=($row["pm_type"] == "1" ? "서비스비용":"일회성비용")?></td>
                             <td><?=$row["pm_code"]?></td>
@@ -935,7 +947,7 @@
                             <td class="claim_payment"><?=$row["pm_once_price"]?></td>
                             <td class="claim_payment"><?=$row["pm_once_dis_price"]?></td>
                             <td class="claim_payment"><?=$row["pm_once_price"]-$row["pm_once_dis_price"]?></td>
-                            <td class="claim_payment"><?=$row["pm_first_price"]?></td>
+                            <td class="claim_payment"><?=$row["pm_first_day_price"]?></td>
                             <td class="claim_payment"><?=$row["pm_service_price"]?></td>
                             <td class="claim_payment"><?=$row["pm_service_dis_price"]?></td>
                             <td class="claim_payment"><?=$row["pm_payment_dis_price"]?></td>
@@ -946,18 +958,27 @@
                             <td><?=$row["pm_total_price"]+$row["pm_surtax_price"]?></td>
                             <td><?=$row["pm_end_date"]?></td>
                             <td><?=($row["pm_end_date"] >= date("Y-m-d") ? "청구":"미납")?></td>
-                            <td><i class="fas fa-edit claimView" data-seq="<?=$row["pm_seq"]?>"></i></td>
-                            <td class="billView" data-seq="<?=$row["pm_seq"]?>">
+                            <?php if($b_pm_ca_seq != $row["pm_ca_seq"]): ?>
+                            <td rowspan="<?=$row["pm_ca_total"]?>"><i class="fas fa-edit claimView" data-seq="<?=$row["pm_ca_seq"]?>"></i></td>
+                            <td class="billView" data-seq="<?=$row["pm_ca_seq"]?>" rowspan="<?=$row["pm_ca_total"]?>">
                                 <?php if($row["pm_payment_publish_type"] == "0"):?>
                                     영수발행
                                 <?php else: ?>
                                     청구발행
                                 <?php endif; ?>
                             </td>
+                            <?php endif; ?>
                             <td><i class="fas fa-edit detailPView" data-seq="<?=$row["pm_seq"]?>"></i></td>
+
                             <td></td>
                         </tr>
+                        <?php $b_pm_ca_seq = $row["pm_ca_seq"]?>
                         <?php endforeach; ?>
+                        <?php else: ?>
+                        <tr>
+                                <td colspan="19" style="text-align:center">요금 정보가 없습니다.</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
                 </form>
@@ -1017,40 +1038,43 @@
 
         </ul>
     </div>
-    <form id="firstSettingForm">
-
+    <form id="memoReg">
+        <input type="hidden" name="po_mb_seq" value="<?=$info["mb_seq"]?>">
+        <input type="hidden" name="po_seq" id="po_seq" value="">
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">회원명</div>
+                <div class="label"><div>회원명</div></div>
                 <div class="input">
-
+                    <div><?=$info["mb_name"]?></div>
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">요금 담당자</div>
+                <div class="label"><div>요금 담당자</div></div>
 
-                <div class="input"></div>
-            </div>
-        </div>
-        <div class="modal-field">
-            <div class="modal-field-input">
-                <div class="label">입금예정일</div>
-                <div class="input">
-
+                <div class="input" style="font-size:11px">
+                    <div><?=$info["mb_payment_name"]?> / <?=$info["mb_payment_tel"]?> / <?=$info["mb_payment_phone"]?></div>
                 </div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">메모</div>
+                <div class="label"><div>입금예정일</div></div>
                 <div class="input">
-
+                    <div><input type="text" name="po_input_date" id="po_input_date" class="datepicker3"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input">
+                <div class="label"><div>메모</div></div>
+                <div class="input">
+                    <div><input type="text" name="po_memo" id="po_memo" style="width:95%""></div>
                 </div>
             </div>
         </div>
     </form>
 
-    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-memo-reg">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogMemo').dialog('close')">닫기</button></div>
+    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-memo-reg" type="button">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogMemo').dialog('close')" type="button">닫기</button></div>
     <div class="table-list">
         <table class="table">
             <thead>
@@ -1087,47 +1111,47 @@
         <input type="hidden" name="pm_sv_seq" id="pm_sv_seq" value="">
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">서비스 종류</div>
-                <div class="input" id="once_service">
+                <div class="label padd"><div>서비스 종류</div></div>
+                <div class="input padd" id="once_service">
 
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">계약번호</div>
+                <div class="label padd"><div>계약번호</div></div>
 
-                <div class="input" id="once_number"></div>
+                <div class="input padd" id="once_number"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">상품명</div>
-                <div class="input" id="once_product">
+                <div class="label padd"><div>상품명</div></div>
+                <div class="input padd" id="once_product">
 
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">서비스 번호</div>
+                <div class="label padd"><div>서비스 번호</div></div>
 
-                <div class="input" id="once_service_number"></div>
+                <div class="input padd" id="once_service_number"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">일회성 청구명</div>
-                <div class="input">
+                <div class="label padd"><div>일회성 청구명</div></div>
+                <div class="input padd">
                     <input type="text" name="pm_claim_name" id="pm_claim_name">
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">계산서 품목명</div>
+                <div class="label padd"><div>계산서 품목명</div></div>
 
-                <div class="input"><input type="text" name="pm_bill_name" id="pm_bill_name"></div>
+                <div class="input padd"><input type="text" name="pm_bill_name" id="pm_bill_name"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">요금 납부 방법</div>
-                <div class="input">
+                <div class="label padd"><div>요금 납부 방법</div></div>
+                <div class="input padd">
                     <select name="pm_com_type" class="select2">
                         <option value="1">무통장</option>
                         <option value="2">카드</option>
@@ -1136,9 +1160,9 @@
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">계산서 발행</div>
+                <div class="label padd"><div>계산서 발행</div></div>
 
-                <div class="input">
+                <div class="input padd">
                     <select  name="pm_payment_publish" id="pm_payment_publish" class="select2" style="width:40%">
                         <option  value="0">발행</option>
                         <option value="1">미발행</option>
@@ -1156,28 +1180,28 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">청구 금액</div>
-                <div class="input">
+                <div class="label padd"><div>청구 금액</div></div>
+                <div class="input padd">
                     <input type="text" name="pm_service_price" id="pm_service_price">
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">일회성 청구 합계</div>
+                <div class="label padd"><div>일회성 청구 합계</div></div>
 
-                <div class="input" id="once_price_info">원</div>
+                <div class="input padd" id="once_price_info">원</div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">할인 금액</div>
-                <div class="input">
+                <div class="label padd"><div>할인 금액</div></div>
+                <div class="input padd">
                     <input type="text" name="pm_service_dis_price" id="pm_service_dis_price">
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">부가세 포함 여부</div>
+                <div class="label padd"><div>부가세 포함 여부</div></div>
 
-                <div class="input">
+                <div class="input padd">
                     <select name="pm_surtax_type" id="pm_surtax_type" class="select2" style="width:40%">
                         <option selected value="0">포함</option>
                         <option value="1">불포함</option>
@@ -1188,28 +1212,28 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">할인 사유</div>
-                <div class="input">
+                <div class="label padd"><div>할인 사유</div></div>
+                <div class="input padd">
                     <input type="text" name="pm_dis_msg" id="pm_dis_msg">
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">부가세</div>
+                <div class="label padd"><div>부가세</div></div>
 
-                <div class="input" id="once_surtax_info"></div>
+                <div class="input padd" id="once_surtax_info"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">결제기한</div>
-                <div class="input">
+                <div class="label padd"><div>결제기한</div></div>
+                <div class="input padd">
                     <input type="text" name="pm_end_date" id="pm_end_date">
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">총 청구 합계</div>
+                <div class="label padd"><div>총 청구 합계</div></div>
 
-                <div class="input" id="once_total_price"></div>
+                <div class="input padd" id="once_total_price"></div>
             </div>
         </div>
     </form>
@@ -1230,9 +1254,9 @@
         <input type="hidden" name="pm_seq" id="input_pm_seq">
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label">입금 예정일</div>
+                <div class="label"><div>입금 예정일</div></div>
                 <div class="input">
-                    <input type="text" name="pm_input_date" id="pm_input_date">
+                    <input type="text" name="pm_input_date" id="pm_input_date" class="datepicker3">
                 </div>
             </div>
 
@@ -1240,14 +1264,14 @@
 
     </form>
 
-    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-input-date">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogMemo').dialog('close')">닫기</button></div>
+    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-input-date" type="button">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogInput').dialog('close')" type="button">닫기</button></div>
 
 </div>
 <div id="dialogClaim" class="dialog" style="padding:5px">
     <div class="modal_search">
         <ul>
             <li >
-                거래명세서
+                거래명세서 수정
             </li>
 
         </ul>
@@ -1365,6 +1389,7 @@
                             <td class='border_top' align='center' width='60'>비고</td>
                         </tr>
                         <tr>
+                            <input type="hidden" name="cl_seq1" id="cl_seq1" >
                             <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date1" id="ca_item_date1" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name1" id="ca_item_name1" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='42' >&nbsp;</td>
@@ -1375,6 +1400,7 @@
                             <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg1" id="ca_item_msg1" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
+                            <input type="hidden" name="cl_seq2" id="cl_seq2" >
                             <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date2" id="ca_item_date2" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name2" id="ca_item_name2" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='42' >&nbsp;</td>
@@ -1385,6 +1411,7 @@
                             <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg2" id="ca_item_msg2" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
+                            <input type="hidden" name="cl_seq3" id="cl_seq3" >
                             <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date3" id="ca_item_date3" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name3" id="ca_item_name3" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='42' >&nbsp;</td>
@@ -1395,6 +1422,7 @@
                             <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg3" id="ca_item_msg3" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
+                            <input type="hidden" name="cl_seq4" id="cl_seq4" >
                             <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date4" id="ca_item_date4" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name4" id="ca_item_name4" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='42' >&nbsp;</td>
@@ -1411,13 +1439,13 @@
         </table>
         </form>
     </div>
-    <div class="modal-close-btn" style="margin-top:5px"><button class="btn btn-black btn-small btn-claim-reg">수정</button> <button class="btn btn-default btn-small" onclick="$('#dialogClaim').dialog('close')">닫기</button></div>
+    <div class="modal-close-btn" style="margin-top:5px"><button class="btn btn-black btn-small btn-claim-reg" type="button">수정</button> <button class="btn btn-default btn-small" onclick="$('#dialogClaim').dialog('close')" type="button">닫기</button></div>
 </div>
 <div id="dialogBill" class="dialog" style="padding:5px">
     <div class="modal_search">
         <ul>
             <li >
-                세금계산서
+                세금계산서 <span id="tax_title">수정</span>
             </li>
 
         </ul>
@@ -1537,6 +1565,7 @@
                             <td class='border_top' align='center' width='60'>비고</td>
                         </tr>
                         <tr>
+                            <input type="hidden" name="cl_seq1" id="bl_seq1" >
                             <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date1" id="ba_item_date1" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name1" id="ba_item_name1" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='42' >&nbsp;</td>
@@ -1547,6 +1576,7 @@
                             <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg1" id="ba_item_msg1" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
+                            <input type="hidden" name="cl_seq2" id="bl_seq2" >
                             <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date2" id="ba_item_date2" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name2" id="ba_item_name2" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='42' >&nbsp;</td>
@@ -1557,6 +1587,7 @@
                             <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg2" id="ba_item_msg2" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
+                            <input type="hidden" name="cl_seq3" id="bl_seq3" >
                             <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ba_item_date3" id="ca_item_date3" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name3" id="ba_item_name3" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='42' >&nbsp;</td>
@@ -1567,6 +1598,7 @@
                             <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg3" id="ba_item_msg3" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
+                            <input type="hidden" name="cl_seq4" id="bl_seq4" >
                             <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ba_item_date4" id="ca_item_date4" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name4" id="ba_item_name4" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                             <td class='border_up' align='center' width='42' >&nbsp;</td>
@@ -1603,7 +1635,7 @@
         </table>
         </form>
     </div>
-    <div class="modal-close-btn" style="margin-top:5px"><button class="btn btn-black btn-small btn-bill-reg">수정</button> <button class="btn btn-default btn-small" onclick="$('#dialogBill').dialog('close')">닫기</button></div>
+    <div class="modal-close-btn" style="margin-top:5px"><button class="btn btn-black btn-small btn-bill-reg" type="button">수정</button> <button class="btn btn-default btn-small" onclick="$('#dialogBill').dialog('close')" type="button">닫기</button></div>
 </div>
 <input type="hidden" id="start" value=1>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>

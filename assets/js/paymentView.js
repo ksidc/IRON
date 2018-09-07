@@ -462,7 +462,7 @@ function setPayment(){
                     insertYn = false;
                     addName = " 외";
                 }
-                item1_price = parseInt(item1_price)+(parseInt(one.ap_once_price)-parseInt(one.ap_once_dis_price)+parseInt(one.ap_price)-parseInt(one.ap_dis_price) - parseInt(one.ap_type_dis_price));
+                item1_price = parseInt(item1_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price) - parseInt(one.svp_discount_price));
             }else if(one.item_num == 2){
                 item2++;
                 if(item2 == 1){
@@ -471,7 +471,7 @@ function setPayment(){
                     insertYn = false;
                     addName = " 외";
                 }
-                item2_price = parseInt(item2_price)+(parseInt(one.ap_once_price)-parseInt(one.ap_once_dis_price)+parseInt(one.ap_price)-parseInt(one.ap_dis_price) - parseInt(one.ap_type_dis_price));
+                item2_price = parseInt(item2_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price) - parseInt(one.svp_discount_price));
             }else if(one.item_num == 3){
                 item3++;
                 if(item3 == 1){
@@ -480,7 +480,7 @@ function setPayment(){
                     insertYn = false;
                     addName = " 외";
                 }
-                item3_price = parseInt(item3_price)+(parseInt(one.ap_once_price)-parseInt(one.ap_once_dis_price)+parseInt(one.ap_price)-parseInt(one.ap_dis_price) - parseInt(one.ap_type_dis_price));
+                item3_price = parseInt(item3_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price) - parseInt(one.svp_discount_price));
             }else if(one.item_num == 4){
                 item4++;
                 if(item4 == 1){
@@ -489,7 +489,7 @@ function setPayment(){
                     insertYn = false;
                     addName = " 외";
                 }
-                item4_price = parseInt(item4_price)+(parseInt(one.ap_once_price)-parseInt(one.ap_once_dis_price)+parseInt(one.ap_price)-parseInt(one.ap_dis_price) - parseInt(one.ap_type_dis_price));
+                item4_price = parseInt(item4_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price) - parseInt(one.svp_discount_price));
             }
             totalprice = item1_price + item2_price + item3_price + item4_price;
             surtaxprice = (item1_price*0.1) + (item2_price*0.1) + (item3_price*0.1) + (item4_price*0.1);

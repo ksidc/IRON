@@ -16,24 +16,17 @@ $(function(){
         height : 500
     });
 
-    $( "#dialogClaim" ).dialog({
-        autoOpen: false,
-        modal: true,
-        width:'710px',
-        height : 700
-    });
-
-    $( "#dialogBill" ).dialog({
-        autoOpen: false,
-        modal: true,
-        width:'710px',
-        height : 700
-    });
-
     $( "#dialogInput" ).dialog({
         autoOpen: false,
         modal: true,
         width:'500px',
+        height : 400
+    });
+
+    $( "#dialogMemo" ).dialog({
+        autoOpen: false,
+        modal: true,
+        width:'700px',
         height : 400
     });
 
@@ -193,6 +186,10 @@ $(function(){
             data : datas,
             success:function(response){
                 console.log(response);
+                if(response.result){
+                    alert("청구 완료");
+                    document.location.reload();
+                }
                 // document.location.reload();
             }
         });
@@ -208,6 +205,10 @@ $(function(){
             data : datas,
             success:function(response){
                 console.log(response);
+                if(response.result){
+                    alert("수정 완료");
+                    document.location.reload();
+                }
                 // document.location.reload();
             },
             error:function(error){
@@ -237,6 +238,10 @@ $(function(){
                 data : "pm_seq="+checkDelete.join(","),
                 success:function(response){
                     console.log(response);
+                    if(response.result){
+                        alert("삭제 되었습니다.");
+                        document.location.reload();
+                    }
                     // document.location.reload();
                 },
                 error : function(error){
@@ -247,11 +252,131 @@ $(function(){
     });
 
     $(".claimView").click(function(){
-        $( "#dialogClaim" ).dialog("open");$("#dialogClaim").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
+
+        var url = "/api/claimView/"+$(this).data("seq");
+        $.ajax({
+            url : url,
+            type : 'GET',
+            dataType : 'JSON',
+            success:function(response){
+                console.log(response);
+
+                $("#ca_seq").val(response.info.ca_seq);
+                $("#ca_from_number").val(response.info.ca_from_number);
+                $("#ca_to_number").val(response.info.ca_to_number);
+                $("#ca_from_name").val(response.info.ca_from_name);
+                $("#ca_from_ceo").val(response.info.ca_from_ceo);
+                $("#ca_to_name").val(response.info.ca_to_name);
+                $("#ca_to_ceo").val(response.info.ca_to_ceo);
+                $("#ca_from_address").val(response.info.ca_from_address);
+                $("#ca_to_address").val(response.info.ca_to_address);
+                $("#ca_from_condition").val(response.info.ca_from_condition);
+                $("#ca_from_type").val(response.info.ca_from_type);
+                $("#ca_to_condition").val(response.info.ca_to_condition);
+                $("#ca_to_type").val(response.info.ca_to_type);
+                $("#ca_from_team").val(response.info.ca_from_team);
+                $("#ca_from_charger").val(response.info.ca_from_charger);
+                $("#ca_to_team").val(response.info.ca_to_team);
+                $("#ca_to_charger").val(response.info.ca_to_charger);
+                $("#ca_from_tel").val(response.info.ca_from_tel);
+                $("#ca_to_tel").val(response.info.ca_to_tel);
+                $("#ca_from_email").val(response.info.ca_from_email);
+                $("#ca_to_email").val(response.info.ca_to_email);
+                $("#ca_date").val(response.info.ca_date);
+                $("#ca_empty_size").val(response.info.ca_empty_size);
+                $("#ca_price").val(response.info.ca_price);
+                $("#ca_surtax").val(response.info.ca_surtax);
+                $("#ca_total_price").val(response.info.ca_total_price);
+                $("#ca_price_info1").val(response.info.ca_price_info1);
+                $("#ca_price_info2").val(response.info.ca_price_info2);
+                $("#ca_price_info3").val(response.info.ca_price_info3);
+                $("#ca_price_info4").val(response.info.ca_price_info4);
+                $("#ca_price_info5").val(response.info.ca_price_info5);
+
+                for(var i = 0; i < response.list.length;i++){
+                    $("#ca_seq"+response.list[i].ca_sort).val(response.list[i].cl_seq);
+                    $("#ca_item_date"+response.list[i].ca_sort).val(response.info.ca_monthday);
+                    $("#ca_item_name"+response.list[i].ca_sort).val(response.list[i].ca_item_name);
+                    $("#ca_item_price"+response.list[i].ca_sort).val(response.list[i].ca_item_price);
+                    $("#ca_item_surtax"+response.list[i].ca_sort).val(response.list[i].ca_item_surtax);
+                }
+                $( "#dialogClaim" ).dialog("open");$("#dialogClaim").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
+            },
+            error : function(error){
+                console.log(error);
+            }
+        });
+
     });
 
     $(".billView").click(function(){
-        $( "#dialogBill" ).dialog("open");$("#dialogBill").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
+        var publish_type = $(this).data("p_type");
+        var url = "/api/claimView/"+$(this).data("seq");
+        $.ajax({
+            url : url,
+            type : 'GET',
+            dataType : 'JSON',
+            success:function(response){
+                console.log(response);
+                if(publish_type == "0"){
+                    $("#tax_title").html("작성");
+                    var date1 = moment().format("YYYY-MM-DD");
+                    var date2 = moment().format("MM-DD");
+                    $(".btn-bill-reg").html("작성")
+                }else{
+                    $("#tax_title").html("수정");
+                    var date1 = response.info.ca_date;
+                    var date2 = response.info.ca_monthday;
+                    $(".btn-bill-reg").html("수정")
+                }
+
+                $("#ba_seq").val(response.info.ca_seq);
+                $("#ba_from_number").val(response.info.ca_from_number);
+                $("#ba_to_number").val(response.info.ca_to_number);
+                $("#ba_from_name").val(response.info.ca_from_name);
+                $("#ba_from_ceo").val(response.info.ca_from_ceo);
+                $("#ba_to_name").val(response.info.ca_to_name);
+                $("#ba_to_ceo").val(response.info.ca_to_ceo);
+                $("#ba_from_address").val(response.info.ca_from_address);
+                $("#ba_to_address").val(response.info.ca_to_address);
+                $("#ba_from_condition").val(response.info.ca_from_condition);
+                $("#ba_from_type").val(response.info.ca_from_type);
+                $("#ba_to_condition").val(response.info.ca_to_condition);
+                $("#ba_to_type").val(response.info.ca_to_type);
+                $("#ba_from_team").val(response.info.ca_from_team);
+                $("#ba_from_charger").val(response.info.ca_from_charger);
+                $("#ba_to_team").val(response.info.ca_to_team);
+                $("#ba_to_charger").val(response.info.ca_to_charger);
+                $("#ba_from_tel").val(response.info.ca_from_tel);
+                $("#ba_to_tel").val(response.info.ca_to_tel);
+                $("#ba_from_email").val(response.info.ca_from_email);
+                $("#ba_to_email").val(response.info.ca_to_email);
+                $("#ba_date").val(date1);
+                $("#ba_empty_size").val(response.info.ca_empty_size);
+                $("#ba_price").val(response.info.ca_price);
+                $("#ba_surtax").val(response.info.ca_surtax);
+                $("#ba_total_price").val(response.info.ca_total_price);
+                $("#ba_price_info1").val(response.info.ca_price_info1);
+                $("#ba_price_info2").val(response.info.ca_price_info2);
+                $("#ba_price_info3").val(response.info.ca_price_info3);
+                $("#ba_price_info4").val(response.info.ca_price_info4);
+                $("#ba_price_info5").val(response.info.ca_price_info5);
+
+                for(var i = 0; i < response.list.length;i++){
+                    $("#ba_seq"+response.list[i].ca_sort).val(response.list[i].cl_seq);
+                    $("#ba_item_date"+response.list[i].ca_sort).val(date2);
+                    $("#ba_item_name"+response.list[i].ca_sort).val(response.list[i].ca_item_name);
+                    $("#ba_item_price"+response.list[i].ca_sort).val(response.list[i].ca_item_price);
+                    $("#ba_item_surtax"+response.list[i].ca_sort).val(response.list[i].ca_item_surtax);
+                }
+
+                $( "#dialogBill" ).dialog("open");$("#dialogBill").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
+            },
+            error : function(error){
+                console.log(error);
+            }
+        });
+
     });
 
     $(".btn-claim-reg").click(function(){
@@ -349,118 +474,7 @@ $(function(){
         }
     })
 
-    $(".detailPView").click(function(){
-        var seq = $(this).data("seq")
-        var url = "/api/paymentView/"+seq
 
-        $.ajax({
-            url : url,
-            type : 'GET',
-            dataType : 'JSON',
-            success:function(response){
-                console.log(response);
-                // console.log(response.sva_seq);
-
-                $("#p_pm_sv_code").text(response.sv_code);
-                $("#p_pm_pc_name").text(response.pc_name);
-                $("#p_pm_pr_name").text(response.pr_name);
-                $("#p_pm_ps_name").text(response.ps_name);
-                $("#p_pm_sv_number").text(response.sv_number)
-
-                $(".sv_seq").val(response.sv_seq);
-                $("#p_pm_claim_name").html(response.sv_claim_name);
-                $("#p_pm_bill_name").html(response.sv_bill_name);
-                $("#p_pm_payment_type").val(response.pm_payment_type).trigger("change");
-                $("#p_pm_payment_period").html(response.pm_pay_period+"개월");
-                $("#p_pm_pay_type").val(response.pm_pay_type).trigger("change");
-                $("#p_pm_pay_day").html(response.sv_pay_day+"개월");
-                if(response.sv_pay_publish_type == "0"){
-                    $("#p_pm_payment_publish").html("영수발행");
-                }else{
-                    $("#p_pm_payment_publish").html("청구발행");
-                }
-                $("#p_pm_end_date").html(response.pm_end_date);
-                // $("#p_pm_pay_publish_type").html(response.sv_pay_publish_type);
-                $("#p_pm_payment_day").val(response.sv_payment_day);
-                $("#p_pm_payment_start").val(response.pm_service_start);
-                $("#p_pm_payment_end").val(response.pm_service_end);
-                // $("#p_pm_c_name").val(response.c_name);
-                // $("#p_pm_register_discount").val(response.sv_register_discount)
-                $("#p_pm_input_price").val(response.sv_input_price);
-                $("#p_pm_first_price").val(response.ap_once_price);
-                $("#p_pm_first_dis_price").val(response.ap_once_dis_price);
-                var first_sum = response.ap_once_price-response.ap_once_dis_price;
-                var first_surtax = first_sum*0.1;
-                $("#first_sum").html($.number(first_sum));
-                $("#first_surtax").html( $.number(Math.round(first_surtax)) )
-                $("#first_total").html($.number(first_sum+Math.round(first_surtax)));
-                $("#service_month_price").val(response.ap_price);
-                $("#service_month_dis_price").val(response.ap_dis_price);
-                var month_price = response.ap_price-response.ap_dis_price;
-                var period_price = month_price*response.sv_payment_period;
-                var discount_price = 0;
-                $("#month_price1").html($.number(month_price));
-                $("#month_price2").html($.number(period_price));
-                $("#month_price3").html($.number(discount_price));
-
-                $("#month_price4").html(period_price-discount_price);
-                var total_surtax = (period_price-discount_price)*0.1;
-                $("#month_price5").html($.number(total_surtax));
-                $("#month_price_total").html(period_price-discount_price+total_surtax);
-                $(".total_contract").html(response.sv_payment_period);
-
-
-                if(response.sv_pay_format == "1"){
-                    var text_format = "1의 자리";
-                }else if(response.sv_pay_format == "2"){
-                    var text_format = "10의 자리";
-                }else if(response.sv_pay_format == "3"){
-                    var text_format = "100의 자리";
-                }else if(response.sv_pay_format == "4"){
-                    var text_format = "1000의 자리";
-                }
-
-                if(response.sv_pay_format_policy == "1"){
-                    var text_format2 = "내림";
-                }else if(response.sv_pay_format_policy == "2"){
-                    var text_format2 = "올림";
-                }else if(response.sv_pay_format_policy == "3"){
-                    var text_format2 = "반올림";
-                }
-
-                if(response.sv_basic_type == "1"){
-                    if(response.sv_policy == "1"){
-                        var text = "당월분 일할 계산";
-                    }else{
-                        var text = response.sv_pay_start_day+"일(과금시작) 이후 건 익월분 통합";
-                    }
-                    var html = '<div class="input"><span id="policy_text"><span id="policy_text1">'+text+'</span> (<span id="policy_text2">'+text_format+' '+text_format2+'</span>)</span> <span id="policy_text_2" style="display:none"></span> <button class="btn btn-brown" type="button" onclick=\'$( "#dialogFirstSetting" ).dialog("open");$("#dialogFirstSetting").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();\'>변경</button></div>';
-                }else{
-
-                    var html = '<div class="input"><span id="policy_text" style="display:none"><span id="policy_text1">당월분 일할 계산</span> (<span id="policy_text2">'+text_format+' '+text_format2+'</span>)</span> <span id="policy_text_2">과금 시작일 기준 결제 주기로 처리</span> <button class="btn btn-brown" type="button" onclick=\'$( "#dialogFirstSetting" ).dialog("open");$("#dialogFirstSetting").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();\'>변경</button></div>';
-                }
-                $("#policy").html(html);
-
-                $("#sv_account_type").val(response.sv_account_type);
-                $("#sv_account_policy").val(response.sv_account_policy);
-                $("#sv_account_start_day").val(response.sv_account_start_day);
-                $("#sv_account_format").val(response.sv_account_format);
-                $("#sv_account_format_policy").val(response.sv_account_format_policy);
-
-                $("input:radio[name='sp_basic_type'][value='"+response.sv_account_type+"']").prop("checked",true);
-                $("input:radio[name='sp_policy'][value='"+response.sv_account_policy+"']").prop("checked",true);
-                $("#sp_pay_start_day").val(response.sv_account_start_day).trigger("change");
-                $("#sp_pay_format").val(response.sv_account_format).trigger("change");
-                $("#sp_pay_format_policy").val(response.sv_account_format_policy).trigger("change");
-                $('#dialogPay').dialog({
-                    title: '서비스 요금 상세',
-                    modal: true,
-                    width: '800px',
-                    draggable: true
-                });
-            }
-        });
-    });
 
     $(".btn-payment_modify").click(function(){
         if(confirm("수정 처리하시겠습니까?")){
@@ -483,10 +497,224 @@ $(function(){
         }
     })
     $(".detailView").click(function(){
-        var specs = "left=10,top=10,width=900,height=700";
+        var specs = "left=10,top=10,width=1000,height=700";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
         window.open("/member/payment_view/"+$(this).data("seq"), 'serviceMake', specs);
     });
+
+    $(".detailPView").click(function(){
+        var specs = "left=10,top=10,width=1000,height=700";
+        specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
+        window.open("/member/claim_view/"+$(this).data("seq"), 'serviceMake', specs);
+    });
+
+    $(".memo").click(function(){
+        getPaymentMemo();
+        $( "#dialogMemo" ).dialog("open");$("#dialogMemo").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
+    })
+
+    $(".btn-memo-reg").click(function(){
+        if($("#po_seq").val() == ""){
+            var url = "/api/paymentMemoAdd";
+        }else{
+            var url = "/api/paymentMemoUpdate";
+        }
+
+        var datas = $("#memoReg").serialize();
+        $.ajax({
+            url : url,
+            type : 'POST',
+            dataType : 'JSON',
+            data : datas,
+            success:function(response){
+                alert("등록되었습니다.");
+                getPaymentMemo();
+                // $('#dialogInput').dialog('close');
+                // document.location.reload();
+            },
+            error : function(error){
+                console.log(error);
+            }
+        });
+    });
+
+    $("body").on("click",".memo_mode",function(){
+        if($(this).data("edit") == "N"){
+            $("#po_seq").val($(this).data("seq"));
+            $("#po_input_date").val($(this).data("inputdate"));
+            $("#po_memo").val($(this).data("memo"));
+            $(".btn-memo-reg").html("수정");
+            $(this).data("edit","Y");
+        }else{
+            $("#po_seq").val("");
+            $("#po_input_date").val("");
+            $("#po_memo").val("");
+            $(".btn-memo-reg").html("등록");
+            $(this).data("edit","N");
+        }
+
+    })
+
+    $("body").on("click",".memo_del",function(){
+        if(confirm("정말 삭제하시겠습니까?")){
+            var url = "/api/paymentMemoDelete";
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                data : "po_seq="+$(this).data("seq"),
+                success:function(response){
+                    alert("삭제되었습니다.");
+                    getPaymentMemo();
+                    // $('#dialogInput').dialog('close');
+                    // document.location.reload();
+                },
+                error : function(error){
+                    console.log(error);
+                }
+            });
+        }
+    });
+
+    $(".btn-com-pay").click(function(){
+        var checkDelete = new Array();
+        $(".claim_check").each(function(){
+            if($(this).is(":checked")){
+                checkDelete.push($(this).data("caseq"));
+            }
+        });
+        if(checkDelete.length == 0){
+            alert("완납 처리할 내역을 선택해 주시기 바랍니다.");
+            return false;
+        }
+        var uniq = checkDelete.reduce(function(a,b){
+            if (a.indexOf(b) < 0 ) a.push(b);
+            return a;
+        },[]);
+        // console.log(uniq);
+        if(uniq.length > 1){
+            alert("각각의 세금계산서 건별로 완납 처리가 가능합니다. 체크상태를 확인해 주세요");
+            return false;
+        }
+        var data = [];
+        var total;
+        var publish;
+        var ca_seq;
+        $(".claim_check").each(function(){
+            if($(this).is(":checked")){
+                total = $(this).data("caseqcount");
+                publish = $(this).data("publish");
+                ca_seq = $(this).data("caseq");
+                data.push($(this).val());
+            }
+        });
+        console.log(data);
+        if(total != data.length && publish == "1"){
+            alert("계산서가 청구발행인 서비스는 부분 완납 처리가 불가합니다. 체크 상태를 확인해 주세요");
+            return false;
+        }
+
+        if(publish == "1"){
+            var url = "/api/paymentComPay";
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : "data="+data.join(","),
+                success:function(response){
+                    // alert("삭제되었습니다.");
+                    // getPaymentMemo();
+                    // $('#dialogInput').dialog('close');
+                    // document.location.reload();
+                },
+                error : function(error){
+                    console.log(error);
+                }
+            });
+        }else{ // 영수처리
+            var url = "/api/paymentComPayPost";
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : "data="+data.join(",")+"&pm_total="+total,
+                success:function(response){
+                    if(confirm("완납 처리되었습니다. 계산서를 작성하겠습니까?")){
+                        var publish_type = 0;
+                        var url = "/api/claimView/"+ca_seq;
+                        $.ajax({
+                            url : url,
+                            type : 'GET',
+                            dataType : 'JSON',
+                            success:function(response){
+                                // console.log(response);
+                                if(publish_type == "0"){
+                                    $("#tax_title").html("작성");
+                                    var date1 = moment().format("YYYY-MM-DD");
+                                    var date2 = moment().format("MM-DD");
+                                    $(".btn-bill-reg").html("작성")
+                                }else{
+                                    $("#tax_title").html("수정");
+                                    var date1 = response.info.ca_date;
+                                    var date2 = response.info.ca_monthday;
+                                    $(".btn-bill-reg").html("수정")
+                                }
+
+                                $("#ba_seq").val(response.info.ca_seq);
+                                $("#ba_from_number").val(response.info.ca_from_number);
+                                $("#ba_to_number").val(response.info.ca_to_number);
+                                $("#ba_from_name").val(response.info.ca_from_name);
+                                $("#ba_from_ceo").val(response.info.ca_from_ceo);
+                                $("#ba_to_name").val(response.info.ca_to_name);
+                                $("#ba_to_ceo").val(response.info.ca_to_ceo);
+                                $("#ba_from_address").val(response.info.ca_from_address);
+                                $("#ba_to_address").val(response.info.ca_to_address);
+                                $("#ba_from_condition").val(response.info.ca_from_condition);
+                                $("#ba_from_type").val(response.info.ca_from_type);
+                                $("#ba_to_condition").val(response.info.ca_to_condition);
+                                $("#ba_to_type").val(response.info.ca_to_type);
+                                $("#ba_from_team").val(response.info.ca_from_team);
+                                $("#ba_from_charger").val(response.info.ca_from_charger);
+                                $("#ba_to_team").val(response.info.ca_to_team);
+                                $("#ba_to_charger").val(response.info.ca_to_charger);
+                                $("#ba_from_tel").val(response.info.ca_from_tel);
+                                $("#ba_to_tel").val(response.info.ca_to_tel);
+                                $("#ba_from_email").val(response.info.ca_from_email);
+                                $("#ba_to_email").val(response.info.ca_to_email);
+                                $("#ba_date").val(date1);
+                                $("#ba_empty_size").val(response.info.ca_empty_size);
+                                $("#ba_price").val(response.info.ca_price);
+                                $("#ba_surtax").val(response.info.ca_surtax);
+                                $("#ba_total_price").val(response.info.ca_total_price);
+                                $("#ba_price_info1").val(response.info.ca_price_info1);
+                                $("#ba_price_info2").val(response.info.ca_price_info2);
+                                $("#ba_price_info3").val(response.info.ca_price_info3);
+                                $("#ba_price_info4").val(response.info.ca_price_info4);
+                                $("#ba_price_info5").val(response.info.ca_price_info5);
+
+                                for(var i = 0; i < response.list.length;i++){
+                                    $("#ba_seq"+response.list[i].ca_sort).val(response.list[i].cl_seq);
+                                    $("#ba_item_date"+response.list[i].ca_sort).val(date2);
+                                    $("#ba_item_name"+response.list[i].ca_sort).val(response.list[i].ca_item_name);
+                                    $("#ba_item_price"+response.list[i].ca_sort).val(response.list[i].ca_item_price);
+                                    $("#ba_item_surtax"+response.list[i].ca_sort).val(response.list[i].ca_item_surtax);
+                                }
+
+                                $( "#dialogBill" ).dialog("open");$("#dialogBill").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
+                            },
+                            error : function(error){
+                                console.log(error);
+                            }
+                        });
+                    }
+                },
+                error : function(error){
+                    console.log(error);
+                }
+            });
+        }
+
+    })
 })
 
 function viewAll(){
@@ -727,4 +955,31 @@ function claimCal(){
     $(".claim_price10").html($.number(price10));
     $(".claim_price11").html($.number(price11));
     $(".claim_price12").html($.number(price12));
+}
+
+function getPaymentMemo(){
+    var url = "/api/paymentMemoList/"+$("#mb_seq").val();
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        success:function(response){
+
+            var html = "";
+            for(var i = 0;i < response.list.length;i++){
+                html += '<tr>\
+                            <td>1</td>\
+                            <td>'+response.list[i].po_memo+'</td>\
+                            <td>'+response.list[i].po_regdate+'</td>\
+                            <td>'+response.list[i].po_input_date+'</td>\
+                            <td></td>\
+                            <td><i class="fas fa-edit memo_mode" data-edit="N" data-inputdate="'+response.list[i].po_input_date+'" data-memo="'+response.list[i].po_memo+'" data-seq="'+response.list[i].po_seq+'"></i> <i class="fas fa-trash memo_del" data-seq="'+response.list[i].po_seq+'"></i></td>\
+                        </tr>';
+            }
+            $("#memo-list").html(html);
+        },
+        error : function(error){
+            console.log(error);
+        }
+    });
 }

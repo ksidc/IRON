@@ -30,13 +30,13 @@
             </div>
             <div class="modal-field">
                 <div class="modal-field-input">
-                    <div class="label">상호/이름(*)</div>
+                    <div class="label"><div>상호/이름(*)</div></div>
                     <div class="input">
                         <input type="text" class="width-button" name="mb_name" id="mb_name" readonly><button class="btn btn-brown " type="button" onclick='$( "#dialogUserSearch" ).dialog("open");$("#dialogUserSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
                     </div>
                 </div>
                 <div class="modal-field-input">
-                    <div class="label">회원아이디</div>
+                    <div class="label"><div>회원아이디</div></div>
                     <div class="input">
                         <input type="text" name="mb_id" id="mb_id" readonly>
                     </div>
@@ -44,13 +44,13 @@
             </div>
             <div class="modal-field">
                 <div class="modal-field-input">
-                    <div class="label">End User(*)</div>
+                    <div class="label"><div>End User(*)</div></div>
                     <div class="input">
                         <input type="text" class="width-button" name="eu_name" id="eu_name" readonly><button class="btn btn-brown " type="button" onclick='getEndUserNextNumber();$( "#dialogEndSearch" ).dialog("open");$("#dialogEndSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
                     </div>
                 </div>
                 <div class="modal-field-input">
-                    <div class="label">업체 분류</div>
+                    <div class="label"><div>업체 분류</div></div>
                     <div class="input">
                         <input type="text" class="width-button" name="ct_name" id="ct_name" readonly><button class="btn btn-brown " type="button" onclick='typeGetList();$( "#dialogTypeSearch" ).dialog("open");$("#dialogTypeSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
                     </div>
@@ -65,7 +65,7 @@
             </div>
             <div class="modal-field">
                 <div class="modal-field-input">
-                    <div class="label">부서</div>
+                    <div class="label"><div>부서</div></div>
                     <div class="input">
 
                             <select id="sr_part" name="sr_part" class="select2" style="width:140px">
@@ -76,7 +76,7 @@
                     </div>
                 </div>
                 <div class="modal-field-input">
-                    <div class="label">사내담당자</div>
+                    <div class="label"><div>사내담당자</div></div>
                     <div class="input">
 
                             <select id="sr_charger" name="sr_charger" class="select2" style="width:140px">
@@ -89,7 +89,7 @@
             </div>
               <div class="modal-field">
                 <div class="modal-field-input">
-                    <div class="label" style="vertical-align:top;padding-top:7px">계약(약정)기간</div>
+                    <div class="label" style="vertical-align:top;padding-top:7px"><div>계약(약정)기간</div></div>
                     <div class="input">
                         <ul style="list-style:none;padding:0;margin:0">
                             <li><input type="radio" name="sr_contract_type" value="1" class="sr_contract_type" checked> 약정 <input type="radio" name="sr_contract_type" class="sr_contract_type" value="2"> 무약정</li>
@@ -98,7 +98,7 @@
                     </div>
                 </div>
                 <div class="modal-field-input">
-                    <div class="label" style="vertical-align:top;padding-top:7px">계약 만료 후 자동 계약 연장 여부</div>
+                    <div class="label" style="vertical-align:top;padding-top:7px"><div>계약 만료 후 자동 계약 연장 여부</div></div>
                     <div class="input">
                         <ul style="list-style:none;padding:0;margin:0">
                             <li style="display:inline-block"><input type="radio" name="sr_auto_extension" value="1" checked> 자동 계약 연장 </li>
@@ -112,7 +112,7 @@
             </div>
 
             <div class="modal-title">
-                <div class="modal-title-text" style="display:inline-block">기본 결제 조건 </div>
+                <div class="modal-title-text" style="display:inline-block"><div>기본 결제 조건 </div></div>
                 <div style="display:inline-block;text-align:right;width:78%">
                     <!-- <div style="text-align:right"><span class="btn btn-brown btn-small " style="cursor:default">등록 할인율 (변경 가능)</span>% </div> -->
                     <input type="hidden" name="sr_register_discount" id="sr_register_discount" value="0" class="price_cal">
@@ -121,13 +121,13 @@
             <div class="modal-field depth-area">
                 <div class="depth-item">
                     <div class="modal-field-input">
-                        <div class="label">요금 납부 방법</div>
+                        <div class="label"><div>요금 납부 방법</div></div>
                         <div class="input">
                             <input type="radio" name="sr_payment_type" value="1" checked> 무통장 <input type="radio" name="sr_payment_type" value="2"> 카드 <input type="radio" name="sr_payment_type" value="3"> CMS
                         </div>
                     </div>
                     <div class="modal-field-input">
-                        <div class="label">결제 주기(*)</div>
+                        <div class="label"><div>결제 주기(*)</div></div>
                         <div class="input">
                             <input type="text" name="sr_payment_period" id="sr_payment_period" style="width:70px" class="price_cal price_cal3"> 개월
                         </div>
@@ -136,7 +136,7 @@
             </div>
             <div class="modal-field">
                 <div class="modal-field-input">
-                    <div class="label">청구 기준</div>
+                    <div class="label"><div>청구 기준</div></div>
                     <div class="input">
                         서비스 이용 월의
 
@@ -149,7 +149,7 @@
                     </div>
                 </div>
                 <div class="modal-field-input">
-                    <div class="label">자동 청구일(*)</div>
+                    <div class="label"><div>자동 청구일(*)</div></div>
 
                     <div class="input">
                         <select name="sr_pay_day" id="sr_pay_day" class="select2" style="width:180px">
@@ -165,7 +165,7 @@
             </div>
             <div class="modal-field">
                 <div class="modal-field-input">
-                    <div class="label">계산서 발행</div>
+                    <div class="label"><div>계산서 발행</div></div>
                     <div class="input">
 
                             <select  name="sr_pay_publish" id="sr_pay_publish" class="select2" style="width:40%">
@@ -184,7 +184,7 @@
                     </div>
                 </div>
                 <div class="modal-field-input">
-                    <div class="label">결제일(*)</div>
+                    <div class="label"><div>결제일(*)</div></div>
                     <div class="input">
                         청구일로부터
                          <input type="text" style="width:15%" name="sr_payment_day" id="sr_payment_day"> 일 후
@@ -193,17 +193,17 @@
             </div>
             <div class="modal-field">
                 <div class="modal-field-input">
-                    <div class="label">과금 시작일(*)</div>
+                    <div class="label"><div>과금 시작일(*)</div></div>
                     <div class="input"><input type="text"  name="sr_account_start" id="sr_account_start" class="datepicker2" style="width:120px"></div>
                 </div>
                 <div class="modal-field-input">
-                    <div class="label">과금 만료일(자동)</div>
+                    <div class="label"><div>과금 만료일(자동)</div></div>
                     <div class="input"><input type="text"  name="sr_account_end" id="sr_account_end" style="width:120px" readonly></div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input full">
-                    <div class="label">초기 일할 청구</div>
+                    <div class="label"><div>초기 일할 청구</div></div>
                     <?php if($basic_policy["sp_pay_format"] == "1"): ?>
                         <?php $text_format = "1의 자리"; ?>
                     <?php elseif($basic_policy["sp_pay_format"] == "2"): ?>
@@ -236,6 +236,9 @@
                 <input type="hidden" name="sp_first_price" id="sp_first_price" value=0>
                 <input type="hidden" name="sp_first_start" id="sp_first_start">
                 <input type="hidden" name="sp_first_end" id="sp_first_end">
+                <input type="hidden" name="sp_first_month_price" id="sp_first_month_price" value=0>
+                <input type="hidden" name="sp_first_month_start" id="sp_first_month_start">
+                <input type="hidden" name="sp_first_month_end" id="sp_first_month_end">
             </div>
             <div class="modal-title">
                 <div class="modal-title-text" style="display:inline-block">기본 서비스 정보 </div>

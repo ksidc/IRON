@@ -1457,11 +1457,12 @@ class Api extends CI_Controller {
 
     public function paymentMemoAdd(){
         $result = $this->api_model->paymentMemoAdd();
-        echo json_encode($result);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
     }
 
-    public function paymentMemoList($po_pm_seq){
-        $list = $this->api_model->fetchPaymentMemo($po_pm_seq);
+    public function paymentMemoList($po_mb_seq){
+        $list = $this->api_model->fetchPaymentMemo($po_mb_seq);
         $result = [
             "list" => $list
         ];
@@ -1469,9 +1470,15 @@ class Api extends CI_Controller {
         echo json_encode($result);
     }
 
-    public function paymentMemoUpdate($po_seq){
-        $result = $this->api_model->paymentMemoUpdate($po_seq);
-        echo json_encode($result);
+    public function paymentMemoUpdate(){
+        $result = $this->api_model->paymentMemoUpdate();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+    public function paymentMemoDelete(){
+        $result = $this->api_model->paymentMemoDelete();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
     }
 
     public function paymentAdd(){
@@ -1504,7 +1511,8 @@ class Api extends CI_Controller {
 
     public function paymentOnceAdd(){
         $result = $this->api_model->paymentOnceAdd();
-        echo json_encode($result);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
     }
 
     public function paymentOnceUpdate($pn_seq){
@@ -1654,6 +1662,24 @@ class Api extends CI_Controller {
 
     public function serviceHistoryAdd(){
         $result = $this->api_model->serviceHistoryAdd();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function claimView($pm_ca_seq){
+        $arr["info"] = $this->api_model->claimView($pm_ca_seq);
+        $arr["list"] = $this->api_model->claimViewList($pm_ca_seq);
+        echo json_encode($arr);
+    }
+
+    public function paymentComPay(){
+        $result = $this->api_model->paymentComPay();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function paymentComPayPost(){
+        $result = $this->api_model->paymentComPayPost();
         $arr = array('result'=>$result);
         echo json_encode($arr);
     }

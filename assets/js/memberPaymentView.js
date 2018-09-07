@@ -198,6 +198,35 @@ $(function(){
         calculatePrice();
     });
 
+    $( ".datepicker4" ).datepicker({
+        "dateFormat" : "yy-mm-dd",
+        onSelect: function(selectedDate) {
+            // console.log(selectedDate);
+                calculatePrice();
+                if($("#sv_payment_period").val() != "" && $("#sv_account_start").val() != ""){
+                    priceInfoDate();
+                }
+                // if($("#sv_account_start").val() != ""){
+                //     // console.log(moment($("#sr_contract_start").val()).add(1,'months').subtract(1, "days").format("YYYY-MM-DD"));
+                //     $("#sv_account_end").val(moment($("#sv_account_start").val()).add(1,'months').subtract(1, "days").format("YYYY-MM-DD"));
+                //     var start = new Date($("#sv_account_start").val());
+                //     // var end = new Date($("#sr_contract_end").val());
+                //     var end = moment($("#sv_account_end").val()).add(1,'days').format("YYYY-MM-DD");
+                //     end = new Date(end);
+                //     // var diff = Date.getFormattedDateDiff(start, end);
+                //     // $("#contractinfo").html("("+diff[0]+"개월 "+diff[1]+"일)");
+                // }
+
+        }
+    });
+    $("#sv_payment_period").change(function(){
+        $(".total_contract").html($(this).val())
+        calculatePrice();
+        if($("#sv_payment_period").val() != "" && $("#sv_account_start").val() != ""){
+            priceInfoDate();
+        }
+    });
+
     $(".btn-payment-modify").click(function(){
         if(confirm("요금정보를 수정하시겠습니까?")){
             var url = "/api/serviceUpdate";
@@ -209,7 +238,36 @@ $(function(){
                 data : datas,
                 success:function(response){
                     console.log(response);
+
                     // document.location.reload();
+                },
+                error:function(error){
+                    console.log(error);
+                }
+            });
+        }
+    })
+
+    $("#sv_register_discount").change(function(){
+        calculatePrice();
+    })
+    $("#defaultRegister").click(function(){
+        if($(this).is(":checked")){
+            var url = "/api/basicPolicyDetail/"+$("#sv_payment_type").val()
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                data : "period="+$("#sv_payment_period").val(),
+                success:function(response){
+                    if(response.result === null){
+                        $("#sv_register_discount").val(0);
+                        // $("#sr_register_discount_str").html(0);
+                    }else{
+                        $("#sv_register_discount").val(response.result.sb_discount);
+                        // $("#sr_register_discount_str").html(response.result.discount);
+                    }
+                    calculatePrice();
                 },
                 error:function(error){
                     console.log(error);
@@ -229,7 +287,7 @@ var calculatePrice = function(){
 
     if($("#svp_discount_yn").is(":checked")){ // 결제방법할인 체크
         var price = Math.floor((sv_month_price-sv_month_dis_price)*sv_register_discount/100*sv_payment_period);
-        $("#month_price3").html(price);
+        $("#month_price3").html($.number(price));
         $("#svp_register_discount").val(price);
     }else{
         $("#month_price3").html(0);
@@ -293,13 +351,13 @@ var calculatePrice = function(){
     }
     // console.log(price);
     // $("#use_price_str_0_1").html($.number(price));
-    $("#month_price1").html(total_price1);
-    $("#month_price2").html(total_price2);
+    $("#month_price1").html($.number(total_price1));
+    $("#month_price2").html($.number(total_price2));
 
     var month_surtax = price*0.1;
-    $("#month_price4").html(price);
-    $("#month_price5").html(month_surtax);
-    $("#month_price_total").html(price+month_surtax);
+    $("#month_price4").html($.number(price));
+    $("#month_price5").html($.number(month_surtax));
+    $("#month_price_total").html($.number(price+month_surtax));
     $("#sv_month_total_price").val(price+month_surtax);
     // $("#show_month_total").val(total_price);
 

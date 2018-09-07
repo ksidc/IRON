@@ -1,49 +1,5 @@
 <style>
-.modal-title {
-    background: #DDDDDD;
-}
-.modal-title-text{
-    width:90%;
-    background:#dddddd;
 
-}
-
-.modal-title-text > div {
-    margin-left:2px;
-    border-left:8px solid gray;
-    padding-left:8px;
-}
-
-.modal-field {
-
-    padding:0;
-    border-bottom:1px solid #ddd;
-}
-
-.label {
-    background:#f4f4f4;
-
-}
-.label.padd {
-    padding:7px 0px;
-}
-
-.label > div {
-    /*padding-left:10px;*/
-    padding:7px 10px;
-}
-
-.input.padd {
-   padding:7px 0px
-}
-
-.modal-field-input.full > .label.label2 {
-    width:30%;
-}
-
-.modal-field-input.full > .input.input2 {
-    width:68%;
-}
 </style>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
 
