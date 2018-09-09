@@ -13,6 +13,12 @@
         <input type="hidden" name="sv_account_start_day" id="sv_account_start_day" value="<?=$info["sv_account_start_day"]?>">
         <input type="hidden" name="sv_account_format" id="sv_account_format" value="<?=$info["sv_account_format"]?>">
         <input type="hidden" name="sv_account_format_policy" id="sv_account_format_policy" value="<?=$info["sv_account_format_policy"]?>">
+        <input type="hidden" name="svp_first_day_price" id="svp_first_day_price" value="<?=$info["svp_first_day_price"]?>">
+        <input type="hidden" name="svp_first_day_start" id="svp_first_day_start" value="<?=$info["svp_first_day_start"]?>">
+        <input type="hidden" name="svp_first_day_end" id="svp_first_day_end" value="<?=$info["svp_first_day_end"]?>">
+        <input type="hidden" name="svp_first_month_price" id="svp_first_month_price" value="<?=$info["svp_first_month_price"]?>">
+        <input type="hidden" name="svp_first_month_start" id="svp_first_month_start" value="<?=$info["svp_first_month_start"]?>">
+        <input type="hidden" name="svp_first_month_end" id="svp_first_month_end" value="<?=$info["svp_first_month_end"]?>">
         <div class="modal-title">
             <div class="modal-title-text">서비스 기본 정보</div>
         </div>
@@ -94,8 +100,8 @@
                 <div class="input">
                     <select name="sv_pay_day" id="sv_pay_day" class="select2" style="width:180px">
                         <option value="">자동 청구일을 선택하세요</option>
-                        <?php for($i = 0; $i < 28;$i++): ?>
-                        <option value="<?=($i+1)?>" <?=($info["sv_pay_day"] == $i ? "selected":"")?>><?=($i+1)?>일</option>
+                        <?php for($i = 1; $i < 28;$i++): ?>
+                        <option value="<?=($i)?>" <?=($info["sv_pay_day"] == $i ? "selected":"")?>><?=($i)?>일</option>
                         <?php endfor; ?>
                         <option value="말일" <?=($info["sv_pay_day"] > "28" ? "selected":"")?>>말일</option>
                     </select>
@@ -184,7 +190,7 @@
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
                     <div class="label" style="width:35%"><div>초기 청구 항목명</div></div>
-                    <div class="input" style="width:45%"><input type="text" name="first_claim_name" id="first_claim_name"> </div>
+                    <div class="input" style="width:45%"><input type="text" name="svp_first_claim_name" id="svp_first_claim_name" value="<?=$info["svp_first_claim_name"]?>"> </div>
                 </div>
             </div>
             <div class="modal-field">
@@ -273,10 +279,10 @@
             ?>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>결제 방법 할인(<input type="checkbox" name="svp_discount_yn" id="svp_discount_yn"> 작용)</div></div>
-                    <div class="input" id="month_price3" style="text-align:right;width:43%;padding-right:10px"><?=number_format($info["svp_register_discount"])?></div>
+                    <div class="label" style="width:35%"><div>결제 방법 할인(<input type="checkbox" name="svp_discount_yn" id="svp_discount_yn" value="Y" <?=($info["svp_discount_yn"] == "Y" ? "checked":"")?>> 작용)</div></div>
+                    <div class="input" id="month_price3" style="text-align:right;width:43%;padding-right:10px"><?=number_format($info["svp_discount_price"])?></div>
                     <div style="display:inline-block">원</div>
-                    <input type="hidden" name="svp_register_discount" id="svp_register_discount" value="<?=$info["svp_register_discount"]?>">
+                    <input type="hidden" name="svp_discount_price" id="svp_discount_price" value="<?=$info["svp_discount_price"]?>">
                 </div>
             </div>
             <div class="modal-field">

@@ -18,7 +18,7 @@
             <div class="modal-title">
                 <div class="modal-title-text">신청 회원 정보</div>
             </div>
-            <div class="table-list">
+            <div class="table-list" style="height:250px;overflow:auto">
                 <table class="table">
                     <thead>
                         <tr>
@@ -72,13 +72,13 @@
                                     <?=$row["sva_bill_name"]?>
                                 <?php endif; ?>
                             </td>
-                            <td class="btn-add-bill" data-index="<?=$key?>" data-view='<?=json_encode($row)?>'>내리기</td>
+                            <td class="btn-add-bill" data-index="<?=$key?>" data-view='<?=json_encode($row)?>' data-clcode="<?=$row["cl_code"]?>">내리기</td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
-            <div class="table-list">
+            <div class="table-list" style="height:250px;overflow:auto">
                 <form id="addClaim">
                     <input type="hidden" name="active_payment" id="active_payment" value="1">
                 <table class="table">
@@ -106,12 +106,20 @@
         <div style="width:45%;display:inline-block">
             <div class="add-tab content-tab" style="width:87%;margin:0 auto">
                 <ul class="addtab">
+                    <?php if(count($claim_list) > 0): ?>
+                    <?php foreach($claim_list as $key=>$row ): ?>
+                    <li class="content-tab-item active" data-index="<?=$row["cl_code"]?>">계산서<?=$row["cl_code"]?></li>
+                    <?php endforeach; ?>
+                    <li class="content-tab-item add">+</li>
+                    <?php else: ?>
                     <li class="content-tab-item active" data-index="1">계산서1</li>
                     <li class="content-tab-item add">+</li>
+                    <?php endif; ?>
                 </ul>
             </div>
             <div id="payment">
-                <table width='700' cellpadding='0' cellspacing='0' align='center' class='border_all payment_claim' id="payment1" >
+                <?php foreach($claim_list as $key=>$row ): ?>
+                <table width='700' cellpadding='0' cellspacing='0' align='center' class='border_all payment_claim' id="payment<?=$row["cl_code"]?>" <?=($row["cl_code"] != "1" ? "style='display:none'":"")?>>
                     <tr>
                         <td width='100%'>
                             <table cellpadding='0' cellspacing='0' height='65' width='100%'>
@@ -233,32 +241,32 @@
                                     <td class='border_up' align='center' width='20'>백</td>
                                     <td class='border_up' align='center' width='20'>십</td>
                                     <td class='border_up' align='center' width='20'>일</td>
-                                    <td class='border_top' align='center' width='156' rowspan='2'>&nbsp;</td>
+                                    <td class='border_top reset' align='center' width='156' rowspan='2'>&nbsp;</td>
                                 </tr>
                                 <tr>
-                                    <td class='border_up' align='center' width='85' height='25' id="date1"> &nbsp; </td>
-                                    <td class='border_up' align='center' width='35' id="number1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="price1_11">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="price1_10">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="price1_9">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="price1_8">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="price1_7">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="price1_6">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="price1_5">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="price1_4">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="price1_3">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="price1_2">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="price1_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="sprice1_10">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="sprice1_9">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="sprice1_8">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="sprice1_7">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="sprice1_6">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="sprice1_5">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="sprice1_4">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="sprice1_3">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="sprice1_2">&nbsp;</td>
-                                    <td class='border_up' align='center' width='20' id="sprice1_1">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='85' height='25' id="date<?=$row["cl_code"]?>"> &nbsp; </td>
+                                    <td class='border_up reset' align='center' width='35' id="number<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="price<?=$row["cl_code"]?>_11">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="price<?=$row["cl_code"]?>_10">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="price<?=$row["cl_code"]?>_9">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="price<?=$row["cl_code"]?>_8">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="price<?=$row["cl_code"]?>_7">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="price<?=$row["cl_code"]?>_6">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="price<?=$row["cl_code"]?>_5">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="price<?=$row["cl_code"]?>_4">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="price<?=$row["cl_code"]?>_3">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="price<?=$row["cl_code"]?>_2">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="price<?=$row["cl_code"]?>_1">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="sprice<?=$row["cl_code"]?>_10">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="sprice<?=$row["cl_code"]?>_9">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="sprice<?=$row["cl_code"]?>_8">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="sprice<?=$row["cl_code"]?>_7">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="sprice<?=$row["cl_code"]?>_6">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="sprice<?=$row["cl_code"]?>_5">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="sprice<?=$row["cl_code"]?>_4">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="sprice<?=$row["cl_code"]?>_3">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="sprice<?=$row["cl_code"]?>_2">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='20' id="sprice<?=$row["cl_code"]?>_1">&nbsp;</td>
                                 </tr>
                             </table>
                         </td>
@@ -277,44 +285,44 @@
                                     <td class='border_top' align='center' width='60'>비고</td>
                                 </tr>
                                 <tr>
-                                    <td class='border_up' align='center' width='50' height='25' id="item_date1_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='195' id="item_name1_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='42' id="item_etc1_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='65' id="item_cnt1_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='55' id="item_price1_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='150' id="item_oprice1_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='83' id="item_sprice1_1">&nbsp;</td>
-                                    <td class='border_top' align='center' width='60' id="item_msg1_1">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='50' height='25' id="item_date1_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='195' id="item_name1_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='42' id="item_etc1_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='65' id="item_cnt1_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='55' id="item_price1_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='150' id="item_oprice1_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='83' id="item_sprice1_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_top reset' align='center' width='60' id="item_msg1_<?=$row["cl_code"]?>">&nbsp;</td>
                                 </tr>
                                 <tr>
-                                    <td class='border_up' align='center' width='50' height='25' id="item_date2_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='195' id="item_name2_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='42' id="item_etc2_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='65' id="item_cnt2_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='55' id="item_price2_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='150' id="item_oprice2_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='83' id="item_sprice2_1">&nbsp;</td>
-                                    <td class='border_top' align='center' width='60' id="item_msg2_1">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='50' height='25' id="item_date2_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='195' id="item_name2_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='42' id="item_etc2_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='65' id="item_cnt2_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='55' id="item_price2_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='150' id="item_oprice2_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='83' id="item_sprice2_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_top reset' align='center' width='60' id="item_msg2_<?=$row["cl_code"]?>">&nbsp;</td>
                                 </tr>
                                 <tr>
-                                    <td class='border_up' align='center' width='50' height='25' id="item_date3_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='195' id="item_name3_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='42' id="item_etc3_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='65' id="item_cnt3_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='55' id="item_price3_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='150' id="item_oprice3_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='83' id="item_sprice3_1">&nbsp;</td>
-                                    <td class='border_top' align='center' width='60' id="item_msg3_1">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='50' height='25' id="item_date3_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='195' id="item_name3_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='42' id="item_etc3_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='65' id="item_cnt3_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='55' id="item_price3_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='150' id="item_oprice3_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='83' id="item_sprice3_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_top reset' align='center' width='60' id="item_msg3_<?=$row["cl_code"]?>">&nbsp;</td>
                                 </tr>
                                 <tr>
-                                    <td class='border_up' align='center' width='50' height='25' id="item_date4_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='195' id="item_name4_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='42' id="item_etc4_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='65' id="item_cnt4_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='55' id="item_price4_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='150' id="item_oprice4_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='83' id="item_sprice4_1">&nbsp;</td>
-                                    <td class='border_top' align='center' width='60' id="item_msg4_1">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='50' height='25' id="item_date4_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='195' id="item_name4_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='42' id="item_etc4_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='65' id="item_cnt4_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='55' id="item_price4_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='150' id="item_oprice4_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='83' id="item_sprice4_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_top reset' align='center' width='60' id="item_msg4_<?=$row["cl_code"]?>">&nbsp;</td>
                                 </tr>
                             </table>
                         </td>
@@ -328,19 +336,20 @@
                                     <td class='border_up' align='center' width='108'>수 &nbsp; &nbsp; 표</td>
                                     <td class='border_up' align='center' width='108'>어 &nbsp; &nbsp; 음</td>
                                     <td class='border_up' align='center' width='108'>외상미수금</td>
-                                    <td class='border_top' rowspan='2' align='center' width='143'>이 금액을 <span id="paytype1">&nbsp;  &nbsp; &nbsp; &nbsp;</span>함</td>
+                                    <td class='border_top' rowspan='2' align='center' width='143'>이 금액을 <span id="paytype<?=$row["cl_code"]?>">&nbsp;  &nbsp; &nbsp; &nbsp;</span>함</td>
                                 </tr>
                                 <tr>
-                                    <td class='border_up' align='center' width='122' height='25' id="totalprice1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='108' id="totalprice2_1">&nbsp;</td>
-                                    <td class='border_up' align='center' width='108'>&nbsp;</td>
-                                    <td class='border_up' align='center' width='108'>&nbsp;</td>
-                                    <td class='border_up' align='center' width='108'>&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='122' height='25' id="totalprice<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='108' id="totalprice2_<?=$row["cl_code"]?>">&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='108'>&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='108'>&nbsp;</td>
+                                    <td class='border_up reset' align='center' width='108'>&nbsp;</td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                 </table>
+            <?php endforeach; ?>
             </div>
             <div class="register" style="text-align:center;margin-top:20px">
                 <button class="btn btn-black btn-save" type="button" data-mbseq="<?=$mb_seq?>">저장</button>
@@ -352,3 +361,20 @@
 </div>
 
 <script src="/assets/js/paymentView.js?date=<?=time()?>"></script>
+<script>
+$(function(){
+    $(".btn-add-bill").each(function(){
+        if($(this).data("clcode") != ""){
+            if($("#active_payment").val() == $(this).data("clcode")){
+                // console.log($("#date"+$(this).data("clcode")).html());
+                if($("#price"+$(this).data("clcode")+"_1").html() == "&nbsp;"){
+                    $(this).trigger("click");
+                }
+
+            }else{
+                $(this).hide();
+            }
+        }
+    })
+})
+</script>

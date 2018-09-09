@@ -72,33 +72,33 @@
             <input type="hidden" name="pr_pc_seq" id="pc_seq" value="<?=$pc_seq?>">
 
             <div class="modal-title">
-                <div class="modal-title-text" style="display:inline-block">기본 정보</div>
-                <div style="display:inline-block">
-                    <div class="label" style="display:inline-block">상품 코드</div>
-                    <div class="input"  style="display:inline-block;"><input type="text" name="pr_code" id="pr_code" style="border:1px solid #ddd;height:18px" value="<?=$info["pr_code"]?>"></div>
+                <div class="modal-title-text" style="display:inline-block;width:20%">기본 정보</div>
+                <div style="display:inline-block;backround:#fff;width:77%">
+                    <div class="label padd" style="display:inline-block"><div>상품 코드</div></div>
+                    <div class="input padd"  style="display:inline-block;"><input type="text" name="pr_code" id="pr_code" style="border:1px solid #ddd" value="<?=$info["pr_code"]?>"></div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input">
-                    <div class="label">제품군</div>
-                    <div class="input"><input type="text" class="width-button" name="pr_pi_seq_str" id="pr_pi_seq_str" value="<?=$info["pi_name"]?>"><button class="btn btn-brown btn-small btn-item-search" type="button" >검색</button></div>
+                    <div class="label padd"><div>제품군</div></div>
+                    <div class="input padd"><input type="text" class="width-button" name="pr_pi_seq_str" id="pr_pi_seq_str" value="<?=$info["pi_name"]?>"><button class="btn btn-brown btn-small btn-item-search" type="button" >검색</button></div>
                 </div>
                 <div class="modal-field-input">
-                    <div class="label">기본 매입처</div>
-                    <div class="input"><input type="text" class="width-button" name="pr_c_seq_str" id="pr_c_seq_str" value="<?=$info["c_name"]?>"><button class="btn btn-brown btn-small btn-client-search" type="button" >검색</button></div>
+                    <div class="label padd"><div>기본 매입처</div></div>
+                    <div class="input padd"><input type="text" class="width-button" name="pr_c_seq_str" id="pr_c_seq_str" value="<?=$info["c_name"]?>"><button class="btn btn-brown btn-small btn-client-search" type="button" >검색</button></div>
                 </div>
             </div>
               <div class="modal-field">
                 <div class="modal-field-input full">
-                    <div class="label">부가항목</div>
-                    <div class="input" id="addOption">제품군을 선택하면 제품군 등록 시 설정한 부가항목이 표시됩니다. 부가항목은 서비스 등록 시 옵션으로 설정할 수 있습니다.</div>
+                    <div class="label padd"><div>부가항목</div></div>
+                    <div class="input padd" id="addOption">제품군을 선택하면 제품군 등록 시 설정한 부가항목이 표시됩니다. 부가항목은 서비스 등록 시 옵션으로 설정할 수 있습니다.</div>
                 </div>
 
             </div>
             <div class="modal-field">
                 <div class="modal-field-input full">
-                    <div class="label">상품명</div>
-                    <div class="input"><input type="text" name="pr_name" id="pr_name" style="width:20%" value="<?=$info["pr_name"]?>"> <b style="color:red">중복 등록 방지</b>를 위해 이미 등록된 유사한 상품이 있는 지 확인 후 등록하세요</div>
+                    <div class="label padd"><div>상품명</div></div>
+                    <div class="input padd"><input type="text" name="pr_name" id="pr_name" style="width:20%" value="<?=$info["pr_name"]?>"> <b style="color:red">중복 등록 방지</b>를 위해 이미 등록된 유사한 상품이 있는 지 확인 후 등록하세요</div>
                 </div>
 
             </div>

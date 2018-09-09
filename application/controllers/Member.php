@@ -44,6 +44,7 @@ class Member extends CI_Controller {
         $data["service_list"] = $this->api_model->fetchMemberService($mb_seq);
         $data["payment_list"] = $this->api_model->fetchMemberPayment($mb_seq);
         $data["claim_list"] = $this->api_model->fetchPayment($mb_seq);
+        $data["paycom_list"] = $this->api_model->fetchPaymentPaycom($mb_seq);
         // $data["basic_policy"] = $this->api_model->fetchPolicy();
         $layout["content"] = $this->load->view("member/view", $data,true);
         $layout["footer"] = $this->load->view("layout/footer", '',true);
@@ -51,9 +52,10 @@ class Member extends CI_Controller {
     }
 
     public function payment_setting($mb_seq){
-        $data["payment_list"] = $this->api_model->fetchMemberPayment($mb_seq);
+        $data["payment_list"] = $this->api_model->fetchMemberPaymentClaim($mb_seq);
         $data["member_view"] = $this->api_model->selectMember($mb_seq);
         $data["claim_list"] = $this->api_model->fetchClaim($mb_seq);
+        // print_r($data["claim_list"]);
         $data["mb_seq"] = $mb_seq;
         $layout["content"] = $this->load->view("member/payment_setting", $data,true);
         $this->load->view('layout/layout_popup',$layout);
@@ -61,13 +63,24 @@ class Member extends CI_Controller {
 
     public function payment_view($svp_seq){
         $data["info"] = $this->api_model->memberPaymentView($svp_seq);
-        $layout["content"] = $this->load->view("member/payment_view", $data,true);
+        if($data["info"]["svp_sva_seq"] != ""){
+            $layout["content"] = $this->load->view("member/payment_view_add", $data,true);
+        }else{
+            $layout["content"] = $this->load->view("member/payment_view", $data,true);
+        }
+
         $this->load->view('layout/layout_popup',$layout);
     }
 
     public function claim_view($pm_seq){
         $data["info"] = $this->api_model->paymentView($pm_seq);
         $layout["content"] = $this->load->view("member/claim_view", $data,true);
+        $this->load->view('layout/layout_popup',$layout);
+    }
+
+    public function paycom_view($pm_seq){
+        $data["info"] = $this->api_model->paymentView($pm_seq);
+        $layout["content"] = $this->load->view("member/paycom_view", $data,true);
         $this->load->view('layout/layout_popup',$layout);
     }
 }

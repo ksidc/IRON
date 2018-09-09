@@ -30,6 +30,20 @@ $(function(){
         height : 400
     });
 
+    $( "#dialogBill" ).dialog({
+        autoOpen: false,
+        modal: true,
+        width:'720px',
+        height : 695
+    });
+
+    $( "#dialogClaim" ).dialog({
+        autoOpen: false,
+        modal: true,
+        width:'720px',
+        height : 645
+    });
+
     $("#all_payment").click(function(){
         if($(this).is(":checked")){
             $(".payment_check").prop("checked",true);
@@ -46,6 +60,14 @@ $(function(){
             $(".claim_check").prop("checked",false);
         }
         claimCal();
+    })
+    $("#paycom_all").click(function(){
+        if($(this).is(":checked")){
+            $(".paycom_check").prop("checked",true);
+        }else{
+            $(".paycom_check").prop("checked",false);
+        }
+        paycomCal();
     })
 
     $("#service_display").click(function(){
@@ -294,7 +316,8 @@ $(function(){
                 $("#ca_price_info5").val(response.info.ca_price_info5);
 
                 for(var i = 0; i < response.list.length;i++){
-                    $("#ca_seq"+response.list[i].ca_sort).val(response.list[i].cl_seq);
+                    // console.log()
+                    $("#cl_seq"+response.list[i].ca_sort).val(response.list[i].cl_seq);
                     $("#ca_item_date"+response.list[i].ca_sort).val(response.info.ca_monthday);
                     $("#ca_item_name"+response.list[i].ca_sort).val(response.list[i].ca_item_name);
                     $("#ca_item_price"+response.list[i].ca_sort).val(response.list[i].ca_item_price);
@@ -363,7 +386,7 @@ $(function(){
                 $("#ba_price_info5").val(response.info.ca_price_info5);
 
                 for(var i = 0; i < response.list.length;i++){
-                    $("#ba_seq"+response.list[i].ca_sort).val(response.list[i].cl_seq);
+                    $("#bl_seq"+response.list[i].ca_sort).val(response.list[i].cl_seq);
                     $("#ba_item_date"+response.list[i].ca_sort).val(date2);
                     $("#ba_item_name"+response.list[i].ca_sort).val(response.list[i].ca_item_name);
                     $("#ba_item_price"+response.list[i].ca_sort).val(response.list[i].ca_item_price);
@@ -383,6 +406,7 @@ $(function(){
         if(confirm("수정하시겠습니까?")){
             var url = "/api/paymentClaimUpdate";
             var datas = $("#claimEdit").serialize();
+
             $.ajax({
                 url : url,
                 type : 'POST',
@@ -495,7 +519,32 @@ $(function(){
                 }
             });
         }
+    });
+
+    $(".btn-basic-view").click(function(){
+        if($(".basic").css("display") != "none"){
+            $(".basic").hide();
+            $(".addcol").attr("colspan",9);
+            $(".addcol2").attr("colspan",10);
+            $(this).html("확장하기(기본)");
+        }else{
+           $(".basic").show();
+            $(".addcol").attr("colspan",13);
+            $(".addcol2").attr("colspan",14);
+            $(this).html("축소하기(기본)");
+        }
+
     })
+
+    $(".btn-payment-view").click(function(){
+        if($(".payment").css("display") != "none"){
+            $(".payment").hide();
+            $(this).html("확장하기(요금)");
+        }else{
+            $(".payment").show();
+            $(this).html("축소하기(요금)");
+        }
+    });
     $(".detailView").click(function(){
         var specs = "left=10,top=10,width=1000,height=700";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
@@ -506,6 +555,12 @@ $(function(){
         var specs = "left=10,top=10,width=1000,height=700";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
         window.open("/member/claim_view/"+$(this).data("seq"), 'serviceMake', specs);
+    });
+
+    $(".detailCView").click(function(){
+        var specs = "left=10,top=10,width=1000,height=700";
+        specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
+        window.open("/member/paycom_view/"+$(this).data("seq"), 'serviceMake', specs);
     });
 
     $(".memo").click(function(){
@@ -715,14 +770,117 @@ $(function(){
         }
 
     })
+
+    $("#mb_auto_claim_yn").click(function(){
+        if($(this).is(":checked")){
+            var value_ = "Y";
+        }else{
+            var value_ = "N";
+        }
+        var url = "/api/memberAutoClaim";
+        $.ajax({
+            url : url,
+            type : 'POST',
+            dataType : 'JSON',
+            data : "mb_seq="+$("#mb_seq").val()+"&mb_auto_claim_yn="+value_,
+            success:function(response){
+                console.log(response);
+                // alert("삭제되었습니다.");
+                // getPaymentMemo();
+                // $('#dialogInput').dialog('close');
+                // document.location.reload();
+            },
+            error : function(error){
+                console.log(error);
+            }
+        });
+
+    })
+
+    $("#mb_auto_email_yn").click(function(){
+        if($(this).is(":checked")){
+            var value_ = "Y";
+        }else{
+            var value_ = "N";
+        }
+        var url = "/api/memberAutoEmail";
+        $.ajax({
+            url : url,
+            type : 'POST',
+            dataType : 'JSON',
+            data : "mb_seq="+$("#mb_seq").val()+"&mb_auto_email_yn="+value_,
+            success:function(response){
+                console.log(response);
+                // alert("삭제되었습니다.");
+                // getPaymentMemo();
+                // $('#dialogInput').dialog('close');
+                // document.location.reload();
+            },
+            error : function(error){
+                console.log(error);
+            }
+        });
+
+    })
+
+    $("#mb_over_pay_yn").click(function(){
+        if($(this).is(":checked")){
+            var value_ = "Y";
+        }else{
+            var value_ = "N";
+        }
+        var url = "/api/memberOverPay";
+        $.ajax({
+            url : url,
+            type : 'POST',
+            dataType : 'JSON',
+            data : "mb_seq="+$("#mb_seq").val()+"&mb_over_pay_yn="+value_,
+            success:function(response){
+                console.log(response);
+                // alert("삭제되었습니다.");
+                // getPaymentMemo();
+                // $('#dialogInput').dialog('close');
+                // document.location.reload();
+            },
+            error : function(error){
+                console.log(error);
+            }
+        });
+
+    })
 })
 
 function viewAll(){
-    $(".payment-basic").show();
+    if($(".payment-basic").css("display") != "none"){
+        $(".payment-basic").hide();
+        $("#payment_extend").html(">");
+    }else{
+        $(".payment-basic").show();
+        $("#payment_extend").html(">");
+    }
+
 }
 
 function viewAll2(){
-    $(".claim_payment").show();
+    if($(".claim_payment").css("display") != "none"){
+        $(".claim_payment").hide();
+        $("#claim_extend").html(">");
+    }else{
+        $(".claim_payment").show();
+        $("#claim_extend").html(">");
+    }
+    // $(".claim_payment").show();
+}
+
+function viewAll3(){
+    if($(".paycom_payment").css("display") != "none"){
+        $(".paycom_payment").hide();
+        $("#paycom_extend").html(">");
+    }else{
+        $(".paycom_payment").show();
+        $("#paycom_extend").html(">");
+    }
+    // $(".claim_payment").show();
 }
 
 function oncePayment(){
@@ -753,11 +911,13 @@ function oncePayment(){
     $( "#dialogOnce" ).dialog("open");$("#dialogOnce").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
 }
 
-function servicePayment(){
+function servicePayment(mb_seq){
     var checkCnt = 0;
+    var checkSeq = [];
     $(".payment_check").each(function(){
         if($(this).is(":checked")){
             checkCnt++;
+            checkSeq.push($(this).val());
         }
     })
     if(checkCnt == 0){
@@ -765,10 +925,29 @@ function servicePayment(){
         return false;
     }
 
-    if(checkCnt > 1){
-        alert("서비스를 하나만 선택해 주세요");
-        return false;
-    }
+    // if(checkCnt > 1){
+    //     alert("서비스를 하나만 선택해 주세요");
+    //     return false;
+    // }
+
+    var url = "/api/claimMake/"+mb_seq;
+    $.ajax({
+        url : url,
+        type : 'POST',
+        dataType : 'JSON',
+        data : "pm_sv_seq="+checkSeq.join(","),
+        success:function(response){
+            console.log(response);
+            if(response.result){
+                alert("청구 되었습니다.");
+                document.location.reload();
+            }
+            //
+        },
+        error:function(error){
+            console.log(error);
+        }
+    });
     // $( "#dialogService" ).dialog("open");$("#dialogOnce").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
 }
 
@@ -955,6 +1134,60 @@ function claimCal(){
     $(".claim_price10").html($.number(price10));
     $(".claim_price11").html($.number(price11));
     $(".claim_price12").html($.number(price12));
+}
+
+function paycomCal(){
+    var price1 = 0;
+    var price2 = 0;
+    var price3 = 0;
+    var price4 = 0;
+    var price5 = 0;
+    var price6 = 0;
+    var price7 = 0;
+    var price8 = 0;
+    var price9 = 0;
+    var price10 = 0;
+    var price11 = 0;
+    var price12 = 0;
+    $(".paycom_check").each(function(){
+        var sumprice1 = parseInt($(this).data("price1")) || 0;
+        var sumprice2 = parseInt($(this).data("price2")) || 0;
+        var sumprice3 = parseInt($(this).data("price3")) || 0;
+        var sumprice4 = parseInt($(this).data("price4")) || 0;
+        var sumprice5 = parseInt($(this).data("price5")) || 0;
+        var sumprice6 = parseInt($(this).data("price6")) || 0;
+        var sumprice7 = parseInt($(this).data("price7")) || 0;
+        var sumprice8 = parseInt($(this).data("price8")) || 0;
+        var sumprice9 = parseInt($(this).data("price9")) || 0;
+        var sumprice10 = parseInt($(this).data("price10")) || 0;
+        var sumprice11 = parseInt($(this).data("price11")) || 0;
+        var sumprice12 = parseInt($(this).data("price12")) || 0;
+
+        price1 = price1 + sumprice1;
+        price2 = price2 + sumprice2;
+        price3 = price3 + sumprice3;
+        price4 = price4 + sumprice4;
+        price5 = price5 + sumprice5;
+        price6 = price6 + sumprice6;
+        price7 = price7 + sumprice7;
+        price8 = price8 + sumprice8;
+        price9 = price9 + sumprice9;
+        price10 = price10 + sumprice10;
+        price11 = price11 + sumprice11;
+        price12 = price12 + sumprice12;
+    })
+    $(".paycom_price1").html($.number(price1));
+    $(".paycom_price2").html($.number(price2));
+    $(".paycom_price3").html($.number(price3));
+    $(".paycom_price4").html($.number(price4));
+    $(".paycom_price5").html($.number(price5));
+    $(".paycom_price6").html($.number(price6));
+    $(".paycom_price7").html($.number(price7));
+    $(".paycom_price8").html($.number(price8));
+    $(".paycom_price9").html($.number(price9));
+    $(".paycom_price10").html($.number(price10));
+    $(".paycom_price11").html($.number(price11));
+    $(".paycom_price12").html($.number(price12));
 }
 
 function getPaymentMemo(){

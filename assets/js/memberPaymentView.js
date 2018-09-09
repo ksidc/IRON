@@ -238,8 +238,29 @@ $(function(){
                 data : datas,
                 success:function(response){
                     console.log(response);
+                    if(response.result)
+                        document.location.reload();
+                },
+                error:function(error){
+                    console.log(error);
+                }
+            });
+        }
+    })
 
-                    // document.location.reload();
+    $(".btn-payment-modify-add").click(function(){
+        if(confirm("요금정보를 수정하시겠습니까?")){
+            var url = "/api/serviceAddUpdate";
+            var datas = $("#serviceAddUpdate").serialize();
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : datas,
+                success:function(response){
+                    console.log(response);
+                    if(response.result)
+                        document.location.reload();
                 },
                 error:function(error){
                     console.log(error);
@@ -589,6 +610,28 @@ function priceInfoDate(){
     $("#start_date_str_0_2").html(start_str[1]);
     $("#end_date_str_0_2").html(end_str[1]+" ("+end_period[1]+")");
 
+    if(basic_date_info.length > 1){
+        $("#svp_first_day_start").val(start_str[0]);
+        $("#svp_first_day_end").val(basic_date_info[0].end_date);
+        $("#svp_first_month_start").val(start_str[1]);
+        $("#svp_first_month_end").val(basic_date_info[1].end_date);
+        // console.log(start_str[0]+"::"+basic_date_info[0].end_date+"::"+basic_date_info[1].end_date);
+    }else{
+        if(basic_date_info[0].interval == "day"){
+            $("#svp_first_day_start").val(start_str[0]);
+            $("#svp_first_day_end").val(basic_date_info[0].end_date);
+            $("#svp_first_month_start").val("");
+            $("#svp_first_month_end").val("");
+        }else{
+            $("#svp_first_day_start").val("");
+            $("#svp_first_day_end").val("");
+            $("#svp_first_month_start").val(start_str[0]);
+            $("#svp_first_month_end").val(basic_date_info[0].end_date);
+        }
+
+        // console.log(start_str[0]+"::"+basic_date_info[0].end_date);
+    }
+
     contractPriceDateInfo();
 }
 
@@ -649,10 +692,14 @@ function contractPriceDateInfo(){
             console.log(price);
             $("#use_price_str_0_1").html($.number(price));
             basic_date_info[0].price = price;
+            $("#svp_first_day_price").val(price);
+            $("#svp_first_month_price").val(0);
         }else{
             // console.log($("#svp_month_total_price").val());
             $("#use_price_str_0_1").html($.number($("#sv_month_total_price").val()));
             basic_date_info[0].price = $("#sv_month_total_price").val();
+            $("#svp_first_day_price").val(0);
+            $("#svp_first_month_price").val(price);
         }
 
     }else if(basic_date_info.length == 2){
@@ -719,6 +766,8 @@ function contractPriceDateInfo(){
 
         $("#use_price_str_0_1").html($.number(price));
         $("#use_price_str_0_2").html($.number(price2));
+        $("#svp_first_day_price").val(price);
+        $("#svp_first_month_price").val(price2);
     }
     var totalprice = 0;
     totalprice = parseInt(totalprice) + parseInt($("#sv_once_total_price").val()) || 0;

@@ -74,6 +74,7 @@ $(function(){
             $("#paytype"+$("#active_payment").val()).html("청구");
         }
         setNum();
+        $(".select2").select();
     });
 
     $("body").on("change",".item_num",function(){
@@ -231,7 +232,7 @@ $(function(){
                                             <td class='border_up' colspan='12' width='250' align='center'>공 &nbsp; 급 &nbsp; 가 &nbsp; 액</td>\
                                             <td class='border_up' rowspan='3' align='center' width='4' height='15'>&nbsp;</td>\
                                             <td class='border_up' colspan='10' align='center' width='190' height='15'>세 &nbsp; 액</td>\
-                                            <td class='border_top' align='center' width='156'>비 &nbsp; 고</td>\
+                                            <td class='border_top reset' align='center' width='156'>비 &nbsp; 고</td>\
                                         </tr>\
                                         <tr>\
                                             <td class='border_up' align='center' width='85' height='21'>년 &nbsp; 월 &nbsp; 일</td>\
@@ -257,32 +258,32 @@ $(function(){
                                             <td class='border_up' align='center' width='20'>백</td>\
                                             <td class='border_up' align='center' width='20'>십</td>\
                                             <td class='border_up' align='center' width='20'>일</td>\
-                                            <td class='border_top' align='center' width='156' rowspan='2'>&nbsp;</td>\
+                                            <td class='border_top reset' align='center' width='156' rowspan='2'>&nbsp;</td>\
                                         </tr>\
                                         <tr>\
-                                            <td class='border_up' align='center' width='85' height='25' id='date"+length+"'> &nbsp; </td>\
-                                            <td class='border_up' align='center' width='35' id='number"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='price"+length+"_11'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='price"+length+"_10'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='price"+length+"_9'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='price"+length+"_8'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='price"+length+"_7'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='price"+length+"_6'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='price"+length+"_5'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='price"+length+"_4'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='price"+length+"_3'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='price"+length+"_2'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='price"+length+"_1'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='sprice"+length+"_10'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='sprice"+length+"_9'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='sprice"+length+"_8'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='sprice"+length+"_7'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='sprice"+length+"_6'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='sprice"+length+"_5'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='sprice"+length+"_4'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='sprice"+length+"_3'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='sprice"+length+"_2'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='20' id='sprice"+length+"_1'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='85' height='25' id='date"+length+"'> &nbsp; </td>\
+                                            <td class='border_up reset' align='center' width='35' id='number"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_11'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_10'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_9'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_8'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_7'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_6'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_5'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_4'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_3'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_2'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_1'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_10'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_9'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_8'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_7'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_6'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_5'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_4'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_3'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_2'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_1'>&nbsp;</td>\
                                         </tr>\
                                     </table>\
                                 </td>\
@@ -301,44 +302,44 @@ $(function(){
                                             <td class='border_top' align='center' width='60'>비고</td>\
                                         </tr>\
                                         <tr>\
-                                            <td class='border_up' align='center' width='50' height='25' id='item_date1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='195' id='item_name1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='42' id='item_etc1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='65' id='item_cnt1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='55' id='item_price1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='150' id='item_oprice1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='83' id='item_sprice1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_top' align='center' width='60' id='item_msg1_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='50' height='25' id='item_date1_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='195' id='item_name1_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='42' id='item_etc1_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='65' id='item_cnt1_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='55' id='item_price1_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='150' id='item_oprice1_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='83' id='item_sprice1_"+length+"'>&nbsp;</td>\
+                                            <td class='border_top reset' align='center' width='60' id='item_msg1_"+length+"'>&nbsp;</td>\
                                         </tr>\
                                         <tr>\
-                                            <td class='border_up' align='center' width='50' height='25' id='item_date2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='195' id='item_name2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='42' id='item_etc2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='65' id='item_cnt2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='55' id='item_price2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='150' id='item_oprice2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='83' id='item_sprice2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_top' align='center' width='60' id='item_msg2_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='50' height='25' id='item_date2_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='195' id='item_name2_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='42' id='item_etc2_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='65' id='item_cnt2_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='55' id='item_price2_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='150' id='item_oprice2_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='83' id='item_sprice2_"+length+"'>&nbsp;</td>\
+                                            <td class='border_top reset' align='center' width='60' id='item_msg2_"+length+"'>&nbsp;</td>\
                                         </tr>\
                                         <tr>\
-                                            <td class='border_up' align='center' width='50' height='25' id='item_date3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='195' id='item_name3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='42' id='item_etc3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='65' id='item_cnt3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='55' id='item_price3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='150' id='item_oprice3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='83' id='item_sprice3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_top' align='center' width='60' id='item_msg3_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='50' height='25' id='item_date3_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='195' id='item_name3_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='42' id='item_etc3_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='65' id='item_cnt3_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='55' id='item_price3_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='150' id='item_oprice3_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='83' id='item_sprice3_"+length+"'>&nbsp;</td>\
+                                            <td class='border_top reset' align='center' width='60' id='item_msg3_"+length+"'>&nbsp;</td>\
                                         </tr>\
                                         <tr>\
-                                            <td class='border_up' align='center' width='50' height='25' id='item_date4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='195' id='item_name4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='42' id='item_etc4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='65' id='item_cnt4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='55' id='item_price4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='150' id='item_oprice4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='83' id='item_sprice4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_top' align='center' width='60' id='item_msg4_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='50' height='25' id='item_date4_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='195' id='item_name4_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='42' id='item_etc4_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='65' id='item_cnt4_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='55' id='item_price4_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='150' id='item_oprice4_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='83' id='item_sprice4_"+length+"'>&nbsp;</td>\
+                                            <td class='border_top reset' align='center' width='60' id='item_msg4_"+length+"'>&nbsp;</td>\
                                         </tr>\
                                     </table>\
                                 </td>\
@@ -355,11 +356,11 @@ $(function(){
                                             <td class='border_top' rowspan='2' align='center' width='143'>이 금액을 <span id='paytype"+length+"'>&nbsp;  &nbsp; &nbsp; &nbsp;</span>함</td>\
                                         </tr>\
                                         <tr>\
-                                            <td class='border_up' align='center' width='122' height='25' id='totalprice1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='108' id='totalprice2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='108'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='108'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='108'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='122' height='25' id='totalprice1_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='108' id='totalprice2_"+length+"'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='108'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='108'>&nbsp;</td>\
+                                            <td class='border_up reset' align='center' width='108'>&nbsp;</td>\
                                         </tr>\
                                     </table>\
                                 </td>\
@@ -372,12 +373,30 @@ $(function(){
             // $(".border_all").last().addClass("payment_claim");
             $(this).before("<li class='content-tab-item' data-index='"+length+"'>계산서"+length+"</li>")
         }else{
+
             $(".content-tab-item").removeClass("active");
             $(this).addClass("active");
             var index = $(this).data("index");
-            $("#active_payment").val(indeX);
+            // console.log(index);
+            $("#active_payment").val(index);
             $(".payment_claim").hide();
             $("#payment"+index).show();
+            $("#after-list").html("");
+            addList = [];
+            $(".btn-add-bill").each(function(){
+                if($(this).data("clcode") != ""){
+                    // console.log($(this).data("clcode"));
+                    if($("#active_payment").val() == $(this).data("clcode")){
+                        console.log("111>>>>>>>"+$("#active_payment").val());
+                        $("#payment"+$("#active_payment").val()).find(".reset").html("");
+                        // if($("#price"+$(this).data("clcode")+"_1").html() == "&nbsp;"){
+                        $(this).trigger("click");
+                        // }
+                    }else{
+                        $(this).hide();
+                    }
+                }
+            })
             // $("#pc_seq").val($(this).data("pcseq"));
             // getList();
             // getItemList();
@@ -541,12 +560,12 @@ function setPayment(){
             $("#number1").html(11 - totalprice.toString().length);
             for(var i = 0; i < totalprice.toString().length;i++){
                 var index =totalprice.toString().length - (i+1)
-                $("#price1_"+(i+1)).html(totalprice.toString().substr(index,1));
+                $("#price"+active_payment+"_"+(i+1)).html(totalprice.toString().substr(index,1));
             }
 
             for(var i = 0; i < surtaxprice.toString().length;i++){
                 var index =surtaxprice.toString().length - (i+1)
-                $("#sprice1_"+(i+1)).html(surtaxprice.toString().substr(index,1));
+                $("#sprice"+active_payment+"_"+(i+1)).html(surtaxprice.toString().substr(index,1));
             }
 
         }

@@ -104,8 +104,8 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">회원 아이디(코드)</div>
-                <div class="input write"><input type="text" name="mb_id" id="mb_id" class="width-button"><button class="btn btn-brown btn-small btn-id-duple" type="button">중복확인</button></div>
+                <div class="label padd"><div>회원 아이디(코드)</div></div>
+                <div class="input write padd"><input type="text" name="mb_id" id="mb_id" class="width-button"><button class="btn btn-brown btn-small btn-id-duple" type="button">중복확인</button></div>
                 <div class="input edit md-id-str"></div>
             </div>
         </div>
@@ -114,8 +114,8 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">회원구분</div>
-                <div class="input">
+                <div class="label padd"><div>회원구분</div></div>
+                <div class="input padd">
 
                     <select name="mb_type" id="mb_type" class="select2" style="width:90%">
                         <option value="0" selected>사업자</option>
@@ -126,57 +126,57 @@
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label company">상호명</div>
-                <div class="label user">이름</div>
-                <div class="input"><input type="text" name="mb_name" id="mb_name"></div>
+                <div class="label company padd"><div>상호명</div></div>
+                <div class="label user padd"><div>이름</div></div>
+                <div class="input padd"><input type="text" name="mb_name" id="mb_name"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label company">사업자등록번호(-포함)</div>
-                <div class="label user">생년월일(1900-01-01)</div>
-                <div class="input"><input type="text" class="width-button" name="mb_number" id="mb_number"><button class="btn btn-brown btn-small btn-number-duple company" type="button">중복확인</button></div>
+                <div class="label company padd"><div>사업자등록번호(-포함)</div></div>
+                <div class="label user padd"><div>생년월일(1900-01-01)</div></div>
+                <div class="input padd"><input type="text" class="width-button" name="mb_number" id="mb_number"><button class="btn btn-brown btn-small btn-number-duple company" type="button">중복확인</button></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">대표자</div>
-                <div class="input"><input type="text" name="mb_ceo" id="mb_ceo"></div>
+                <div class="label padd"><div>대표자</div></div>
+                <div class="input padd"><input type="text" name="mb_ceo" id="mb_ceo"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label">주소</div>
-                <div class="input" style="width:78%"><input type="text" style="width:17%" name="mb_zipcode" id="mb_zipcode" readonly onclick="daumApi()"> <input type="text" style="width:50%" name="mb_address" id="mb_address" readonly onclick="daumApi()"> <input type="text" style="width:27%" name="mb_detail_address" id="mb_detail_address"></div>
+                <div class="label padd"><div>주소</div></div>
+                <div class="input padd" style="width:78%"><input type="text" style="width:17%" name="mb_zipcode" id="mb_zipcode" readonly onclick="daumApi()"> <input type="text" style="width:45%" name="mb_address" id="mb_address" readonly onclick="daumApi()"> <input type="text" style="width:27%" name="mb_detail_address" id="mb_detail_address"></div>
             </div>
 
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">전화번호(-포함)</div>
-                <div class="input"><input type="text" name="mb_tel" id="mb_tel"></div>
+                <div class="label padd"><div>전화번호(-포함)</div></div>
+                <div class="input padd"><input type="text" name="mb_tel" id="mb_tel"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">휴대폰번호(-포함)</div>
-                <div class="input"><input type="text" name="mb_phone" id="mb_phone"></div>
+                <div class="label padd"><div>휴대폰번호(-포함)</div></div>
+                <div class="input padd"><input type="text" name="mb_phone" id="mb_phone"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">이메일</div>
-                <div class="input"><input type="text" name="mb_email" id="mb_email" ></div>
+                <div class="label padd"><div>이메일</div></div>
+                <div class="input padd"><input type="text" name="mb_email" id="mb_email" ></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">팩스(-포함)</div>
-                <div class="input"><input type="text" name="mb_fax" id="mb_fax"></div>
+                <div class="label padd"><div>팩스(-포함)</div></div>
+                <div class="input padd"><input type="text" name="mb_fax" id="mb_fax"></div>
             </div>
         </div>
         <div class="modal-field company">
             <div class="modal-field-input">
-                <div class="label">업태</div>
-                <div class="input"><input type="text" name="mb_business_conditions" id="mb_business_conditions"></div>
+                <div class="label padd"><div>업태</div></div>
+                <div class="input padd"><input type="text" name="mb_business_conditions" id="mb_business_conditions"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">종목</div>
-                <div class="input"><input type="text" name="mb_business_type" id="mb_business_type"></div>
+                <div class="label padd"><div>종목</div></div>
+                <div class="input padd"><input type="text" name="mb_business_type" id="mb_business_type"></div>
             </div>
         </div>
         <div class="modal-title">
@@ -184,22 +184,22 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">담당자명</div>
-                <div class="input"><input type="text" name="mb_contract_name" id="mb_contract_name"></div>
+                <div class="label padd"><div>담당자명</div></div>
+                <div class="input padd"><input type="text" name="mb_contract_name" id="mb_contract_name"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">이메일</div>
-                <div class="input"><input type="text" name="mb_contract_email" id="mb_contract_email"></div>
+                <div class="label padd"><div>이메일</div></div>
+                <div class="input padd"><input type="text" name="mb_contract_email" id="mb_contract_email"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">전화번호(-포함)</div>
-                <div class="input"><input type="text" name="mb_contract_tel" id="mb_contract_tel"></div>
+                <div class="label padd"><div>전화번호(-포함)</div></div>
+                <div class="input padd"><input type="text" name="mb_contract_tel" id="mb_contract_tel"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">휴대폰번호(-포함)</div>
-                <div class="input"><input type="text" name="mb_contract_phone" id="mb_contract_phone"></div>
+                <div class="label padd"><div>휴대폰번호(-포함)</div></div>
+                <div class="input padd"><input type="text" name="mb_contract_phone" id="mb_contract_phone"></div>
             </div>
         </div>
         <div class="modal-title">
@@ -207,22 +207,22 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">담당자명</div>
-                <div class="input"><input type="text" name="mb_payment_name" id="mb_payment_name"></div>
+                <div class="label padd"><div>담당자명</div></div>
+                <div class="input padd"><input type="text" name="mb_payment_name" id="mb_payment_name"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">이메일</div>
-                <div class="input"><input type="text" name="mb_payment_email" id="mb_payment_email"></div>
+                <div class="label padd"><div>이메일</div></div>
+                <div class="input padd"><input type="text" name="mb_payment_email" id="mb_payment_email"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">전화번호(-포함)</div>
-                <div class="input"><input type="text" name="mb_payment_tel" id="mb_payment_tel"></div>
+                <div class="label padd"><div>전화번호(-포함)</div></div>
+                <div class="input padd"><input type="text" name="mb_payment_tel" id="mb_payment_tel"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">휴대폰번호(-포함)</div>
-                <div class="input"><input type="text" name="mb_payment_phone" id="mb_payment_phone"></div>
+                <div class="label padd"><div>휴대폰번호(-포함)</div></div>
+                <div class="input padd"><input type="text" name="mb_payment_phone" id="mb_payment_phone"></div>
             </div>
         </div>
         <div class="modal-title">
@@ -230,22 +230,22 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">은행명</div>
-                <div class="input"><input type="text" name="mb_bank" id="mb_bank"></div>
+                <div class="label padd"><div>은행명</div></div>
+                <div class="input padd"><input type="text" name="mb_bank" id="mb_bank"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">계좌번호(-포함)</div>
-                <div class="input"><input type="text" name="mb_bank_input_number" id="mb_bank_input_number"></div>
+                <div class="label padd"><div>계좌번호(-포함)</div></div>
+                <div class="input padd"><input type="text" name="mb_bank_input_number" id="mb_bank_input_number"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">예금주</div>
-                <div class="input"><input type="text" style="width:38.7%" name="mb_bank_name" id="mb_bank_name">&nbsp;&nbsp;&nbsp;&nbsp;관계 <input type="text" style="width:30%" name="mb_bank_name_relationship" id="mb_bank_name_relationship"> </div>
+                <div class="label padd"><div>예금주</div></div>
+                <div class="input padd"><input type="text" style="width:38.7%" name="mb_bank_name" id="mb_bank_name">&nbsp;&nbsp;&nbsp;&nbsp;관계 <input type="text" style="width:30%" name="mb_bank_name_relationship" id="mb_bank_name_relationship"> </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">사업자번호/생년월일</div>
-                <div class="input"><input type="text" name="mb_bank_number" id="mb_bank_number"></div>
+                <div class="label padd"><div>사업자번호/생년월일</div></div>
+                <div class="input padd"><input type="text" name="mb_bank_number" id="mb_bank_number"></div>
             </div>
         </div>
         <div class="modal-title">
@@ -253,8 +253,8 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">청구 기준</div>
-                <div class="input">이용 월의
+                <div class="label padd"><div>청구 기준</div></div>
+                <div class="input padd">이용 월의
 
                     <select name="mb_payment_type" id="mb_payment_type" class="select2" style="width:40%">
                         <option selected value="0">전월</option>
@@ -265,8 +265,8 @@
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">자동 청구일</div>
-                <div class="input">
+                <div class="label padd"><div>자동 청구일</div></div>
+                <div class="input padd">
 
                     <select name="mb_auto_payment" id="mb_auto_payment" class="select2" style="width:90%">
                         <?php for($i = 1; $i < 29; $i++): ?>
@@ -284,8 +284,8 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">계산서 발행</div>
-                <div class="input">
+                <div class="label padd"><div>계산서 발행</div></div>
+                <div class="input padd">
 
                     <select  name="mb_payment_publish" id="mb_payment_publish" class="select2" style="width:30%">
                         <option selected value="0">발행</option>
@@ -303,8 +303,8 @@
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">결제일</div>
-                <div class="input">청구일로부터
+                <div class="label padd"><div>결제일</div></div>
+                <div class="input padd">청구일로부터
 
                         <select name="mb_payment_day_select" id="mb_payment_day_select" class="select2" style="width:30%">
                             <option selected value="etc">입력</option>

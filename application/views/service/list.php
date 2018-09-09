@@ -194,13 +194,28 @@
         })
 
         $(".btn-basic-view").click(function(){
-            $(".basic").show();
-            $(".addcol").attr("colspan",13);
-            $(".addcol2").attr("colspan",14);
+            if($(".basic").css("display") == ""){
+                $(".basic").hide();
+                $(".addcol").attr("colspan",9);
+                $(".addcol2").attr("colspan",10);
+                $(this).html("확장하기(기본)");
+            }else{
+               $(".basic").show();
+                $(".addcol").attr("colspan",13);
+                $(".addcol2").attr("colspan",14);
+                $(this).html("축소하기(기본)");
+            }
+
         })
 
         $(".btn-payment-view").click(function(){
-            $(".payment").show();
+            if($(".payment").css("display") == ""){
+                $(".payment").hide();
+                $(this).html("확장하기(요금)");
+            }else{
+                $(".payment").show();
+                $(this).html("축소하기(요금)");
+            }
         });
 
         $("body").on("click",".option_extend",function(){

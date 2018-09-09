@@ -1426,7 +1426,14 @@ class Api extends CI_Controller {
 
     public function serviceUpdate(){
         $result = $this->api_model->serviceUpdate();
-        echo json_encode($result);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceAddUpdate(){
+        $result = $this->api_model->serviceAddUpdate();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
     }
 
     public function serviceList($start,$end){
@@ -1680,6 +1687,18 @@ class Api extends CI_Controller {
 
     public function paymentComPayPost(){
         $result = $this->api_model->paymentComPayPost();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function claimMake($mb_seq){
+        $result = $this->api_model->claimMake($mb_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function memberAutoClaim(){
+        $result = $this->api_model->memberAutoClaim();
         $arr = array('result'=>$result);
         echo json_encode($arr);
     }

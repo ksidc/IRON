@@ -4,7 +4,7 @@
     </div>
     <div style="padding:5px">
         <form name="payForm" id="payForm">
-        <input type="hidden" name="pm_seq" id="p_pm_seq">
+        <input type="hidden" name="pm_seq" id="p_pm_seq" value="<?=$info["pm_seq"]?>">
         <div class="modal-title">
             <div class="modal-title-text">서비스 기본 정보</div>
         </div>
@@ -281,9 +281,10 @@
             </div>
         </div>
         <div class="modal-button">
-            <button class="btn btn-black btn-payment_modify" type="button">수정</button>
+            <button class="btn btn-black btn-claim-modify" type="button">수정</button>
         </div>
     </form>
     </div>
 
 </div>
+<script src="/assets/js/memberClaimView.js?date=<?=time()?>"></script>

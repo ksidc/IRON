@@ -7,6 +7,7 @@
 
 
 .claim_payment {display:none;}
+.paycom_payment {display:none;}
 </style>
 
 <div class="content">
@@ -549,8 +550,8 @@
             <div style="float:left">서비스 정보</div>
             <div style="float:right">
                 <input type="checkbox" name=""> 서비스 해지 제외
-                <button class="btn btn-black btn-add" type="button">확장하기(기본)</button>
-                <button class="btn btn-black btn-add" type="button">확장하기(요금)</button>
+                <button class="btn btn-black btn-add btn-basic-view" type="button">확장하기(기본)</button>
+                <button class="btn btn-black btn-add btn-payment-view" type="button">확장하기(요금)</button>
                 <select class="select2" name="" style="width:90px">
                     <option value="50">50라인</option>
                 </select>
@@ -736,7 +737,7 @@
                             <th>계산서</th>
                             <th>TaxCode</th>
                             <th>상세보기</th>
-                            <th onclick="viewAll()"><</th>
+                            <th onclick="viewAll()" id="payment_extend"><</th>
                         </tr>
                     </thead>
                     <tbody id="payment-tbody-list">
@@ -819,7 +820,11 @@
                                 <?php endif; ?>
                             </td>
                             <td>Default</td>
-                            <td><i class="fas fa-edit detailView" data-seq="<?=$row["svp_seq"]?>"></i></td>
+                            <?php if($row["sva_seq"] == ""):// 부가서비스가 아닐때(기본) ?>
+                                <td><i class="fas fa-edit detailView" data-seq="<?=$row["svp_seq"]?>" data-paytype="S"></i></td>
+                            <?php else://부가서비스 일때 ?>
+                                <td><i class="fas fa-edit detailView" data-seq="<?=$row["svp_seq"]?>" data-paytype="A"></i></td>
+                            <?php endif; ?>
                             <td></td>
                         </tr>
                     <?php endforeach; ?>
@@ -860,18 +865,18 @@
                 </table>
             </div>
             <div style="clear:both;text-align:center;padding-top:20px">
-                <button class="btn btn-default" type="button" onclick="servicePayment()">서비스 비용 청구</button>
+                <button class="btn btn-default" type="button" onclick="servicePayment('<?=$info["mb_seq"]?>')">서비스 비용 청구</button>
                 <button class="btn btn-default" type="button" onclick='oncePayment()'>일회성 청구</button>
             </div>
         </div>
     </div>
     <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:40px">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left">청구 내역 <img src="/images/Picture2.png" class="memo"> <img src="/images/Picture2.png" class=""></div>
+            <div style="float:left">청구 내역 <img src="/assets/images/Picture1.png" class="memo" style="width:20px"> <img src="/assets/images/Picture2.png" class="" style="width:20px"></div>
             <div style="float:right">
-                <input type="checkbox" name=""> 서비스 비용 자동 청구
-                <input type="checkbox" name=""> 메일 자동 발송
-                <input type="checkbox" name=""> 연체 수수료 부과
+                <input type="checkbox" name="mb_auto_claim_yn" id="mb_auto_claim_yn" value="Y" <?=($info["mb_auto_claim_yn"] == "Y" ? "checked":"")?>> 서비스 비용 자동 청구
+                <input type="checkbox" name="mb_auto_email_yn" id="mb_auto_email_yn" value="Y" <?=($info["mb_auto_email_yn"] == "Y" ? "checked":"")?>> 메일 자동 발송
+                <input type="checkbox" name="mb_over_pay_yn" id="mb_over_pay_yn" value="Y" <?=($info["mb_over_pay_yn"] == "Y" ? "checked":"")?>> 연체 수수료 부과
 
             </div>
         </div>
@@ -911,10 +916,10 @@
                             <th>거래명세서</th>
                             <th>세금계산서</th>
                             <th>수정</th>
-                            <th onclick="viewAll2()"><</th>
+                            <th onclick="viewAll2()" id="claim_extend"><</th>
                         </tr>
                     </thead>
-                    <tbody id="tbody-list">
+                    <tbody id="tbody2-list">
                         <?php if(count($claim_list) > 0): ?>
                             <?php $b_pm_ca_seq = ""?>
                         <?php foreach($claim_list as $row): ?>
@@ -1023,6 +1028,164 @@
                 <button class="btn btn-default btn-check-delete" type="button">선택 삭제</button>
                 <button class="btn btn-default btn-com-pay" type="button">완납 처리</button>
                 <button class="btn btn-default" type="button">청구 메일 발송</button>
+            </div>
+        </div>
+    </div>
+    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:40px">
+        <div class="header-title" style="padding:10px;background:#ddd;height:25px">
+            <div style="float:left">결제 내역 </div>
+            <div style="float:right">
+                <select name="" class="select2" style="width:120px">
+                    <option value="">서비스 번호</option>
+                </select>
+                <input type="text"><button class="btn btn-search btn-small" type="button">검색</button>
+                <select name="" class="select2" style="width:70px"></select> 년
+                <select name="" class="select2" style="width:70px"></select> 월
+            </div>
+        </div>
+        <div class="view-body" style="clear:both;width:100%">
+            <div class="table-list" style="margin-top:0px">
+                <form id="listForm" method="POST" action="/api/estimateExport">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="paycom_all"></th>
+                            <th>No</th>
+                            <th>구분</th>
+                            <th>청구 번호</th>
+                            <th>청구일</th>
+                            <th>결제일</th>
+                            <th>서비스 기간</th>
+                            <th>서비스 종류</th>
+                            <th>상품명</th>
+                            <th>소분류</th>
+                            <th>서비스 번호</th>
+                            <th>납부방법</th>
+                            <th class="paycom_payment">청구명</th>
+                            <th class="paycom_payment">일회성 요금</th>
+                            <th class="paycom_payment">일회성 할인</th>
+                            <th class="paycom_payment">일회성 청구 합계</th>
+                            <th class="paycom_payment">초기 일할 요금</th>
+                            <th class="paycom_payment">서비스 요금</th>
+                            <th class="paycom_payment">서비스 할인</th>
+                            <th class="paycom_payment">결제 방법 할인</th>
+                            <th class="paycom_payment">서비스 청구 합계</th>
+                            <th class="paycom_payment">연체 수수료</th>
+                            <th>결제 합계</th>
+                            <th>부가세</th>
+                            <th>총 결제 합계</th>
+                            <th>거래명세서</th>
+                            <th>세금계산서</th>
+                            <th>수정</th>
+                            <th onclick="viewAll3()" id="paycom_extend"><</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody3-list">
+                        <?php if(count($paycom_list) > 0): ?>
+                            <?php $b_pm_ca_seq = ""?>
+                        <?php foreach($paycom_list as $row): ?>
+                        <tr>
+                            <td><input type="checkbox" class="paycom_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]?>" data-price6="<?=$row["pm_service_dis_price"]?>" data-price7="<?=$row["pm_payment_dis_price"]?>" data-price8="" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$row["pm_total_price"]?>" data-price11="<?=$row["pm_surtax_price"]?>" data-price12="<?=$row["pm_total_price"]+$row["pm_surtax_price"]?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
+                            <td>1</td>
+                            <td><?=($row["pm_type"] == "1" ? "서비스비용":"일회성비용")?></td>
+                            <td><?=$row["pm_code"]?></td>
+                            <td>
+                                <?=$row["pm_date"]?>
+                            </td>
+                            <td>ㄱ결제일</td>
+                            <td>
+                                <?=$row["pm_service_start"]?> ~ <?=$row["pm_service_end"]?>
+                            </td>
+                            <td><?=$row["pc_name"]?></td>
+                            <td><?=$row["pr_name"]?></td>
+                            <td><?=$row["ps_name"]?></td>
+                            <td><?=$row["sv_number"]?></td>
+                            <td>
+                                <?php if($row["sv_payment_type"] == "1"): ?>
+                                    무통장
+                                <?php elseif($row["sv_payment_type"] == "2"): ?>
+                                    카드
+                                <?php else: ?>
+                                    CMS
+                                <?php endif; ?>
+                            </td>
+                            <td class="paycom_payment">청구명</td>
+                            <td class="paycom_payment"><?=$row["pm_once_price"]?></td>
+                            <td class="paycom_payment"><?=$row["pm_once_dis_price"]?></td>
+                            <td class="paycom_payment"><?=$row["pm_once_price"]-$row["pm_once_dis_price"]?></td>
+                            <td class="paycom_payment"><?=$row["pm_first_day_price"]?></td>
+                            <td class="paycom_payment"><?=$row["pm_service_price"]?></td>
+                            <td class="paycom_payment"><?=$row["pm_service_dis_price"]?></td>
+                            <td class="paycom_payment"><?=$row["pm_payment_dis_price"]?></td>
+                            <td class="paycom_payment">서비스 청구 합계</td>
+                            <td class="paycom_payment"><?=$row["pm_delay_price"]?></td>
+                            <td><?=$row["pm_total_price"]?></td>
+                            <td><?=$row["pm_surtax_price"]?></td>
+                            <td><?=$row["pm_total_price"]+$row["pm_surtax_price"]?></td>
+                            <?php if($b_pm_ca_seq != $row["pm_ca_seq"]): ?>
+                            <td rowspan="<?=$row["pm_ca_total"]?>"><i class="fas fa-edit claimView" data-seq="<?=$row["pm_ca_seq"]?>"></i></td>
+                            <td class="billView" data-seq="<?=$row["pm_ca_seq"]?>" rowspan="<?=$row["pm_ca_total"]?>">
+                                <?php if($row["pm_payment_publish_type"] == "0"):?>
+                                    영수발행
+                                <?php else: ?>
+                                    청구발행
+                                <?php endif; ?>
+                            </td>
+                            <?php endif; ?>
+                            <td><i class="fas fa-edit detailCView" data-seq="<?=$row["pm_seq"]?>"></i></td>
+
+                            <td></td>
+                        </tr>
+                        <?php $b_pm_ca_seq = $row["pm_ca_seq"]?>
+                        <?php endforeach; ?>
+                        <?php else: ?>
+                        <tr>
+                                <td colspan="19" style="text-align:center">요금 정보가 없습니다.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+                </form>
+                <div class="pagination-html">
+
+                </div>
+            </div>
+            <div style="float:right;margin-top:20px">
+                <table class="table">
+                    <tr>
+                        <td style="background:#ddd" class="paycom_payment">일회성 요금</td>
+                        <td style="background:#ddd" class="paycom_payment">일회성 할인</td>
+                        <td style="background:#ddd" class="paycom_payment">일회성 청구 합계</td>
+                        <td style="background:#ddd" class="paycom_payment">초기 일할 요금</td>
+                        <td style="background:#ddd" class="paycom_payment">서비스 요금</td>
+                        <td style="background:#ddd" class="paycom_payment">서비스 할인</td>
+                        <td style="background:#ddd" class="paycom_payment">결제 방법 할인</td>
+                        <td style="background:#ddd" class="paycom_payment">서비스 청구 합계</td>
+                        <td style="background:#ddd" class="paycom_payment">연체 수수료</td>
+                        <td style="background:#ddd;width:150px">결제 합계</td>
+                        <td style="background:#ddd;width:150px">부가세</td>
+                        <td style="background:#ddd;width:150px">총 결제 합계</td>
+                    </tr>
+                    <tr>
+                        <td class="paycom_price1 paycom_payment"></td>
+                        <td class="paycom_price2 paycom_payment"></td>
+                        <td class="paycom_price3 paycom_payment"></td>
+                        <td class="paycom_price4 paycom_payment"></td>
+                        <td class="paycom_price5 paycom_payment"></td>
+                        <td class="paycom_price6 paycom_payment"></td>
+                        <td class="paycom_price7 paycom_payment"></td>
+                        <td class="paycom_price8 paycom_payment"></td>
+                        <td class="paycom_price9 paycom_payment"></td>
+                        <td class="paycom_price10"></td>
+                        <td class="paycom_price11"></td>
+                        <td class="paycom_price12"></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="clear:both;text-align:center;padding-top:20px">
+
+                <button class="btn btn-default btn-check-delete" type="button">선택 삭제</button>
+
             </div>
         </div>
     </div>

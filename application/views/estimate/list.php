@@ -138,8 +138,8 @@ var category = '<?=json_encode($category)?>';
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">부서</div>
-                <div class="input">
+                <div class="label padd"><div>부서</div></div>
+                <div class="input padd">
                     <select id="es_part" name="es_part" class="select2" style="width:140px">
                         <option value="영업팀" selected>영업팀</option>
                         <option value="기술팀">기술팀</option>
@@ -147,8 +147,8 @@ var category = '<?=json_encode($category)?>';
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">등록자</div>
-                <div class="input">
+                <div class="label padd"><div>등록자</div></div>
+                <div class="input padd">
                     <select id="es_register" name="es_register" class="select2" style="width:140px">
                         <option value="김지훈" selected>김지훈</option>
                         <option value="노성민">노성민</option>
@@ -158,8 +158,8 @@ var category = '<?=json_encode($category)?>';
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">상태</div>
-                <div class="input">
+                <div class="label padd"><div>상태</div></div>
+                <div class="input padd">
                     <select id="es_status" name="es_status" class="select2" style="width:140px">
                         <option value="0" selected>등록</option>
                         <option value="1">신청완료</option>
@@ -169,46 +169,46 @@ var category = '<?=json_encode($category)?>';
 
         </div>
         <div class="modal-title">
-            <div class="modal-title-text" style="display:inline-block">고객 정보</div>
-            <div style="display:inline-block">
-                <div class="label" style="display:inline-block">회원 아이디</div>
-                <div class="input"  style="display:inline-block;"><input type="text" name="mb_id" id="mb_id" style="border:1px solid #ddd;height:15px" readonly></div>
+            <div class="modal-title-text" style="display:inline-block;width:20%">고객 정보</div>
+            <div style="display:inline-block;background:#fff;width:77%">
+                <div class="label padd" style="display:inline-block"><div>회원 아이디</div></div>
+                <div class="input padd"  style="display:inline-block;"><input type="text" name="mb_id" id="mb_id" style="border:1px solid #ddd;" readonly></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">상호/이름</div>
-                <div class="input"><input type="text" class="width-button" name="es_name" id="es_name"><button class="btn btn-brown btn-small" type="button" onclick='$( "#dialogUserSearch" ).dialog("open");$("#dialogUserSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
+                <div class="label padd"><div>상호/이름</div></div>
+                <div class="input padd"><input type="text" class="width-button" name="es_name" id="es_name"><button class="btn btn-brown btn-small" type="button" onclick='$( "#dialogUserSearch" ).dialog("open");$("#dialogUserSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">담당자</div>
-                <div class="input"><input type="text" name="es_charger" id="es_charger"></div>
+                <div class="label padd"><div>담당자</div></div>
+                <div class="input padd"><input type="text" name="es_charger" id="es_charger"></div>
             </div>
         </div>
           <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">전화번호(-포함)</div>
-                <div class="input"><input type="text" name="es_tel" id="es_tel"></div>
+                <div class="label padd"><div>전화번호(-포함)</div></div>
+                <div class="input padd"><input type="text" name="es_tel" id="es_tel"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">휴대폰번호(-포함)</div>
-                <div class="input"><input type="text" name="es_phone" id="es_phone"></div>
+                <div class="label padd"><div>휴대폰번호(-포함)</div></div>
+                <div class="input padd"><input type="text" name="es_phone" id="es_phone"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">이메일</div>
-                <div class="input"><input type="text" name="es_email" id="es_email" class="emailCheck"></div>
+                <div class="label padd"><div>이메일</div></div>
+                <div class="input padd"><input type="text" name="es_email" id="es_email" class="emailCheck"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">팩스(-포함)</div>
-                <div class="input"><input type="text" name="es_fax" id="es_fax"></div>
+                <div class="label padd"><div>팩스(-포함)</div></div>
+                <div class="input padd"><input type="text" name="es_fax" id="es_fax"></div>
             </div>
         </div>
         <div class="modal-field company">
             <div class="modal-field-input">
-                <div class="label">신규/기존</div>
-                <div class="input">
+                <div class="label padd"><div>신규/기존</div></div>
+                <div class="input padd">
                     <select id="es_type" name="es_type" class="select2" style="width:140px">
                         <option value="0" selected>신규</option>
                         <option value="1">기존</option>
@@ -216,23 +216,23 @@ var category = '<?=json_encode($category)?>';
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label">업체 분류</div>
+                <div class="label padd"><div>업체 분류</div></div>
                 <input type="hidden" name="es_company_type" id="es_company_type">
-                <div class="input"><input type="text" class="width-button" name="es_company_type_name" id="es_company_type_name" readonly><button class="btn btn-brown btn-small" type="button" onclick='typeGetList();$( "#dialogTypeSearch" ).dialog("open");$("#dialogTypeSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
+                <div class="input padd"><input type="text" class="width-button" name="es_company_type_name" id="es_company_type_name" readonly><button class="btn btn-brown btn-small" type="button" onclick='typeGetList();$( "#dialogTypeSearch" ).dialog("open");$("#dialogTypeSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
             </div>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text" style="display:inline-block">견적정보</div>
-            <div style="display:inline-block">
-                <div class="label" style="display:inline-block">견적번호</div>
-                <div class="input" style="display:inline-block"><input type="text" name="es_number1" id="es_number1" style="width:30%;border:1px solid #ddd;height:15px"> - <input type="text" name="es_number2" id="es_number2" style="width:20%;border:1px solid #ddd;height:15px"> <button class="btn btn-brown btn-small btn-number-duple" type="button">중복확인</button></div>
+            <div class="modal-title-text" style="display:inline-block;width:20%">견적정보</div>
+            <div style="display:inline-block;width:77%;background:#fff">
+                <div class="label padd" style="display:inline-block"><div>견적번호</div></div>
+                <div class="input padd" style="display:inline-block"><input type="text" name="es_number1" id="es_number1" style="width:30%;border:1px solid #ddd;"> - <input type="text" name="es_number2" id="es_number2" style="width:20%;border:1px solid #ddd;"> <button class="btn btn-brown btn-small btn-number-duple" type="button">중복확인</button></div>
             </div>
         </div>
         <div class="modal-field depth-area">
             <div class="depth-item">
                 <div class="modal-field-input">
-                    <div class="label">서비스 종류</div>
-                    <div class="input">
+                    <div class="label padd"><div>서비스 종류</div></div>
+                    <div class="input padd">
                         <input type="hidden" name="ed_seq[]" value="">
 
                         <select id="es_depth1_1" name="es_depth1[]" class="es_depth1 select2" data-index="1" data-childvalue="" style="width:140px">
@@ -245,8 +245,8 @@ var category = '<?=json_encode($category)?>';
                     </div>
                 </div>
                 <div class="modal-field-input">
-                    <div class="label">상품명</div>
-                    <div class="input">
+                    <div class="label padd"><div>상품명</div></div>
+                    <div class="input padd">
 
                         <select id="es_depth2_1" name="es_depth2[]" class="select2" style="width:140px">
                             <option value="" selected>상품명 선택</option>
@@ -265,27 +265,27 @@ var category = '<?=json_encode($category)?>';
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">견적요약</div>
-                <div class="input"><input type="text"  name="es_shot" id="es_shot"></div>
+                <div class="label padd"><div>견적요약</div></div>
+                <div class="input padd"><input type="text"  name="es_shot" id="es_shot"></div>
             </div>
             <div class="modal-field-input">
-                <div class="label">END User</div>
+                <div class="label padd"><div>END User</div></div>
                 <input type="hidden" name="es_end_user" id="es_end_user">
-                <div class="input"><input type="text" name="es_end_user_name" id="es_end_user_name" class="width-button" readonly><button class="btn btn-brown btn-small" type="button" onclick='getEndUserNextNumber();$( "#dialogEndSearch" ).dialog("open");$("#dialogEndSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
+                <div class="input padd"><input type="text" name="es_end_user_name" id="es_end_user_name" class="width-button" readonly><button class="btn btn-brown btn-small" type="button" onclick='getEndUserNextNumber();$( "#dialogEndSearch" ).dialog("open");$("#dialogEndSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button></div>
             </div>
         </div>
 
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label" style="vertical-align:top">메모</div>
-                <div class="input" style="width:75%"><textarea name="es_memo" id="es_memo" style="width:100%;height:100px"></textarea></div>
+                <div class="label padd" style="vertical-align:top"><div>메모</div></div>
+                <div class="input padd" style="width:75%"><textarea name="es_memo" id="es_memo" style="width:100%;height:100px"></textarea></div>
             </div>
 
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label">건적서 첨부</div>
-                <div class="input"><button class="btn btn-black" type="button" onclick="$('#es_file').trigger('click')">찾아보기</button></div>
+                <div class="label padd"><div>건적서 첨부</div></div>
+                <div class="input padd"><button class="btn btn-black" type="button" onclick="$('#es_file').trigger('click')">찾아보기</button></div>
 
             </div>
         </div>
@@ -312,33 +312,33 @@ var category = '<?=json_encode($category)?>';
         </div>
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label">보내는 사람</div>
-                <div class="input"><input type="text" name="from" id="from"></div>
+                <div class="label padd"><div>보내는 사람</div></div>
+                <div class="input padd"><input type="text" name="from" id="from"></div>
             </div>
 
         </div>
         <div class="modal-field">
             <div class="modal-field-input full" >
-                <div class="label">받는 사람</div>
-                <div class="input"><input type="text" name="to" id="to"></div>
+                <div class="label padd"><div>받는 사람</div></div>
+                <div class="input padd"><input type="text" name="to" id="to"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input full" >
-                <div class="label">휴대폰번호</div>
-                <div class="input"><input type="text" name="phone" id="phone"></div>
+                <div class="label padd"><div>휴대폰번호</div></div>
+                <div class="input padd"><input type="text" name="phone" id="phone"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input full" >
-                <div class="label"><input type="checkbox" name="sms_yn" id="sms_yn" value="Y"> SMS 발송 | 내용</div>
-                <div class="input"><input type="text" name="sms" id="sms" style="width:70%" > <span class="bytes">0</span>byte / 80byte</div>
+                <div class="label padd"><div><input type="checkbox" name="sms_yn" id="sms_yn" value="Y"> SMS 발송 | 내용</div></div>
+                <div class="input padd"><input type="text" name="sms" id="sms" style="width:70%" > <span class="bytes">0</span>byte / 80byte</div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input full" >
-                <div class="label">제목</div>
-                <div class="input"><input type="text" name="subject" id="subject"></div>
+                <div class="label padd"><div>제목</div></div>
+                <div class="input padd"><input type="text" name="subject" id="subject"></div>
             </div>
         </div>
 
@@ -362,24 +362,24 @@ var category = '<?=json_encode($category)?>';
         </div>
         <div class="modal-field" style="border-top:2px solid #ddd">
             <div class="modal-field-input full">
-                <div class="label">견적서</div>
-                <div class="input es_file">
+                <div class="label padd"><div>견적서</div></div>
+                <div class="input es_file padd">
 
                 </div>
             </div>
         </div>
         <div class="modal-field" style="border-top:2px solid #ddd">
             <div class="modal-field-input">
-                <div class="label" style="vertical-align:top">기본 첨부 파일 리스트</div>
-                <div class="input es_basic_file">
+                <div class="label padd" style="vertical-align:top"><div>기본 첨부 파일 리스트</div></div>
+                <div class="input es_basic_file padd">
 
                 </div>
             </div>
         </div>
         <div class="modal-field" style="border-top:2px solid #ddd">
             <div class="modal-field-input full">
-                <div class="label" style="vertical-align:top">추가 첨부 파일</div>
-                <div class="input">
+                <div class="label padd" style="vertical-align:top"><div>추가 첨부 파일</div></div>
+                <div class="input padd">
                     <div>
                         <button class="btn btn-default" type="button" onclick="$('#em_file').trigger('click')">추가</button>
                         <button class="btn btn-default btn-addfile-delete" type="button">삭제</button>
@@ -407,8 +407,8 @@ var category = '<?=json_encode($category)?>';
 
     <div class="modal-field">
         <div class="modal-field-input" style="width:60%">
-            <div class="label">첨부파일1</div>
-            <div class="input"><input type="file" name="basic_file[]" class="basic_file fileform"></div>
+            <div class="label padd"><div>첨부파일1</div></div>
+            <div class="input padd"><input type="file" name="basic_file[]" class="basic_file fileform"></div>
             <input type="hidden" name="bf_sort[]" id="bf_sort1" value="1" class="bf_sort">
         </div>
         <div class="modal-field-input" style="width:38%">
@@ -418,8 +418,8 @@ var category = '<?=json_encode($category)?>';
     </div>
     <div class="modal-field">
         <div class="modal-field-input" style="width:60%">
-            <div class="label">첨부파일2</div>
-            <div class="input"><input type="file" name="basic_file[]" class="basic_file fileform"></div>
+            <div class="label padd"><div>첨부파일2</div></div>
+            <div class="input padd"><input type="file" name="basic_file[]" class="basic_file fileform"></div>
             <input type="hidden" name="bf_sort[]" id="bf_sort2" value="2" class="bf_sort">
         </div>
         <div class="modal-field-input" style="width:38%">
@@ -429,8 +429,8 @@ var category = '<?=json_encode($category)?>';
     </div>
     <div class="modal-field">
         <div class="modal-field-input" style="width:60%">
-            <div class="label">첨부파일3</div>
-            <div class="input"><input type="file" name="basic_file[]" class="basic_file fileform"></div>
+            <div class="label padd"><div>첨부파일3</div></div>
+            <div class="input padd"><input type="file" name="basic_file[]" class="basic_file fileform"></div>
             <input type="hidden" name="bf_sort[]" id="bf_sort3" value="3" class="bf_sort">
         </div>
         <div class="modal-field-input" style="width:38%">
@@ -440,8 +440,8 @@ var category = '<?=json_encode($category)?>';
     </div>
     <div class="modal-field">
         <div class="modal-field-input" style="width:60%">
-            <div class="label">첨부파일4</div>
-            <div class="input"><input type="file" name="basic_file[]" class="basic_file fileform"></div>
+            <div class="label padd"><div>첨부파일4</div></div>
+            <div class="input padd"><input type="file" name="basic_file[]" class="basic_file fileform"></div>
             <input type="hidden" name="bf_sort[]" id="bf_sort4" value="4" class="bf_sort">
         </div>
         <div class="modal-field-input" style="width:38%">
@@ -452,7 +452,7 @@ var category = '<?=json_encode($category)?>';
     </form>
     <div class="modal-field">
         <div class="modal-field-input">
-            <div class="label"><img src="/assets/images/up.png" class="basicFileAdd"> <img src="/assets/images/down.png" class="basicFileMinus"></div>
+            <div class="label padd"><div><img src="/assets/images/up.png" class="basicFileAdd"> <img src="/assets/images/down.png" class="basicFileMinus"></div></div>
         </div>
     </div>
     <div class="modal-button">

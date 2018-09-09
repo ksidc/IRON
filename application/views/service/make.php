@@ -57,8 +57,8 @@
                 </div>
             </div>
             <div class="modal-title">
-                <div class="modal-title-text" style="display:inline-block">계약 정보</div>
-                <div style="display:inline-block">
+                <div class="modal-title-text" style="display:inline-block;width:20%">계약 정보</div>
+                <div style="display:inline-block;width:77%">
                     <div class="label" style="display:inline-block">계약 번호(*)</div>
                     <div class="input" style="display:inline-block"><input type="text" name="sr_code1" id="sr_code1" style="width:30%;border:1px solid #ddd;height:22px" value="<?=$code1?>"> - <input type="text" name="sr_code2" id="sr_code2" style="width:20%;border:1px solid #ddd;height:22px" value="<?=$code2?>"> <button class="btn btn-brown btn-small btn-number-duple" type="button">중복확인</button></div>
                 </div>
@@ -88,8 +88,8 @@
                 </div>
             </div>
               <div class="modal-field">
-                <div class="modal-field-input">
-                    <div class="label" style="vertical-align:top;padding-top:7px"><div>계약(약정)기간</div></div>
+                <div class="modal-field-input" style="vertical-align:top">
+                    <div class="label" style="vertical-align:top;padding-top:17px"><div>계약(약정)기간</div></div>
                     <div class="input">
                         <ul style="list-style:none;padding:0;margin:0">
                             <li><input type="radio" name="sr_contract_type" value="1" class="sr_contract_type" checked> 약정 <input type="radio" name="sr_contract_type" class="sr_contract_type" value="2"> 무약정</li>
@@ -97,8 +97,8 @@
                         </ul>
                     </div>
                 </div>
-                <div class="modal-field-input">
-                    <div class="label" style="vertical-align:top;padding-top:7px"><div>계약 만료 후 자동 계약 연장 여부</div></div>
+                <div class="modal-field-input" style="vertical-align:top">
+                    <div class="label" style="vertical-align:top;padding-top:17px"><div>계약 만료 후 자동 계약 연장 여부</div></div>
                     <div class="input">
                         <ul style="list-style:none;padding:0;margin:0">
                             <li style="display:inline-block"><input type="radio" name="sr_auto_extension" value="1" checked> 자동 계약 연장 </li>
