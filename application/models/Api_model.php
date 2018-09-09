@@ -4480,7 +4480,7 @@ class Api_model extends CI_Model {
                 $this->db->where("pm_seq" , $data[$i]);
                 $this->db->update("payment",$data_array);
             }
-            return true;
+            // return true;
         }else{
             // 기존 내용이 뭔지 가져오기
             $claim_date = "";
@@ -4591,8 +4591,25 @@ class Api_model extends CI_Model {
             );
             $this->db->where("cl_ca_seq",$old_ca_seq);
             $this->db->update("payment_claim_list",$data_claim_d);
-            return true;
+            // return true;
         }
+        //서비스 상태 변경
+        for($i = 0; $i < count($data);$i++){
+            $this->db->select("*");
+            $this->db->from("payment a");
+            $this->db->join("service b","a.pm_sv_seq = b.sv_seq","inner");
+            $this->db->where("pm_seq",$data[$i]);
+
+            $query = $this->db->get();
+
+            $row = $query->row_array();
+            if($row["sv_status"] == "0"){
+                $data_status["sv_status"] = "1";
+                $this->db->where("sv_seq",$row["sv_seq"]);
+                $this->db->update("service",$data_status);
+            }
+        }
+        return true;
     }
 
     public function claimMake($mb_seq){
