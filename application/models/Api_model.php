@@ -142,7 +142,13 @@ class Api_model extends CI_Model {
         $this->db->from("members");
 
         if($this->input->get("memberSearchWord") != ""){
-            $this->db->like($this->input->get("memberSearchType"),$this->input->get("memberSearchWord"),'both');
+            if($this->input->get("memberSearchType") == "mb_phone"){
+                $this->db->where(" (mb_tel LIKE '%".$this->input->get("memberSearchWord")."%' or mb_phone LIKE '%".$this->input->get("memberSearchWord")."%' ) ");
+                // $this->db->like("mb_tel",$this->input->get("memberSearchWord"),'both');
+            }else{
+                $this->db->like($this->input->get("memberSearchType"),$this->input->get("memberSearchWord"),'both');
+            }
+
         }
         $this->db->order_by("mb_seq desc");
 
@@ -199,6 +205,78 @@ class Api_model extends CI_Model {
             "mb_payment_day" => $this->input->post("mb_payment_day")
         );
         $this->db->where("mb_seq",$mb_seq);
+        if($this->input->post("b_mb_type") != $this->input->post("mb_type")){
+            $this->logInsert(1,$mb_seq,'회원 정보','회원 구분',$this->input->post("b_mb_type"),$this->input->post("mb_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_name") != $this->input->post("mb_name")){
+            $this->logInsert(1,$mb_seq,'회원 정보','상호/이름',$this->input->post("b_mb_name"),$this->input->post("mb_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_number") != $this->input->post("mb_number")){
+            $this->logInsert(1,$mb_seq,'회원 정보','사업자번호/생년월일',$this->input->post("b_mb_number"),$this->input->post("mb_number"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_ceo") != $this->input->post("mb_ceo")){
+            $this->logInsert(1,$mb_seq,'회원 정보','대표자',$this->input->post("b_mb_ceo"),$this->input->post("mb_ceo"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_address") != $this->input->post("mb_address") || $this->input->post("b_mb_zipcode") != $this->input->post("mb_zipcode") || $this->input->post("b_mb_detail_address") != $this->input->post("mb_detail_address")){
+            $this->logInsert(1,$mb_seq,'회원 정보','주소(한글)',$this->input->post("b_mb_zipcode")." ".$this->input->post("b_mb_address")." ".$this->input->post("b_mb_detail_address"),$this->input->post("mb_zipcode")." ".$this->input->post("mb_address")." ".$this->input->post("mb_detail_address"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_business_conditions") != $this->input->post("mb_business_conditions")){
+            $this->logInsert(1,$mb_seq,'회원 정보','업태',$this->input->post("b_mb_business_conditions"),$this->input->post("mb_business_conditions"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_business_type") != $this->input->post("mb_business_type")){
+            $this->logInsert(1,$mb_seq,'회원 정보','종목',$this->input->post("b_mb_business_type"),$this->input->post("mb_business_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_tel") != $this->input->post("mb_tel")){
+            $this->logInsert(1,$mb_seq,'회원 정보','전화번호',$this->input->post("b_mb_tel"),$this->input->post("mb_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_phone") != $this->input->post("mb_phone")){
+            $this->logInsert(1,$mb_seq,'회원 정보','휴대폰번호',$this->input->post("b_mb_phone"),$this->input->post("mb_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_email") != $this->input->post("mb_email")){
+            $this->logInsert(1,$mb_seq,'회원 정보','이메일',$this->input->post("b_mb_email"),$this->input->post("mb_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_fax") != $this->input->post("mb_fax")){
+            $this->logInsert(1,$mb_seq,'회원 정보','팩스',$this->input->post("b_mb_fax"),$this->input->post("mb_fax"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($this->input->post("b_mb_contract_name") != $this->input->post("mb_contract_name")){
+            $this->logInsert(1,$mb_seq,'계약 담당자','이름',$this->input->post("b_mb_contract_name"),$this->input->post("mb_contract_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_contract_email") != $this->input->post("mb_contract_email")){
+            $this->logInsert(1,$mb_seq,'계약 담당자','이메일',$this->input->post("b_mb_contract_email"),$this->input->post("mb_contract_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_contract_phone") != $this->input->post("mb_contract_phone")){
+            $this->logInsert(1,$mb_seq,'계약 담당자','휴대폰번호',$this->input->post("b_mb_contract_phone"),$this->input->post("mb_contract_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_contract_tel") != $this->input->post("mb_contract_tel")){
+            $this->logInsert(1,$mb_seq,'계약 담당자','전화번호',$this->input->post("b_mb_contract_tel"),$this->input->post("mb_contract_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        // if($this->input->post("b_mb_service_name") != $this->input->post("mb_service_name")){
+        //     // $this->logInsert(1,$mb_seq,'운영 담당자','이름',$this->input->post("b_mb_service_name"),$this->input->post("mb_service_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        // }
+        // if($this->input->post("b_mb_service_email") != $this->input->post("mb_service_email")){
+        //     // $this->logInsert(1,$mb_seq,'운영 담당자','이메일',$this->input->post("b_mb_service_email"),$this->input->post("mb_service_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+        // }
+        // if($this->input->post("b_mb_service_phone") != $this->input->post("mb_service_phone")){
+        //     // $this->logInsert(1,$mb_seq,'운영 담당자','휴대폰번호',$this->input->post("b_mb_service_phone"),$this->input->post("mb_service_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+        // }
+        // if($this->input->post("b_mb_service_tel") != $this->input->post("mb_service_tel")){
+        //     // $this->logInsert(1,$mb_seq,'운영 담당자','전화번호',$this->input->post("b_mb_service_tel"),$this->input->post("mb_service_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+        // }
+
+        if($this->input->post("b_mb_payment_name") != $this->input->post("mb_payment_name")){
+            $this->logInsert(1,$mb_seq,'요금 담당자','이름',$this->input->post("b_mb_payment_name"),$this->input->post("mb_payment_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_payment_email") != $this->input->post("mb_payment_email")){
+            $this->logInsert(1,$mb_seq,'요금 담당자','이메일',$this->input->post("b_mb_payment_email"),$this->input->post("mb_payment_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_payment_phone") != $this->input->post("mb_payment_phone")){
+            $this->logInsert(1,$mb_seq,'요금 담당자','휴대폰번호',$this->input->post("b_mb_payment_phone"),$this->input->post("mb_payment_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_payment_tel") != $this->input->post("mb_payment_tel")){
+            $this->logInsert(1,$mb_seq,'요금 담당자','전화번호',$this->input->post("b_mb_payment_tel"),$this->input->post("mb_service_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
         // ci 이용 디비 인서트
         return $this->db->update("members",$data);
     }
@@ -1040,8 +1118,9 @@ class Api_model extends CI_Model {
         $this->db->order_by("sr_code desc");
 
         $query = $this->db->get();
+        // echo $query->num_rows();
         if($query->num_rows() == 0){
-            return "AW100001-01";
+            return "AW100000-01";
         }else{
             $row = $query->row_array();
             // $es_number = explode("-",$row["es_number"]);
@@ -1423,6 +1502,14 @@ class Api_model extends CI_Model {
         return $this->db->update("product_items",$idata);
     }
 
+    public function productItemSortUpdate(){
+        $pi_seq = $this->input->post("pi_seq");
+        for($i = 0; $i < count($pi_seq);$i++){
+            $sql = "update product_items set pi_sort = '".($i+1)."' where pi_seq = '".$pi_seq[$i]."' ";
+            $this->db->query($sql);
+        }
+    }
+
     public function productItemDelete($pi_seq){
         $this->db->where("pis_pi_seq",$pi_seq);
         $this->db->delete("product_item_sub");
@@ -1484,7 +1571,7 @@ class Api_model extends CI_Model {
     }
 
     public function fetchProductItemSub($pi_seq){
-        $this->db->select("a.*,b.c_name,c.pi_name");
+        $this->db->select("a.*,b.c_name,c.pi_name,c_seq");
         $this->db->from("product_item_sub a");
         $this->db->join("clients b","a.pis_c_seq = b.c_seq","left");
         $this->db->join("product_items c","a.pis_pi_seq = c.pi_seq","left");
@@ -1835,7 +1922,7 @@ class Api_model extends CI_Model {
         return $pr_seq;
     }
 
-    public function productSubAdd($pr_seq,$prs_pd_seq,$prs_ps_seq,$prs_price,$prs_div,$prs_one_price,$prs_month_price,$prs_use_type,$prs_msg){
+    public function productSubAdd($pr_seq,$prs_pd_seq,$prs_ps_seq,$prs_price,$prs_div,$prs_one_price,$prs_one_type,$prs_one_percent,$prs_one_dis_price,$prs_one_after_price,$prs_month_price,$prs_month_type,$prs_month_percent,$prs_month_dis_price,$prs_month_after_price,$prs_use_type,$prs_msg){
 
         $data_sub = array(
             "prs_pr_seq" => $pr_seq,
@@ -1844,7 +1931,15 @@ class Api_model extends CI_Model {
             "prs_price" => str_replace(",","",$prs_price),
             "prs_div" => $prs_div,
             "prs_one_price" => str_replace(",","",$prs_one_price),
+            "prs_one_type" => $prs_one_type,
+            "prs_one_percent" => $prs_one_percent,
+            "prs_one_dis_price" => str_replace(",","",$prs_one_dis_price),
+            "prs_one_after_price" => str_replace(",","",$prs_one_after_price),
             "prs_month_price" => str_replace(",","",$prs_month_price),
+            "prs_month_type" => $prs_month_type,
+            "prs_month_percent" => $prs_month_percent,
+            "prs_month_dis_price" => str_replace(",","",$prs_month_dis_price),
+            "prs_month_after_price" => str_replace(",","",$prs_month_after_price),
             "prs_use_type" => $prs_use_type,
             "prs_msg" => $prs_msg
         );
@@ -1904,8 +1999,9 @@ class Api_model extends CI_Model {
     }
 
     public function productSearch($pc_seq){
-        $this->db->select("a.pr_name , a.pr_seq ,a.pr_name as name");
+        $this->db->select("a.pr_name , a.pr_seq ,a.pr_name as name,pr_c_seq,c_name");
         $this->db->from("product a");
+        $this->db->join("clients c","a.pr_c_seq = c.c_seq","left");
         $this->db->where("pr_pc_seq" , $pc_seq);
         if($this->input->get("pi_seq") != ""){
             $this->db->where("pr_pi_seq",$this->input->get("pi_seq"));
@@ -1914,6 +2010,17 @@ class Api_model extends CI_Model {
         if($this->input->get("searchWord") != ""){
             $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
         }
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function productSearchItem($pi_seq){
+        $this->db->select("*");
+        $this->db->from("product a");
+
+        $this->db->where("pr_pi_seq",$pi_seq);
 
         $query = $this->db->get();
 
@@ -1940,7 +2047,7 @@ class Api_model extends CI_Model {
         return $this->db->update("product",$data);
     }
 
-    public function productSubUpdate($prs_seq,$prs_pd_seq,$prs_ps_seq,$prs_price,$prs_div,$prs_one_price,$prs_month_price,$prs_use_type,$prs_msg){
+    public function productSubUpdate($prs_seq,$prs_pd_seq,$prs_ps_seq,$prs_price,$prs_div,$prs_one_price,$prs_one_type,$prs_one_percent,$prs_one_dis_price,$prs_one_after_price,$prs_month_price,$prs_month_type,$prs_month_percent,$prs_month_dis_price,$prs_month_after_price,$prs_use_type,$prs_msg){
 
         $data_sub = array(
             "prs_pd_seq" => $prs_pd_seq,
@@ -1948,7 +2055,15 @@ class Api_model extends CI_Model {
             "prs_price" => str_replace(",","",$prs_price),
             "prs_div" => $prs_div,
             "prs_one_price" => str_replace(",","",$prs_one_price),
+            "prs_one_type" => $prs_one_type,
+            "prs_one_percent" => $prs_one_percent,
+            "prs_one_dis_price" => str_replace(",","",$prs_one_dis_price),
+            "prs_one_after_price" => str_replace(",","",$prs_one_after_price),
             "prs_month_price" => str_replace(",","",$prs_month_price),
+            "prs_month_type" => $prs_month_type,
+            "prs_month_percent" => $prs_month_percent,
+            "prs_month_dis_price" => str_replace(",","",$prs_month_dis_price),
+            "prs_month_after_price" => str_replace(",","",$prs_month_after_price),
             "prs_use_type" => $prs_use_type,
             "prs_msg" => $prs_msg
         );
@@ -2208,9 +2323,9 @@ class Api_model extends CI_Model {
             "sr_contract_end" => $this->input->post("sr_contract_end"),
             "sr_auto_extension" => $this->input->post("sr_auto_extension"),
             "sr_auto_extension_month" => $this->input->post("sr_auto_extension_month"),
-            "sr_register_discount" => $this->input->post("sr_register_discount"),
+            "sr_register_discount" => str_replace(",","",$this->input->post("sr_register_discount")),
             "sr_payment_type" => $this->input->post("sr_payment_type"),
-            "sr_payment_period" => $this->input->post("sr_payment_period"),
+            "sr_payment_period" => str_replace(",","",$this->input->post("sr_payment_period")),
             "sr_pay_type" => $this->input->post("sr_pay_type"),
             "sr_pay_day" => $this->input->post("sr_pay_day"),
             "sr_pay_publish" => $this->input->post("sr_pay_publish"),
@@ -2231,13 +2346,13 @@ class Api_model extends CI_Model {
             "sr_claim_name" => $this->input->post("sr_claim_name"),
             "sr_rental" => $this->input->post("sr_rental"),
             "sr_bill_name" => $this->input->post("sr_bill_name"),
-            "sr_once_price" => $this->input->post("sr_once_price"),
-            "sr_month_price" => $this->input->post("sr_month_price"),
+            "sr_once_price" => str_replace(",","",$this->input->post("sr_once_price")),
+            "sr_month_price" => str_replace(",","",$this->input->post("sr_month_price")),
             "sr_c_seq" => $this->input->post("sr_c_seq"),
-            "sr_input_price" => $this->input->post("sr_input_price"),
+            "sr_input_price" => str_replace(",","",$this->input->post("sr_input_price")),
             "sr_rental_type" => $this->input->post("sr_rental_type"),
             "sr_rental_date" => $this->input->post("sr_rental_date"),
-            "sr_after_price" => $this->input->post("sr_after_price")
+            "sr_after_price" => str_replace(",","",$this->input->post("sr_after_price"))
         );
 
         $this->db->insert("service_register",$data);
@@ -2247,18 +2362,18 @@ class Api_model extends CI_Model {
         $data_price = array(
             "sp_sr_seq" => $sr_seq,
             "sp_ps_seq" => $this->input->post("sr_ps_seq"),
-            "sp_once_price" => $this->input->post("sr_once_price"),
-            "sp_once_dis_price" => $this->input->post("sp_once_dis_price"),
+            "sp_once_price" => str_replace(",","",$this->input->post("sr_once_price")),
+            "sp_once_dis_price" => str_replace(",","",$this->input->post("sp_once_dis_price")),
             "sp_once_dis_msg" => $this->input->post("sp_once_dis_msg"),
-            "sp_month_price" => $this->input->post("sp_month_price"),
-            "sp_month_dis_price" => $this->input->post("sp_month_dis_price"),
+            "sp_month_price" => str_replace(",","",$this->input->post("sp_month_price")),
+            "sp_month_dis_price" => str_replace(",","",$this->input->post("sp_month_dis_price")),
             "sp_month_dis_msg" => $this->input->post("sp_month_dis_msg"),
             "sp_discount_yn" => $this->input->post("sp_discount_yn"),
-            "sp_discount_price" => $this->input->post("sp_discount_price"),
-            "sp_first_day_price" => $this->input->post("sp_first_price"),
+            "sp_discount_price" => str_replace(",","",$this->input->post("sp_discount_price")),
+            "sp_first_day_price" => str_replace(",","",$this->input->post("sp_first_price")),
             "sp_first_day_start" => $this->input->post("sp_first_start"),
             "sp_first_day_end" => $this->input->post("sp_first_end"),
-            "sp_first_month_price" => $this->input->post("sp_first_month_price"),
+            "sp_first_month_price" => str_replace(",","",$this->input->post("sp_first_month_price")),
             "sp_first_month_start" => $this->input->post("sp_first_month_start"),
             "sp_first_month_end" => $this->input->post("sp_first_month_end")
         );
@@ -2275,8 +2390,15 @@ class Api_model extends CI_Model {
         $sa_once_price = $this->input->post("sa_once_price");
         $sa_month_price = $this->input->post("sa_month_price");
         $sa_pay_day = $this->input->post("sa_pay_day");
-        $pis_yn = $this->input->post("pis_yn");
-        $etc_yn = $this->input->post("etc_yn");
+        if($this->input->post("pis_yn") != "")
+            $pis_yn = $this->input->post("pis_yn");
+        else
+            $pis_yn = array();
+
+        if($this->input->post("etc_yn_v") != "")
+            $etc_yn = $this->input->post("etc_yn_v");
+        else
+            $etc_yn = array();
         $sa_pis_seq = $this->input->post("sa_pis_seq");
 
         for($i = 0; $i < count($pis_yn); $i++){
@@ -2287,20 +2409,26 @@ class Api_model extends CI_Model {
                 "sa_pr_seq" => $this->input->post("sr_pr_seq"),
                 "sa_pis_seq" => $pis_yn[$i],
                 "sa_c_seq" => $sa_c_seq[$i],
-                "sa_input_price" => $sa_input_price[$i],
+                "sa_input_price" => str_replace(",","",$sa_input_price[$i]),
                 "sa_input_unit" => $sa_input_unit[$i],
                 "sa_input_date" => $sa_input_date[$i],
                 "sa_claim_name" => $sa_claim_name[$i],
                 "sa_bill_name" => $sa_bill_name[$i],
-                "sa_once_price" => $sa_once_price[$i],
-                "sa_month_price" => $sa_month_price[$i],
+                "sa_once_price" => str_replace(",","",$sa_once_price[$i]),
+                "sa_month_price" => str_replace(",","",$sa_month_price[$i]),
                 "sa_pay_day" => $sa_pay_day[$i]
             );
 
             $this->db->insert("service_register_addoption",$data_addoption);
+
+            $sa_seq = $this->db->insert_id();
+            // if($etc_yn[$i] == "Y"){
+
+            // }
             // }
         }
         if($this->input->post("sp_once_price_add") != ""){
+            // $etc_yn_v = $this->input->post("etc_yn_v");
             $sp_once_price_add = $this->input->post("sp_once_price_add");
             $sp_once_dis_price_add = $this->input->post("sp_once_dis_price_add");
             $sp_once_dis_msg_add = $this->input->post("sp_once_dis_msg_add");
@@ -2318,28 +2446,32 @@ class Api_model extends CI_Model {
             $sap_first_month_start_add = $this->input->post("sap_first_month_start_add");
             $sap_first_month_end_add = $this->input->post("sap_first_month_end_add");
             for($i = 0; $i < count($sp_once_price_add);$i++){
+
+
                 $this->db->select("*");
                 $this->db->from("service_register_addoption");
                 $this->db->where("sa_pis_seq",$pis_seq_add[$i]);
+                $this->db->order_by("sa_seq desc");
+                $this->db->limit(1);
                 $query = $this->db->get();
                 $row = $query->row_array();
 
                 $data_addoption_price = array(
                     "sap_sa_seq" => $row["sa_seq"],
                     "sap_sr_seq" => $sr_seq,
-                    "sap_once_price" => $sp_once_price_add[$i],
-                    "sap_once_dis_price" => $sp_once_dis_price_add[$i],
+                    "sap_once_price" => str_replace(",","",$sp_once_price_add[$i]),
+                    "sap_once_dis_price" => str_replace(",","",$sp_once_dis_price_add[$i]),
                     "sap_once_dis_msg" => $sp_once_dis_msg_add[$i],
-                    "sap_month_price" => $sp_month_price_add[$i],
-                    "sap_month_dis_price" => $sp_month_dis_price_add[$i],
+                    "sap_month_price" => str_replace(",","",$sp_month_price_add[$i]),
+                    "sap_month_dis_price" => str_replace(",","",$sp_month_dis_price_add[$i]),
                     "sap_month_dis_msg" => $sp_month_dis_msg_add[$i],
                     "sap_discount_yn" => $sp_discount_yn_add[$i],
-                    "sap_discount_price" => $sp_discount_price_add[$i],
-                    "sap_register_discount" => $sp_register_discount_add[$i],
-                    "sap_first_day_price" => $sap_first_price_add[$i],
+                    "sap_discount_price" => str_replace(",","",$sp_discount_price_add[$i]),
+                    "sap_register_discount" => str_replace(",","",$sp_register_discount_add[$i]),
+                    "sap_first_day_price" => str_replace(",","",$sap_first_price_add[$i]),
                     "sap_first_day_start" => $sap_first_start_add[$i],
                     "sap_first_day_end" => $sap_first_end_add[$i],
-                    "sap_first_month_price" => $sap_first_month_price_add[$i],
+                    "sap_first_month_price" => str_replace(",","",$sap_first_month_price_add[$i]),
                     "sap_first_month_start" => $sap_first_month_start_add[$i],
                     "sap_first_month_end" => $sap_first_month_end_add[$i]
                 );
@@ -2349,6 +2481,7 @@ class Api_model extends CI_Model {
                 $addupdate["sa_claim_type"] = "0";
                 $this->db->where("sa_seq" , $row["sa_seq"]);
                 $this->db->update("service_register_addoption",$addupdate);
+
             }
         }
 
@@ -2391,13 +2524,13 @@ class Api_model extends CI_Model {
             "sr_claim_name" => $this->input->post("sr_claim_name"),
             "sr_rental" => $this->input->post("sr_rental"),
             "sr_bill_name" => $this->input->post("sr_bill_name"),
-            "sr_once_price" => $this->input->post("sr_once_price"),
-            "sr_month_price" => $this->input->post("sr_month_price"),
+            "sr_once_price" => str_replace(",","",$this->input->post("sr_once_price")),
+            "sr_month_price" => str_replace(",","",$this->input->post("sr_month_price")),
             "sr_c_seq" => $this->input->post("sr_c_seq"),
-            "sr_input_price" => $this->input->post("sr_input_price"),
+            "sr_input_price" => str_replace(",","",$this->input->post("sr_input_price")),
             "sr_rental_type" => $this->input->post("sr_rental_type"),
             "sr_rental_date" => $this->input->post("sr_rental_date"),
-            "sr_after_price" => $this->input->post("sr_after_price")
+            "sr_after_price" => str_replace(",","",$this->input->post("sr_after_price"))
         );
 
         $this->db->where("sr_seq",$sr_seq);
@@ -2405,18 +2538,18 @@ class Api_model extends CI_Model {
 
         $data_price = array(
             "sp_ps_seq" => $this->input->post("sr_ps_seq"),
-            "sp_once_price" => $this->input->post("sr_once_price"),
-            "sp_once_dis_price" => $this->input->post("sp_once_dis_price"),
+            "sp_once_price" => str_replace(",","",$this->input->post("sr_once_price")),
+            "sp_once_dis_price" => str_replace(",","",$this->input->post("sp_once_dis_price")),
             "sp_once_dis_msg" => $this->input->post("sp_once_dis_msg"),
-            "sp_month_price" => $this->input->post("sp_month_price"),
-            "sp_month_dis_price" => $this->input->post("sp_month_dis_price"),
+            "sp_month_price" => str_replace(",","",$this->input->post("sp_month_price"))/$this->input->post("sr_payment_period"),
+            "sp_month_dis_price" => str_replace(",","",$this->input->post("sp_month_dis_price")),
             "sp_month_dis_msg" => $this->input->post("sp_month_dis_msg"),
             "sp_discount_yn" => $this->input->post("sp_discount_yn"),
-            "sp_discount_price" => $this->input->post("sp_discount_price"),
-            "sp_first_day_price" => $this->input->post("sp_first_price"),
+            "sp_discount_price" => str_replace(",","",$this->input->post("sp_discount_price")),
+            "sp_first_day_price" => str_replace(",","",$this->input->post("sp_first_price")),
             "sp_first_day_start" => $this->input->post("sp_first_start"),
             "sp_first_day_end" => $this->input->post("sp_first_end"),
-            "sp_first_month_price" => $this->input->post("sp_first_month_price"),
+            "sp_first_month_price" => str_replace(",","",$this->input->post("sp_first_month_price")),
             "sp_first_month_start" => $this->input->post("sp_first_month_start"),
             "sp_first_month_end" => $this->input->post("sp_first_month_end")
         );
@@ -2438,8 +2571,16 @@ class Api_model extends CI_Model {
         $sa_once_price = $this->input->post("sa_once_price");
         $sa_month_price = $this->input->post("sa_month_price");
         $sa_pay_day = $this->input->post("sa_pay_day");
-        $pis_yn = $this->input->post("pis_yn");
-        $etc_yn = $this->input->post("etc_yn");
+        if($this->input->post("pis_yn") != "")
+            $pis_yn = $this->input->post("pis_yn");
+        else
+            $pis_yn = array();
+
+        if($this->input->post("etc_yn") != "")
+            $etc_yn = $this->input->post("etc_yn");
+        else
+            $etc_yn = array();
+
         $sa_pis_seq = $this->input->post("sa_pis_seq");
 
         for($i = 0; $i < count($pis_yn); $i++){
@@ -2450,13 +2591,13 @@ class Api_model extends CI_Model {
                     "sa_pr_seq" => $this->input->post("sr_pr_seq"),
                     "sa_pis_seq" => $pis_yn[$i],
                     "sa_c_seq" => $sa_c_seq[$i],
-                    "sa_input_price" => $sa_input_price[$i],
+                    "sa_input_price" => str_replace(",","",$sa_input_price[$i]),
                     "sa_input_unit" => $sa_input_unit[$i],
                     "sa_input_date" => $sa_input_date[$i],
                     "sa_claim_name" => $sa_claim_name[$i],
                     "sa_bill_name" => $sa_bill_name[$i],
-                    "sa_once_price" => $sa_once_price[$i],
-                    "sa_month_price" => $sa_month_price[$i],
+                    "sa_once_price" => str_replace(",","",$sa_once_price[$i]),
+                    "sa_month_price" => str_replace(",","",$sa_month_price[$i]),
                     "sa_pay_day" => $sa_pay_day[$i],
                     "insert_yn" => "Y"
                 );
@@ -2469,13 +2610,13 @@ class Api_model extends CI_Model {
                     "sa_pr_seq" => $this->input->post("sr_pr_seq"),
                     "sa_pis_seq" => $pis_yn[$i],
                     "sa_c_seq" => $sa_c_seq[$i],
-                    "sa_input_price" => $sa_input_price[$i],
+                    "sa_input_price" => str_replace(",","",$sa_input_price[$i]),
                     "sa_input_unit" => $sa_input_unit[$i],
                     "sa_input_date" => $sa_input_date[$i],
                     "sa_claim_name" => $sa_claim_name[$i],
                     "sa_bill_name" => $sa_bill_name[$i],
-                    "sa_once_price" => $sa_once_price[$i],
-                    "sa_month_price" => $sa_month_price[$i],
+                    "sa_once_price" => str_replace(",","",$sa_once_price[$i]),
+                    "sa_month_price" => str_replace(",","",$sa_month_price[$i]),
                     "sa_pay_day" => $sa_pay_day[$i],
                     "sa_claim_type" => "1",
                     "insert_yn" => "Y"
@@ -2489,12 +2630,10 @@ class Api_model extends CI_Model {
         $this->db->where("insert_yn","N");
         $this->db->delete("service_register_addoption");
 
+        $data_insertyn["insert_yn"] = "N";
+        $this->db->where("sap_sr_seq",$sr_seq);
+        $this->db->update("service_register_addoption_price",$data_insertyn);
         if($this->input->post("sp_once_price_add") != ""){
-
-            $data_insertyn["insert_yn"] = "N";
-            $this->db->where("sap_sr_seq",$sr_seq);
-            $this->db->update("service_register_addoption_price",$data_insertyn);
-
             $sap_seq = $this->input->post("sap_seq");
             $sp_once_price_add = $this->input->post("sp_once_price_add");
             $sp_once_dis_price_add = $this->input->post("sp_once_dis_price_add");
@@ -2525,19 +2664,19 @@ class Api_model extends CI_Model {
                     $data_addoption_price = array(
                         "sap_sa_seq" => $row["sa_seq"],
                         "sap_sr_seq" => $sr_seq,
-                        "sap_once_price" => $sp_once_price_add[$i],
-                        "sap_once_dis_price" => $sp_once_dis_price_add[$i],
+                        "sap_once_price" => str_replace(",","",$sp_once_price_add[$i]),
+                        "sap_once_dis_price" => str_replace(",","",$sp_once_dis_price_add[$i]),
                         "sap_once_dis_msg" => $sp_once_dis_msg_add[$i],
-                        "sap_month_price" => $sp_month_price_add[$i],
-                        "sap_month_dis_price" => $sp_month_dis_price_add[$i],
+                        "sap_month_price" => str_replace(",","",$sp_month_price_add[$i]),
+                        "sap_month_dis_price" => str_replace(",","",$sp_month_dis_price_add[$i]),
                         "sap_month_dis_msg" => $sp_month_dis_msg_add[$i],
                         "sap_discount_yn" => $sp_discount_yn_add[$i],
-                        "sap_discount_price" => $sp_discount_price_add[$i],
+                        "sap_discount_price" => str_replace(",","",$sp_discount_price_add[$i]),
                         "sap_register_discount" => $sp_register_discount_add[$i],
-                        "sap_first_day_price" => $sap_first_price_add[$i],
+                        "sap_first_day_price" => str_replace(",","",$sap_first_price_add[$i]),
                         "sap_first_day_start" => $sap_first_start_add[$i],
                         "sap_first_day_end" => $sap_first_end_add[$i],
-                        "sap_first_month_price" => $sap_first_month_price_add[$i],
+                        "sap_first_month_price" => str_replace(",","",$sap_first_month_price_add[$i]),
                         "sap_first_month_start" => $sap_first_month_start_add[$i],
                         "sap_first_month_end" => $sap_first_month_end_add[$i],
                         "insert_yn" => "Y"
@@ -2549,19 +2688,19 @@ class Api_model extends CI_Model {
                     $this->db->update("service_register_addoption",$addupdate);
                 }else{
                     $data_addoption_price = array(
-                        "sap_once_price" => $sp_once_price_add[$i],
-                        "sap_once_dis_price" => $sp_once_dis_price_add[$i],
+                        "sap_once_price" => str_replace(",","",$sp_once_price_add[$i]),
+                        "sap_once_dis_price" => str_replace(",","",$sp_once_dis_price_add[$i]),
                         "sap_once_dis_msg" => $sp_once_dis_msg_add[$i],
-                        "sap_month_price" => $sp_month_price_add[$i],
-                        "sap_month_dis_price" => $sp_month_dis_price_add[$i],
+                        "sap_month_price" => str_replace(",","",$sp_month_price_add[$i]),
+                        "sap_month_dis_price" => str_replace(",","",$sp_month_dis_price_add[$i]),
                         "sap_month_dis_msg" => $sp_month_dis_msg_add[$i],
                         "sap_discount_yn" => $sp_discount_yn_add[$i],
-                        "sap_discount_price" => $sp_discount_price_add[$i],
-                        "sap_register_discount" => $sp_register_discount_add[$i],
-                        "sap_first_day_price" => $sap_first_price_add[$i],
+                        "sap_discount_price" => str_replace(",","",$sp_discount_price_add[$i]),
+                        "sap_register_discount" => str_replace(",","",$sp_register_discount_add[$i]),
+                        "sap_first_day_price" => str_replace(",","",$sap_first_price_add[$i]),
                         "sap_first_day_start" => $sap_first_start_add[$i],
                         "sap_first_day_end" => $sap_first_end_add[$i],
-                        "sap_first_month_price" => $sap_first_month_price_add[$i],
+                        "sap_first_month_price" => str_replace(",","",$sap_first_month_price_add[$i]),
                         "sap_first_month_start" => $sap_first_month_start_add[$i],
                         "sap_first_month_end" => $sap_first_month_end_add[$i],
                         "insert_yn" => "Y"
@@ -2569,20 +2708,34 @@ class Api_model extends CI_Model {
                     $this->db->where("sap_seq",$sap_seq[$i]);
                     $this->db->update("service_register_addoption_price",$data_addoption_price);
 
+                    $this->db->select("*");
+                    $this->db->from("service_register_addoption_price");
+                    $this->db->where("sap_seq",$sap_seq[$i]);
+                    // $this->db->where("sa_sr_seq",$sr_seq);
+                    $query = $this->db->get();
+                    $row = $query->row_array();
+
                     $addupdate["sa_claim_type"] = "0";
-                    $this->db->where("sa_seq" , $row["sa_seq"]);
+                    $this->db->where("sa_seq" , $row["sap_sa_seq"]);
                     $this->db->update("service_register_addoption",$addupdate);
                 }
             }
-            $this->db->where("sap_sr_seq",$sr_seq);
-            $this->db->where("insert_yn","N");
-            $this->db->delete("service_register_addoption_price");
-        }
 
+        }
+        $this->db->where("sap_sr_seq",$sr_seq);
+        $this->db->where("insert_yn","N");
+        $this->db->delete("service_register_addoption_price");
         return true;
     }
 
     public function serviceRegisterDelete($sr_seq){
+        $this->db->where("sap_sr_seq",$sr_seq);
+        $this->db->delete("service_register_addoption_price");
+        $this->db->where("sa_sr_seq",$sr_seq);
+        $this->db->delete("service_register_addoption");
+        $this->db->where("sp_sr_seq",$sr_seq);
+        $this->db->delete("service_register_price");
+
         $this->db->where("sr_seq",$sr_seq);
 
         return $this->db->delete("service_register");
@@ -2599,7 +2752,7 @@ class Api_model extends CI_Model {
 
     }
 
-    public function serviceRegisterCopy($data){
+    public function serviceRegisterCopy($data,$sr_seq){
         $new_data = array(
             "sr_mb_seq" => $data["sr_mb_seq"],
             "sr_eu_seq" => $data["sr_eu_seq"],
@@ -2643,7 +2796,96 @@ class Api_model extends CI_Model {
             "sr_after_price" => $data["sr_after_price"]
         );
 
-        return $this->db->insert("service_register",$new_data);
+        $this->db->insert("service_register",$new_data);
+
+        $new_sr_seq = $this->db->insert_id();
+
+        $this->db->select("*");
+        $this->db->from("service_register_price");
+        $this->db->where("sp_sr_seq",$sr_seq);
+        $query = $this->db->get();
+        $price_row = $query->row_array();
+        $data_price = array(
+            "sp_sr_seq" => $new_sr_seq,
+            "sp_ps_seq" => $price_row["sp_ps_seq"],
+            "sp_once_price" => $price_row["sp_once_price"],
+            "sp_once_dis_price" => $price_row["sp_once_dis_price"],
+            "sp_once_dis_msg" => $price_row["sp_once_dis_msg"],
+            "sp_month_price" => $price_row["sp_month_price"],
+            "sp_month_dis_price" => $price_row["sp_month_dis_price"],
+            "sp_month_dis_msg" => $price_row["sp_month_dis_msg"],
+            "sp_discount_yn" => $price_row["sp_discount_yn"],
+            "sp_discount_price" => $price_row["sp_discount_price"],
+            "sp_first_day_price" => $price_row["sp_first_day_price"],
+            "sp_first_day_start" => $price_row["sp_first_day_start"],
+            "sp_first_day_end" => $price_row["sp_first_day_end"],
+            "sp_first_month_price" => $price_row["sp_first_month_price"],
+            "sp_first_month_start" => $price_row["sp_first_month_start"],
+            "sp_first_month_end" => $price_row["sp_first_month_end"]
+        );
+        $this->db->insert("service_register_price",$data_price);
+        $this->db->select("*");
+        $this->db->from("service_register_addoption");
+        $this->db->where("sa_sr_seq",$sr_seq);
+        $this->db->order_by("sa_seq");
+        $query = $this->db->get();
+
+        foreach($query->result_array() as $row){
+            $data_addoption = array(
+                "sa_name" => $row["sa_name"],
+                "sa_sr_seq" => $new_sr_seq,
+                "sa_pr_seq" => $row["sa_pr_seq"],
+                "sa_pis_seq" => $row["sa_pis_seq"],
+                "sa_c_seq" => $row["sa_c_seq"],
+                "sa_input_price" => $row["sa_input_price"],
+                "sa_input_unit" => $row["sa_input_unit"],
+                "sa_input_date" => $row["sa_input_date"],
+                "sa_claim_name" => $row["sa_claim_name"],
+                "sa_bill_name" => $row["sa_bill_name"],
+                "sa_once_price" => $row["sa_once_price"],
+                "sa_month_price" => $row["sa_month_price"],
+                "sa_pay_day" => $row["sa_pay_day"]
+            );
+
+            $this->db->insert("service_register_addoption",$data_addoption);
+
+            $new_sa_seq = $this->db->insert_id();
+
+            $this->db->select("*");
+            $this->db->from("service_register_addoption_price");
+            $this->db->where("sap_sa_seq",$row["sa_seq"]);
+
+            $query2 = $this->db->get();
+            if($query2->num_rows() > 0){
+                $row2 = $query2->row_array();
+
+                $data_addoption_price = array(
+                    "sap_sa_seq" => $new_sa_seq,
+                    "sap_sr_seq" => $new_sr_seq,
+                    "sap_once_price" => $row2["sap_once_price"],
+                    "sap_once_dis_price" => $row2["sap_once_dis_price"],
+                    "sap_once_dis_msg" => $row2["sap_once_dis_msg"],
+                    "sap_month_price" => $row2["sap_month_price"],
+                    "sap_month_dis_price" => $row2["sap_month_dis_price"],
+                    "sap_month_dis_msg" => $row2["sap_month_dis_msg"],
+                    "sap_discount_yn" => $row2["sap_discount_yn"],
+                    "sap_discount_price" => $row2["sap_discount_price"],
+                    "sap_register_discount" => $row2["sap_register_discount"],
+                    "sap_first_day_price" => $row2["sap_first_day_price"],
+                    "sap_first_day_start" => $row2["sap_first_day_start"],
+                    "sap_first_day_end" => $row2["sap_first_day_end"],
+                    "sap_first_month_price" => $row2["sap_first_month_price"],
+                    "sap_first_month_start" => $row2["sap_first_month_start"],
+                    "sap_first_month_end" => $row2["sap_first_month_end"]
+                );
+
+                $this->db->insert("service_register_addoption_price",$data_addoption_price);
+            }
+        }
+
+        return true;
+
+
     }
 
     public function countServiceRegister(){
@@ -2705,7 +2947,8 @@ class Api_model extends CI_Model {
         }else{
             $this->db->where_in("sr_status",array("0","1"));
         }
-
+        $this->db->order_by("a.sr_seq desc");
+        $this->db->limit($end,$start);
         $query = $this->db->get();
 
         return $query->result_array();
@@ -2773,6 +3016,40 @@ class Api_model extends CI_Model {
 
     public function memberUpdate1($mb_seq)
     {
+        if($this->input->post("b_mb_type") != $this->input->post("mb_type")){
+            $this->logInsert(1,$mb_seq,'회원 정보','회원 구분',$this->input->post("b_mb_type"),$this->input->post("mb_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_name") != $this->input->post("mb_name")){
+            $this->logInsert(1,$mb_seq,'회원 정보','상호/이름',$this->input->post("b_mb_name"),$this->input->post("mb_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_number") != $this->input->post("mb_number")){
+            $this->logInsert(1,$mb_seq,'회원 정보','사업자번호/생년월일',$this->input->post("b_mb_number"),$this->input->post("mb_number"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_ceo") != $this->input->post("mb_ceo")){
+            $this->logInsert(1,$mb_seq,'회원 정보','대표자',$this->input->post("b_mb_ceo"),$this->input->post("mb_ceo"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_address") != $this->input->post("mb_address") || $this->input->post("b_mb_zipcode") != $this->input->post("mb_zipcode") || $this->input->post("b_mb_detail_address") != $this->input->post("mb_detail_address")){
+            $this->logInsert(1,$mb_seq,'회원 정보','주소(한글)',$this->input->post("b_mb_zipcode")." ".$this->input->post("b_mb_address")." ".$this->input->post("b_mb_detail_address"),$this->input->post("mb_zipcode")." ".$this->input->post("mb_address")." ".$this->input->post("mb_detail_address"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        // if($this->input->post("b_mb_business_conditions") != $this->input->post("mb_business_conditions")){
+        //     $this->logInsert(1,$mb_seq,'회원 정보','업태',$this->input->post("b_mb_business_conditions"),$this->input->post("mb_business_conditions"),1,'',$_SERVER["REMOTE_ADDR"]);
+        // }
+        // if($this->input->post("b_mb_business_type") != $this->input->post("mb_business_type")){
+        //     $this->logInsert(1,$mb_seq,'회원 정보','종목',$this->input->post("b_mb_business_type"),$this->input->post("mb_business_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+        // }
+        if($this->input->post("b_mb_tel") != $this->input->post("mb_tel")){
+            $this->logInsert(1,$mb_seq,'회원 정보','전화번호',$this->input->post("b_mb_tel"),$this->input->post("mb_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_phone") != $this->input->post("mb_phone")){
+            $this->logInsert(1,$mb_seq,'회원 정보','휴대폰번호',$this->input->post("b_mb_phone"),$this->input->post("mb_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_email") != $this->input->post("mb_email")){
+            $this->logInsert(1,$mb_seq,'회원 정보','이메일',$this->input->post("b_mb_email"),$this->input->post("mb_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_fax") != $this->input->post("mb_fax")){
+            $this->logInsert(1,$mb_seq,'회원 정보','팩스',$this->input->post("b_mb_fax"),$this->input->post("mb_fax"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
         $data = array(
             "mb_type"=>$this->input->post("mb_type"),
             "mb_name" => $this->input->post("mb_name"),
@@ -2809,6 +3086,18 @@ class Api_model extends CI_Model {
 
     public function memberUpdate4($mb_seq)
     {
+        // if($this->input->post("b_mb_contract_name") != $this->input->post("mb_contract_name")){
+        //     $this->logInsert(1,$mb_seq,'계약 담당자','이름',$this->input->post("b_mb_contract_name"),$this->input->post("mb_contract_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        // }
+        // if($this->input->post("b_mb_contract_email") != $this->input->post("mb_contract_email")){
+        //     $this->logInsert(1,$mb_seq,'계약 담당자','이메일',$this->input->post("b_mb_contract_email"),$this->input->post("mb_contract_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+        // }
+        // if($this->input->post("b_mb_contract_phone") != $this->input->post("mb_contract_phone")){
+        //     $this->logInsert(1,$mb_seq,'계약 담당자','휴대폰번호',$this->input->post("b_mb_contract_phone"),$this->input->post("mb_contract_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+        // }
+        // if($this->input->post("b_mb_contract_tel") != $this->input->post("mb_contract_tel")){
+        //     $this->logInsert(1,$mb_seq,'계약 담당자','전화번호',$this->input->post("b_mb_contract_tel"),$this->input->post("mb_contract_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+        // }
         $data = array(
             "mb_contract_name"=>$this->input->post("mb_contract_name"),
             "mb_contract_email" => $this->input->post("mb_contract_email"),
@@ -2825,13 +3114,25 @@ class Api_model extends CI_Model {
 
     public function memberUpdate5($mb_seq)
     {
+        if($this->input->post("b_mb_service_name") != $this->input->post("mb_service_name")){
+            $this->logInsert(1,$mb_seq,'운영 담당자','이름',$this->input->post("b_mb_service_name"),$this->input->post("mb_service_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_service_email") != $this->input->post("mb_service_email")){
+            $this->logInsert(1,$mb_seq,'운영 담당자','이메일',$this->input->post("b_mb_service_email"),$this->input->post("mb_service_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_service_phone") != $this->input->post("mb_service_phone")){
+            $this->logInsert(1,$mb_seq,'운영 담당자','휴대폰번호',$this->input->post("b_mb_service_phone"),$this->input->post("mb_service_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_service_tel") != $this->input->post("mb_service_tel")){
+            $this->logInsert(1,$mb_seq,'운영 담당자','전화번호',$this->input->post("b_mb_service_tel"),$this->input->post("mb_service_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
         $data = array(
-            "mb_contract_name"=>$this->input->post("mb_service_name"),
-            "mb_contract_email" => $this->input->post("mb_service_email"),
-            "mb_contract_team" => $this->input->post("mb_service_team"),
-            "mb_contract_position" => $this->input->post("mb_service_position"),
-            "mb_contract_phone" => $this->input->post("mb_service_phone"),
-            "mb_contract_tel" => $this->input->post("mb_service_tel")
+            "mb_service_name"=>$this->input->post("mb_service_name"),
+            "mb_service_email" => $this->input->post("mb_service_email"),
+            "mb_service_team" => $this->input->post("mb_service_team"),
+            "mb_service_position" => $this->input->post("mb_service_position"),
+            "mb_service_phone" => $this->input->post("mb_service_phone"),
+            "mb_service_tel" => $this->input->post("mb_service_tel")
         );
 
         $this->db->where("mb_seq",$mb_seq);
@@ -2841,13 +3142,25 @@ class Api_model extends CI_Model {
 
     public function memberUpdate6($mb_seq)
     {
+        if($this->input->post("b_mb_payment_name") != $this->input->post("mb_payment_name")){
+            $this->logInsert(1,$mb_seq,'요금 담당자','이름',$this->input->post("b_mb_payment_name"),$this->input->post("mb_payment_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_payment_email") != $this->input->post("mb_payment_email")){
+            $this->logInsert(1,$mb_seq,'요금 담당자','이메일',$this->input->post("b_mb_payment_email"),$this->input->post("mb_payment_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_payment_phone") != $this->input->post("mb_payment_phone")){
+            $this->logInsert(1,$mb_seq,'요금 담당자','휴대폰번호',$this->input->post("b_mb_payment_phone"),$this->input->post("mb_payment_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_payment_tel") != $this->input->post("mb_payment_tel")){
+            $this->logInsert(1,$mb_seq,'요금 담당자','전화번호',$this->input->post("b_mb_payment_tel"),$this->input->post("mb_service_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
         $data = array(
-            "mb_contract_name"=>$this->input->post("mb_payment_name"),
-            "mb_contract_email" => $this->input->post("mb_payment_email"),
-            "mb_contract_team" => $this->input->post("mb_payment_team"),
-            "mb_contract_position" => $this->input->post("mb_payment_position"),
-            "mb_contract_phone" => $this->input->post("mb_payment_phone"),
-            "mb_contract_tel" => $this->input->post("mb_payment_tel")
+            "mb_payment_name"=>$this->input->post("mb_payment_name"),
+            "mb_payment_email" => $this->input->post("mb_payment_email"),
+            "mb_payment_team" => $this->input->post("mb_payment_team"),
+            "mb_payment_position" => $this->input->post("mb_payment_position"),
+            "mb_payment_phone" => $this->input->post("mb_payment_phone"),
+            "mb_payment_tel" => $this->input->post("mb_payment_tel")
         );
 
         $this->db->where("mb_seq",$mb_seq);
@@ -2871,7 +3184,7 @@ class Api_model extends CI_Model {
         $query2 = $this->db->get();
 
         if($query2->num_rows() == 0){
-            $sv_number = "SCCES0000001";
+            $sv_number = "SVCES0000001";
         }else{
             $max_row = $query2->row_array();
             $max_row1 = substr($max_row["sv_number"],0,5);
@@ -2880,6 +3193,17 @@ class Api_model extends CI_Model {
 
             $sv_number = $max_row1.sprintf("%07d",$max_row2);
         }
+
+        $this->db->select("prs_div");
+        $this->db->from("product_sub");
+        $this->db->where("prs_pr_seq",$row["sr_pr_seq"]);
+        $this->db->where("prs_pd_seq",$row["sr_pd_seq"]);
+        $this->db->where("prs_ps_seq",$row["sr_ps_seq"]);
+        $this->db->limit(1);
+        $query_ps = $this->db->get();
+
+        $ps_row = $query_ps->row_array();
+
         // $old_num = $max_row["sv_number"];
 
         $new_data = array(
@@ -2925,7 +3249,8 @@ class Api_model extends CI_Model {
             "sv_input_price" => $row["sr_input_price"],
             "sv_rental_type" => $row["sr_rental_type"],
             "sv_rental_date" => $row["sr_rental_date"],
-            "sv_after_price" => $row["sr_after_price"]
+            "sv_after_price" => $row["sr_after_price"],
+            "sv_input_unit" => $ps_row["prs_div"]
         );
 
         $this->db->insert("service",$new_data);
@@ -2956,7 +3281,8 @@ class Api_model extends CI_Model {
             "svp_first_day_end" => $row2["sp_first_day_end"],
             "svp_first_month_price" => $row2["sp_first_month_price"],
             "svp_first_month_start" => $row2["sp_first_month_start"],
-            "svp_first_month_end" => $row2["sp_first_month_end"]
+            "svp_first_month_end" => $row2["sp_first_month_end"],
+            "svp_payment_period" => $row["sr_payment_period"]
         );
 
         $this->db->insert("service_price",$data_price);
@@ -3055,9 +3381,9 @@ class Api_model extends CI_Model {
                 $row_cl = $query_c->row_array();
                 $ca_item_price = $row_cl["ca_item_price"]+$total_price;
                 $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
-                if($row_cl["ca_m_sv_num"] < $row["sv_number"]){
-                    $ca_m_sv_num = $row["sv_number"];
-                    $ca_item_name = $row["sv_bill_name"];
+                if($row_cl["ca_m_sv_num"] < $sv_number){
+                    $ca_m_sv_num = $sv_number;
+                    $ca_item_name = $row["sr_bill_name"];
                 }else{
                     $ca_m_sv_num = $row_cl["ca_m_sv_num"];
                     $ca_item_name = $row_cl["ca_item_name"];
@@ -3077,7 +3403,7 @@ class Api_model extends CI_Model {
                     "ca_item_price" => $total_price,
                     "ca_item_surtax" => floor($total_price*0.1),
                     "ca_sort" => 1,
-                    "ca_m_sv_num" => $row["sv_number"]
+                    "ca_m_sv_num" => $sv_number
                 );
                 $this->db->insert("payment_claim_list",$data_claim_detail);
             }
@@ -3156,7 +3482,7 @@ class Api_model extends CI_Model {
                 "ca_item_price" => $total_price,
                 "ca_item_surtax" => floor($total_price*0.1),
                 "ca_sort" => 1,
-                "ca_m_sv_num" => $row["sv_number"]
+                "ca_m_sv_num" => $sv_number
             );
             $this->db->insert("payment_claim_list",$data_claim_d);
 
@@ -3217,7 +3543,7 @@ class Api_model extends CI_Model {
                 "sva_pis_seq" => $row["sa_pis_seq"],
                 "sva_c_seq" => $row["sa_c_seq"],
                 "sva_input_price" => $row["sa_input_price"],
-                "sva_input_unit" => $row["sa_input_date"],
+                "sva_input_unit" => $row["sa_input_unit"],
                 "sva_input_date" => $row["sa_input_date"],
                 "sva_claim_name" => $row["sa_claim_name"],
                 "sva_bill_name" => $row["sa_bill_name"],
@@ -3241,232 +3567,258 @@ class Api_model extends CI_Model {
             $this->db->where("sap_sr_seq",$sr_seq);
             $this->db->where("sap_sa_seq",$row["sa_seq"]);
             $query = $this->db->get();
+            if($query->num_rows() > 0){
+                foreach($query->result_array() as $row2){
+                    $data_addoption_price = array(
+                        "svp_sv_seq" => $sv_seq,
+                        "svp_sva_seq" => $sva_seq,
+                        "svp_once_price" => $row2["sap_once_price"],
+                        "svp_once_dis_price" => $row2["sap_once_dis_price"],
+                        "svp_once_dis_msg" => $row2["sap_once_dis_msg"],
+                        "svp_month_price" => $row2["sap_month_price"]/$row["sa_pay_day"],
+                        "svp_month_dis_price" => $row2["sap_month_dis_price"],
+                        "svp_month_dis_msg" => $row2["sap_month_dis_msg"],
+                        "svp_discount_yn" => $row2["sap_discount_yn"],
+                        "svp_discount_price" => $row2["sap_discount_price"],
+                        "svp_register_discount" => $row2["sap_register_discount"],
+                        "svp_first_day_price" => $row2["sap_first_day_price"],
+                        "svp_first_day_start" => $row2["sap_first_day_start"],
+                        "svp_first_day_end" => $row2["sap_first_day_end"],
+                        "svp_first_month_price" => $row2["sap_first_month_price"],
+                        "svp_first_month_start" => $row2["sap_first_month_start"],
+                        "svp_first_month_end" => $row2["sap_first_month_end"],
+                        "svp_payment_period" => $row["sa_pay_day"]
+                    );
 
-            foreach($query->result_array() as $row2){
-                $data_addoption_price = array(
-                    "svp_sv_seq" => $sv_seq,
-                    "svp_sva_seq" => $sva_seq,
-                    "svp_once_price" => $row2["sap_once_price"],
-                    "svp_once_dis_price" => $row2["sap_once_dis_price"],
-                    "svp_once_dis_msg" => $row2["sap_once_dis_msg"],
-                    "svp_month_price" => $row2["sap_month_price"],
-                    "svp_month_dis_price" => $row2["sap_month_dis_price"],
-                    "svp_month_dis_msg" => $row2["sap_month_dis_msg"],
-                    "svp_discount_yn" => $row2["sap_discount_yn"],
-                    "svp_discount_price" => $row2["sap_discount_price"],
-                    "svp_register_discount" => $row2["sap_register_discount"],
-                    "svp_first_day_price" => $row2["sap_first_day_price"],
-                    "svp_first_day_start" => $row2["sap_first_day_start"],
-                    "svp_first_day_end" => $row2["sap_first_day_end"],
-                    "svp_first_month_price" => $row2["sap_first_month_price"],
-                    "svp_first_month_start" => $row2["sap_first_month_start"],
-                    "svp_first_month_end" => $row2["sap_first_month_end"]
-                );
+                    $this->db->insert("service_price",$data_addoption_price);
 
-                $this->db->insert("service_price",$data_addoption_price);
+                    // $price_data["ap_once_price"] = $row2["sap_once_price"];
+                    // $price_data["ap_once_dis_price"] = $row2["sap_once_dis_price"];
+                    // $price_data["ap_price"] = $row2["sap_month_price"];
+                    // $price_data["ap_dis_price"] = $row2["sap_month_dis_price"];
+                    // $price_data["ap_type_dis_price"] = $row2["sap_discount_price"];
+                    // $price_data["ap_first_price"] = $row2["sap_first_price"];
 
-                // $price_data["ap_once_price"] = $row2["sap_once_price"];
-                // $price_data["ap_once_dis_price"] = $row2["sap_once_dis_price"];
-                // $price_data["ap_price"] = $row2["sap_month_price"];
-                // $price_data["ap_dis_price"] = $row2["sap_month_dis_price"];
-                // $price_data["ap_type_dis_price"] = $row2["sap_discount_price"];
-                // $price_data["ap_first_price"] = $row2["sap_first_price"];
-
-                $pay_day = $row_sr["sr_pay_day"];
-                if($row_sr["sr_pay_type"] == "0"){ // 전월
-                    $standard_day = substr($row_sr["sr_account_start"],8,2);
-                    if($pay_day > $standard_day){
-                        $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row_sr["sr_account_start"],5,2)-1,substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
-                    }else{
+                    $pay_day = $row_sr["sr_pay_day"];
+                    if($row_sr["sr_pay_type"] == "0"){ // 전월
+                        $standard_day = substr($row_sr["sr_account_start"],8,2);
+                        if($pay_day > $standard_day){
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row_sr["sr_account_start"],5,2)-1,substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
+                        }else{
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row_sr["sr_account_start"],5,2),substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
+                        }
+                    }else if($row_sr["sr_pay_type"] == "1"){ // 당월
                         $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row_sr["sr_account_start"],5,2),substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
+                    }else if($row_sr["sr_pay_type"] == "2"){ // 익월
+                        $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row_sr["sr_account_start"],5,2)+1,substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
                     }
-                }else if($row_sr["sr_pay_type"] == "1"){ // 당월
-                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row_sr["sr_account_start"],5,2),substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
-                }else if($row_sr["sr_pay_type"] == "2"){ // 익월
-                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row_sr["sr_account_start"],5,2)+1,substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
-                }
-                $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row_sr["sr_payment_day"],substr($claim_date,0,4)));
+                    $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row_sr["sr_payment_day"],substr($claim_date,0,4)));
 
-                $this->db->select("pm_ca_seq");
-                $this->db->from("payment");
-                $this->db->where("pm_mb_seq",$row_sr["sr_mb_seq"]);
-                $this->db->where("pm_date",$claim_date);
-                $this->db->where("pm_payment_publish_type",$row_sr["sr_pay_publish_type"]);
-                $this->db->where("pm_end_date",$end_date);
-                $this->db->limit(1);
-                $query_claim = $this->db->get();
-                if($query_claim->num_rows() > 0){
-                    $row_claim = $query_claim->row_array();
-                    $pm_ca_seq = $row_claim["pm_ca_seq"];
-                }else{
-                    $pm_ca_seq = "";
-                }
-
-                $this->db->select("pm_code");
-                $this->db->from("payment");
-                $this->db->order_by("pm_seq","desc");
-                $this->db->limit(1);
-                $query_code = $this->db->get();
-
-                if($query_code->num_rows() == 0){
-                    $pm_code = "CHA0000001";
-                }else{
-                    $max_row = $query_code->row_array();
-                    $max_row1 = substr($max_row["pm_code"],0,3);
-                    $max_row2 = (int)substr($max_row["pm_code"],3,7);
-                    $max_row2 = $max_row2+1;
-
-                    $pm_code = $max_row1.sprintf("%07d",$max_row2);
-                }
-                $total_price = $row2["sap_once_price"]-$row2["sap_once_dis_price"]+$row2["sap_month_price"]-$row2["sap_month_dis_price"]-$row2["sap_discount_price"]+$row2["sap_first_day_price"];
-                $payment_data = array(
-                    "pm_type" => "1",
-                    "pm_mb_seq" => $row_sr["sr_mb_seq"],
-                    "pm_sv_seq" => $sv_seq,
-                    "pm_sva_seq" => $sva_seq,
-                    "pm_code" => $pm_code,
-                    "pm_date" => $claim_date,
-                    "pm_service_start" => $row_sr["sr_account_start"],
-                    "pm_service_end" =>  $row_sr["sr_account_end"],
-                    "pm_pay_type" => $row_sr["sr_pay_type"],
-                    "pm_pay_period" => $row["sa_pay_day"],
-                    "pm_once_price" => $row2["sap_once_price"],
-                    "pm_once_dis_price" => $row2["sap_once_dis_price"],
-                    "pm_service_price" => $row2["sap_month_price"],
-                    "pm_service_dis_price" => $row2["sap_month_dis_price"],
-                    "pm_payment_dis_price" => $row2["sap_discount_price"],
-                    "pm_delay_price" => 0,
-                    "pm_total_price" => $total_price,
-                    "pm_surtax_price" => floor($total_price*0.1),
-                    "pm_end_date" => $end_date,
-                    "pm_status" => 0,
-                    "pm_first_day_price" => $row2["sap_first_day_price"],
-                    "pm_first_day_start" => $row2["sap_first_day_start"],
-                    "pm_first_day_end" => $row2["sap_first_day_end"],
-                    "pm_first_month_price" => $row2["sap_first_month_price"],
-                    "pm_first_month_start" => $row2["sap_first_month_start"],
-                    "pm_first_month_end" => $row2["sap_first_month_end"],
-                    "pm_payment_publish_type" => $row_sr["sr_pay_publish_type"],
-                    "pm_ca_seq" => $pm_ca_seq,
-                    "pm_claim_type" => "0"
-                );
-                $this->db->insert("payment",$payment_data);
-
-                $pm_seq = $this->db->insert_id();
-
-                if($pm_ca_seq != ""){
-                    $this->db->select("*");
-                    $this->db->from("payment_claim_list");
-                    $this->db->where("cl_ca_seq",$pm_ca_seq);
-                    $this->db->where("ca_sort",1);
-                    $query_c = $this->db->get();
-
-
-                    if($query_c->num_rows() > 0){
-                        $row_cl = $query_c->row_array();
-                        $ca_item_price = $row_cl["ca_item_price"]+$total_price;
-                        $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
-
-                        $data_claim_detail = array(
-                            "ca_item_price" => $ca_item_price,
-                            "ca_item_surtax" => $ca_item_surtax
-                        );
-                        $this->db->where("cl_seq",$row_cl["cl_seq"]);
-                        $this->db->update("payment_claim_list",$data_claim_detail);
+                    $this->db->select("pm_ca_seq");
+                    $this->db->from("payment");
+                    $this->db->where("pm_mb_seq",$row_sr["sr_mb_seq"]);
+                    $this->db->where("pm_date",$claim_date);
+                    $this->db->where("pm_payment_publish_type",$row_sr["sr_pay_publish_type"]);
+                    $this->db->where("pm_end_date",$end_date);
+                    $this->db->limit(1);
+                    $query_claim = $this->db->get();
+                    if($query_claim->num_rows() > 0){
+                        $row_claim = $query_claim->row_array();
+                        $pm_ca_seq = $row_claim["pm_ca_seq"];
                     }else{
-                        $data_claim_detail = array(
-                            "cl_ca_seq" => $pm_ca_seq,
-                            "ca_item_name" => $row_sr["sv_bill_name"],
+                        $pm_ca_seq = "";
+                    }
+
+                    $this->db->select("pm_code");
+                    $this->db->from("payment");
+                    $this->db->order_by("pm_seq","desc");
+                    $this->db->limit(1);
+                    $query_code = $this->db->get();
+
+                    if($query_code->num_rows() == 0){
+                        $pm_code = "CHA0000001";
+                    }else{
+                        $max_row = $query_code->row_array();
+                        $max_row1 = substr($max_row["pm_code"],0,3);
+                        $max_row2 = (int)substr($max_row["pm_code"],3,7);
+                        $max_row2 = $max_row2+1;
+
+                        $pm_code = $max_row1.sprintf("%07d",$max_row2);
+                    }
+                    $total_price = $row2["sap_once_price"]-$row2["sap_once_dis_price"]+$row2["sap_month_price"]-$row2["sap_month_dis_price"]-$row2["sap_discount_price"]+$row2["sap_first_day_price"];
+                    $payment_data = array(
+                        "pm_type" => "1",
+                        "pm_mb_seq" => $row_sr["sr_mb_seq"],
+                        "pm_sv_seq" => $sv_seq,
+                        "pm_sva_seq" => $sva_seq,
+                        "pm_code" => $pm_code,
+                        "pm_date" => $claim_date,
+                        "pm_service_start" => $row_sr["sr_account_start"],
+                        "pm_service_end" =>  $row_sr["sr_account_end"],
+                        "pm_pay_type" => $row_sr["sr_pay_type"],
+                        "pm_pay_period" => $row["sa_pay_day"],
+                        "pm_once_price" => $row2["sap_once_price"],
+                        "pm_once_dis_price" => $row2["sap_once_dis_price"],
+                        "pm_service_price" => $row2["sap_month_price"],
+                        "pm_service_dis_price" => $row2["sap_month_dis_price"],
+                        "pm_payment_dis_price" => $row2["sap_discount_price"],
+                        "pm_delay_price" => 0,
+                        "pm_total_price" => $total_price,
+                        "pm_surtax_price" => floor($total_price*0.1),
+                        "pm_end_date" => $end_date,
+                        "pm_status" => 0,
+                        "pm_first_day_price" => $row2["sap_first_day_price"],
+                        "pm_first_day_start" => $row2["sap_first_day_start"],
+                        "pm_first_day_end" => $row2["sap_first_day_end"],
+                        "pm_first_month_price" => $row2["sap_first_month_price"],
+                        "pm_first_month_start" => $row2["sap_first_month_start"],
+                        "pm_first_month_end" => $row2["sap_first_month_end"],
+                        "pm_payment_publish_type" => $row_sr["sr_pay_publish_type"],
+                        "pm_ca_seq" => $pm_ca_seq,
+                        "pm_claim_type" => "0"
+                    );
+                    $this->db->insert("payment",$payment_data);
+
+                    $pm_seq = $this->db->insert_id();
+
+                    if($pm_ca_seq != ""){
+                        $this->db->select("*");
+                        $this->db->from("payment_claim_list");
+                        $this->db->where("cl_ca_seq",$pm_ca_seq);
+                        $this->db->where("ca_sort",1);
+                        $query_c = $this->db->get();
+
+
+                        if($query_c->num_rows() > 0){
+                            $row_cl = $query_c->row_array();
+                            $ca_item_price = $row_cl["ca_item_price"]+$total_price;
+                            $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
+
+                            $data_claim_detail = array(
+                                "ca_item_price" => $ca_item_price,
+                                "ca_item_surtax" => $ca_item_surtax
+                            );
+                            $this->db->where("cl_seq",$row_cl["cl_seq"]);
+                            $this->db->update("payment_claim_list",$data_claim_detail);
+                        }else{
+                            $data_claim_detail = array(
+                                "cl_ca_seq" => $pm_ca_seq,
+                                "ca_item_name" => $row_sr["sv_bill_name"],
+                                "ca_item_price" => $total_price,
+                                "ca_item_surtax" => floor($total_price*0.1),
+                                "ca_sort" => 1,
+                                "ca_m_sv_num" => $row_sr["sv_number"]
+                            );
+                            $this->db->insert("payment_claim_list",$data_claim_detail);
+                        }
+
+
+                        $this->db->select("*");
+                        $this->db->from("payment_claim");
+                        $this->db->where("ca_seq",$pm_ca_seq);
+                        $claim_query = $this->db->get();
+                        $row_c = $claim_query->row_array();
+                        $total_claim_price = $row_c["ca_price"]+$total_price;
+                        $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
+                        $total_claim_total_price = $total_claim_price+$total_claim_surtax;
+                        $ca_empty_size = 11 - strlen($total_claim_total_price);
+                        $ca_price_info1 = $total_claim_total_price;
+                        $ca_price_info2 = $total_claim_total_price;
+
+                        $data_update = array(
+                            "ca_price" => $total_claim_price,
+                            "ca_surtax" => $total_claim_surtax,
+                            "ca_total_price" => $total_claim_total_price,
+                            "ca_empty_size" => $ca_empty_size,
+                            "ca_price_info1" => $ca_price_info1,
+                            "ca_price_info2" => $ca_price_info2
+                        );
+                        $this->db->where("ca_seq",$pm_ca_seq);
+                        $this->db->update("payment_claim",$data_update);
+                    }else{
+                        $this->db->select("*");
+                        $this->db->from("members");
+                        $this->db->where("mb_seq",$row["sr_mb_seq"]);
+                        $query_member = $this->db->get();
+
+                        $row_member = $query_member->row_array();
+
+                        $data_claim = array(
+                            "ca_from_number" => "215-87-70318",
+                            "ca_to_number" => $row_member["mb_number"],
+                            "ca_from_name" => "아이온 시큐리티",
+                            "ca_to_name" => $row_member["mb_name"],
+                            "ca_from_ceo" => "김성혁",
+                            "ca_to_ceo" => $row_member["mb_ceo"],
+                            "ca_from_address" => "서울특별시 서초구 서초대로 255",
+                            "ca_to_address"=> $row_member["mb_address"],
+                            "ca_from_condition" => "서비스 외",
+                            "ca_to_condition" => $row_member["mb_business_conditions"],
+                            "ca_from_type" => "보안서비스 및 용역제공",
+                            "ca_to_type" => $row_member["mb_business_type"],
+                            "ca_from_team" => "영업2팀",
+                            "ca_to_team" => $row_member["mb_payment_team"],
+                            "ca_from_charger" => "전이준",
+                            "ca_to_charger" => $row_member["mb_payment_name"],
+                            "ca_from_tel" => "",
+                            "ca_to_tel" => $row_member["mb_payment_tel"],
+                            "ca_from_email" => "ijjun@eyeonsec.co.kr",
+                            "ca_to_email" => $row_member["mb_payment_email"],
+                            "ca_date" => $claim_date,
+                            "ca_price" => $total_price,
+                            "ca_surtax" => floor($total_price*0.1),
+                            "ca_total_price" => floor($total_price*1.1),
+                            "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
+                            "ca_price_info1" => floor($total_price*1.1),
+                            "ca_price_info2" => floor($total_price*1.1),
+                            "ca_price_info3" => 0,
+                            "ca_price_info4" => 0,
+                            "ca_price_info5" => 0,
+                            "ca_payment_type" => $row_sr["sr_pay_publish_type"],
+                            "ca_mb_seq" => $row_sr["sr_mb_seq"]
+                        );
+                        $this->db->insert("payment_claim",$data_claim);
+
+                        $cl_ca_seq = $this->db->insert_id();
+                        $data_claim_d = array(
+                            "cl_ca_seq" => $cl_ca_seq,
+                            "ca_item_name" => $row["sa_bill_name"],
                             "ca_item_price" => $total_price,
                             "ca_item_surtax" => floor($total_price*0.1),
                             "ca_sort" => 1,
                             "ca_m_sv_num" => $row_sr["sv_number"]
                         );
-                        $this->db->insert("payment_claim_list",$data_claim_detail);
+                        $this->db->insert("payment_claim_list",$data_claim_d);
+
+                        $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq;
+                        $this->db->where("pm_seq",$pm_seq);
+                        $this->db->update("payment",$data_pm_ca_seq);
                     }
-
-
-                    $this->db->select("*");
-                    $this->db->from("payment_claim");
-                    $this->db->where("ca_seq",$pm_ca_seq);
-                    $claim_query = $this->db->get();
-                    $row_c = $claim_query->row_array();
-                    $total_claim_price = $row_c["ca_price"]+$total_price;
-                    $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
-                    $total_claim_total_price = $total_claim_price+$total_claim_surtax;
-                    $ca_empty_size = 11 - strlen($total_claim_total_price);
-                    $ca_price_info1 = $total_claim_total_price;
-                    $ca_price_info2 = $total_claim_total_price;
-
-                    $data_update = array(
-                        "ca_price" => $total_claim_price,
-                        "ca_surtax" => $total_claim_surtax,
-                        "ca_total_price" => $total_claim_total_price,
-                        "ca_empty_size" => $ca_empty_size,
-                        "ca_price_info1" => $ca_price_info1,
-                        "ca_price_info2" => $ca_price_info2
-                    );
-                    $this->db->where("ca_seq",$pm_ca_seq);
-                    $this->db->update("payment_claim",$data_update);
-                }else{
-                    $this->db->select("*");
-                    $this->db->from("members");
-                    $this->db->where("mb_seq",$row["sr_mb_seq"]);
-                    $query_member = $this->db->get();
-
-                    $row_member = $query_member->row_array();
-
-                    $data_claim = array(
-                        "ca_from_number" => "215-87-70318",
-                        "ca_to_number" => $row_member["mb_number"],
-                        "ca_from_name" => "아이온 시큐리티",
-                        "ca_to_name" => $row_member["mb_name"],
-                        "ca_from_ceo" => "김성혁",
-                        "ca_to_ceo" => $row_member["mb_ceo"],
-                        "ca_from_address" => "서울특별시 서초구 서초대로 255",
-                        "ca_to_address"=> $row_member["mb_address"],
-                        "ca_from_condition" => "서비스 외",
-                        "ca_to_condition" => $row_member["mb_business_conditions"],
-                        "ca_from_type" => "보안서비스 및 용역제공",
-                        "ca_to_type" => $row_member["mb_business_type"],
-                        "ca_from_team" => "영업2팀",
-                        "ca_to_team" => $row_member["mb_payment_team"],
-                        "ca_from_charger" => "전이준",
-                        "ca_to_charger" => $row_member["mb_payment_name"],
-                        "ca_from_tel" => "",
-                        "ca_to_tel" => $row_member["mb_payment_tel"],
-                        "ca_from_email" => "ijjun@eyeonsec.co.kr",
-                        "ca_to_email" => $row_member["mb_payment_email"],
-                        "ca_date" => $claim_date,
-                        "ca_price" => $total_price,
-                        "ca_surtax" => floor($total_price*0.1),
-                        "ca_total_price" => floor($total_price*1.1),
-                        "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
-                        "ca_price_info1" => floor($total_price*1.1),
-                        "ca_price_info2" => floor($total_price*1.1),
-                        "ca_price_info3" => 0,
-                        "ca_price_info4" => 0,
-                        "ca_price_info5" => 0,
-                        "ca_payment_type" => $row_sr["sr_pay_publish_type"],
-                        "ca_mb_seq" => $row_sr["sr_mb_seq"]
-                    );
-                    $this->db->insert("payment_claim",$data_claim);
-
-                    $cl_ca_seq = $this->db->insert_id();
-                    $data_claim_d = array(
-                        "cl_ca_seq" => $cl_ca_seq,
-                        "ca_item_name" => $row["sa_bill_name"],
-                        "ca_item_price" => $total_price,
-                        "ca_item_surtax" => floor($total_price*0.1),
-                        "ca_sort" => 1,
-                        "ca_m_sv_num" => $row_sr["sv_number"]
-                    );
-                    $this->db->insert("payment_claim_list",$data_claim_d);
-
-                    $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq;
-                    $this->db->where("pm_seq",$pm_seq);
-                    $this->db->update("payment",$data_pm_ca_seq);
                 }
+            }else{
+                $data_addoption_price = array(
+                    "svp_sv_seq" => $sv_seq,
+                    "svp_sva_seq" => $sva_seq,
+                    "svp_once_price" => 0,
+                    "svp_once_dis_price" => 0,
+                    "svp_once_dis_msg" => '',
+                    "svp_month_price" => 0,
+                    "svp_month_dis_price" => 0,
+                    "svp_month_dis_msg" => '',
+                    "svp_discount_yn" => 'N',
+                    "svp_discount_price" => 0,
+                    "svp_register_discount" => 0,
+                    "svp_first_day_price" => 0,
+                    "svp_first_day_start" => '',
+                    "svp_first_day_end" => '',
+                    "svp_first_month_price" => 0,
+                    "svp_first_month_start" => '',
+                    "svp_first_month_end" => '',
+                    "svp_payment_period" => 0,
+                    "svp_display_yn" => 'N'
+                );
+
+                $this->db->insert("service_price",$data_addoption_price);
             }
 
             // $this->db->insert("service_all_price",$price_data);
@@ -3489,22 +3841,38 @@ class Api_model extends CI_Model {
         $this->db->join("end_users c","a.sv_eu_seq = c.eu_seq","left");
         $this->db->join("product d","a.sv_pr_seq = d.pr_seq","left");
 
-        if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
-            $this->db->where("date_format(sv_regdate,'%Y-%m-%d') >= '".$this->input->get("startDate")."' and date_format(sv_regdate,'%Y-%m-%d') <= '".$this->input->get("endDate")."' ");
+        if($this->input->get("sv_date") != ""){
+            $sv_date = $this->input->get("sv_date");
+            for($i = 0; $i < count($sv_date);$i++){
+                if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
+                    $this->db->where("date_format(".$sv_date[$i].",'%Y-%m-%d') >= '".$this->input->get("startDate")."' and date_format(".$sv_date[$i].",'%Y-%m-%d') <= '".$this->input->get("endDate")."' ");
+                }
+            }
         }
 
-        if($this->input->get("searchWord") != ""){
-            $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
-        }
+        // if($this->input->get("searchWord") != ""){
+        //     $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+        // }
 
         if($this->input->get("sv_status") != ""){
-            if(count($this->input->get("sv_status")) == 1){
-                $this->db->where("sv_status",$this->input->get("sv_status")[0]);
-            }else{
-                $this->db->where_in("sv_status",array("0","1"));
-            }
-        }else{
-            $this->db->where_in("sv_status",array("0","1"));
+
+            $this->db->where_in("sv_status",$this->input->get("sv_status"));
+        }
+
+        if($this->input->get("pc_seq") != ""){
+            $this->db->where_in("sv_pc_seq",$this->input->get("pc_seq"));
+        }
+
+        if($this->input->get("pi_seq") != ""){
+            $this->db->where_in("sv_pi_seq",$this->input->get("pi_seq"));
+        }
+
+        if($this->input->get("pd_seq") != ""){
+            $this->db->where_in("sv_pd_seq",$this->input->get("pd_seq"));
+        }
+
+        if($this->input->get("ps_seq") != ""){
+            $this->db->where_in("sv_ps_seq",$this->input->get("ps_seq"));
         }
 
         $query = $this->db->get();
@@ -3515,7 +3883,7 @@ class Api_model extends CI_Model {
     }
 
     public function fetchService($start,$end){
-        $this->db->select("*,(select concat(ifnull(sum(svp_once_price),0),'|',ifnull(sum(svp_month_price),0),'|',ifnull(sum(svp_month_dis_price),0),'|',ifnull(sum(svp_discount_price),0)) from service_price where a.sv_seq = svp_sv_seq ) as priceinfo",true);
+        $this->db->select("*,(select concat(ifnull(sum(svp_once_price),0),'|',ifnull(sum(svp_once_dis_price),0),'|',ifnull(sum(svp_month_price),0),'|',ifnull(sum(svp_month_dis_price),0),'|',ifnull(sum(svp_discount_price/svp_payment_period),0)) from service_price where a.sv_seq = svp_sv_seq ) as priceinfo,(select concat(pm_status,'|',pm_pay_period,'|',pm_date,'|',pm_end_date,'|',ifnull(pm_input_date,'')) from payment where pm_sv_seq = a.sv_seq order by pm_seq desc limit 1) as paymentinfo,(select count(*) from service_addoption where sva_sv_seq = a.sv_seq) as addoptionTotal",true);
         $this->db->from("service a");
         $this->db->join("service_price ap","a.sv_seq=ap.svp_sv_seq","left" );
         $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
@@ -3527,37 +3895,57 @@ class Api_model extends CI_Model {
         $this->db->join("product_sub_div f","a.sv_ps_seq = f.ps_seq","left");
         $this->db->join("clients cl","a.sv_c_seq = cl.c_seq","left");
 
-
-        if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
-            $this->db->where("date_format(sv_regdate,'%Y-%m-%d') >= '".$this->input->get("startDate")."' and date_format(sv_regdate,'%Y-%m-%d') <= '".$this->input->get("endDate")."' ");
+        if($this->input->get("sv_date") != ""){
+            $sv_date = $this->input->get("sv_date");
+            for($i = 0; $i < count($sv_date);$i++){
+                if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
+                    $this->db->where("date_format(".$sv_date[$i].",'%Y-%m-%d') >= '".$this->input->get("startDate")."' and date_format(".$sv_date[$i].",'%Y-%m-%d') <= '".$this->input->get("endDate")."' ");
+                }
+            }
         }
 
-        if($this->input->get("searchWord") != ""){
-            $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
-        }
+
+        // if($this->input->get("searchWord") != ""){
+        //     $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+        // }
 
         if($this->input->get("sv_status") != ""){
-            if(count($this->input->get("sv_status")) == 1){
-                $this->db->where("sv_status",$this->input->get("sv_status")[0]);
-            }else{
-                $this->db->where_in("sv_status",array("0","1"));
-            }
-        }else{
-            $this->db->where_in("sv_status",array("0","1"));
+
+            $this->db->where_in("sv_status",$this->input->get("sv_status"));
         }
+
+        if($this->input->get("pc_seq") != ""){
+            $this->db->where_in("sv_pc_seq",$this->input->get("pc_seq"));
+        }
+
+        if($this->input->get("pi_seq") != ""){
+            $this->db->where_in("sv_pi_seq",$this->input->get("pi_seq"));
+        }
+
+        if($this->input->get("pd_seq") != ""){
+            $this->db->where_in("sv_pd_seq",$this->input->get("pd_seq"));
+        }
+
+        if($this->input->get("ps_seq") != ""){
+            $this->db->where_in("sv_ps_seq",$this->input->get("ps_seq"));
+        }
+
         $this->db->group_by("sv_seq");
+        $this->db->order_by("sv_seq desc");
+        $this->db->limit($end,$start);
         $query = $this->db->get();
 
         return $query->result_array();
     }
 
     public function fetchServiceAdd($sv_seq){
-        $this->db->select("*");
+        $this->db->select("*,(select concat(pm_status,'|',pm_pay_period,'|',pm_date,'|',pm_end_date,'|',ifnull(pm_input_date,'')) from payment where pm_sv_seq = sv.sv_seq order by pm_seq desc limit 1) as paymentinfo",true);
         $this->db->from("service_addoption a");
         $this->db->join("service sv","a.sva_sv_seq = sv.sv_seq","inner");
-        $this->db->join("service_addoption_price b","a.sva_seq = b.svp_sva_seq","inner");
+        $this->db->join("service_price b","a.sva_seq = b.svp_sva_seq","left");
         $this->db->join("clients cl","a.sva_c_seq = cl.c_seq","left");
         $this->db->where("sva_sv_seq",$sv_seq);
+        $this->db->where("svp_display_yn","Y");
 
         $query = $this->db->get();
 
@@ -3565,7 +3953,7 @@ class Api_model extends CI_Model {
     }
 
     public function fetchMemberService($mb_seq){
-        $this->db->select("*,(select concat(ifnull(sum(svp_once_price),0),'|',ifnull(sum(svp_month_price),0),'|',ifnull(sum(svp_month_dis_price),0),'|',ifnull(sum(svp_discount_price),0)) from service_price where a.sv_seq = svp_sv_seq ) as priceinfo",true);
+        $this->db->select("*,(select concat(ifnull(sum(svp_once_price),0),'|',ifnull(sum(svp_once_dis_price),0),'|',ifnull(sum(svp_month_price),0),'|',ifnull(sum(svp_month_dis_price),0),'|',ifnull(sum(svp_discount_price/svp_payment_period),0)) from service_price where a.sv_seq = svp_sv_seq ) as priceinfo,(select concat(pm_status,'|',pm_pay_period,'|',pm_date,'|',pm_end_date,'|',ifnull(pm_input_date,'')) from payment where pm_sv_seq = a.sv_seq order by pm_seq desc limit 1) as paymentinfo ,(select count(*) from service_addoption where sva_sv_seq = a.sv_seq) as addoptionTotal",true);
         $this->db->from("service a");
         $this->db->join("service_price ap","a.sv_seq=ap.svp_sv_seq","left" );
         $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
@@ -3580,6 +3968,7 @@ class Api_model extends CI_Model {
 
         $this->db->where("mb_seq",$mb_seq);
         $this->db->group_by("sv_seq");
+        $this->db->order_by("sv_seq desc");
         $query = $this->db->get();
 
         return $query->result_array();
@@ -3601,7 +3990,7 @@ class Api_model extends CI_Model {
 
 
         $this->db->where("mb_seq",$mb_seq);
-
+        $this->db->order_by("sv_seq desc");
         $query = $this->db->get();
 
         return $query->result_array();
@@ -3748,6 +4137,7 @@ class Api_model extends CI_Model {
             "pm_payment_dis_price" => $this->input->post("pm_payment_dis_price"),
             "pm_total_price" => $this->input->post("pm_total_price"),
             "pm_surtax_price" => $this->input->post("pm_surtax_price"),
+            "pm_memo" => $this->input->post("pm_memo")
         );
         $this->db->where("pm_seq",$this->input->post("pm_seq"));
         return $this->db->update("payment",$data);
@@ -3762,7 +4152,7 @@ class Api_model extends CI_Model {
         $this->db->join("product e","b.sv_pr_seq = e.pr_seq","left");
 
         $this->db->where("pm_mb_seq",$pm_mb_seq);
-        $this->db->where("pm_status != 'Y'");
+        $this->db->where("pm_status != '1'");
 
         $this->db->order_by("pm_ca_seq desc, pm_seq desc");
         $query = $this->db->get();
@@ -3779,7 +4169,7 @@ class Api_model extends CI_Model {
         $this->db->join("product e","b.sv_pr_seq = e.pr_seq","left");
 
         $this->db->where("pm_mb_seq",$pm_mb_seq);
-        $this->db->where("pm_status = 'Y'");
+        $this->db->where("pm_status = '1'");
 
         $this->db->order_by("pm_ca_seq desc, pm_seq desc");
         $query = $this->db->get();
@@ -3886,6 +4276,11 @@ class Api_model extends CI_Model {
     }
 
     public function serviceUpdate(){
+        if($this->input->post("sv_rental_type") == "1"){
+            $sv_rental_date = "";
+        }else{
+            $sv_rental_date = $this->input->post("sv_rental_date");
+        }
         $new_data = array(
             "sv_payment_type" => $this->input->post("sv_payment_type"),
             "sv_payment_period" => $this->input->post("sv_payment_period"),
@@ -3903,12 +4298,14 @@ class Api_model extends CI_Model {
             "sv_account_format_policy" => $this->input->post("sv_account_format_policy"),
             "sv_claim_name" => $this->input->post("sv_claim_name"),
             "sv_bill_name" => $this->input->post("sv_bill_name"),
-            "sv_once_price" => $this->input->post("svp_once_price"),
-            "sv_month_price" => $this->input->post("svp_month_price"),
+            "sv_once_price" => str_replace(",","",$this->input->post("svp_once_price")),
+            "sv_month_price" => str_replace(",","",$this->input->post("svp_month_price")),
             "sv_c_seq" => $this->input->post("sv_c_seq"),
-            "sv_input_price" => $this->input->post("sv_input_price"),
+            "sv_input_price" => str_replace(",","",$this->input->post("sv_input_price")),
             "sv_input_start" => $this->input->post("sv_input_start"),
-            "sv_input_unit" => $this->input->post("sv_input_unit")
+            "sv_input_unit" => $this->input->post("sv_input_unit"),
+            "sv_rental_type" => $this->input->post("sv_rental_type"),
+            "sv_rental_date" => $sv_rental_date
         );
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
         $this->db->update("service",$new_data);
@@ -3925,25 +4322,78 @@ class Api_model extends CI_Model {
         // $this->db->update("service_all_price",$data_price);
 
         $data_price = array(
-            "svp_once_price" => $this->input->post("svp_once_price"),
-            "svp_once_dis_price" => $this->input->post("svp_once_dis_price"),
+            "svp_once_price" => str_replace(",","",$this->input->post("svp_once_price")),
+            "svp_once_dis_price" => str_replace(",","",$this->input->post("svp_once_dis_price")),
             "svp_once_dis_msg" => $this->input->post("svp_once_dis_msg"),
-            "svp_month_price" => $this->input->post("svp_month_price"),
-            "svp_month_dis_price" => $this->input->post("svp_month_dis_price"),
+            "svp_month_price" => str_replace(",","",$this->input->post("svp_month_price")),
+            "svp_month_dis_price" => str_replace(",","",$this->input->post("svp_month_dis_price")),
             "svp_month_dis_msg" => $this->input->post("svp_month_dis_msg"),
             "svp_discount_yn" => $this->input->post("svp_discount_yn"),
-            "svp_discount_price" => $this->input->post("svp_discount_price"),
-            "svp_register_discount" => $this->input->post("svp_register_discount"),
+            "svp_discount_price" => str_replace(",","",$this->input->post("svp_discount_price")),
+            "svp_register_discount" => str_replace(",","",$this->input->post("svp_register_discount")),
             "svp_first_claim_name" => $this->input->post("svp_first_claim_name"),
-            "svp_first_day_price" => $this->input->post("svp_first_day_name"),
+            "svp_first_day_price" => $this->input->post("svp_first_day_price"),
             "svp_first_day_start" => $this->input->post("svp_first_day_start"),
             "svp_first_day_end" => $this->input->post("svp_first_day_end"),
-            "svp_first_month_price" => $this->input->post("svp_first_month_name"),
+            "svp_first_month_price" => $this->input->post("svp_first_month_price"),
             "svp_first_month_start" => $this->input->post("svp_first_month_start"),
-            "svp_first_month_end" => $this->input->post("svp_first_month_end")
+            "svp_first_month_end" => $this->input->post("svp_first_month_end"),
+            "svp_memo" => $this->input->post("svp_memo")
         );
         $this->db->where("svp_seq",$this->input->post("svp_seq"));
+
+        if($this->input->post("b_sv_claim_name") != $this->input->post("sv_claim_name")){
+            // $this->logInsert(1,$mb_seq,'서비스 기본 정보','청구명',$this->input->post("b_sv_claim_name"),$this->input->post("sv_claim_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($this->input->post("b_sv_bill_name") != $this->input->post("sv_bill_name")){
+            // $this->logInsert(1,$mb_seq,'서비스 기본 정보','계산서 품목명',$this->input->post("b_sv_bill_name"),$this->input->post("sv_bill_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($this->input->post("b_sv_payment_type") != $this->input->post("sv_payment_type")){
+            // $this->logInsert(1,$mb_seq,'서비스 결제 조건','요금 납부 방법',$this->input->post("b_sv_payment_type"),$this->input->post("sv_payment_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($this->input->post("b_sv_payment_period") != $this->input->post("sv_payment_period")){
+            // $this->logInsert(1,$mb_seq,'서비스 결제 조건','결제 주기',$this->input->post("b_sv_payment_period"),$this->input->post("sv_payment_period"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_sv_pay_type") != $this->input->post("sv_pay_type")){
+            // $this->logInsert(1,$mb_seq,'서비스 결제 조건','청구 기준',$this->input->post("b_sv_pay_type"),$this->input->post("sv_pay_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($this->input->post("b_sv_pay_day") != $this->input->post("sv_pay_day")){
+            // $this->logInsert(1,$mb_seq,'서비스 결제 조건','자동 청구일',$this->input->post("b_sv_pay_day"),$this->input->post("sv_pay_day"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($this->input->post("b_sv_pay_publish") != $this->input->post("sv_pay_publish") || $this->input->post("b_sv_pay_publish_type") != $this->input->post("sv_pay_publish_type")){
+            // $this->logInsert(1,$mb_seq,'서비스 결제 조건','계산서 발행',$this->input->post("b_sv_pay_publish"),$this->input->post("sv_pay_publish"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+
+
+
+
         return $this->db->update("service_price",$data_price);
+    }
+
+    public function serviceViewUpdate(){
+        $new_data = array(
+            "sv_eu_seq" => $this->input->post("sv_eu_seq"),
+            "sv_ct_seq" => $this->input->post("sv_ct_seq"),
+            "sv_code" => $this->input->post("sv_code1")."-".$this->input->post("sv_code2"),
+            "sv_part" => $this->input->post("sv_part"),
+            "sv_charger" => $this->input->post("sv_charger"),
+            "sv_contract_type" => $this->input->post("sv_contract_type"),
+            "sv_contract_start" => $this->input->post("sv_contract_start"),
+            "sv_contract_end" => $this->input->post("sv_contract_end"),
+            "sv_auto_extension" => $this->input->post("sv_auto_extension"),
+            "sv_auto_extension_month" => $this->input->post("sv_auto_extension_month"),
+            "sv_claim_name" => $this->input->post("sv_claim_name"),
+            "sv_rental_type" => $this->input->post("sv_rental_type"),
+            "sv_rental_date" => $this->input->post("sv_rental_date")
+        );
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+        return $this->db->update("service",$new_data);
     }
 
     public function serviceAddUpdate(){
@@ -4217,7 +4667,23 @@ class Api_model extends CI_Model {
 
         $seq = explode(",",$this->input->post("pm_seq"));
         $this->db->where_in("pm_seq",$seq);
-        return $this->db->update("payment",$data);
+        $this->db->update("payment",$data);
+
+
+        $this->db->select("*");
+        $this->db->from("payment a");
+        $this->db->join("service b","a.pm_sv_seq = b.sv_seq","inner");
+        $this->db->where("pm_seq",$this->input->post("pm_seq"));
+
+        $query = $this->db->get();
+
+        $row = $query->row_array();
+        if($row["sv_status"] == "0"){
+            $data_status["sv_status"] = "1";
+            $this->db->where("sv_seq",$row["sv_seq"]);
+            $this->db->update("service",$data_status);
+        }
+        return true;
     }
 
     public function updateServiceOutInfo(){
@@ -4460,11 +4926,31 @@ class Api_model extends CI_Model {
         $data = explode(",",$this->input->post("data"));
         for($i = 0; $i < count($data);$i++){
             $data_array = array(
-                "pm_status" => "1"
+                "pm_status" => "1",
+                "pm_com_date" => date("Y-m-d H:i:s")
             );
 
             $this->db->where("pm_seq" , $data[$i]);
             $this->db->update("payment",$data_array);
+
+            $this->db->select("*");
+            $this->db->from("payment");
+            $this->db->where("pm_seq",$data[$i]);
+            $query = $this->db->get();
+
+            $row = $query->row_array();
+
+            $this->db->select("*");
+            $this->db->from("service");
+            $this->db->where("sv_seq",$row["pm_sv_seq"]);
+
+            $query = $this->db->get();
+            $row2 = $query->row_array();
+            if($row2["sv_status"] == 0){
+                $data_service["sv_status"] = 1;
+                $this->db->where("sv_seq" , $row2["sv_seq"]);
+                $this->db->update("service",$data_service);
+            }
         }
         return true;
     }
@@ -4474,7 +4960,8 @@ class Api_model extends CI_Model {
         if($this->input->post("pm_total") == count($data)){
             for($i = 0; $i < count($data);$i++){
                 $data_array = array(
-                    "pm_status" => "1"
+                    "pm_status" => "1",
+                    "pm_com_date" => date("Y-m-d H:i:s")
                 );
 
                 $this->db->where("pm_seq" , $data[$i]);
@@ -5157,6 +5644,234 @@ class Api_model extends CI_Model {
         );
         $this->db->where("mb_seq",$this->input->post("mb_seq"));
         return $this->db->update("members",$data);
+    }
+
+    public function serviceDelete(){
+        $this->db->where("sva_sv_seq",$this->input->post("sv_seq"));
+        $this->db->delete("service_addoption");
+
+        $this->db->where("svp_sv_seq",$this->input->post("sv_seq"));
+        $this->db->delete("service_price");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+        return $this->db->delete("service");
+
+    }
+
+    public function serviceInstallEdit(){
+
+        $data = array(
+            "sv_position" => $this->input->post("sv_position"),
+            "sv_serial_number" => $this->input->post("sv_serial_number"),
+            "sv_firmware" => $this->input->post("sv_firmware"),
+            "sv_install_charger" => $this->input->post("sv_install_charger"),
+            "sv_install_date" => $this->input->post("sv_install_date"),
+            "sv_security_level" => $this->input->post("sv_security_level")
+        );
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+        return $this->db->update("service_install",$data);
+
+    }
+
+    public function serviceInstallIpAdd(){
+        $data = array(
+            "sii_sv_seq" => $this->input->post("sii_sv_seq"),
+            "sii_ip" => $this->input->post("sii_ip")
+        );
+
+        return $this->db->insert("service_install_ip",$data);
+    }
+
+    public function serviceInstallIpEdit(){
+        $data = array(
+            "sii_ip" => $this->input->post("sii_ip")
+        );
+        $this->db->where("sii_seq",$this->input->post("sii_seq"));
+        return $this->db->update("service_install_ip",$data);
+    }
+
+    public function serviceInstallIpDel(){
+        $this->db->where("sii_seq",$this->input->get("sii_seq"));
+        return $this->db->delete("service_install_ip");
+    }
+
+    public function serviceLicenseAdd(){
+        $data = array(
+            "sl_sv_seq" => $this->input->post("sv_seq"),
+            "sl_license_name" => $this->input->post("sl_license_name"),
+            "sl_start_date" => $this->input->post("sl_start_date"),
+            "sl_end_date" => $this->input->post("sl_end_date"),
+            "sl_contract_number" => $this->input->post("sl_contract_number")
+        );
+
+        return $this->db->insert("service_license",$data);
+    }
+
+    public function serviceLicenseEdit(){
+        $data = array(
+            "sl_license_name" => $this->input->post("sl_license_name"),
+            "sl_start_date" => $this->input->post("sl_start_date"),
+            "sl_end_date" => $this->input->post("sl_end_date"),
+            "sl_contract_number" => $this->input->post("sl_contract_number")
+        );
+        $this->db->where("sl_seq",$this->input->post("sl_seq"));
+        return $this->db->update("service_license",$data);
+    }
+
+    public function serviceLicenseDel(){
+        $this->db->where("sl_seq",$this->input->get("sl_seq"));
+        return $this->db->delete("service_license");
+    }
+
+    public function serviceModuleAdd(){
+        $data = array(
+            "sm_sv_seq" => $this->input->post("sv_seq"),
+            "sm_name" => $this->input->post("sm_name"),
+            "sm_cnt" => $this->input->post("sm_cnt"),
+            "sm_div" => $this->input->post("sm_div"),
+            "sm_date" => $this->input->post("sm_date")
+        );
+
+        return $this->db->insert("service_module",$data);
+    }
+
+    public function serviceModuleEdit(){
+        $data = array(
+            "sm_name" => $this->input->post("sm_name"),
+            "sm_cnt" => $this->input->post("sm_cnt"),
+            "sm_div" => $this->input->post("sm_div"),
+            "sm_date" => $this->input->post("sm_date")
+        );
+        $this->db->where("sm_seq",$this->input->post("sm_seq"));
+        return $this->db->update("service_module",$data);
+    }
+
+    public function serviceModuleDel(){
+        $this->db->where("sm_seq",$this->input->get("sm_seq"));
+        return $this->db->delete("service_module");
+    }
+
+    public function serviceInstallIpList(){
+        $this->db->select("*");
+        $this->db->from("service_install_ip");
+        $this->db->where("sii_sv_seq",$this->input->get("sii_sv_seq"));
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function serviceLicenseList(){
+        $this->db->select("*");
+        $this->db->from("service_license");
+        $this->db->where("sl_sv_seq",$this->input->get("sv_seq"));
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function serviceModuleList(){
+        $this->db->select("*");
+        $this->db->from("service_module");
+        $this->db->where("sm_sv_seq",$this->input->get("sv_seq"));
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function productItemSubDelete($pis_seq){
+        $this->db->where("pis_seq",$pis_seq);
+        return $this->db->delete("product_item_sub");
+    }
+
+    public function logInsert($lo_div,$lo_relation_seq,$lo_type,$lo_item,$lo_origin,$lo_after,$lo_user,$lo_charger_seq,$lo_ip){
+        $data = array(
+            "lo_div" => $lo_div,
+            "lo_relation_seq" => $lo_relation_seq,
+            "lo_type" => $lo_type,
+            "lo_item" => $lo_item,
+            "lo_origin" => $lo_origin,
+            "lo_after" => $lo_after,
+            "lo_user" => $lo_user,
+            "lo_charger_seq" => $lo_charger_seq,
+            "lo_ip" => $lo_ip,
+            "lo_regdate" => date("Y-m-d H:i:s")
+        );
+
+        $this->db->insert("logs",$data);
+
+    }
+
+    public function fetchLogs($lo_div,$lo_relation_seq){
+        $this->db->select("*");
+        $this->db->from("logs a");
+        $this->db->where("lo_relation_seq",$lo_relation_seq);
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function groupServiceEdit(){
+        $sv_seq = explode(",",$this->input->post("sg_sv_seq"));
+
+        $data = array(
+            "sv_auto_extension_month" => $this->input->post("sv_auto_extension_month"),
+            "sv_auto_extension" => $this->input->post("sv_auto_extension")
+        );
+
+        $this->db->where_in("sv_seq",$sv_seq);
+
+        return $this->db->update("service",$data);
+    }
+
+    public function serviceGroupMemoAdd(){
+        $data = array(
+            "sg_sv_code" => $this->input->post("sg_sv_code"),
+            "sg_charger" => $this->input->post("sg_chager"),
+            "sg_regdate" => date("Y-m-d H:i:s"),
+            "sg_msg" => $this->input->post("sg_msg")
+        );
+
+        return $this->db->insert("service_group_memo",$data);
+    }
+
+    public function serviceGroupMemoModify(){
+        $data = array(
+            "sg_charger" => $this->input->post("sg_chager"),
+            "sg_msg" => $this->input->post("sg_msg")
+        );
+        $this->db->where("sg_seq",$this->input->post("sg_seq"));
+        return $this->db->update("service_group_memo",$data);
+    }
+
+    public function serviceGroupMemoDelete(){
+        $this->db->where("sg_seq",$this->input->post("sg_seq"));
+        return $this->db->delete("service_group_memo");
+    }
+
+    public function countServiceGroupMemo(){
+        $this->db->select("count(*) as total");
+        $this->db->from("service_group_memo");
+        $this->db->where("sg_sv_code",$this->input->get("sg_sv_code"));
+
+        $query = $this->db->get();
+
+        $row = $query->row_array();
+
+        return $row["total"];
+    }
+
+    public function serviceGroupMemoFetch(){
+        $this->db->select("*");
+        $this->db->from("service_group_memo");
+        $this->db->where("sg_sv_code",$this->input->get("sg_sv_code"));
+
+        $this->db->limit($this->input->get("end"),$this->input->get("start"));
+        $query = $this->db->get();
+
+        return $query->result_array();
+
+        // return $row["total"];
     }
 }
 

@@ -16,25 +16,25 @@
             <div class="search1">
 
                 <div class="form-group">
-                    <input type="checkbox" name="es_status[]" id="es_status1" value="0"> 등록
+                    <input type="checkbox" name="sr_status[]" id="sr_status1" value="0"> 등록
                 </div>
                 <div class="form-group">
-                    <input type="checkbox" name="es_status[]" id="es_status2" value="1"> 신청완료
+                    <input type="checkbox" name="sr_status[]" id="sr_status2" value="1"> 신청완료
                 </div>
             </div>
             <div class="search2">
                 <div class="form-group">
                     <label>등록일</label>
-                    <input type="text" style="width:80px" name="startDate" id="startDate" class="datepicker" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker" value="<?=date('Y-m-d')?>">
+                    <input type="text" style="width:80px" name="startDate" id="startDate" class="datepicker3" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker3" value="<?=date('Y-m-d')?>">
                 </div>
                 <div class="form-group ml15" style="text-align:left">
                     <select id="searchType" name="searchType" class="select2" style="width:140px">
-                        <option value="es_name" selected>회원명</option>
-                        <option value="es_number">회원아이디</option>
-                        <option value="es_mb_id">End User</option>
-                        <option value="es_charger">계약번호</option>
-                        <option value="es_tel">상품명</option>
-                        <option value="es_phone">사내담당자</option>
+                        <option value="mb_name" selected>회원명</option>
+                        <option value="mb_id">회원아이디</option>
+                        <option value="eu_name">End User</option>
+                        <option value="sr_code">계약번호</option>
+                        <option value="pr_name">상품명</option>
+                        <option value="sr_charger">사내담당자</option>
 
                     </select>
 

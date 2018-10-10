@@ -38,6 +38,10 @@ $(function(){
             alert("계약 번호를 입력해 주시기 바랍니다.");
             return false;
         }
+        if($("#b_sv_code").val() == $("#sv_code1").val()+"-"+$("#sv_code2").val()){
+            alert("사용가능한 계약번호 입니다.");
+            return false;
+        }
         var url = "/api/serviceNumberCheck";
         $.ajax({
             url : url,
@@ -78,6 +82,7 @@ $(function(){
                 success:function(response){
                     if(response.result){
                         alert("처리완료");
+                        $("#sv_out_date_str").html($("#sv_out_date").val());
                         $('#dialogOut').dialog('close')
                     }else{
                         alert("오류발생")
@@ -675,7 +680,298 @@ $(function(){
         }
     });
 
+    $(".btn-delete").click(function(){
+        if(confirm("삭제하시겠습니까?")){
+            var sv_seq = $(this).data("seq");
+            var url = "/api/serviceDelete";
+
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : "sv_seq="+sv_seq,
+                success:function(response){
+                    if(response.result){
+                        alert("삭제되었습니다");
+                        // getMemo();
+                        document.location.href='/service/list'
+                    }else{
+                        alert("오류발생")
+                    }
+                }
+            });
+        }
+    })
+
+    $(".btn-edit").click(function(){
+        if($("#b_sv_code").val() != $("#sv_code1").val()+"-"+$("#sv_code2").val()){
+            if($("#dupleNumberYn").val() == "N"){
+                alert("계약번호 중복체크를 하시기 바랍니다.");
+                return false;
+            }
+        }
+        if(confirm("수정하시겠습니까?")){
+            // var sv_seq = $(this).data("seq");
+            // $("#edit").submit();
+            // return false;
+            var url = "/api/serviceViewUpdate";
+            // $("#edit").attr("method",)
+            var datas = $("#edit").serialize();
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : datas,
+                success:function(response){
+                    if(response.result){
+                        alert("수정되었습니다");
+                        // getMemo();
+                        document.location.reload();
+                    }else{
+                        alert("오류발생")
+                    }
+                }
+            });
+        }
+    })
+
+    $("body").on("click",".editEnd",function(){
+        // console.log($(this).parent().children("td").eq(1).children("input").length);
+        if($(this).parent().children("td").eq(1).children("input").length > 0){
+            var url = "/api/endUserUpdate/"+$(this).data("seq");
+            var editname = $(this).parent().children("td").eq(1).children("input").val();
+            var that = $(this);
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : "eu_name="+editname,
+                success:function(response){
+                    // typeGetList();
+                    alert("수정되었습니다.");
+                    that.parent().children("td").eq(0).children("a").data("name",editname);
+                    that.parent().children("td").eq(1).html(editname);
+                    that.parent().children("td").eq(2).data("name",editname);
+                }
+            });
+        }else{
+            $(this).parent().children("td").eq(1).html("<input type='text' name='end_mode_name' value='"+$(this).data("name")+"'>");
+        }
+
+    });
+
+    $("body").on("click",".deleteEnd",function(){
+        if(confirm("삭제하시겠습니까?")){
+            var that = $(this);
+            var url = "/api/endUserDelete/"+$(this).data("seq");
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                success:function(response){
+                    // typeGetList();
+                    alert("삭제되었습니다.");
+                    that.parent().remove();
+                }
+            });
+        }
+    });
+
+    $("#endAdd").submit(function(){
+        if($("#addEnd").val() == ""){
+            alert("코드를 입력해 주시기 바랍니다.");
+            return false;
+        }
+        if($("#add_eu_name").val() == ""){
+            alert("End User를 입력해 주시기 바랍니다.");
+            return false;
+        }
+        var url = "/api/endUserAdd";
+        var datas = $("#endAdd").serialize();
+        $.ajax({
+            url : url,
+            type : 'POST',
+            dataType : 'JSON',
+            data : datas,
+            success:function(response){
+                // typeGetList();
+                if(response.result){
+                    alert("등록되었습니다.");
+                    getEndUserNextNumber();
+                    $("#endSearchForm").submit();
+                }else{
+                    alert(response.msg);
+                }
+            }
+        });
+        return false;
+    });
+
+    $("body").on("click",".editType",function(){
+        // console.log($(this).parent().children("td").eq(1).children("input").length);
+        if($(this).parent().children("td").eq(1).children("input").length > 0){
+            var url = "/api/companyTypeUpdate/"+$(this).data("seq");
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : "ct_name="+$(this).parent().children("td").eq(1).children("input").val(),
+                success:function(response){
+                    alert("수정되었습니다.");
+                    typeGetList();
+                }
+            });
+        }else{
+            $(this).parent().children("td").eq(1).html("<input type='text' name='mode_name' value='"+$(this).data("name")+"'>");
+        }
+
+    });
+
+    $("body").on("click",".deleteType",function(){
+        if(confirm("삭제하시겠습니까?")){
+            var url = "/api/companyTypeDelete/"+$(this).data("seq");
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                success:function(response){
+                    typeGetList();
+                }
+            });
+        }
+    });
+
+    $("#typeAdd").submit(function(){
+        if($("#addType").val() == ""){
+            alert("코드를 입력해 주세요");
+            return false;
+        }
+
+        if($("#add_ct_name").val() == ""){
+            alert("분류명을 입력해 주세요");
+            return false;
+        }
+        var url = "/api/companyTypeAdd";
+        var datas = $("#typeAdd").serialize();
+        $.ajax({
+            url : url,
+            type : 'POST',
+            dataType : 'JSON',
+            data : datas,
+            success:function(response){
+                // console.log(response);
+                if(response.result){
+                    alert("저장되었습니다.");
+                    typeGetList();
+                }else{
+                    alert(response.msg);
+
+                }
+
+            }
+        });
+        return false;
+    });
+
+    $("#endSearchWord").autocomplete({
+        source : function (request, response) {
+            // $.post('http://'+$('#apiHost').val()+':'+$('#apiPort').val()+'/products/_search/1/limit/20', request, response);
+            $.ajax( {
+                method : "GET",
+                url: '/api/endUserList',
+                dataType: "json",
+                data: {
+                    endSearchWord: request.term
+                },
+                success: function( data ) {
+                    // alert(1);
+                    // console.log(data);
+                    response( data.list );
+                }
+            });
+        },
+        minLength: 1,
+        focus: function( event, ui ) {
+            $( "#endSearchWord" ).val( ui.item.eu_name );
+            return false;
+        },
+        select : function(event,ui){
+            $( "#endSearchWord" ).val( ui.item.eu_name );
+            return false;
+        },
+        open: function(){
+            setTimeout(function () {
+                $('.ui-autocomplete').css('z-index', 102);
+            }, 0);
+        }
+    })
+    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+        console.log(ul);
+        return $( "<li>" )
+            .append( item.eu_name )
+            .appendTo( ul );
+    };
+
+    $("#typeSearchWord").autocomplete({
+        source : function (request, response) {
+            // $.post('http://'+$('#apiHost').val()+':'+$('#apiPort').val()+'/products/_search/1/limit/20', request, response);
+            $.ajax( {
+                method : "GET",
+                url: '/api/companyTypeList',
+                dataType: "json",
+                data: {
+                    typeSearchWord: request.term
+                },
+                success: function( data ) {
+                    response( data.list );
+                }
+            });
+        },
+        minLength: 1,
+        focus: function( event, ui ) {
+            $( "#typeSearchWord" ).val( ui.item.ct_name );
+            return false;
+        },
+        select : function(event,ui){
+            $( "#typeSearchWord" ).val( ui.item.ct_name );
+            return false;
+        },
+        open: function(){
+            setTimeout(function () {
+                $('.ui-autocomplete').css('z-index', 102);
+            }, 0);
+        }
+    })
+    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+        return $( "<li>" )
+            .append( item.ct_name )
+            .appendTo( ul );
+    };
+
+    $("#sv_rental_type").change(function(){
+        if($(this).val() == "0"){
+            $("#sv_rental_date").hide();
+            $(".sv_rental_date").hide();
+        }else{
+            $("#sv_rental_date").show();
+            $(".sv_rental_date").show();
+        }
+    })
 })
+
+var getEndUserNextNumber = function(){
+    var url = "/api/endUserNextCode";
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        success:function(response){
+
+            $("#addEnd").val(response);
+            $("#add_eu_name").val("");
+        }
+    });
+}
 function serviceEnd(){
     if($("#end_yn").val() == "Y"){
         var url = "/api/updateServiceEnd";
@@ -759,14 +1055,18 @@ function getMemo(){
             console.log(response);
             var html = "";
             for(var i = 0;i<response.list.length;i++){
+                var num = parseInt(response.list.length)  - i;
                 html += '<tr>\
-                            <td>1</td>\
+                            <td>'+num+'</td>\
                             <td>'+response.list[i].sm_regdate+'</td>\
-                            <td><div id="msg_show_'+response.list[i].sm_seq+'">'+response.list[i].sm_msg+'</div><div id="msg_hide_'+response.list[i].sm_seq+'" style="display:none"><textarea style="width:100%;height:50px" id="sm_msg_'+response.list[i].sm_seq+'">'+response.list[i].sm_msg+'</textarea></div></td>\
+                            <td><div id="msg_show_'+response.list[i].sm_seq.replace(/\n/g, "<br />")+'">'+response.list[i].sm_msg.replace(/\n/g, "<br />")+'</div><div id="msg_hide_'+response.list[i].sm_seq+'" style="display:none"><textarea style="width:100%;height:50px" id="sm_msg_'+response.list[i].sm_seq+'">'+response.list[i].sm_msg+'</textarea></div></td>\
                             <td></td>\
-                            <td class="btn-service-msg-modify" data-seq="'+response.list[i].sm_seq+'">[수정]</td>\
-                            <td class="btn-service-msg-delete" data-seq="'+response.list[i].sm_seq+'">[삭제]</td>\
+                            <td class="btn-service-msg-modify" data-seq="'+response.list[i].sm_seq+'"><i class="fas fa-edit"></i></td>\
+                            <td class="btn-service-msg-delete" data-seq="'+response.list[i].sm_seq+'"><i class="fas fa-trash"></i></td>\
                         </tr>';
+            }
+            if(html == ""){
+                html = "<tr><td colspan=6 align=center>내용이 없습니다.</td></tr>";
             }
             $("#memoList").html(html);
 
@@ -789,3 +1089,9 @@ function getMemo(){
         }
     });
 }
+
+function openProductView(sv_seq){
+        var specs = "left=10,top=10,width=1000,height=700";
+        specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
+        window.open("/service/product_view/"+sv_seq, 'serviceProductView', specs);
+    }

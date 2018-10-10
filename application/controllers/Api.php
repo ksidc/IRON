@@ -765,7 +765,7 @@ class Api extends CI_Controller {
         echo json_encode($arr);
     }
 
-    public function productItemList($pc_seq,$start,$end)
+    public function productItemList($pc_seq)
     {
 
         // $start = ($start-1)*$end;
@@ -780,16 +780,17 @@ class Api extends CI_Controller {
                 $subItemHtml .= '<div class="subItem_'.$row["pi_seq"].'" data-name="'.$row2["pis_name"].'" data-pisseq="'.$row2["pis_seq"].'">'.$row2["pis_name"].'</div>';
                 $subItemClientHtml .= '<div class="subItem_'.$row["pi_seq"].'" data-name="'.$row2["c_name"].'" data-pisseq="'.$row2["pis_seq"].'" data-cseq="'.$row2["pis_c_seq"].'">'.$row2["c_name"].'</div>';
             }
-
-            $html .= '<tr>
-                        <td>'.($key+1).'</td>
+            $html .= "<table class='table'>";
+            $html .= '<tr><input type="hidden" name="pi_seq[]" value="'.$row["pi_seq"].'">
+                        <td style="width:50px">'.($key+1).'</td>
                         <td style="text-align:left" class="item_'.$row["pi_seq"].'" data-name="'.$row["pi_name"].'" data-piseq="'.$row["pi_seq"].'">'.$row["pi_name"].'</td>
-                        <td style="line-height:28px;text-align:left">'.$subItemHtml.'</td>
-                        <td style="line-height:28px;text-align:left">'.$subItemClientHtml.'</td>
-                        <td><i class="fas fa-plus addSubItem" data-piseq="'.$row["pi_seq"].'" title="부가 항목 추가"></i></td>
-                        <td class="btn-modify" data-seq="'.$row["pi_seq"].'" style="cursor:pointer"><i class="fas fa-edit"></i></td>
-                        <td class="btn-delete" data-seq="'.$row["pi_seq"].'" style="cursor:pointer"><i class="fas fa-trash"></i></td>
+                        <td style="width:50%;line-height:28px;text-align:left">'.$subItemHtml.'</td>
+                        <td style="width:15%;line-height:28px;text-align:left">'.$subItemClientHtml.'</td>
+                        <td style="width:5%;"><i class="fas fa-plus addSubItem" data-piseq="'.$row["pi_seq"].'" title="부가 항목 추가"></i></td>
+                        <td style="width:5%;" class="btn-modify" data-seq="'.$row["pi_seq"].'" style="cursor:pointer"><i class="fas fa-edit"></i></td>
+                        <td style="width:5%;" class="btn-delete" data-seq="'.$row["pi_seq"].'" style="cursor:pointer"><i class="fas fa-trash"></i></td>
                     </tr>';
+            $html .= "</table>";
         }
         $result = [
             "total" => $total,
@@ -839,8 +840,15 @@ class Api extends CI_Controller {
         echo json_encode($arr);
     }
 
+    public function productItemSubDelete($pis_seq){
+        $result = $this->api_model->productItemSubDelete($pis_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
     // 상품 등록 - 제품 서브 등록
     public function productItemSubRegister(){
+        $this->api_model->productItemSortUpdate();
         if($this->input->post("add_pis_name") != ""){
             $pi_seq = $this->input->post("add_pis_pi_seq");
             $pis_name = $this->input->post("add_pis_name");
@@ -1042,6 +1050,7 @@ class Api extends CI_Controller {
     // 상품 입력 - post
     public function productAdd()
     {
+
         $pr_seq = $this->api_model->productAdd();
 
         $prs_pd_seq = $this->input->post("prs_pd_seq");
@@ -1049,11 +1058,20 @@ class Api extends CI_Controller {
         $prs_price = $this->input->post("prs_price");
         $prs_div = $this->input->post("prs_div");
         $prs_one_price = $this->input->post("prs_one_price");
+        $prs_one_type = $this->input->post("prs_one_type");
+        $prs_one_percent = $this->input->post("prs_one_percent");
+        $prs_one_dis_price = $this->input->post("prs_one_dis_price");
+        $prs_one_after_price = $this->input->post("prs_one_after_price");
         $prs_month_price = $this->input->post("prs_month_price");
+        $prs_month_type = $this->input->post("prs_month_type");
+        $prs_month_percent = $this->input->post("prs_month_percent");
+        $prs_month_dis_price = $this->input->post("prs_month_dis_price");
+        $prs_month_after_price = $this->input->post("prs_month_after_price");
         $prs_use_type = $this->input->post("prs_use_type");
         $prs_msg = $this->input->post("prs_msg");
-        for($i = 0 ; $i < count($prs_pd_seq);$i++){
-            $result = $this->api_model->productSubAdd($pr_seq,$prs_pd_seq[$i],$prs_ps_seq[$i],$prs_price[$i],$prs_div[$i],$prs_one_price[$i],$prs_month_price[$i],$prs_use_type[$i],$prs_msg[$i]);
+        for($i = 0 ; $i < count($prs_div);$i++){
+            // $result = $this->api_model->productSubAdd($pr_seq,$prs_pd_seq[$i],$prs_ps_seq[$i],$prs_price[$i],$prs_div[$i],$prs_one_price[$i],$prs_month_price[$i],$prs_use_type[$i],$prs_msg[$i]);
+            $result = $this->api_model->productSubAdd($pr_seq,$prs_pd_seq[$i],$prs_ps_seq[$i],$prs_price[$i],$prs_div[$i],$prs_one_price[$i],$prs_one_type[$i],$prs_one_percent[$i],$prs_one_dis_price[$i],$prs_one_after_price[$i],$prs_month_price[$i],$prs_month_type[$i],$prs_month_percent[$i],$prs_month_dis_price[$i],$prs_month_after_price[$i],$prs_use_type[$i],$prs_msg[$i]);
         }
         $arr = array('result'=>$result);
         echo json_encode($arr);
@@ -1088,9 +1106,19 @@ class Api extends CI_Controller {
                                     if($b_pr_seq != $row["pr_seq"]){
                                         $html .= '<td rowspan="'.(count($sub)).'" style="width:16%">'.$row["c_name"].'</td>';
                                     }
+                                    if($row2["prs_one_dis_price"] > 0){
+                                        $addHtml = "<span style='width:20px;height:10px;background:red;padding:0px 3px;color:white'>P</span> ";
+                                    }else{
+                                        $addHtml = "";
+                                    }
+                                    if($row2["prs_month_dis_price"] > 0){
+                                        $addHtml2 = "<span style='width:20px;height:10px;background:red;padding:0px 3px;color:white'>P</span> ";
+                                    }else{
+                                        $addHtml2 = "";
+                                    }
                                     $html .= '<td style="width:16%;text-align:right">'.number_format($row2["prs_price"]).'원'.($row2["prs_div"] == "2" ? "/월":"").'</td>
-                                    <td style="width:16%;text-align:right">'.number_format($row2["prs_one_price"]).'원</td>
-                                    <td style="width:16%;text-align:right">'.number_format($row2["prs_month_price"]).'원/월</td>
+                                    <td style="width:16%;text-align:right">'.$addHtml.number_format($row2["prs_one_after_price"]).'원</td>
+                                    <td style="width:16%;text-align:right">'.$addHtml2.number_format($row2["prs_month_after_price"]).'원/월</td>
                                 </tr>';
                             $b_pr_seq = $row["pr_seq"];
                         }
@@ -1124,6 +1152,7 @@ class Api extends CI_Controller {
     // 상품 수정 - post
     public function productUpdate($pr_seq)
     {
+
         $this->api_model->productUpdate($pr_seq);
 
         $prs_pd_seq = $this->input->post("prs_pd_seq");
@@ -1131,15 +1160,23 @@ class Api extends CI_Controller {
         $prs_price = $this->input->post("prs_price");
         $prs_div = $this->input->post("prs_div");
         $prs_one_price = $this->input->post("prs_one_price");
+        $prs_one_type = $this->input->post("prs_one_type");
+        $prs_one_percent = $this->input->post("prs_one_percent");
+        $prs_one_dis_price = $this->input->post("prs_one_dis_price");
+        $prs_one_after_price = $this->input->post("prs_one_after_price");
         $prs_month_price = $this->input->post("prs_month_price");
+        $prs_month_type = $this->input->post("prs_month_type");
+        $prs_month_percent = $this->input->post("prs_month_percent");
+        $prs_month_dis_price = $this->input->post("prs_month_dis_price");
+        $prs_month_after_price = $this->input->post("prs_month_after_price");
         $prs_use_type = $this->input->post("prs_use_type");
         $prs_msg = $this->input->post("prs_msg");
         $prs_seq = $this->input->post("prs_seq");
-        for($i = 0 ; $i < count($prs_seq);$i++){
+        for($i = 0 ; $i < count($prs_div);$i++){
             if($prs_seq[$i] == ""){
-                $result = $this->api_model->productSubAdd($pr_seq,$prs_pd_seq[$i],$prs_ps_seq[$i],$prs_price[$i],$prs_div[$i],$prs_one_price[$i],$prs_month_price[$i],$prs_use_type[$i],$prs_msg[$i]);
+                $result = $this->api_model->productSubAdd($pr_seq,$prs_pd_seq[$i],$prs_ps_seq[$i],$prs_price[$i],$prs_div[$i],$prs_one_price[$i],$prs_one_type[$i],$prs_one_percent[$i],$prs_one_dis_price[$i],$prs_one_after_price[$i],$prs_month_price[$i],$prs_month_type[$i],$prs_month_percent[$i],$prs_month_dis_price[$i],$prs_month_after_price[$i],$prs_use_type[$i],$prs_msg[$i]);
             }else{
-                $result = $this->api_model->productSubUpdate($prs_seq[$i],$prs_pd_seq[$i],$prs_ps_seq[$i],$prs_price[$i],$prs_div[$i],$prs_one_price[$i],$prs_month_price[$i],$prs_use_type[$i],$prs_msg[$i]);
+                $result = $this->api_model->productSubUpdate($prs_seq[$i],$prs_pd_seq[$i],$prs_ps_seq[$i],$prs_price[$i],$prs_div[$i],$prs_one_price[$i],$prs_one_type[$i],$prs_one_percent[$i],$prs_one_dis_price[$i],$prs_one_after_price[$i],$prs_month_price[$i],$prs_month_type[$i],$prs_month_percent[$i],$prs_month_dis_price[$i],$prs_month_after_price[$i],$prs_use_type[$i],$prs_msg[$i]);
             }
         }
         // $result = $this->api_model->productSubUpdate($prs_seq,$prs_pd_seq,$prs_ps_seq,$prs_price,$prs_div,$prs_one_price,$prs_month_price,$prs_use_type,$prs_msg);
@@ -1277,6 +1314,8 @@ class Api extends CI_Controller {
     }
 
     public function serviceRegister(){
+        // print_r($_POST);
+        // exit;
         $result = $this->api_model->serviceRegister();
         $arr = array('result'=>$result);
         echo json_encode($arr);
@@ -1288,42 +1327,47 @@ class Api extends CI_Controller {
         echo json_encode($arr);
     }
 
-    public function serviceRegisterDelete($sr_seq){
-        $result = $this->api_model->serviceRegisterDelete($sr_seq);
+    public function serviceRegisterDelete(){
+        $result = $this->api_model->serviceRegisterDelete($this->input->get("sr_seq"));
         $arr = array('result'=>$result);
         echo json_encode($arr);
     }
 
-    public function serviceRegisterCopy($sr_seq){
+    public function serviceRegisterCopy(){
+        $sr_seq = $this->input->post("checkSeq");
         $data = $this->api_model->selectServiceRegister($sr_seq);
 
-        $code = $data["sr_code"];
+        $code = $this->api_model->serviceNextCode();
+        // $code = $data["sr_code"];
         $code = explode("-",$code);
 
-        $new_code = substr($code[1],-6);
+        $new_code = substr($code[0],-6);
+        $code_first = substr($code[0],0,2);
         $new_srcode = (int)$new_code+1;
 
-        $data["sr_code"] = $code[0]."-".sprintf("%06d",$new_srcode)."-".$code[2];
-        $result = $this->api_model->serviceRegisterCopy($data);
+        $data["sr_code"] = $code_first.sprintf("%06d",$new_srcode)."-01";
+        $result = $this->api_model->serviceRegisterCopy($data,$sr_seq);
         $arr = array('result'=>$result);
         echo json_encode($arr);
     }
 
-    public function serviceRegisterReCopy($sr_seq){
+    public function serviceRegisterReCopy(){
+        $sr_seq = $this->input->post("checkSeq");
         $data = $this->api_model->selectServiceRegister($sr_seq);
 
         $code = $data["sr_code"];
         $code = explode("-",$code);
 
-        $new_srcode = (int)$code[2]+1;
+        $new_srcode = (int)$code[1]+1;
 
-        $data["sr_code"] = $code[0]."-".$code[1]."-".sprintf("%02d",$new_srcode);
-        $result = $this->api_model->serviceRegisterCopy($data);
+        $data["sr_code"] = $code[0]."-".sprintf("%02d",$new_srcode);
+        $result = $this->api_model->serviceRegisterCopy($data,$sr_seq);
         $arr = array('result'=>$result);
         echo json_encode($arr);
     }
 
     public function serviceRegisterList($start,$end){
+        $start = ($start-1)*$end;
         $total = $this->api_model->countServiceRegister();
         $list = $this->api_model->fetchServiceRegister($start,$end);
         $result = [
@@ -1412,13 +1456,16 @@ class Api extends CI_Controller {
         echo json_encode($arr);
     }
 
-    public function serviceMake($sr_seq){
-        $this->api_model->updateServiceStatus($sr_seq);
-        $sv_seq = $this->api_model->selectInsertService($sr_seq);
+    public function serviceMake(){
+        $sr_seq = explode(",",$this->input->post("sr_seq"));
+        for($i = 0;$i < count($sr_seq);$i++){
+            $this->api_model->updateServiceStatus($sr_seq[$i]);
+            $sv_seq = $this->api_model->selectInsertService($sr_seq[$i]);
 
 
-        // $this->api_model->selectInsertServicePrice($sv_seq,$sr_seq);
-        $result = $this->api_model->selectInsertServiceOption($sv_seq,$sr_seq);
+            // $this->api_model->selectInsertServicePrice($sv_seq,$sr_seq);
+            $result = $this->api_model->selectInsertServiceOption($sv_seq,$sr_seq[$i]);
+        }
 
         $arr = array('result'=>$result);
         echo json_encode($arr);
@@ -1430,6 +1477,12 @@ class Api extends CI_Controller {
         echo json_encode($arr);
     }
 
+    public function serviceViewUpdate(){
+        $result = $this->api_model->serviceViewUpdate();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
     public function serviceAddUpdate(){
         $result = $this->api_model->serviceAddUpdate();
         $arr = array('result'=>$result);
@@ -1437,6 +1490,7 @@ class Api extends CI_Controller {
     }
 
     public function serviceList($start,$end){
+        $start = ($start-1)*$end;
         $total = $this->api_model->countService();
         $list = $this->api_model->fetchService($start,$end);
         $result = [
@@ -1490,12 +1544,12 @@ class Api extends CI_Controller {
 
     public function paymentAdd(){
         $result = $this->api_model->paymentAdd();
-        echo json_encode($result);
+        echo json_encode(array("result"=>$result));
     }
 
     public function paymentUpdate(){
         $result = $this->api_model->paymentUpdate();
-        echo json_encode($result);
+        echo json_encode(array("result"=>$result));
     }
 
     public function paymentDelete(){
@@ -1702,4 +1756,142 @@ class Api extends CI_Controller {
         $arr = array('result'=>$result);
         echo json_encode($arr);
     }
+
+    public function serviceDelete(){
+        $result = $this->api_model->serviceDelete();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceInstallEdit(){
+        $result = $this->api_model->serviceInstallEdit();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceInstallIpAdd(){
+        $result = $this->api_model->serviceInstallIpAdd();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceInstallIpEdit(){
+        $result = $this->api_model->serviceInstallIpEdit();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceInstallIpDel(){
+        $result = $this->api_model->serviceInstallIpDel();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceLicenseAdd(){
+        $result = $this->api_model->serviceLicenseAdd();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceLicenseEdit(){
+        $result = $this->api_model->serviceLicenseEdit();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceLicenseDel(){
+        $result = $this->api_model->serviceLicenseDel();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceModuleAdd(){
+        $result = $this->api_model->serviceModuleAdd();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceModuleEdit(){
+        $result = $this->api_model->serviceModuleEdit();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceModuleDel(){
+        $result = $this->api_model->serviceModuleDel();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceInstallIpList(){
+        $result = $this->api_model->serviceInstallIpList();
+        echo json_encode($result);
+    }
+
+    public function serviceLicenseList(){
+        $result = $this->api_model->serviceLicenseList();
+        echo json_encode($result);
+    }
+
+    public function serviceModuleList(){
+        $result = $this->api_model->serviceModuleList();
+        echo json_encode($result);
+    }
+
+    public function memberService($mb_seq){
+        $result = $this->api_model->fetchMemberService($mb_seq);
+
+        echo json_encode($result);
+    }
+
+    public function emailFile(){
+        $result = $this->api_model->emailFile();
+        // $list = $this->api_model->emailFileList($this->input->post("em_es_seq"));
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    // 추가 첨부파일 삭제 - get
+    public function emailFileDelete()
+    {
+        $result = $this->api_model->emailFileDelete();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function groupServiceEdit(){
+        $result = $this->api_model->groupServiceEdit();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceGroupMemoAdd(){
+        $result = $this->api_model->serviceGroupMemoAdd();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceGroupMemoModify(){
+        $result = $this->api_model->serviceGroupMemoModify();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceGroupMemoDelete(){
+        $result = $this->api_model->serviceGroupMemoDelete();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceGroupMemoFetch(){
+        $total = $this->api_model->countServiceGroupMemo();
+        $list = $this->api_model->serviceGroupMemoFetch();
+        $result = [
+            "total" => $total,
+            "list" => $list
+        ];
+
+        echo json_encode($result);
+    }
+
 }

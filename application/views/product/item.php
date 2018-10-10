@@ -39,14 +39,13 @@
                         <th style="width:5%">삭제</th>
                     </tr>
                 </thead>
-                <tbody id="tbody-list">
 
-                </tbody>
             </table>
-            </form>
-            <div class="pagination-html">
+            <div style="height:200px;overflow:auto" id="tbody_list">
 
             </div>
+            </form>
+
         </div>
         <form id="footerItemAdd">
         <div class="div-add" style="margin-top:10px;margin-left:3px;padding-bottom:10px">

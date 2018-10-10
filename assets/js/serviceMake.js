@@ -1,9 +1,11 @@
 var basic_date_info = [];
 var basic_date_info_add = [];
+var allPiSeq = '';
+var allPrSeq = '';
 $(function(){
     // var num = Math.floor(1076/100)*100;
     // console.log(num);
-    $( ".datepicker" ).datepicker({
+    $(".datepicker" ).datepicker({
         "dateFormat" : "yy-mm-dd",
         onSelect: function(selectedDate) {
             // console.log(selectedDate);
@@ -35,6 +37,7 @@ $(function(){
         onSelect: function(selectedDate){
             // 날짜 및 초기 청구 요금 내용
             priceInfoDate();
+            calculatePrice();
             $(".addoptionprice").each(function(){
                 var add_seq = $(this).data("seq");
                 if($("#sa_pay_day_"+add_seq).val() != ""){
@@ -82,6 +85,13 @@ $(function(){
         modal: true,
         width:'800px',
         height : 260
+    });
+
+    $( "#dialogAllProduct" ).dialog({
+        autoOpen: false,
+        modal: true,
+        width:'600px',
+        height : 550
     });
 
     $("#userSearchForm").submit(function(e){
@@ -134,6 +144,10 @@ $(function(){
                     for(var i in response){
                         $('select[name="sr_pi_seq"]').append('<option value="'+response[i].pi_seq+'" >'+response[i].pi_name+'</option>');
                     }
+
+                    if(allPiSeq != ""){
+                        $('select[name="sr_pi_seq"]').val(allPiSeq).trigger("change");
+                    }
                 }
 
             });
@@ -166,7 +180,11 @@ $(function(){
                     $('select[name="sr_pr_seq"]').empty().append('<option value="">선택</option>');
                     $("#sr_pr_seq_str").html("선택");
                     for(var i in response){
-                        $('select[name="sr_pr_seq"]').append('<option value="'+response[i].pr_seq+'" >'+response[i].pr_name+'</option>');
+                        $('select[name="sr_pr_seq"]').append('<option value="'+response[i].pr_seq+'" data-cseq="'+response[i].pr_c_seq+'" data-cname="'+response[i].c_name+'">'+response[i].pr_name+'</option>');
+                    }
+
+                    if(allPrSeq != ""){
+                        $('select[name="sr_pr_seq"]').val(allPrSeq).trigger("change");
                     }
                 }
 
@@ -180,7 +198,7 @@ $(function(){
                 dataType : 'JSON',
                 success:function(response){
                     for(var i = 0; i < response.length;i++){
-                        addoption += '<input type="hidden" name="sa_c_seq[]" id="sa_c_seq_'+response[i].pis_seq+'"><div class="modal-title" style="background:#ddd">\
+                        addoption += '<input type="hidden" name="sa_c_seq[]" id="sa_c_seq_'+response[i].pis_seq+'" value="'+response[i].c_seq+'"><div class="modal-title" style="background:#ddd">\
                                 <div class="modal-title-text" style="display:inline-block;background:#ddd;font-size:12px;font-weight:normal">부가 항목 '+(i+1)+'</div>\
                                 <div style="display:inline-block"><input type="checkbox" data-seq="'+response[i].pis_seq+'" class="pis_yn" name="pis_yn[]" value="'+response[i].pis_seq+'" checked> 사용</div>\
                                 <div style="display:inline-block;padding-left:552px"></div>\
@@ -188,52 +206,52 @@ $(function(){
                             <div class="modal-field" style="padding-bottom:0px;padding-top:5px;text-align:right" id="addoption_view_'+response[i].pis_seq+'">\
                                 <div style="width:100%">\
                                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px">\
-                                        <li class="dib">부가 항목명 <i class="fas fa-info-circle"></i></li>\
+                                        <li class="dib">부가 항목명 <i class="fas fa-info-circle" title="선택한 제품군에 등록된 부가 항목" rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 10px">\
                                             <input type="text" style="width:570px" name="sa_name[]" id="sa_name_'+response[i].pis_seq+'" value="'+response[i].pis_name+'" readonly>\
                                         </li>\
                                         <li class="dib" style="padding-right:50px"><input type="checkbox" data-num="'+(i+1)+'" data-seq="'+response[i].pis_seq+'" data-name="'+response[i].pis_name+'" data-piname="'+response[i].pi_name+'" class="etc_yn" name="etc_yn[]" id="etc_yn_'+response[i].pis_seq+'"> 계산서 품목 분류 <i class="fas fa-info-circle"></i></li>\
                                     </ul>\
                                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px;display:none" class="more_view_'+response[i].pis_seq+'">\
-                                        <li class="dib">청구명(*) <i class="fas fa-info-circle"></i></li>\
+                                        <li class="dib">청구명(*) <i class="fas fa-info-circle" title="부가 항목을 세금계산서 내에 별도 품목으로 분류하려면 체크하세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 10px">\
                                             <input type="text" style="width:286px" name="sa_claim_name[]" id="sa_claim_name_'+response[i].pis_seq+'">\
                                         </li>\
-                                        <li class="dib" style="padding-left:40px">계산서 품목명(*) <i class="fas fa-info-circle"></i></li>\
+                                        <li class="dib" style="padding-left:40px">계산서 품목명(*) <i class="fas fa-info-circle" title="부가 항목을 세금계산서 내에 별도 품목으로 분류하려면 체크하세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 0px 0px 10px">\
                                             <input type="text" style="width:285px" name="sa_bill_name[]" id="sa_bill_name_'+response[i].pis_seq+'" >\
                                         </li>\
                                     </ul>\
                                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px;display:none" class="more_view_'+response[i].pis_seq+'">\
-                                        <li class="dib">일회성 요금(*) <i class="fas fa-info-circle"></i></li>\
+                                        <li class="dib">일회성 요금(*) <i class="fas fa-info-circle" title="부가 항목에 대한 초기 1회 청구 금액을 입력하세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 10px">\
-                                            <input type="text" style="width:80px" name="sa_once_price[]" id="sa_once_price_'+response[i].pis_seq+'" class="sa_once_price right" data-seq="'+response[i].pis_seq+'" value="0"> 원\
+                                            <input type="text" style="width:80px" name="sa_once_price[]" id="sa_once_price_'+response[i].pis_seq+'" class="sa_once_price right" data-seq="'+response[i].pis_seq+'" value="0" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> 원\
                                         </li>\
-                                        <li class="dib" style="padding-left:50px">월 요금(*) <i class="fas fa-info-circle"></i></li>\
+                                        <li class="dib" style="padding-left:50px">월 요금(*) <i class="fas fa-info-circle" title="부가 항목에 대한 월 단위 청구 금액을 입력하세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 10px">\
-                                            <input type="text" style="width:80px" name="sa_month_price[]" id="sa_month_price_'+response[i].pis_seq+'" class="sa_month_price right" data-seq="'+response[i].pis_seq+'" value="0"> 원/월\
+                                            <input type="text" style="width:80px" name="sa_month_price[]" id="sa_month_price_'+response[i].pis_seq+'" class="sa_month_price right" data-seq="'+response[i].pis_seq+'" value="0" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> 원/월\
                                         </li>\
-                                        <li class="dib" style="padding-left:48px">결제주기 <i class="fas fa-info-circle"></i></li>\
+                                        <li class="dib" style="padding-left:48px">결제주기 <i class="fas fa-info-circle" title="부가 항목에 대한 결제 주기를 개월 단위로 입력하세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 172px 0px 10px">\
                                             <input type="text" style="width:50px" name="sa_pay_day[]" id="sa_pay_day_'+response[i].pis_seq+'" class="sa_pay_day" data-seq="'+response[i].pis_seq+'" value="0"> 개월\
                                         </li>\
                                     </ul>\
                                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px">\
-                                        <li class="dib">부가 항목 매입처 <i class="fas fa-info-circle"></i></li>\
+                                        <li class="dib">부가 항목 매입처 <i class="fas fa-info-circle" title="부가 항목에 등록된 매입처를 자동으로 불러옵니다. (수정 가능)<br>나중에 입력하려면 공란으로 두세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 10px">\
-                                            <input type="text" style="width:146px" name="sa_c_name[]" id="sa_c_name_'+response[i].pis_seq+'" readonly><button class="btn btn-brown" type="button" onclick=\'$("#searchSeq").val("'+response[i].pis_seq+'");$( "#dialogClientSearch" ).dialog("open");$("#dialogClientSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();\'>검색</button>\
+                                            <input type="text" style="width:146px" name="sa_c_name[]" id="sa_c_name_'+response[i].pis_seq+'" readonly value="'+response[i].c_name+'"><button class="btn btn-brown" type="button" onclick=\'$("#searchSeq").val("'+response[i].pis_seq+'");$( "#dialogClientSearch" ).dialog("open");$("#dialogClientSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();\'>검색</button>\
                                         </li>\
-                                        <li class="dib" style="padding-left:171px">부가 항목 매입가 <i class="fas fa-info-circle"></i></li>\
+                                        <li class="dib" style="padding-left:171px">부가 항목 매입가 <i class="fas fa-info-circle" title="부가 항목에 대한 매입가를 입력하세요.<br>예) 12개월 주기로 1,000,000원 씩 매입이면 1,000,000 입력<br>나중에 입력하려면 공란으로 두세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 56px 0px 10px">\
-                                            <input type="text" style="width:180px" name="sa_input_price[]" id="sa_input_price_'+response[i].pis_seq+'" class="right">원\
+                                            <input type="text" style="width:180px" name="sa_input_price[]" id="sa_input_price_'+response[i].pis_seq+'" class="right" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)">원\
                                         </li>\
                                     </ul>\
                                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px">\
-                                        <li class="dib">부가 항목 매입 단위 <i class="fas fa-info-circle"></i></li>\
+                                        <li class="dib">부가 항목 매입 단위 <i class="fas fa-info-circle" title="부가 항목 매입가에 대한 매입 단위를 개월 단위로 입력하세요.<br>예) 12개월 주기로 1,000,000원 씩 매입이면 12 입력<br>나중에 입력하려면 공란으로 두세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 10px">\
                                             <input type="text" style="width:146px" name="sa_input_unit[]" id="sa_input_unit_'+response[i].pis_seq+'"> 개월\
                                         </li>\
-                                        <li class="dib" style="padding-left:174px">부가 항목 매입 시작일 <i class="fas fa-info-circle"></i></li>\
+                                        <li class="dib" style="padding-left:174px">부가 항목 매입 시작일 <i class="fas fa-info-circle" title="부가 항목에 대한 시작일(매입 기준)을 입력하세요.<br>나중에 입력하려면 공란으로 두세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 66px 0px 10px">\
                                             <input type="text" style="width:180px" name="sa_input_date[]" id="sa_input_date_'+response[i].pis_seq+'" class="sa_input_date datepicker3">\
                                         </li>\
@@ -265,6 +283,8 @@ $(function(){
     $("#sr_pr_seq").change(function(){
         if($(this).val() != ""){
             $("#sr_pr_name").html($("#sr_pr_seq option:selected").text());
+            $("#sr_c_seq_str").val($("#sr_pr_seq option:selected").data("cname"));
+            $("#sr_c_seq").val($("#sr_pr_seq option:selected").data("cseq"));
             var url = "/api/productSubDepth1Search/"+$(this).val();
             $.ajax({
                 url : url,
@@ -301,7 +321,7 @@ $(function(){
                     $('select[name="sr_ps_seq"]').empty().append('<option value="">선택</option>');
                     $("#sr_ps_seq_str").html("선택");
                     for(var i in response){
-                        $('select[name="sr_ps_seq"]').append('<option value="'+response[i].ps_seq+'" data-price="'+response[i].prs_price+'" data-prsoneprice="'+response[i].prs_one_price+'" data-prsmonthprice="'+response[i].prs_month_price+'" data-prsdiv="'+response[i].prs_div+'">'+response[i].ps_name+'</option>');
+                        $('select[name="sr_ps_seq"]').append('<option value="'+response[i].ps_seq+'" data-price="'+response[i].prs_price+'" data-prsoneprice="'+response[i].prs_one_price+'" data-prsmonthprice="'+response[i].prs_month_price+'" data-prsdiv="'+response[i].prs_div+'" data-prsonedisprice="'+response[i].prs_one_dis_price+'" data-prsmonthdisprice="'+response[i].prs_month_dis_price+'">'+response[i].ps_name+'</option>');
                     }
                 }
 
@@ -317,10 +337,12 @@ $(function(){
             $("#sr_ps_name").html("소분류");
         }else{
             $("#sr_ps_name").html($("#sr_ps_seq option:selected").text());
-            $("#sr_once_price").val($(this).find(':selected').data('prsoneprice')).trigger("change");
-            $("#sr_month_price").val($(this).find(':selected').data('prsmonthprice')).trigger("change");
-            $("#sr_input_price").val($(this).find(':selected').data('price'));
-            if($(this).find(':selected').data('prsdiv') == "1"){
+            $("#sr_once_price").val($.number($(this).find(':selected').data('prsoneprice'))).trigger("change");
+            $("#sp_once_dis_price").val($.number($(this).find(':selected').data('prsonedisprice'))).trigger("change");
+            $("#sr_month_price").val($.number($(this).find(':selected').data('prsmonthprice'))).trigger("change");
+            $("#sp_month_dis_price").val($.number($(this).find(':selected').data('prsmonthdisprice'))).trigger("change");
+            $("#sr_input_price").val($.number($(this).find(':selected').data('price')));
+            if($(this).find(':selected').data('prsdiv') == "0"){
                 $("#sr_month_price_str").html("원<span style='color:transparent'>/월</span>");
                 $("#sr_after_price_str").html("원<span style='color:transparent'>/월</span>");
                 $("#sr_input_price_text").html("원<span style='color:transparent'>/월</span>");
@@ -366,7 +388,7 @@ $(function(){
                         <div style="width:30%;float:left;vertical-align:top ">\
                             <ul style="list-style:none;padding:0;margin:0">\
                                 <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:160px" name="sp_once_price_add[]" id="sp_once_price_add_'+seq+'" class="sp_once_price_add right" data-seq="'+seq+'" readonly value=0> 원</li>\
-                                <li style="line-height:35px;padding-left:5px;color:red;border-left:1px solid #ddd"> - <input type="text" style="width:160px" name="sp_once_dis_price_add[]" id="sp_once_dis_price_add'+seq+'" class="sp_once_dis_price_add right" data-seq="'+seq+'" value=0> 원</li>\
+                                <li style="line-height:35px;padding-left:5px;color:red;border-left:1px solid #ddd"> - <input type="text" style="width:160px" name="sp_once_dis_price_add[]" id="sp_once_dis_price_add'+seq+'" class="sp_once_dis_price_add right" data-seq="'+seq+'" value=0 onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> 원</li>\
                                 <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:160px" name="sp_once_dis_msg_add[]" id="sp_once_dis_msg_add'+seq+'"></li>\
                                 <li style="line-height:35px;font-size:11px;padding-left:12px"><input type="checkbox" value="Y" id="sp_discount_yn_add_check'+seq+'" class="sp_discount_yn_add_check" data-seq="'+seq+'"> 할인적용(<span id="sr_register_discount_str_'+seq+'">0</span>%)<input type="hidden" name="sr_register_discount_add[]" id="sr_register_discount_'+seq+'" value=0></li>\
                                 <li style="line-height:35px;background:#eee;padding-left:5px;border-bottom:1px solid #ddd;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:160px" name="sp_once_total_price_add[]" id="sp_once_total_price_add'+seq+'" readonly class="add_service_once_total right"> 원</li>\
@@ -374,11 +396,11 @@ $(function(){
                         </div>\
                         <div style="width:32%;float:left;vertical-align:top; ">\
                             <ul style="list-style:none;padding:0;margin:0">\
-                                <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:180px" name="sp_month_price_add[]" id="sp_month_price_add'+seq+'" class="right" readonly value="0"> 원 / <span class="sa_payment_str_'+seq+'">결주</span></li>\
-                                <li style="line-height:35px;padding-left:5px;color:red;border-left:1px solid #ddd"> - <input type="text" style="width:180px" name="sp_month_dis_price_add[]" id="sp_month_dis_price_add'+seq+'" class="sp_month_dis_price_add right" data-seq="'+seq+'" value="0"><span style=";color:red"> 원 / 월</span></li>\
+                                <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:180px" name="sp_month_price_add[]" id="sp_month_price_add'+seq+'" class="right" readonly value="0"> 원 / <span class="sa_payment_str_'+seq+'">1개월</span></li>\
+                                <li style="line-height:35px;padding-left:5px;color:red;border-left:1px solid #ddd"> - <input type="text" style="width:180px" name="sp_month_dis_price_add[]" id="sp_month_dis_price_add'+seq+'" class="sp_month_dis_price_add right" data-seq="'+seq+'" value="0" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"><span style=";color:red"> 원 / 월</span></li>\
                                 <li style="line-height:35px;padding-left:4px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:180px" name="sp_month_dis_msg_add[]" id="sp_month_dis_msg_add'+seq+'"></li>\
-                                <li style="line-height:35px;padding-left:5px;color:red"> - <input type="text" style="width:180px" name="sp_discount_price_add[]" id="sp_discount_price_add'+seq+'" class="right" readonly> 원 / <span class="sa_payment_str_'+seq+'">[[결제]]</span></li>\
-                                <li style="line-height:35px;background:#eee;padding-left:4px;border-bottom:1px solid #ddd;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:180px" name="sp_month_total_price_add[]" id="sp_month_total_price_add'+seq+'" readonly class="add_service_month_total right" data-seq="'+seq+'"> 원 / <span class="sa_payment_str_'+seq+'">[[결제]]</span></li>\
+                                <li style="line-height:35px;padding-left:5px;color:red"> - <input type="text" style="width:180px" name="sp_discount_price_add[]" id="sp_discount_price_add'+seq+'" class="right" readonly> 원 / <span class="sa_payment_str_'+seq+'">1개월</span></li>\
+                                <li style="line-height:35px;background:#eee;padding-left:4px;border-bottom:1px solid #ddd;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:180px" name="sp_month_total_price_add[]" id="sp_month_total_price_add'+seq+'" readonly class="add_service_month_total right" data-seq="'+seq+'"> 원 / <span class="sa_payment_str_'+seq+'">1개월</span></li>\
                             </ul>\
                         </div>\
                         <div style="clear:both;width:100%;background-color:#EBE9E4;height:50px;border-left:1px solid #ddd">\
@@ -603,9 +625,9 @@ $(function(){
                     $("#sr_register_discount").val(response.result.discount);
                     $("#sr_register_discount_str").html(response.result.discount);
                 }
-                var price = parseInt($("#sr_month_price").val() || 0);
+                var price = parseInt($("#sr_month_price").val().replace(/,/gi, "") || 0);
                 var period = parseInt($("#sr_payment_period").val() || 0);
-                $("#sp_month_price").val(price*period);
+                $("#sp_month_price").val($.number(price*period));
                 // $("#sp_month_total_price").val(price*period);
                 // $("#use_price_str_0_1").html($.number(price*period));
                 $(".sp_payment_str").html($("#sr_payment_period").val()+"개월");
@@ -626,17 +648,17 @@ $(function(){
 
     $("body").on("change",".sa_once_price",function(){
         var seq = $(this).data("seq");
-        $("#sp_once_price_add_"+seq).val($(this).val());
-        $("#sp_once_total_price_add"+seq).val($(this).val());
+        $("#sp_once_price_add_"+seq).val($.number($(this).val().replace(/,/gi, "")));
+        $("#sp_once_total_price_add"+seq).val($.number($(this).val().replace(/,/gi, "")));
 
         priceInfoDateAdd(seq);
         calculateAddPrice(seq);
     })
 
     $("#sr_once_price").change(function(){
-        $("#sp_once_price").val($(this).val());
-        $("#sp_once_total_price").val($(this).val());
-        $("#one_price_str0").html($.number($(this).val()));
+        $("#sp_once_price").val($.number($(this).val().replace(/,/gi, "")));
+        $("#sp_once_total_price").val($.number($(this).val().replace(/,/gi, "")));
+        $("#one_price_str0").html($.number($(this).val().replace(/,/gi, "")));
         calculatePrice();
     });
 
@@ -649,9 +671,9 @@ $(function(){
     })
 
     $("#sr_month_price").change(function(){
-        var price = parseInt($(this).val());
+        var price = parseInt($(this).val().replace(/,/gi, ""));
         var period = parseInt($("#sr_payment_period").val() || 0);
-        $("#sp_month_price").val(price*period);
+        $("#sp_month_price").val($.number(price*period));
         // $("#sp_month_total_price").val(price*period);
         // $("#use_price_str_0_1").html($.number(price*period));
         // $(".price_cal").trigger("change");
@@ -663,9 +685,9 @@ $(function(){
 
     $("body").on("change",".sa_month_price",function(){
         var seq = $(this).data("seq");
-        var price = parseInt($(this).val());
+        var price = parseInt($(this).val().replace(/,/gi, ""));
         var period = parseInt($("#sa_pay_day_"+seq).val() || 0);
-        $("#sp_month_price_add"+seq).val(price*period);
+        $("#sp_month_price_add"+seq).val($.number(price*period));
         // $("#sp_month_total_price").val(price*period);
         // $("#use_price_str_add_"+seq+"_1").html($.number(price*period));
 
@@ -721,7 +743,19 @@ $(function(){
             alert("업체분류를 검색해주시기 바랍니다.");
             return false;
         }
-
+        if($("#sr_seq").val() == ""){
+            if($("#dupleNumberYn").val() == "N"){
+                alert("계약번호 중복확인을 해주시기 바랍니다.");
+                return false;
+            }
+        }else{
+            if($("#b_sr_code").val() != $("#sr_code1").val()+"-"+$("#sr_code2").val()){
+                if($("#dupleNumberYn").val() == "N"){
+                    alert("계약번호 중복확인을 해주시기 바랍니다.");
+                    return false;
+                }
+            }
+        }
         if($("#sr_payment_period").val() == ""){
             alert("결제 주기를 입력해 주시기 바랍니다.");
             return false;
@@ -796,49 +830,95 @@ $(function(){
         if($("#sr_seq").val() == ""){
             var url = "/api/serviceRegister";
             var actionType = "add";
+            var confirmMsg = "등록하시겠습니까?";
         }else{
         // 수정
             var url = "/api/serviceRegisterEdit/"+$("#sr_seq").val();
             var actionType = "edit";
+            var confirmMsg = "수정하시겠습니까?";
         }
-
-        $(".etc_yn").each(function(){
-            var seq = $(this).data("seq");
-            if($(this).attr("disabled") == false){
-                if($(this).is(":checked")){
-                    $("#etc_yn_v_"+seq).val("Y");
-                }else{
-                    $("#etc_yn_v_"+seq).val("N");
-                }
-            }
-
-        })
-        var datas = $("#registerForm").serialize();
-
-        $.ajax({
-            url : url,
-            type : 'POST',
-            dataType : 'JSON',
-            data : datas,
-            success:function(response){
-                // console.log(response);
-                if(response.result == true){
-                    if(actionType == "add"){
-                        alert("등록 되었습니다.");
+        if(confirm(confirmMsg)){
+            $(".etc_yn").each(function(){
+                var seq = $(this).data("seq");
+                if($(this).attr("disabled") != "disabled"){
+                    if($(this).is(":checked")){
+                        $("#etc_yn_v_"+seq).val("Y");
+                        $("#sp_once_price_add_"+seq).removeAttr("disabled");
+                        $("#sp_once_dis_price_add"+seq).removeAttr("disabled");
+                        $("#sp_once_dis_msg_add"+seq).removeAttr("disabled");
+                        $("#sp_discount_yn_add"+seq).removeAttr("disabled");
+                        $("#sp_month_price_add"+seq).removeAttr("disabled");
+                        $("#sp_month_dis_msg_add"+seq).removeAttr("disabled");
+                        $("#sp_discount_price_add"+seq).removeAttr("disabled");
+                        $("#pis_seq_add"+seq).removeAttr("disabled");
+                        $("#sr_register_discount_"+seq).removeAttr("disabled");
+                        $("#sap_first_price_add"+seq).removeAttr("disabled");
+                        $("#sap_first_start_add"+seq).removeAttr("disabled");
+                        $("#sap_first_end_add"+seq).removeAttr("disabled");
+                        $("#sap_first_month_price_add"+seq).removeAttr("disabled");
+                        $("#sap_first_month_start_add"+seq).removeAttr("disabled");
+                        $("#sap_first_month_end_add"+seq).removeAttr("disabled");
                     }else{
-                        alert("수정 되었습니다.");
+                        $("#etc_yn_v_"+seq).val("N");
+                        $("#sp_once_price_add_"+seq).attr("disabled",true);
+                        $("#sp_once_dis_price_add"+seq).attr("disabled",true);
+                        $("#sp_once_dis_msg_add"+seq).attr("disabled",true);
+                        $("#sp_discount_yn_add"+seq).attr("disabled",true);
+                        $("#sp_month_price_add"+seq).attr("disabled",true);
+                        $("#sp_month_dis_msg_add"+seq).attr("disabled",true);
+                        $("#sp_discount_price_add"+seq).attr("disabled",true);
+                        $("#pis_seq_add"+seq).attr("disabled",true);
+                        $("#sr_register_discount_"+seq).attr("disabled",true);
+                        $("#sap_first_price_add"+seq).attr("disabled",true);
+                        $("#sap_first_start_add"+seq).attr("disabled",true);
+                        $("#sap_first_end_add"+seq).attr("disabled",true);
+                        $("#sap_first_month_price_add"+seq).attr("disabled",true);
+                        $("#sap_first_month_start_add"+seq).attr("disabled",true);
+                        $("#sap_first_month_end_add"+seq).attr("disabled",true);
                     }
-                    // getList();
-                    // $("#dialog").dialog( "close" );
-                }else{
-                    alert("오류가 발생했습니다.");
-                    return false;
                 }
-            },
-            error:function(error){
-                console.log(error);
-            }
-        });
+
+            })
+
+            $(".sp_discount_yn_add_check").each(function(){
+                if($(this).is(":checked")){
+                    $("#sp_discount_yn_add"+$(this).data("seq")).val("Y");
+                }else{
+                    $("#sp_discount_yn_add"+$(this).data("seq")).val("N");
+                }
+            })
+
+            var datas = $("#registerForm").serialize();
+            // console.log(datas);
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : datas,
+                success:function(response){
+                    // console.log(response);
+                    if(response.result == true){
+                        if(actionType == "add"){
+                            alert("등록 되었습니다.");
+                            opener.getList();
+                            self.close();
+                        }else{
+                            alert("수정 되었습니다.");
+                            opener.getList();
+                            self.close();
+                        }
+                        // getList();
+                        // $("#dialog").dialog( "close" );
+                    }else{
+                        alert("오류가 발생했습니다.");
+                        return false;
+                    }
+                },
+                error:function(error){
+                    console.log(error);
+                }
+            });
+        }
         return false;
     })
 
@@ -863,9 +943,9 @@ $(function(){
                 }
                 $(".sa_payment_str_"+seq).html(period+"개월");
 
-                var price = parseInt($("#sa_month_price_"+seq).val() || 0);
+                var price = parseInt($("#sa_month_price_"+seq).val().replace(/,/gi, "") || 0);
                 period = parseInt(period);
-                $("#sp_month_price_add"+seq).val(price*period);
+                $("#sp_month_price_add"+seq).val($.number(price*period));
                 priceInfoDateAdd(seq);
                 calculateAddPrice(seq);
             }
@@ -880,6 +960,10 @@ $(function(){
     $(".btn-number-duple").click(function(){
         if($("#sr_code1").val() == "" || $("#sr_code2").val() == ""){
             alert("계약 번호를 입력해 주시기 바랍니다.");
+            return false;
+        }
+        if($("#b_sr_code").val() == $("#sr_code1").val()+"-"+$("#sr_code2").val()){
+            alert("사용가능한 계약번호 입니다.");
             return false;
         }
         var url = "/api/serviceNumberCheck";
@@ -901,13 +985,13 @@ $(function(){
             }
         });
     })
-    $(".sp_discount_yn_add_check").click(function(){
-        if($(this).is(":checked")){
-            $(".sp_discount_yn_add"+$(this).data("seq")).val("Y");
-        }else{
-            $(".sp_discount_yn_add"+$(this).data("seq")).val("N");
-        }
-    })
+    // $(".sp_discount_yn_add_check").click(function(){
+    //     if($(this).is(":checked")){
+    //         $(".sp_discount_yn_add"+$(this).data("seq")).val("Y");
+    //     }else{
+    //         $(".sp_discount_yn_add"+$(this).data("seq")).val("N");
+    //     }
+    // })
 
     $("#sp_discount_yn").click(function(){
         calculatePrice();
@@ -943,7 +1027,9 @@ $(function(){
                 success:function(response){
                     // typeGetList();
                     alert("수정되었습니다.");
+                    that.parent().children("td").eq(0).children("a").data("name",editname);
                     that.parent().children("td").eq(1).html(editname);
+                    that.parent().children("td").eq(2).data("name",editname);
                 }
             });
         }else{
@@ -974,7 +1060,7 @@ $(function(){
             alert("코드를 입력해 주시기 바랍니다.");
             return false;
         }
-        if($("#eu_name").val() == ""){
+        if($("#add_eu_name").val() == ""){
             alert("End User를 입력해 주시기 바랍니다.");
             return false;
         }
@@ -990,6 +1076,7 @@ $(function(){
                 if(response.result){
                     alert("등록되었습니다.");
                     getEndUserNextNumber();
+                    $("#endSearchForm").submit();
                 }else{
                     alert(response.msg);
                 }
@@ -1008,6 +1095,7 @@ $(function(){
                 dataType : 'JSON',
                 data : "ct_name="+$(this).parent().children("td").eq(1).children("input").val(),
                 success:function(response){
+                    alert("수정되었습니다.");
                     typeGetList();
                 }
             });
@@ -1037,7 +1125,7 @@ $(function(){
             return false;
         }
 
-        if($("#ct_name").val() == ""){
+        if($("#add_ct_name").val() == ""){
             alert("분류명을 입력해 주세요");
             return false;
         }
@@ -1049,7 +1137,7 @@ $(function(){
             dataType : 'JSON',
             data : datas,
             success:function(response){
-                console.log(response);
+                // console.log(response);
                 if(response.result){
                     alert("저장되었습니다.");
                     typeGetList();
@@ -1061,6 +1149,120 @@ $(function(){
             }
         });
         return false;
+    });
+
+    $("input:radio[name=sr_rental_type]").change(function(){
+        // console.log($(this).val());
+        if($(this).val() == "2"){
+            $(".rentaltype2").css("opacity",1);
+        }else{
+            $(".rentaltype2").css("opacity",0);
+        }
+    });
+
+    $("#sr_pay_publish").change(function(){
+        // console.log($(this).val());
+        if($(this).val() == "1"){
+            $("#sr_pay_publish_type").hide()
+            $("#sr_pay_publish_type").next().hide();
+        }else{
+            $("#sr_pay_publish_type").show();
+            $("#sr_pay_publish_type").next().show();
+        }
+    });
+
+    $("#endSearchWord").autocomplete({
+        source : function (request, response) {
+            // $.post('http://'+$('#apiHost').val()+':'+$('#apiPort').val()+'/products/_search/1/limit/20', request, response);
+            $.ajax( {
+                method : "GET",
+                url: '/api/endUserList',
+                dataType: "json",
+                data: {
+                    endSearchWord: request.term
+                },
+                success: function( data ) {
+                    response( data.list );
+                }
+            });
+        },
+        minLength: 1,
+        focus: function( event, ui ) {
+            $( "#endSearchWord" ).val( ui.item.eu_name );
+            return false;
+        },
+        select : function(event,ui){
+            $( "#endSearchWord" ).val( ui.item.eu_name );
+            return false;
+        }
+    })
+    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+        console.log(ul);
+        return $( "<li>" )
+            .append( item.eu_name )
+            .appendTo( ul );
+    };
+
+    $("#typeSearchWord").autocomplete({
+        source : function (request, response) {
+            // $.post('http://'+$('#apiHost').val()+':'+$('#apiPort').val()+'/products/_search/1/limit/20', request, response);
+            $.ajax( {
+                method : "GET",
+                url: '/api/companyTypeList',
+                dataType: "json",
+                data: {
+                    typeSearchWord: request.term
+                },
+                success: function( data ) {
+                    response( data.list );
+                }
+            });
+        },
+        minLength: 1,
+        focus: function( event, ui ) {
+            $( "#typeSearchWord" ).val( ui.item.ct_name );
+            return false;
+        },
+        select : function(event,ui){
+            $( "#typeSearchWord" ).val( ui.item.ct_name );
+            return false;
+        }
+    })
+    .autocomplete( "instance" )._renderItem = function( ul, item ) {
+        return $( "<li>" )
+            .append( item.ct_name )
+            .appendTo( ul );
+    };
+
+    $("body").on("click",".all_pr_name",function(){
+        // alert(1)
+        allPiSeq = $(this).data("piseq");
+        allPrSeq = $(this).data("prseq");
+        $("#sr_pc_seq").val($(this).data("pcseq")).trigger("change");
+        $('#dialogAllProduct').dialog('close')
+    })
+
+    $.widget("ui.tooltip", $.ui.tooltip, {
+         options: {
+             content: function () {
+                 return $(this).prop('title');
+             }
+         }
+     });
+    $( '[rel=tooltip]' ).tooltip({
+        position: {
+            my: "center bottom-20",
+            at: "center top",
+            using: function( position, feedback ) {
+                console.log(this);
+                $( this ).css( position );
+                $( "<div>" )
+                    .addClass( "arrow" )
+                    .addClass( feedback.vertical )
+                    .addClass( feedback.horizontal )
+                    .appendTo( this );
+            }
+        }
     });
 });
 
@@ -1078,34 +1280,35 @@ var getEndUserNextNumber = function(){
     });
 }
 var calculatePrice = function(){
-    var sr_register_discount = parseInt($("#sr_register_discount").val() || 0);
-    var sr_payment_period = parseInt($("#sr_payment_period").val() || 0);
-    var sr_month_price = parseInt($("#sr_month_price").val() || 0);
-    var sp_month_dis_price = parseInt($("#sp_month_dis_price").val() || 0);
+    // console.log(1);
+    var sr_register_discount = parseInt($("#sr_register_discount").val().replace(/,/gi, "") || 0);
+    var sr_payment_period = parseInt($("#sr_payment_period").val().replace(/,/gi, "") || 0);
+    var sr_month_price = parseInt($("#sr_month_price").val().replace(/,/gi, "") || 0);
+    var sp_month_dis_price = parseInt($("#sp_month_dis_price").val().replace(/,/gi, "") || 0);
     // console.log(sr_register_discount + "::"+sr_payment_period+"::"+sr_month_price+"::"+sp_month_dis_price);
     if($("#sp_discount_yn").is(":checked")){
         var price = Math.floor((sr_month_price-sp_month_dis_price)*sr_register_discount/100*sr_payment_period);
-        $("#sp_discount_price").val(price);
+        $("#sp_discount_price").val($.number(price));
     }else{
         $("#sp_discount_price").val(0);
     }
 
-    var sp_once_price = parseInt($("#sp_once_price").val()|| 0);
-    var sp_once_dis_price = parseInt($("#sp_once_dis_price").val() || 0);
+    var sp_once_price = parseInt($("#sp_once_price").val().replace(/,/gi, "")|| 0);
+    var sp_once_dis_price = parseInt($("#sp_once_dis_price").val().replace(/,/gi, "") || 0);
 
     var price = Math.floor((sp_once_price-sp_once_dis_price));
-    $("#sp_once_total_price").val(price);
+    $("#sp_once_total_price").val($.number(price));
 
-    $("#show_once_total").val(price);
+    $("#show_once_total").val($.number(price));
 
     $("#one_price_str0").html($.number(price));
     // $("#show_all_once_total").val(price);
 
-    var sr_payment_period = parseInt($("#sr_payment_period").val()|| 0);
-    var sp_month_price = parseInt($("#sp_month_price").val() || 0);
-    var sp_month_dis_price = parseInt($("#sp_month_dis_price").val() || 0);
+    var sr_payment_period = parseInt($("#sr_payment_period").val().replace(/,/gi, "")|| 0);
+    var sp_month_price = parseInt($("#sp_month_price").val().replace(/,/gi, "") || 0);
+    var sp_month_dis_price = parseInt($("#sp_month_dis_price").val().replace(/,/gi, "") || 0);
     if($("#sp_discount_yn").is(":checked")){
-        var sp_discount_price = parseInt($("#sp_discount_price").val() || 0);
+        var sp_discount_price = parseInt($("#sp_discount_price").val().replace(/,/gi, "") || 0);
     }else{
         var sp_discount_price = 0;
     }
@@ -1147,21 +1350,24 @@ var calculatePrice = function(){
     }
     // console.log(price);
     // $("#use_price_str_0_1").html($.number(price));
-    $("#sp_month_total_price").val(total_price);
+    $("#sp_month_total_price").val($.number(total_price));
 
-    $("#show_month_total").val(total_price);
+    $("#show_month_total").val($.number(total_price));
 
-    var sp_once_total_price = parseInt($("#sp_once_total_price").val() || 0);
-    var sp_month_total_price = parseInt($("#sp_month_total_price").val() || 0);
+    var sp_once_total_price = parseInt($("#sp_once_total_price").val().replace(/,/gi, "") || 0);
+    var sp_month_total_price = parseInt($("#sp_month_total_price").val().replace(/,/gi, "") || 0);
     // $("#total_str0").html($.number(sp_once_total_price+sp_month_total_price));
     var show_total_price = 0;
     $(".total-cal-price").each(function(){
+        // console.log($(this).data("price"));
         show_total_price = show_total_price + parseInt($(this).data("price"));
     })
-    $("#show_all_total").val(show_total_price);
-
-    var total_month_price = parseInt($("#show_all_total").val()) - parseInt($("#show_all_once_total").val());
-    $("#show_all_month_total").val(total_month_price);
+    $("#show_all_total").val($.number(show_total_price));
+    // console.log($("#show_all_total").val());
+    // console.log($("#show_all_once_total").val());
+    var total_month_price = parseInt($("#show_all_total").val().replace(/,/gi, "")) - parseInt($("#show_all_once_total").val().replace(/,/gi, ""));
+    console.log(total_month_price);
+    $("#show_all_month_total").val($.number(total_month_price));
 
 
     contractPriceDateInfo();
@@ -1169,36 +1375,36 @@ var calculatePrice = function(){
 }
 
 var calculateAddPrice = function(seq){
-    var sr_register_discount = parseInt($("#sr_register_discount_"+seq).val() || 0);
-    var sr_payment_period = parseInt($("#sa_pay_day_"+seq).val() || 0);
-    var sr_month_price = parseInt($("#sa_month_price_"+seq).val() || 0);
-    var sp_month_dis_price = parseInt($("#sp_month_dis_price_add"+seq).val() || 0);
+    var sr_register_discount = parseInt($("#sr_register_discount_"+seq).val().replace(/,/gi, "") || 0);
+    var sr_payment_period = parseInt($("#sa_pay_day_"+seq).val().replace(/,/gi, "") || 0);
+    var sr_month_price = parseInt($("#sa_month_price_"+seq).val().replace(/,/gi, "") || 0);
+    var sp_month_dis_price = parseInt($("#sp_month_dis_price_add"+seq).val().replace(/,/gi, "") || 0);
 
-    $("#sp_discount_price_add"+seq).val(price);
+    $("#sp_discount_price_add"+seq).val($.number(price));
 
     if($("#sp_discount_yn_add_check"+seq).is(":checked")){
         var price = Math.floor((sr_month_price-sp_month_dis_price)*sr_register_discount/100*sr_payment_period);
-        $("#sp_discount_price_add"+seq).val(price);
+        $("#sp_discount_price_add"+seq).val($.number(price));
     }else{
         $("#sp_discount_price_add"+seq).val(0);
     }
 
-    var sp_once_price = parseInt($("#sa_once_price_"+seq).val()|| 0);
-    var sp_once_dis_price = parseInt($("#sp_once_dis_price_add"+seq).val() || 0);
+    var sp_once_price = parseInt($("#sa_once_price_"+seq).val().replace(/,/gi, "")|| 0);
+    var sp_once_dis_price = parseInt($("#sp_once_dis_price_add"+seq).val().replace(/,/gi, "") || 0);
 
     var price = Math.floor((sp_once_price-sp_once_dis_price));
-    $("#sp_once_total_price_add"+seq).val(price);
+    $("#sp_once_total_price_add"+seq).val($.number(price));
     $("#one_price_str_add_"+seq).html($.number(price));
     // $("#show_once_total").val(price);
     // $("#show_all_once_total").val(price);
 
-    var sr_payment_period = parseInt($("#sa_pay_day_"+seq).val()|| 0);
-    var sp_month_price = parseInt($("#sp_month_price_add"+seq).val() || 0);
-    var sp_month_dis_price = parseInt($("#sp_month_dis_price_add"+seq).val() || 0);
-    var sp_discount_price = parseInt($("#sp_discount_price_add"+seq).val() || 0);
+    var sr_payment_period = parseInt($("#sa_pay_day_"+seq).val().replace(/,/gi, "")|| 0);
+    var sp_month_price = parseInt($("#sp_month_price_add"+seq).val().replace(/,/gi, "") || 0);
+    var sp_month_dis_price = parseInt($("#sp_month_dis_price_add"+seq).val().replace(/,/gi, "") || 0);
+    var sp_discount_price = parseInt($("#sp_discount_price_add"+seq).val().replace(/,/gi, "") || 0);
 
     if($("#sp_discount_yn_add_check"+seq).is(":checked")){
-        var sp_discount_price = parseInt($("#sp_discount_price_add"+seq).val() || 0);
+        var sp_discount_price = parseInt($("#sp_discount_price_add"+seq).val().replace(/,/gi, "") || 0);
     }else{
         var sp_discount_price = 0;
     }
@@ -1241,10 +1447,10 @@ var calculateAddPrice = function(seq){
         }
     }
     $("#use_price_str_add_0_1_"+seq).html($.number(total_price));
-    $("#sp_month_total_price_add"+seq).val(total_price);
+    $("#sp_month_total_price_add"+seq).val($.number(total_price));
 
-    var sp_once_total_price = parseInt($("#sp_once_total_price_add"+seq).val() || 0);
-    var sp_month_total_price = parseInt($("#sp_month_total_price_add"+seq).val() || 0);
+    var sp_once_total_price = parseInt($("#sp_once_total_price_add"+seq).val().replace(/,/gi, "") || 0);
+    var sp_month_total_price = parseInt($("#sp_month_total_price_add"+seq).val().replace(/,/gi, "") || 0);
     $("#total_str_add_"+seq).html($.number(sp_once_total_price+sp_month_total_price));
     // $("#sap_first_price_"+seq).val(sp_once_total_price+sp_month_total_price);
     contractPriceDateInfoAdd(seq);
@@ -1253,34 +1459,37 @@ var calculateAddPrice = function(seq){
 }
 
 var calculateTotalPrice = function(){
-
-    var price = parseInt($("#sp_once_total_price").val() || 0);
+    // console.log(3)
+    var price = parseInt($("#sp_once_total_price").val().replace(/,/gi, "") || 0);
     $(".add_service_once_total").each(function(){
-        price = price+parseInt($(this).val());
+        price = price+parseInt($(this).val().replace(/,/gi, ""));
     });
-    $("#show_once_total").val(price);
-    $("#show_all_once_total").val(price)
+    $("#show_once_total").val($.number(price));
+    $("#show_all_once_total").val($.number(price));
 
-    var monthPrice = parseInt($("#sp_month_total_price").val() || 0);
-    monthPrice = monthPrice / parseInt($("#sr_payment_period").val());
+    var monthPrice = parseInt($("#sp_month_total_price").val().replace(/,/gi, "") || 0);
+    monthPrice = monthPrice / parseInt($("#sr_payment_period").val().replace(/,/gi, ""));
     $(".add_service_month_total").each(function(){
-        var period = $("#sa_pay_day_"+$(this).data("seq")).val();
-        monthPrice = monthPrice+(parseInt($(this).val()) / parseInt(period));
+        var period = $("#sa_pay_day_"+$(this).data("seq")).val().replace(/,/gi, "");
+        monthPrice = monthPrice+(parseInt($(this).val().replace(/,/gi, "")) / parseInt(period));
     });
-    $("#show_month_total").val(monthPrice);
+    console.log()
+    $("#show_month_total").val($.number(monthPrice));
 
-    var sp_once_total_price = parseInt($("#show_all_once_total").val() || 0);
-    var sp_month_total_price = parseInt($("#show_month_total").val() || 0);
+    var sp_once_total_price = parseInt($("#show_all_once_total").val().replace(/,/gi, "") || 0);
+    var sp_month_total_price = parseInt($("#show_month_total").val().replace(/,/gi, "") || 0);
     // $("#show_all_total").val(sp_once_total_price+sp_month_total_price);
 
     var show_total_price = 0;
     $(".total-cal-price").each(function(){
+        console.log($(this).data("price"));
         show_total_price = show_total_price + parseInt($(this).data("price"));
     })
-    $("#show_all_total").val(show_total_price);
+    // console.log(show_total_price);
+    $("#show_all_total").val($.number(show_total_price));
 
-    var total_month_price = parseInt($("#show_all_total").val()) - parseInt($("#show_all_once_total").val());
-    $("#show_all_month_total").val(total_month_price);
+    var total_month_price = parseInt($("#show_all_total").val().replace(/,/gi, "")) - parseInt($("#show_all_once_total").val().replace(/,/gi, ""));
+    $("#show_all_month_total").val($.number(total_month_price));
 }
 
 
@@ -1360,38 +1569,23 @@ function priceInfoDate(){
 
             }else{
 
-                date_info1.period = period;
-                date_info1.interval = 'month';
-                end_period[0] = date_info1.period+"개월";
-                if(period > 1){
-                    end_period[1] = (period - 1)+"개월";
-                    date_info2.period = period-1;
-                }else{
-                    end_period[1] = "1개월";
-                    date_info2.period = 1;
-                }
-                basic_date_info.push(date_info1);
-
-                end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
-                if(period > 1){
-                    date_info2.start_date = moment(end_date).format("YYYY-MM-01");
-
-                    end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
-
-                    end_str[1] = moment(end_date).format("YYYY년 MM월 DD일");
-                    start_str[1] = moment(date_info1.end_date).add(1,'months').format("YYYY년 MM월 01일");
-                    date_info2.end_date = end_date;
-
-                    date_info2.interval = 'month';
-                    basic_date_info.push(date_info2);
-
-                    $("#view_add").show();
-                }else{
+                var end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+                    end_str[0] = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY년 MM월 DD일");
                     end_str[1] = "0000년 00월 00일";
+
                     start_str[0] = selectedDate;
                     start_str[1] = "0000년 00월 00일";
+
+                    end_period[0] = period+"개월";
+                    end_period[1] = "0개월";
+
+                    date_info1.start_date = selectedDate;
+                    date_info1.end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+                    date_info1.period = period;
+                    date_info1.interval = 'month';
+                    basic_date_info.push(date_info1);
+
                     $("#view_add").hide();
-                }
 
 
 
@@ -1445,41 +1639,57 @@ function priceInfoDate(){
                     date_info1.period = moment.duration(moment(end_date).diff(moment(selectedDate))).asDays()+1;
                     date_info1.interval = 'day';
                     end_period[0] = date_info1.period+"일";
+
+                    basic_date_info.push(date_info1);
+                    end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
+                    start_str[0] = selectedDate;
+                    if(period > 1){
+                        end_period[1] = (period - 1)+"개월";
+                        date_info2.period = period-1;
+                    }else{
+                        end_period[1] = "1개월";
+                        date_info2.period = 1;
+                    }
+
+                    if(period > 1){
+                        date_info2.start_date = moment(end_date).format("YYYY-MM-01");
+
+                        end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
+
+                        end_str[1] = moment(end_date).format("YYYY년 MM월 DD일");
+                        start_str[1] = moment(date_info1.end_date).add(1,'months').format("YYYY년 MM월 01일");
+                        date_info2.end_date = end_date;
+
+                        date_info2.interval = 'month';
+                        basic_date_info.push(date_info2);
+
+                        $("#view_add").show();
+                    }else{
+                        end_str[1] = "0000년 00월 00일";
+                        start_str[0] = selectedDate;
+                        start_str[1] = "0000년 00월 00일";
+                        $("#view_add").hide();
+                    }
                 }else{
-                    date_info1.period = period;
-                    date_info1.interval = 'month';
-                    end_period[0] = date_info1.period+"개월";
-                }
-                basic_date_info.push(date_info1);
-                end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
-                start_str[0] = selectedDate;
-                if(period > 1){
-                    end_period[1] = (period - 1)+"개월";
-                    date_info2.period = period-1;
-                }else{
-                    end_period[1] = "1개월";
-                    date_info2.period = 1;
-                }
-
-                if(period > 1){
-                    date_info2.start_date = moment(end_date).format("YYYY-MM-01");
-
-                    end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
-
-                    end_str[1] = moment(end_date).format("YYYY년 MM월 DD일");
-                    start_str[1] = moment(date_info1.end_date).add(1,'months').format("YYYY년 MM월 01일");
-                    date_info2.end_date = end_date;
-
-                    date_info2.interval = 'month';
-                    basic_date_info.push(date_info2);
-
-                    $("#view_add").show();
-                }else{
+                    var end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+                    end_str[0] = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY년 MM월 DD일");
                     end_str[1] = "0000년 00월 00일";
+
                     start_str[0] = selectedDate;
                     start_str[1] = "0000년 00월 00일";
+
+                    end_period[0] = period+"개월";
+                    end_period[1] = "0개월";
+
+                    date_info1.start_date = selectedDate;
+                    date_info1.end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+                    date_info1.period = period;
+                    date_info1.interval = 'month';
+                    basic_date_info.push(date_info1);
+
                     $("#view_add").hide();
                 }
+
             }
         }
     }else{
@@ -1546,9 +1756,9 @@ function contractPriceDateInfo(){
             // var one_day_price = parseInt($("#sp_month_total_price").val())/month_total_date;
             // var total_price = one_day_price*basic_date_info[0].period;
 
-            var month_price = parseInt($("#sp_month_price").val())/parseInt($("#sr_payment_period").val());
-            var dis_price = parseInt($("#sp_month_dis_price").val());
-            var dis_per = parseInt($("#sr_register_discount").val());
+            var month_price = parseInt($("#sp_month_price").val().replace(/,/gi, ""))/parseInt($("#sr_payment_period").val().replace(/,/gi, ""));
+            var dis_price = parseInt($("#sp_month_dis_price").val().replace(/,/gi, ""));
+            var dis_per = parseInt($("#sr_register_discount").val().replace(/,/gi, ""));
             var period_day = parseInt(basic_date_info[0].period);
 
             if($("#sp_discount_yn").is(":checked")){
@@ -1592,13 +1802,13 @@ function contractPriceDateInfo(){
 
             $("#use_price_str_0_1").html($.number(price));
             basic_date_info[0].price = price;
-            $("#sp_first_price").val(price);
+            $("#sp_first_price").val($.number(price));
             $("#sp_first_month_price").val(0);
         }else{
-            $("#use_price_str_0_1").html($.number($("#sp_month_total_price").val()));
-            basic_date_info[0].price = $("#sp_month_total_price").val();
+            $("#use_price_str_0_1").html($.number($("#sp_month_total_price").val().replace(/,/gi, "")));
+            basic_date_info[0].price = $("#sp_month_total_price").val().replace(/,/gi, "");
             $("#sp_first_price").val(0);
-            $("#sp_first_month_price").val(price);
+            $("#sp_first_month_price").val($.number(price));
         }
 
     }else if(basic_date_info.length == 2){
@@ -1608,9 +1818,9 @@ function contractPriceDateInfo(){
             // var one_day_price = parseInt($("#sp_month_total_price").val())/month_total_date;
             // var total_price = one_day_price*basic_date_info[0].period;
 
-        var month_price = parseInt($("#sp_month_price").val())/parseInt($("#sr_payment_period").val());
-        var dis_price = parseInt($("#sp_month_dis_price").val());
-        var dis_per = parseInt($("#sr_register_discount").val());
+        var month_price = parseInt($("#sp_month_price").val().replace(/,/gi, ""))/parseInt($("#sr_payment_period").val().replace(/,/gi, ""));
+        var dis_price = parseInt($("#sp_month_dis_price").val().replace(/,/gi, ""));
+        var dis_per = parseInt($("#sr_register_discount").val().replace(/,/gi, ""));
         var period_day = parseInt(basic_date_info[0].period);
         // console.log(month_total_date+"::"+period_day);
         // console.log(period_day);
@@ -1655,21 +1865,21 @@ function contractPriceDateInfo(){
         }
 
         basic_date_info[0].price = price;
-        var month2 = parseInt($("#sp_month_total_price").val());
-        var period_month = parseInt($("#sr_payment_period").val());
+        var month2 = parseInt($("#sp_month_total_price").val().replace(/,/gi, ""));
+        var period_month = parseInt($("#sr_payment_period").val().replace(/,/gi, ""));
         var once_period = basic_date_info[1].period;
-        console.log(period_month+":"+once_period)
+        // console.log(period_month+":"+once_period)
         var price2 = month2 / period_month * once_period;
 
         basic_date_info[1].price = price2;
 
         $("#use_price_str_0_1").html($.number(price));
         $("#use_price_str_0_2").html($.number(price2));
-        $("#sp_first_price").val(price);
-        $("#sp_first_month_price").val(price2);
+        $("#sp_first_price").val($.number(price));
+        $("#sp_first_month_price").val($.number(price2));
     }
     var totalprice = 0;
-    totalprice = parseInt(totalprice) + parseInt($("#sp_once_total_price").val()) || 0;
+    totalprice = parseInt(totalprice) + parseInt($("#sp_once_total_price").val().replace(/,/gi, "")) || 0;
     for(var i = 0; i < basic_date_info.length;i++){
         totalprice = parseInt(totalprice) + parseInt(basic_date_info[i].price);
     }
@@ -1696,9 +1906,9 @@ function contractPriceDateInfoAdd(seq){
             // var one_day_price = parseInt($("#sp_month_total_price").val())/month_total_date;
             // var total_price = one_day_price*basic_date_info[0].period;
 
-            var month_price = parseInt($("#sp_month_price_add"+seq).val())/parseInt($("#sa_pay_day_"+seq).val());
-            var dis_price = parseInt($("#sp_month_dis_price_add"+seq).val());
-            var dis_per = parseInt($("#sr_register_discount_"+seq).val());
+            var month_price = parseInt($("#sp_month_price_add"+seq).val().replace(/,/gi, ""))/parseInt($("#sa_pay_day_"+seq).val().replace(/,/gi, ""));
+            var dis_price = parseInt($("#sp_month_dis_price_add"+seq).val().replace(/,/gi, ""));
+            var dis_per = parseInt($("#sr_register_discount_"+seq).val().replace(/,/gi, ""));
             var period_day = parseInt(basic_date_info_add[seq][0].period);
 
             if($("#sp_discount_yn_add_check"+seq).is(":checked")){
@@ -1743,13 +1953,13 @@ function contractPriceDateInfoAdd(seq){
 
             $("#use_price_str_add_0_1_"+seq).html($.number(price));
             basic_date_info_add[seq][0].price = price;
-            $("#sap_first_price_"+seq).val(price);
+            $("#sap_first_price_"+seq).val($.number(price));
             $("#sap_first_month_price_"+seq).val(0);
         }else{
-            $("#use_price_str_add_0_1_"+seq).html($.number($("#sp_month_total_price_add"+seq).val()));
-            basic_date_info_add[seq][0].price = $("#sp_month_total_price_add"+seq).val();
+            $("#use_price_str_add_0_1_"+seq).html($.number($("#sp_month_total_price_add"+seq).val().replace(/,/gi, "")));
+            basic_date_info_add[seq][0].price = $("#sp_month_total_price_add"+seq).val().replace(/,/gi, "");
             $("#sap_first_price_"+seq).val(0);
-            $("#sap_first_month_price_"+seq).val(price);
+            $("#sap_first_month_price_"+seq).val($.number(price));
         }
 
     }else if(basic_date_info_add[seq].length == 2){
@@ -1757,9 +1967,9 @@ function contractPriceDateInfoAdd(seq){
 
         var month_total_date = ( new Date( date_array[0], date_array[1], 0) ).getDate();
 
-        var month_price = parseInt($("#sp_month_price_add"+seq).val())/parseInt($("#sa_pay_day_"+seq).val());
-        var dis_price = parseInt($("#sp_month_dis_price_add"+seq).val());
-        var dis_per = parseInt($("#sr_register_discount_"+seq).val());
+        var month_price = parseInt($("#sp_month_price_add"+seq).val().replace(/,/gi, ""))/parseInt($("#sa_pay_day_"+seq).val().replace(/,/gi, ""));
+        var dis_price = parseInt($("#sp_month_dis_price_add"+seq).val().replace(/,/gi, ""));
+        var dis_per = parseInt($("#sr_register_discount_"+seq).val().replace(/,/gi, ""));
         var period_day = parseInt(basic_date_info_add[seq][0].period);
         console.log(period_day);
         if($("#sp_discount_yn_add_check"+seq).is(":checked")){
@@ -1807,7 +2017,7 @@ function contractPriceDateInfoAdd(seq){
 
         $("#use_price_str_add_0_1_"+seq).html($.number(price));
 
-        var month2 = parseInt($("#sp_month_total_price_add"+seq).val());
+        var month2 = parseInt($("#sp_month_total_price_add"+seq).val().replace(/,/gi, ""));
         var period_month = parseInt($("#sa_pay_day_"+seq).val());
         var once_period = basic_date_info_add[seq][1].period;
         // console.log(period_month+":"+once_period)
@@ -1816,11 +2026,11 @@ function contractPriceDateInfoAdd(seq){
         basic_date_info_add[seq][1].price = price2;
 
         $("#use_price_str_add_0_2_"+seq).html($.number(price2)); // 여기 수정
-        $("#sap_first_price_"+seq).val(price);
-        $("#sap_first_month_price_"+seq).val(price2);
+        $("#sap_first_price_"+seq).val($.number(price));
+        $("#sap_first_month_price_"+seq).val($.number(price2));
     }
     var totalprice = 0;
-    totalprice = parseInt(totalprice) + parseInt($("#sp_once_total_price_add"+seq).val()) || 0
+    totalprice = parseInt(totalprice) + parseInt($("#sp_once_total_price_add"+seq).val().replace(/,/gi, "")) || 0
     for(var i = 0; i < basic_date_info_add[seq].length;i++){
         totalprice = parseInt(totalprice) + parseInt(basic_date_info_add[seq][i].price);
     }
@@ -1888,38 +2098,55 @@ function priceInfoDateAdd(pis_seq){
 
             }else{
 
+                // date_info1.period = period;
+                // date_info1.interval = 'month';
+                // end_period[0] = "1개월";
+                // if(period > 1){
+                //     end_period[1] = (period - 1)+"개월";
+                //     date_info2.period = (period-1);
+                // }else{
+                //     end_period[1] = "0개월";
+                //     date_info2.period = 0;
+                // }
+                // basic_date_info_add[pis_seq].push(date_info1);
+
+                // end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
+                // if(period > 1){
+                //     date_info2.start_date = moment(end_date).format("YYYY-MM-01");
+
+                //     end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
+
+                //     end_str[1] = moment(end_date).format("YYYY년 MM월 DD일");
+                //     start_str[1] = moment(date_info1.end_date).add(1,'months').format("YYYY년 MM월 01일");
+                //     date_info2.end_date = end_date;
+
+                //     date_info2.interval = 'month';
+                //     basic_date_info_add[pis_seq].push(date_info2);
+
+                //     $("#view_add_"+pis_seq).show();
+                // }else{
+                //     end_str[1] = "0000년 00월 00일";
+                //     start_str[0] = selectedDate;
+                //     start_str[1] = "0000년 00월 00일";
+                //     $("#view_add_"+pis_seq).hide();
+                // }
+                var end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+                end_str[0] = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY년 MM월 DD일");
+                end_str[1] = "0000년 00월 00일";
+
+                start_str[0] = selectedDate;
+                start_str[1] = "0000년 00월 00일";
+
+                end_period[0] = period+"개월";
+                end_period[1] = "0개월";
+
+                date_info1.start_date = selectedDate;
+                date_info1.end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
                 date_info1.period = period;
                 date_info1.interval = 'month';
-                end_period[0] = date_info1.period+"개월";
-                if(period > 1){
-                    end_period[1] = (period - 1)+"개월";
-                    date_info2.period = (period-1);
-                }else{
-                    end_period[1] = "0개월";
-                    date_info2.period = 0;
-                }
                 basic_date_info_add[pis_seq].push(date_info1);
 
-                end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
-                if(period > 1){
-                    date_info2.start_date = moment(end_date).format("YYYY-MM-01");
-
-                    end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
-
-                    end_str[1] = moment(end_date).format("YYYY년 MM월 DD일");
-                    start_str[1] = moment(date_info1.end_date).add(1,'months').format("YYYY년 MM월 01일");
-                    date_info2.end_date = end_date;
-
-                    date_info2.interval = 'month';
-                    basic_date_info_add[pis_seq].push(date_info2);
-
-                    $("#view_add_"+pis_seq).show();
-                }else{
-                    end_str[1] = "0000년 00월 00일";
-                    start_str[0] = selectedDate;
-                    start_str[1] = "0000년 00월 00일";
-                    $("#view_add_"+pis_seq).hide();
-                }
+                $("#view_add_"+pis_seq).hide();
             }
 
         }else{
@@ -1965,43 +2192,56 @@ function priceInfoDateAdd(pis_seq){
                     date_info1.period = moment.duration(moment(end_date).diff(moment(selectedDate))).asDays()+1;
                     date_info1.interval = 'day';
                     end_period[0] = date_info1.period+"일";
+
+                    basic_date_info_add[pis_seq].push(date_info1);
+                    end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
+                    start_str[0] = selectedDate;
+                    if(period > 1){
+                        end_period[1] = (period - 1)+"개월";
+                        date_info2.period = (period-1);
+                    }else{
+                        end_period[1] = "0개월";
+                        date_info2.period = 0;
+                    }
+                    // console.log(period);
+                    if(period > 1){
+                        date_info2.start_date = moment(end_date).format("YYYY-MM-01");
+
+                        end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
+
+                        end_str[1] = moment(end_date).format("YYYY년 MM월 DD일");
+                        start_str[1] = moment(date_info1.end_date).add(1,'months').format("YYYY년 MM월 01일");
+                        date_info2.end_date = end_date;
+
+                        date_info2.interval = 'month';
+                        basic_date_info_add[pis_seq].push(date_info2);
+
+                        $("#view_add_"+pis_seq).show();
+                    }else{
+                        end_str[1] = "0000년 00월 00일";
+                        start_str[0] = selectedDate;
+                        start_str[1] = "0000년 00월 00일";
+                        $("#view_add_"+pis_seq).hide();
+                    }
                 }else{
-                    date_info1.period = period;
-                    date_info1.interval = 'month';
-                    end_period[0] = date_info1.period+"개월";
-                }
-                basic_date_info_add[pis_seq].push(date_info1);
-                end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
-                start_str[0] = selectedDate;
-                if(period > 1){
-                    end_period[1] = (period - 1)+"개월";
-                    date_info2.period = (period-1);
-                }else{
-                    end_period[1] = "0개월";
-                    date_info2.period = 0;
-                }
-                // console.log(period);
-                if(period > 1){
-                    date_info2.start_date = moment(end_date).format("YYYY-MM-01");
-
-                    end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
-
-                    end_str[1] = moment(end_date).format("YYYY년 MM월 DD일");
-                    start_str[1] = moment(date_info1.end_date).add(1,'months').format("YYYY년 MM월 01일");
-                    date_info2.end_date = end_date;
-
-                    date_info2.interval = 'month';
-                    basic_date_info_add[pis_seq].push(date_info2);
-
-                    $("#view_add_"+pis_seq).show();
-                }else{
+                    var end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+                    end_str[0] = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY년 MM월 DD일");
                     end_str[1] = "0000년 00월 00일";
+
                     start_str[0] = selectedDate;
                     start_str[1] = "0000년 00월 00일";
+
+                    end_period[0] = period+"개월";
+                    end_period[1] = "0개월";
+
+                    date_info1.start_date = selectedDate;
+                    date_info1.end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+                    date_info1.period = period;
+                    date_info1.interval = 'month';
+                    basic_date_info_add[pis_seq].push(date_info1);
+
                     $("#view_add_"+pis_seq).hide();
                 }
-
-
             }
         }
     }else{
@@ -2050,7 +2290,7 @@ function priceInfoDateAdd(pis_seq){
             $("#sap_first_start_"+pis_seq).val("");
             $("#sap_first_end_"+pis_seq).val("");
             $("#sap_first_month_start_"+pis_seq).val(start_str[0]);
-            $("#sap_first_month_end_"+pis_seq).val(basic_date_info_Add[pis_seq][0].end_date);
+            $("#sap_first_month_end_"+pis_seq).val(basic_date_info_add[pis_seq][0].end_date);
         }
         // console.log(start_str[0]+"::"+basic_date_info_add[pis_seq][0].end_date);
     }
@@ -2058,4 +2298,37 @@ function priceInfoDateAdd(pis_seq){
     // console.log(basic_date_info_add);
     // contractPriceDateInfo();
     contractPriceDateInfoAdd(pis_seq);
+}
+
+function getEditDate(){
+    if($("#sr_contract_start").val() != "" && $("#sr_contract_end").val() != ""){
+        var start = new Date($("#sr_contract_start").val());
+        var end = moment($("#sr_contract_end").val()).add(1,'days').format("YYYY-MM-DD");
+        end = new Date(end);
+        var diff = Date.getFormattedDateDiff(start, end);
+        $("#contractinfo").html("("+diff[0]+"개월 "+diff[1]+"일)");
+    }else {
+        if($("#sr_contract_start").val() != "" && $(":input:radio[name=sr_contract_type]:checked").val() == "2"){
+            // console.log(moment($("#sr_contract_start").val()).add(1,'months').subtract(1, "days").format("YYYY-MM-DD"));
+            $("#sr_contract_end").val(moment($("#sr_contract_start").val()).add(1,'months').subtract(1, "days").format("YYYY-MM-DD"));
+            var start = new Date($("#sr_contract_start").val());
+            // var end = new Date($("#sr_contract_end").val());
+            var end = moment($("#sr_contract_end").val()).add(1,'days').format("YYYY-MM-DD");
+            end = new Date(end);
+            var diff = Date.getFormattedDateDiff(start, end);
+            $("#contractinfo").html("("+diff[0]+"개월 "+diff[1]+"일)");
+        }
+    }
+}
+
+function getAllProduct(){
+    var url = "/service/allProduct";
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'HTML',
+        success:function(response){
+            $("#allProduct").html(response);
+        }
+    });
 }

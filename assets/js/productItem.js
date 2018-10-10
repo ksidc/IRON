@@ -91,13 +91,30 @@ $(function(){
     })
 
     $(".btn-item-sub-save").click(function(){
+        var register = true;
         $(".subItemName").each(function(){
             if($(this).val() == ""){
                 alert("부가항목을 입력하시기 바랍니다.");
                 $(this).focus();
+                register =false;
                 return false;
             }
         })
+        if(!register){
+            return false;
+        }
+        $(".subitemlist").each(function(){
+            if($(this).val() == ""){
+                alert("부가항목 매입처를 선택하시기 바랍니다.");
+                $(this).focus();
+                register =false;
+                return false;
+            }
+        })
+        if(!register){
+            return false;
+        }
+
         var datas = $("#listForm").serialize();
         // console.log(datas);
         // return false;
@@ -144,36 +161,7 @@ $(function(){
     $("body").on("click",".btn-modify",function(){
         var pi_seq = $(this).data("seq");
         if($(this).parent().children("td").eq(1).children("input").length > 0){
-            // var query = {};
-            // query.pi_seq = pi_seq;
-            // query.pi_name = $(this).parent().children("td").eq(1).children("input").val();
-            // var sub = $(this).parent().children("td").eq(2).children("div");
-            // query.sub = [];
-            // sub.each(function(){
-            //     var pis_c_seq = $(this).parent().parent().children("td").eq(3).children("div").children("div").children("select").val();
 
-            //     var subitem = {
-            //         pis_name : $(this).children("input").val(),
-            //         pis_c_seq : pis_c_seq,
-            //         pis_seq : $(this).data("pisseq")
-            //     }
-            //     query.sub.push(subitem);
-            // })
-
-            // $.ajax({
-            //     url : "/api/productItemUpdate",
-            //     type : 'POST',
-            //     dataType : 'JSON',
-            //     data : query,
-            //     success:function(response){
-            //         if(response.result == true){
-            //             alert("수정 되었습니다.");
-            //             document.location.reload();
-            //         }
-            //     },error: function(error){
-            //         console.log(error);
-            //     }
-            // });
             var editYn = false;
             var subitem = $(this).parent().children("td").eq(2).children("div");
             var subclient = $(this).parent().children("td").eq(3).children("div");
@@ -183,13 +171,16 @@ $(function(){
             }
 
             subitem.each(function(){
+                console.log($(this).data("name")+"::"+$(this).children("input").first().val());
                 if($(this).data("name") != $(this).children("input").first().val()){
                     editYn = true;
                 }
             });
 
             subclient.each(function(){
-                if($(this).data("cseq") != $(this).children("div").children("select").first().val()){
+                // console.log($(this).children("select"))
+                // console.log($(this).data("cseq")+"::"+$(this).children("div").children("select").first().val());
+                if($(this).data("cseq") != $(this).children("select").first().val()){
                     editYn = true;
                 }
             });
@@ -211,7 +202,7 @@ $(function(){
             $(this).parent().children("td").eq(1).html("<input type='text' name='m_pi_name[]' value='"+$(this).parent().children("td").eq(1).data("name")+"' style='width:90%'><input type='hidden' name='m_pi_seq[]' value='"+pi_seq+"'>");
             var subitem = $(this).parent().children("td").eq(2).children("div");
             subitem.each(function(){
-                $(this).html("<input type='text' name='m_pis_name[]' value='"+$(this).data("name")+"' style='width:90%'><input type='hidden' name='m_pis_seq[]' value='"+$(this).data("pisseq")+"' style='width:90%'>");
+                $(this).html("<input type='text' name='m_pis_name[]' value='"+$(this).data("name")+"' style='width:90%' class='subItemName'><input type='hidden' name='m_pis_seq[]' value='"+$(this).data("pisseq")+"' style='width:90%'>");
             });
             var that = $(this);
             $.ajax({
@@ -235,7 +226,7 @@ $(function(){
                             }
                         }
                         html += '</select>';
-
+                        html += '<i class="fas fa-trash subpisdel" data-seq="'+$(this).data("pisseq")+'"></i>';
                         $(this).html(html);
                         $(".select2").select2();
                     });
@@ -244,13 +235,35 @@ $(function(){
             });
 
         }
+    });
+
+    $("body").on("click",".subpisdel",function(){
+        if(confirm("정말 삭제하시겠습니까?")){
+            var pis_seq = $(this).data("seq");
+            var url = "/api/productItemSubDelete/"+pis_seq;
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                success:function(response){
+                    // console.log(response);
+                    if(response.result == true){
+                        alert("삭제 되었습니다.");
+                        getList();
+                    }else{
+                        alert("오류가 발생했습니다.");
+                        return false;
+                    }
+                }
+            });
+        }
     })
 })
 
 function getList(){
-    var start = $("#start").val();
-    var end = 10;
-    var url = "/api/productItemList/"+$("#pc_seq").val()+"/"+start+"/"+end;
+    // var start = $("#start").val();
+    // var end = 10;
+    var url = "/api/productItemList/"+$("#pc_seq").val();
     // console.log(url);
     $.ajax({
         url : url,
@@ -258,7 +271,12 @@ function getList(){
         dataType : 'JSON',
         success:function(response){
 
-            $("#tbody-list").html(response.list);
+            $("#tbody_list").html(response.list);
+
+            $("#tbody_list").sortable({
+                appendTo: "parent",
+                draggedClass : "dragged"
+            });
         }
     });
 }

@@ -277,7 +277,7 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input" style="width:100%">
-                <textarea name="" style="width:98%;height:150px"></textarea>
+                <textarea name="pm_memo" style="width:98%;height:150px"><?=$info["pm_memo"]?></textarea>
             </div>
         </div>
         <div class="modal-button">

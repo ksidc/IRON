@@ -88,7 +88,7 @@
                 </div>
                 <div class="modal-field-input">
                     <div class="label"><div>결제 주기</div></div>
-                    <div class="input"><input type="text" name="sva_payment_period" id="sva_payment_period" style="width:70px" value="<?=$info["sva_payment_period"]?>"> 개월</div>
+                    <div class="input"><input type="text" name="svp_payment_period" id="svp_payment_period" style="width:70px" value="<?=$info["svp_payment_period"]?>"> 개월</div>
                 </div>
             </div>
             <div class="modal-field">
@@ -349,10 +349,7 @@
             <div class="modal-field-input">
                 <div class="label"><div>매입 단위</div></div>
                 <div class="input">
-                    <select name="sva_input_unit" id="sva_input_unit" class="select2" style="width:120px">
-                        <option value="0" <?=($info["sva_input_unit"] == "0" ? "selected":"")?>>구매</option>
-                        <option value="1" <?=($info["sva_input_unit"] == "1" ? "selected":"")?>>월</option>
-                    </select>
+                    <input type="text" name="sva_input_unit" id="sva_input_unit" value="<?=$info["sva_input_unit"]?>" style="width:50%"> 개월
                 </div>
             </div>
         </div>

@@ -53,6 +53,7 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
 <link rel='stylesheet' href="/assets/css/uniform.default.css">
 <script src="/assets/js/jquery.uniform.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>
 <script src="/assets/js/product.js?date=<?=time()?>"></script>
 <div style="background:#fff;width:100%;overflow-x:hidden">
     <div class="popup_title" style="padding:10px">
@@ -65,7 +66,7 @@
 
     </div>
     <div style="padding:5px">
-        <form id="registerForm" method="post" action="/api/productUpdate/<?=$info["pr_seq"]?>">
+        <form id="registerForm" method="post" action="/api/productAdd">
             <input type="hidden" name="pr_seq" id="pr_seq" value="<?=$info["pr_seq"]?>">
             <input type="hidden" name="pr_pi_seq" id="pr_pi_seq" value="<?=$info["pr_pi_seq"]?>">
             <input type="hidden" name="pr_c_seq" id="pr_c_seq" value="<?=$info["pr_c_seq"]?>">
@@ -81,11 +82,11 @@
             <div class="modal-field">
                 <div class="modal-field-input">
                     <div class="label padd"><div>제품군</div></div>
-                    <div class="input padd"><input type="text" class="width-button" name="pr_pi_seq_str" id="pr_pi_seq_str" value="<?=$info["pi_name"]?>"><button class="btn btn-brown btn-small btn-item-search" type="button" >검색</button></div>
+                    <div class="input padd"><input type="text" class="width-button" name="pr_pi_seq_str" id="pr_pi_seq_str" value="<?=$info["pi_name"]?>" readonly><button class="btn btn-brown btn-small btn-item-search" type="button" >검색</button></div>
                 </div>
                 <div class="modal-field-input">
                     <div class="label padd"><div>기본 매입처</div></div>
-                    <div class="input padd"><input type="text" class="width-button" name="pr_c_seq_str" id="pr_c_seq_str" value="<?=$info["c_name"]?>"><button class="btn btn-brown btn-small btn-client-search" type="button" >검색</button></div>
+                    <div class="input padd"><input type="text" class="width-button" name="pr_c_seq_str" id="pr_c_seq_str" value="<?=$info["c_name"]?>" readonly><button class="btn btn-brown btn-small btn-client-search" type="button" >검색</button></div>
                 </div>
             </div>
               <div class="modal-field">
@@ -117,18 +118,30 @@
                     VAT 별도
                 </div>
             </div>
-            <div class="modal-title" style="height:318px;background:#fff">
+            <div class="modal-title" style="background:#fff">
                 <table class="table">
                 <thead>
                     <tr>
-                        <th>구분</th>
-                        <th>분류 명</th>
-                        <th>기본 매입가 <i class="fas fa-info-circle" title="등록 상품에 대한 기본 매입가이며 서비스 등록 시 기본으로 불러옵니다.<br>서비스 등록 시 서비스 건 별로 수정할 수 있습니다." rel="tooltip"></i></th>
-                        <th>매입 단위 <i class="fas fa-info-circle" title="등록 상품에 대한 기본 매입단위이며 서비스 등록 시 기본으로 불러옵니다.<br>서비스 등록 시 서비스 건 별로 수정할 수 있습니다." rel="tooltip"></i></th>
-                        <th>일회성 요금 <i class="fas fa-info-circle" title="등록 상품에 대한 분류별 초기 청구 요금(구매, 설치비 등)입니다.<br>서비스 등록 시 서비스 건 별로 수정할 수 있습니다." rel="tooltip"></i></th>
-                        <th>월 요금 <i class="fas fa-info-circle" title="등록 상품에 대한 분류별 월 청구 요금입니다.<br>서비스 등록 시 서비스 건 별로 수정할 수 있습니다." rel="tooltip"></i></th>
-                        <th>사용 구분 <i class="fas fa-info-circle" title="분류 등록으로 등록된 소분류 항목에 대해서<br>등록 상품에 적용할 지 여부를 선택할 수 있습니다." rel="tooltip"></i></th>
-                        <th>비고 </th>
+                        <th colspan=2>분류정보</th>
+                        <th colspan=2 style="border-left:1px solid #ddd">매입정보</th>
+                        <th colspan=4 style="border-left:1px solid #ddd">일회성 요금 정보</th>
+                        <th colspan=4 style="border-left:1px solid #ddd">월 요금 정보</th>
+                        <th rowspan=2 style="border-left:1px solid #ddd">사용 구분 <i class="fas fa-info-circle" title="분류 등록으로 등록된 소분류 항목에 대해서<br>등록 상품에 적용할 지 여부를 선택할 수 있습니다." rel="tooltip"></i></th>
+                        <th rowspan=2 style="border-left:1px solid #ddd">비고 </th>
+                    </tr>
+                    <tr>
+                        <th style="border-top:1px solid #ddd">구분</th>
+                        <th style="border-top:1px solid #ddd;">분류 명</th>
+                        <th style="border-top:1px solid #ddd;border-left:1px solid #ddd">기본 매입가 <i class="fas fa-info-circle" title="등록 상품에 대한 기본 매입가이며 서비스 등록 시 기본으로 불러옵니다.<br>서비스 등록 시 서비스 건 별로 수정할 수 있습니다." rel="tooltip"></i></th>
+                        <th style="border-top:1px solid #ddd">단위 <i class="fas fa-info-circle" title="등록 상품에 대한 기본 매입단위이며 서비스 등록 시 기본으로 불러옵니다.<br>서비스 등록 시 서비스 건 별로 수정할 수 있습니다." rel="tooltip"></i></th>
+                        <th style="border-top:1px solid #ddd;border-left:1px solid #ddd">일회성 요금 <i class="fas fa-info-circle" title="등록 상품에 대한 분류별 초기 청구 요금(구매, 설치비 등)입니다.<br>서비스 등록 시 서비스 건 별로 수정할 수 있습니다." rel="tooltip"></i></th>
+                        <th style="border-top:1px solid #ddd">할인 방식 </th>
+                        <th style="border-top:1px solid #ddd">할인 금액</th>
+                        <th style="border-top:1px solid #ddd">할인 후 일회성 </th>
+                        <th style="border-top:1px solid #ddd;border-left:1px solid #ddd">월 요금 <i class="fas fa-info-circle" title="등록 상품에 대한 분류별 월 청구 요금입니다.<br>서비스 등록 시 서비스 건 별로 수정할 수 있습니다." rel="tooltip"></i></th>
+                        <th style="border-top:1px solid #ddd">할인 방식</th>
+                        <th style="border-top:1px solid #ddd">할인 금액</th>
+                        <th style="border-top:1px solid #ddd">할인 후 월 요금</th>
                     </tr>
                 </thead>
                 <tbody>

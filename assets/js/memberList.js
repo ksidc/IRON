@@ -149,6 +149,7 @@ $(function(){
                 }
                 $(".md-id-str").html(response.mb_id);
                 $("#mb_address").val(response.mb_address);
+                $("#b_mb_address").val(response.mb_address);
                 $("#mb_auto_payment").val(response.mb_auto_payment).trigger("change");
                 $("#mb_bank").val(response.mb_bank);
                 $("#mb_bank_input_number").val(response.mb_bank_input_number);
@@ -156,29 +157,49 @@ $(function(){
                 $("#mb_bank_name_relationship").val(response.mb_bank_name_relationship);
                 $("#mb_bank_number").val(response.mb_bank_number);
                 $("#mb_business_conditions").val(response.mb_business_conditions);
+                $("#b_mb_business_conditions").val(response.mb_business_conditions);
                 $("#mb_business_type").val(response.mb_business_type);
+                $("#b_mb_business_type").val(response.mb_business_type);
                 $("#mb_ceo").val(response.mb_ceo);
+                $("#b_mb_ceo").val(response.mb_ceo);
                 $("#mb_contract_email").val(response.mb_contract_email);
+                $("#b_mb_contract_email").val(response.mb_contract_email);
                 $("#mb_contract_name").val(response.mb_contract_name);
+                $("#b_mb_contract_name").val(response.mb_contract_name);
                 $("#mb_contract_phone").val(response.mb_contract_phone);
+                $("#b_mb_contract_phone").val(response.mb_contract_phone);
                 $("#mb_contract_tel").val(response.mb_contract_tel);
+                $("#b_mb_contract_tel").val(response.mb_contract_tel);
                 $("#mb_detail_address").val(response.mb_detail_address);
+                $("#b_mb_detail_address").val(response.mb_detail_address);
                 $("#mb_email").val(response.mb_email);
+                $("#b_mb_email").val(response.mb_email);
                 $("#mb_fax").val(response.mb_fax);
+                $("#b_mb_fax").val(response.mb_fax);
                 $("#mb_name").val(response.mb_name);
+                $("#b_mb_name").val(response.mb_name);
                 $("#mb_number").val(response.mb_number);
+                $("#b_mb_number").val(response.mb_number);
                 $("#mb_payment_day").val(response.mb_payment_day);
                 $("#mb_payment_email").val(response.mb_payment_email);
+                $("#b_mb_payment_email").val(response.mb_payment_email);
                 $("#mb_payment_name").val(response.mb_payment_name);
+                $("#b_mb_payment_name").val(response.mb_payment_name);
                 $("#mb_payment_phone").val(response.mb_payment_phone);
+                $("#b_mb_payment_phone").val(response.mb_payment_phone);
                 $("#mb_payment_publish").val(response.mb_payment_publish).trigger("change");
                 $("#mb_payment_publish_type").val(response.mb_payment_publish_type).trigger("change");
                 $("#mb_payment_tel").val(response.mb_payment_tel);
+                $("#b_mb_payment_tel").val(response.mb_payment_tel);
                 $("#mb_payment_type").val(response.mb_payment_type).trigger("change");
                 $("#mb_phone").val(response.mb_phone);
+                $("#b_mb_phone").val(response.mb_phone);
                 $("#mb_tel").val(response.mb_tel);
+                $("#b_mb_tel").val(response.mb_tel);
                 $("#mb_type").val(response.mb_type);
+                $("#b_mb_type").val(response.mb_type);
                 $("#mb_zipcode").val(response.mb_zipcode);
+                $("#b_mb_zipcode").val(response.mb_zipcode);
                 $("#mb_seq").val(response.mb_seq);
 
                 $('#dialog').dialog({

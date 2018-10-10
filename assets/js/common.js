@@ -146,7 +146,7 @@ $(function(){
                 console.log(response);
                 var html = "";
                 for(var i =0 ; i < response.length;i++){
-                    html = '<tr>\
+                    html += '<tr>\
                     <td class="c_click" data-seq="'+response[i].c_seq+'" data-name="'+response[i].c_name+'" style="cursor:pointer;text-decoration:underline">'+response[i].c_id+'</td>\
                     <td>'+response[i].c_name+'</td>\
                     </tr>;'
@@ -196,4 +196,25 @@ var typeGetList = function(){
         }
     });
     return false;
+}
+
+function onlyNumDecimalInput(obj){
+    var code = window.event.keyCode;
+    // console.log(code);
+    if ((code >= 48 && code <= 57) || (code >= 96 && code <= 105) || code == 190 || code == 8 || code == 9 || code == 13 || code == 46 || code == 44 || code == 45 || code == 35 || code == 40 || code == 34 || code == 37 || code == 12 || code == 39 || code == 36 || code == 38 || code == 33){
+        // console.log(code);
+        window.event.returnValue = true;
+        return;
+    }
+    // alert(code);
+    window.event.returnValue = false;
+}
+
+function fn_press_han(obj){
+    // console.log(event.keyCode);
+    if(event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 32 || event.keyCode == 190) return;
+    obj.value = obj.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');
+    obj.value = obj.value.replace(/\D/g, '')
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    // console.log(obj.value);
 }

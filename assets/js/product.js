@@ -1,18 +1,40 @@
 $(function(){
     $(".btn-product-save").click(function(){
+        if($("#pr_pi_seq").val() == ""){
+            alert("제품군을 선택해 주세요");
+            return false;
+        }
+
+        if($("#pr_c_seq").val() == ""){
+            alert("기본매입처를 선택해 주세요");
+            return false;
+        }
+        if($("#pr_name").val() == ""){
+            alert("상품명을 입력해 주세요");
+            return false;
+        }
+        $(".prs_div_check").each(function(){
+            if($(this).prop("checked")){
+                $(".prs_div_"+$(this).data("in")).val($(this).val());
+            }
+        })
         if($("#pr_seq").val() != ""){
             var url = "/api/productUpdate/"+$("#pr_seq").val();
         }else{
             var url = "/api/productAdd";
         }
         $(".prs_use_type_str").each(function(i){
+
             if($(this).prop("checked") == true){
                 $(".prs_use_type").eq(i).val("1");
             }else{
                 $(".prs_use_type").eq(i).val("0");
             }
         })
+        // $("#registerForm").submit();
         var datas = $("#registerForm").serialize();
+        // console.log(datas);
+        // return false;
         $.ajax({
             url : url,
             type : 'POST',
@@ -25,7 +47,7 @@ $(function(){
                 }else{
                     alert("등록되었습니다.");
                 }
-                opener.document.location.reload();
+                opener.getList();
                 self.close();
                 // console.log(response);
             },
@@ -74,8 +96,8 @@ $(function(){
             success:function(response){
                 var html = "";
                 for(var i =0 ; i < response.length;i++){
-                    html = '<tr>\
-                    <td class="pi_click" data-seq="'+response[i].pi_seq+'" data-name="'+response[i].pi_name+'">'+response[i].pi_name+'</td>\
+                    html += '<tr>\
+                    <td class="pi_click" data-seq="'+response[i].pi_seq+'" data-name="'+response[i].pi_name+'" style="cursor:pointer;text-decoration:underline;text-align:left;padding-left:10px">'+response[i].pi_name+'</td>\
                     </tr>;'
                 };
                 $("#modalSearchItem").html(html);
@@ -85,6 +107,7 @@ $(function(){
     })
 
     $(".btn-client-search").click(function(){
+        $(".btn-search-client").trigger("click");
         $('#dialogClientSearch').dialog({
             title: '',
             modal: true,
@@ -167,25 +190,86 @@ $(function(){
             }
         }
     });
+
+    $(".prs_one_type").click(function(){
+        if($(this).val() == "1"){
+            $(this).parent().next().children("input").attr("readonly",true);
+            var price = $(this).parent().prev().children("input").val().replace(/,/gi, "");
+            var percent = $(this).next().val();
+            var dis_price = price*(percent/100);
+            dis_price = Math.floor(dis_price/100)*100;
+
+            $(this).parent().next().children("input").val($.number(dis_price));
+            $(this).parent().next().next().children("input").val($.number(price-dis_price));
+        }else{
+            $(this).parent().next().children("input").attr("readonly",false);
+        }
+    })
+
+    $(".prs_month_type").click(function(){
+        if($(this).val() == "1"){
+            $(this).parent().next().children("input").attr("readonly",true);
+            var price = $(this).parent().prev().children("input").val().replace(/,/gi, "");
+            var percent = $(this).next().val();
+            var dis_price = price*(percent/100);
+            dis_price = Math.floor(dis_price/100)*100;
+
+            $(this).parent().next().children("input").val($.number(dis_price));
+        }else{
+            $(this).parent().next().children("input").attr("readonly",false);
+        }
+    })
+
+    $(".prs_one_percent").keyup(function(){
+        if($(this).prev().prop("checked") == true){
+            var price = $(this).parent().prev().children("input").val().replace(/,/gi, "");
+            var percent = $(this).val();
+            var dis_price = price*(percent/100);
+            dis_price = Math.floor(dis_price/100)*100;
+
+            $(this).parent().next().children("input").val($.number(dis_price));
+            $(this).parent().next().next().children("input").val($.number(price-dis_price));
+        }
+    })
+
+    $(".prs_month_percent").keyup(function(){
+        if($(this).prev().prop("checked") == true){
+            var price = $(this).parent().prev().children("input").val().replace(/,/gi, "");
+            var percent = $(this).val();
+            var dis_price = price*(percent/100);
+            dis_price = Math.floor(dis_price/100)*100;
+
+            $(this).parent().next().children("input").val($.number(dis_price));
+            $(this).parent().next().next().children("input").val($.number(price-dis_price));
+        }
+    })
+
+    $(".prs_one_dis_price").keyup(function(){
+        var price = $(this).parent().prev().prev().children("input").val().replace(/,/gi, "");
+        var dis_price = $(this).val().replace(/,/gi, "");
+
+        $(this).parent().next().children("input").val($.number(price-dis_price));
+    })
+
+    $(".prs_month_dis_price").keyup(function(){
+        var price = $(this).parent().prev().prev().children("input").val().replace(/,/gi, "");
+        var dis_price = $(this).val().replace(/,/gi, "");
+
+        $(this).parent().next().children("input").val($.number(price-dis_price));
+    })
+
+    $(".prs_one_price").keyup(function(){
+        var dis_price = $(this).parent().next().next().children("input").val().replace(/,/gi, "");
+        var price = $(this).val().replace(/,/gi, "");
+
+        $(this).parent().next().next().next().children("input").val($.number(price-dis_price));
+    })
+
+    $(".prs_month_price").keyup(function(){
+        var dis_price = $(this).parent().next().next().children("input").val().replace(/,/gi, "");
+        var price = $(this).val().replace(/,/gi, "");
+
+        $(this).parent().next().next().next().children("input").val($.number(price-dis_price));
+    })
 })
 
-function onlyNumDecimalInput(obj){
-    var code = window.event.keyCode;
-
-    if ((code >= 48 && code <= 57)  || code == 190 || code == 8 || code == 9 || code == 13 || code == 46 || code == 44){
-        // console.log(code);
-        window.event.returnValue = true;
-        return;
-    }
-    // alert(code);
-    window.event.returnValue = false;
-}
-
-function fn_press_han(obj){
-    console.log(event.keyCode);
-    if(event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46 || event.keyCode == 190 || event.keyCode == 32 || (event.keyCode >= 96 && event.keyCode <= 105) || event.keyCode == 190) return;
-    obj.value = obj.value.replace(/[\ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');
-    obj.value = obj.value.replace(/\D/g, '')
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    // console.log(obj.value);
-}

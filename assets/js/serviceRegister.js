@@ -1,4 +1,12 @@
 $(function(){
+    $("#all").click(function(){
+        // console.log($(this).is(":checked"));
+        if($(this).is(":checked")){
+            $(".listCheck").prop("checked",true);
+        }else{
+            $(".listCheck").prop("checked",false);
+        }
+    });
     getList();
     $(".btn-basic-price").click(function(){
         $.ajax({
@@ -131,6 +139,9 @@ $(function(){
                         alert("복사 완료");
                         getList();
                     }
+                },
+                error : function(error){
+                    console.log(error);
                 }
             });
         }
@@ -183,31 +194,40 @@ $(function(){
 
     $(".btn-apply").click(function(){
         var checkCount = 0;
-        var checkSeq = "";
+        var checkSeq = [];
+        var status = [];
         $(".listCheck").each(function(){
             if($(this).is(":checked")){
                 checkCount++;
-                checkSeq = $(this).val();
+                checkSeq.push($(this).val());
+                if($(this).data("status") != "0"){
+                    status.push($(this).val())
+                }
             }
         });
-        if(checkCount > 1){
-            alert("한 개의 서비스만 신청 가능합니다.");
-            return false;
-        }else if(checkCount == 0){
+        if(checkCount == 0){
             alert("서비스를 선택해 주시기 바랍니다.");
             return false;
         }
 
-        if(confirm("서비스 신청으로 등록 하시겠습니까?")){
-            var url = "/api/serviceMake/"+checkSeq;
+        // var status = $(this).data("status");
+        // console.log(status);
+        if(status.length > 0){
+            alert("이미 신청 처리가 된 서비스가 있습니다");
+            return false;
+        }
+
+        if(confirm("선택한 서비스를 신청 처리하시겠습니까?")){
+            var url = "/api/serviceMake/";
             $.ajax({
                 url : url,
                 type : 'POST',
                 dataType : 'JSON',
+                data : "sr_seq="+checkSeq.join(","),
                 success:function(response){
                     // console.log(response);
                     if(response.result){
-                        alert("신청 완료");
+                        alert("신청 처리되었습니다");
                         getList();
                     }
                 },
@@ -217,10 +237,34 @@ $(function(){
             });
         }
     })
+
+    $("body").on("click",".btn-delete",function(){
+        if(confirm("삭제하시겠습니까?")){
+            var sr_seq = $(this).data("seq");
+            var url = "/api/serviceRegisterDelete";
+
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                data : "sr_seq="+sr_seq,
+                success:function(response){
+                    if(response.result){
+                        alert("삭제되었습니다");
+                        // getMemo();
+                        document.location.href='/service/register';
+                    }else{
+                        alert("오류발생")
+                    }
+                }
+            });
+        }
+    })
 })
 
 var getList = function(){
     var start = $("#start").val();
+    // console.log(start);
     var end = 5;
     var url = "/api/serviceRegisterList/"+start+"/"+end;
     var searchForm = $("#searchForm").serialize();
@@ -242,7 +286,7 @@ var getList = function(){
                     var enddate = new Date(response.list[i].sr_contract_end);
                     var diff = Date.getFormattedDateDiff(startdate, enddate);
                     html += '<tr>\
-                                <td><input type="checkbox" class="listCheck" name="sr_seq[]" value="'+response.list[i].sr_seq+'"></td>\
+                                <td><input type="checkbox" class="listCheck" name="sr_seq[]" value="'+response.list[i].sr_seq+'" data-status="'+response.list[i].sr_status+'"></td>\
                                 <td>'+num+'</td>\
                                 <td>'+response.list[i].mb_name+'</td>\
                                 <td>'+response.list[i].eu_name+'</td>\
@@ -255,7 +299,7 @@ var getList = function(){
                                 <td>'+moment(response.list[i].sr_regdate).format("YYYY-MM-DD")+'</td>\
                                 <td>'+response.list[i].sr_account_start+'</td>\
                                 <td>'+response.list[i].sr_payment_period+'개월</td>\
-                                <td></td>\
+                                <td>'+response.list[i].sr_charger+'</td>\
                                 <td>'+(response.list[i].sr_status == 0 ? "<span class='statusEdit' style='cursor:pointer;color:#0070C0' data-seq='"+response.list[i].sr_seq+"'>등록</span>":"<span style='color:#FF0000'>신청완료</span>")+'</td>\
                                 <td class="btn-modify" data-seq="'+response.list[i].sr_seq+'"><i class="fas fa-edit"></i></td>\
                                 <td class="btn-delete" data-seq="'+response.list[i].sr_seq+'"><i class="fas fa-trash"></i></td>\
@@ -289,7 +333,7 @@ var getList = function(){
 
 Date.getFormattedDateDiff = function(date1, date2) {
   var b = moment(date1),
-      a = moment(date2),
+      a = moment(date2).add(1,"days"),
       intervals = ['months','days'],
       out = [];
 

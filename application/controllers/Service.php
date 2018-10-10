@@ -56,6 +56,14 @@ class Service extends CI_Controller {
         $this->load->view('layout/layout',$layout);
     }
 
+    public function product_view($sv_seq)
+    {
+        $data["product_category"] = $this->api_model->productCategoryList();
+        $data["info"] = $this->service_model->selectService($sv_seq);
+        $layout["content"] = $this->load->view("service/product_view", $data,true);
+        $this->load->view('layout/layout_popup',$layout);
+    }
+
     public function numberGroupView($sv_code){
         $sv_code = explode("-",$sv_code);
         $data["sv_code"] = $sv_code[0];
@@ -68,15 +76,17 @@ class Service extends CI_Controller {
         $array6 = array(); // service end
         $array7 = array(); // auto
         $array8 = array(); // auto day
+        $sv_seq = array();
         foreach($data["list"] as $row){
+            array_push($sv_seq,$row["sv_seq"]);
             array_push($array1,$row["sv_eu_seq"]);
             array_push($array2,$row["sv_ct_seq"]);
             array_push($array3,$row["sv_part"]);
             array_push($array4,$row["sv_charger"]);
             array_push($array5,$row["sv_contract_start"]);
             array_push($array6,$row["sv_contract_end"]);
-            array_push($array7,$row["sv_auto_extention"]);
-            array_push($array8,$row["sv_auto_extention_month"]);
+            array_push($array7,$row["sv_auto_extension"]);
+            array_push($array8,$row["sv_auto_extension_month"]);
         }
         $result1 = array_unique($array1);
         $result2 = array_unique($array2);
@@ -86,32 +96,38 @@ class Service extends CI_Controller {
         $result6 = array_unique($array6);
         $result7 = array_unique($array7);
         $result8 = array_unique($array8);
-        $data["same"] = true;
+        $data["same1"] = true;
+        $data["same2"] = true;
+        $data["same3"] = true;
+        $data["same4"] = true;
+        $data["same5"] = true;
+
         if(count($result1) > 1){
-            $data["same"] = false;
+            $data["same1"] = false;
         }
         if(count($result2) > 1){
-            $data["same"] = false;
+            $data["same2"] = false;
         }
         if(count($result3) > 1){
-            $data["same"] = false;
+            $data["same3"] = false;
         }
         if(count($result4) > 1){
-            $data["same"] = false;
+            $data["same3"] = false;
         }
         if(count($result5) > 1){
-            $data["same"] = false;
+            $data["same4"] = false;
         }
         if(count($result6) > 1){
-            $data["same"] = false;
+            $data["same4"] = false;
         }
         if(count($result7) > 1){
-            $data["same"] = false;
+            $data["same5"] = false;
         }else{
             if(count($result8) > 1){
-                $data["same"] = false;
+                $data["same5"] = false;
             }
         }
+        $data["sv_seq"] = implode(",",$sv_seq);
         $layout["content"] = $this->load->view("service/group_view", $data,true);
         $this->load->view('layout/layout_popup',$layout);
     }
@@ -123,7 +139,7 @@ class Service extends CI_Controller {
         // print_r($data["basic_policy"]);
 
         $last_code = explode("-",$this->api_model->serviceNextCode());
-
+        // print_r($last_code);
         $code_first = substr($last_code[0],0,2);
         $code_number = substr($last_code[0],2,6);
 
@@ -136,7 +152,7 @@ class Service extends CI_Controller {
         // }
 
         $data["code1"] = $next_first.$next_number;
-        $data["code2"] = $last_code[1];
+        $data["code2"] = "01";
 
         $layout["content"] = $this->load->view("service/make", $data,true);
         $this->load->view('layout/layout_popup',$layout);
@@ -157,9 +173,14 @@ class Service extends CI_Controller {
     public function allCategory(){
         $category = $this->api_model->productCategoryList();
         $html = "";
-        foreach($category as $row){
-            $html .= '<div class="searchStep1" data-tag="'.$row["pc_name"].'" data-step="1">
-                        <div style="width:100%"><input type="checkbox" name="pc_seq[]" value="'.$row["pc_seq"].'" class="pc_seq">'.$row["pc_name"].'</div>';
+        foreach($category as $key => $row){
+            if($key%2 == 0){
+                $background = "style='background:#f2f2f2'";
+            }else{
+                $background = "";
+            }
+            $html .= '<div class="searchStep1" data-tag="'.$row["pc_name"].'" data-step="1" '.$background.'>
+                        <div style="width:100%;font-weight:900"><input type="checkbox" name="pc_seq[]" value="'.$row["pc_seq"].'" class="pc_seq">'.$row["pc_name"].'</div>';
             $productItem = $this->api_model->fetchProductSearch($row["pc_seq"]);
             foreach($productItem as $pi_row){
                 $html .= '<div class="searchStep2" data-tag="'.$row["pc_name"].'|'.$pi_row["pi_name"].'" data-step="2">
@@ -172,8 +193,8 @@ class Service extends CI_Controller {
                     $productDivSub = $this->api_model->fetchProductDivSub($pd_row["pd_seq"]);
 
                     foreach($productDivSub as $ps_row){
-                        $html .= '<div class="searchStep4" data-tag="'.$row["pc_name"].'|'.$pi_row["pi_name"].'|'.$pd_row["pd_name"].'|'.$ps_row["ps_name"].'" data-step="4">
-                                    <input type="checkbox" name="ps_seq[]" value="'.$ps_row["ps_seq"].'" class="pd_seq_'.$pi_row["pi_seq"].'"> '.$ps_row["ps_name"].'
+                        $html .= '<div class="searchStep4" data-tag="'.$row["pc_name"].'|'.$pi_row["pi_name"].'|'.$pd_row["pd_name"].'|'.$ps_row["ps_name"].'" data-parent1="'.$row["pc_name"].'" data-parent2="'.$pi_row["pi_name"].'" data-parent3="'.$pd_row["pd_name"].'" data-parent4="'.$ps_row["ps_name"].'" data-step="4">
+                                    <input type="checkbox" name="ps_seq[]" value="'.$ps_row["ps_seq"].'" class="pd_seq_'.$pi_row["pi_seq"].' ps_seq"> '.$ps_row["ps_name"].'
                                 </div>';
                     }
                     $html .= '</div>';
@@ -184,6 +205,53 @@ class Service extends CI_Controller {
 
         }
 
+        echo $html;
+    }
+
+    public function allProduct(){
+        $category = $this->api_model->productCategoryList();
+        $html = "<table cellpadding=0 cellspacing=0 border=0 style='width:100%;'>";
+        foreach($category as $key => $row){
+            $html .= "<tr>";
+                $html .= "<td style='width:145px;height:30px;border-bottom:1px solid #ddd'>&nbsp;&nbsp;&nbsp;&nbsp;".$row["pc_name"]."</td>";
+                if(count($category) > ($key)){
+                    $addborder= ";border-bottom:1px solid #ddd";
+                }else{
+                    $addborder= "";
+                }
+                $html .= "<td style='border-left:1px solid #ddd".$addborder."'>";
+                $productItem = $this->api_model->fetchProductSearch($row["pc_seq"]);
+                    $html .= "<table cellpadding=0 cellspacing=0 border=0 style='width:100%'>";
+                    foreach($productItem as $key2 => $pi_row){
+                        if(count($productItem) > ($key2+1)){
+                            $addborder2= ";border-bottom:1px solid #ddd";
+                        }else{
+                            $addborder2= "";
+                        }
+                        $html .= "<tr>";
+                            $html .= "<td style='width:197px".$addborder2.";height:30px;'>&nbsp;&nbsp;&nbsp;&nbsp;".$pi_row["pi_name"]."</td>";
+                            $html .= "<td style='".$addborder2."'>";
+                                $html .= "<table cellpadding=0 cellspacing=0 border=0 style='width:100%'>";
+                                $product = $this->api_model->productSearchItem($pi_row["pi_seq"]);
+                                foreach($product as $key3 => $pr_row){
+                                    if(count($product) > ($key3+1)){
+                                        $addborder3= ";border-bottom:1px solid #ddd";
+                                    }else{
+                                        $addborder3= "";
+                                    }
+                                    $html .= "<tr>";
+                                        $html .= "<td style='width:250px;height:30px".$addborder3.";border-left:1px solid #ddd'>&nbsp;&nbsp;&nbsp;&nbsp;<a href='javascript:void(0)' class='all_pr_name' data-pcseq='".$row["pc_seq"]."' data-piseq='".$pi_row["pi_seq"]."' data-prseq='".$pr_row["pr_seq"]."' style='text-decoration:underline'>".$pr_row["pr_name"]."</a></td>";
+                                    $html .= "</tr>";
+                                }
+                                $html .= "</table>";
+                            $html .= "</td>";
+                        $html .= "</tr>";
+                    }
+                    $html .= "</table>";
+                $html .= "</td>";
+            $html .= "</tr>";
+        }
+        $html .= "</table>";
         echo $html;
     }
 }

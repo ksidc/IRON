@@ -843,3 +843,7 @@ nav ul li.active {
 .modal-field-input.full > .input.input2 {
     width:68%;
 }
+
+.right {
+    text-align:right;
+}

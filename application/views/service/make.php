@@ -1,3 +1,51 @@
+<style>
+  .ui-tooltip, .arrow:after {
+    background: black;
+
+  }
+  .ui-tooltip {
+    padding: 10px 20px;
+    color: white;
+    border-radius: 2px;
+    font-size:11px;
+    text-transform: uppercase;
+    box-shadow: 0 0 0px black;
+    width:auto;
+    background-color:rgba(0,0,0,0.8);
+  }
+  .arrow {
+    width: 60px;
+    height: 16px;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin-left: -28px;
+    bottom: -16px;
+  }
+  .arrow.top {
+    top: -16px;
+    bottom: auto;
+  }
+  .arrow.left {
+    left: 20%;
+  }
+  .arrow:after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: -20px;
+    width: 25px;
+    height: 25px;
+    box-shadow: 6px 5px 9px -9px black;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+  .arrow.top:after {
+    bottom: -20px;
+    top: auto;
+  }
+  </style>
 <script src="//code.jquery.com/jquery-migrate-1.2.1.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
@@ -24,6 +72,7 @@
             <input type="hidden" name="sr_account_format" id="sr_account_format" value="<?=$basic_policy["sp_pay_format"]?>">
             <input type="hidden" name="sr_account_format_policy" id="sr_account_format_policy" value="<?=$basic_policy["sp_pay_format_policy"]?>">
             <input type="hidden" name="sr_c_seq" id="sr_c_seq">
+            
             <input type="hidden" name="dupleNumberYn" id="dupleNumberYn" value="N">
             <div class="modal-title">
                 <div class="modal-title-text">신청 회원 정보</div>
@@ -129,7 +178,7 @@
                     <div class="modal-field-input">
                         <div class="label"><div>결제 주기(*)</div></div>
                         <div class="input">
-                            <input type="text" name="sr_payment_period" id="sr_payment_period" style="width:70px" class="price_cal price_cal3"> 개월
+                            <input type="text" name="sr_payment_period" id="sr_payment_period" style="width:70px" class="price_cal price_cal3" value=1> 개월
                         </div>
                     </div>
                 </div>
@@ -241,8 +290,8 @@
                 <input type="hidden" name="sp_first_month_end" id="sp_first_month_end">
             </div>
             <div class="modal-title">
-                <div class="modal-title-text" style="display:inline-block">기본 서비스 정보 </div>
-
+                <div class="modal-title-text" style="width:45%;float:left">기본 서비스 정보 </div>
+                <div style="width:45%;float:right;text-align:right;padding:5px 5px 0px 0px"><button class="btn btn-brown btn-small" type="button" onclick='getAllProduct();$( "#dialogAllProduct" ).dialog("open");$("#dialogAllProduct").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>전체 상품 카테고리 보기</button></div>
             </div>
             <div class="modal-title" style="background:#ddd">
                 <div class="modal-title-text" style="display:inline-block;background:#ddd;font-size:12px;font-weight:normal">서비스 정보</div>
@@ -250,7 +299,7 @@
             <div class="modal-field" style="padding-bottom:0px;padding-top:5px;text-align:right">
                 <div style="width:100%">
                     <ul style="text-align:right;padding-right:2px">
-                        <li class="dib">서비스 종류(*) <i class="fas fa-info-circle"></i></li>
+                        <li class="dib">서비스 종류(*) <i class="fas fa-info-circle" title="상품 등록 > 최상위 탭으로 분류된 서비스" rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 10px;text-align:left">
 
                                 <select id="sr_pc_seq" name="sr_pc_seq" class="select2" style="width:162px">
@@ -261,7 +310,7 @@
                                 </select>
 
                         </li>
-                        <li class="dib">제품군(*) <i class="fas fa-info-circle"></i></li>
+                        <li class="dib">제품군(*) <i class="fas fa-info-circle" title="서비스로 등록할 상품의 제조사(IDC 제외)" rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 10px;text-align:left">
 
                                 <select id="sr_pi_seq" name="sr_pi_seq" class="select2" style="width:162px">
@@ -269,7 +318,7 @@
                                 </select>
 
                         </li>
-                        <li class="dib">상품명(*) <i class="fas fa-info-circle"></i></li>
+                        <li class="dib">상품명(*) <i class="fas fa-info-circle" title="선택한 제품군 내에 등록된 상품" rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 0px 0px 10px;text-align:left">
 
                                 <select id="sr_pr_seq" name="sr_pr_seq" class="select2" style="width:262px">
@@ -279,7 +328,7 @@
                         </li>
                     </ul>
                     <ul style="text-align:right;padding-right:2px;padding-top:5px">
-                        <li class="dib">대분류(*) <i class="fas fa-info-circle"></i></li>
+                        <li class="dib">대분류(*) <i class="fas fa-info-circle" title="선택한 상품에 등록된 대분류" rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 8px;text-align:left">
 
                                 <select id="sr_pd_seq" name="sr_pd_seq" class="select2" style="width:162px">
@@ -287,7 +336,7 @@
                                 </select>
 
                         </li>
-                        <li class="dib">소분류(*) <i class="fas fa-info-circle"></i></li>
+                        <li class="dib">소분류(*) <i class="fas fa-info-circle" title="상품 > 대분류에 등록된 소분류" rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 12px;text-align:left">
 
                                 <select id="sr_ps_seq" name="sr_ps_seq" class="select2" style="width:162px">
@@ -295,13 +344,13 @@
                                 </select>
 
                         </li>
-                        <li class="dib">청구명(*) <i class="fas fa-info-circle"></i></li>
+                        <li class="dib">청구명(*) <i class="fas fa-info-circle" title="이메일 요금 청구서 상에 표시할 청구명을 입력하세요." rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 0px 0px 10px">
                             <input type="text" style="width:246px" name="sr_claim_name" id="sr_claim_name">
                         </li>
                     </ul>
                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px">
-                        <li class="dib">임대 여부 <i class="fas fa-info-circle"></i></li>
+                        <li class="dib">임대 여부 <i class="fas fa-info-circle" title="임대 상품일 경우 Y로 선택하세요." rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 10px;text-align:left">
 
                                 <select id="sr_rental" name="sr_rental" class="select2" style="width:162px">
@@ -311,7 +360,7 @@
 
                         </li>
 
-                        <li class="dib" style="padding-left:217px">계산서 품목명(*) <i class="fas fa-info-circle"></i></li>
+                        <li class="dib" style="padding-left:217px">계산서 품목명(*) <i class="fas fa-info-circle" title="세금계산서 상에 표시할 품목명을 입력하세요." rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 0px 0px 10px">
                             <input type="text" style="width:246px" name="sr_bill_name" id="sr_bill_name">
                         </li>
@@ -326,36 +375,36 @@
                 <div style="width:100%">
 
                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px">
-                        <li class="dib">일회성 요금(*) <i class="fas fa-info-circle"></i></li>
+                        <li class="dib">일회성 요금(*) <i class="fas fa-info-circle" title="선택한 상품에 대한 초기 1회 청구 금액을 입력하세요." rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 10px">
-                            <input type="text" style="width:146px" name="sr_once_price" id="sr_once_price" class="right"> 원
+                            <input type="text" style="width:146px" name="sr_once_price" id="sr_once_price" class="right" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> 원
                         </li>
 
-                        <li class="dib" style="padding-left:235px">월 요금(*) <i class="fas fa-info-circle"></i></li>
+                        <li class="dib" style="padding-left:235px">월 요금(*) <i class="fas fa-info-circle" title="선택한 상품에 대한 월 단위 청구 금액을 입력하세요." rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 40px 0px 10px">
-                            <input type="text" style="width:180px" name="sr_month_price" id="sr_month_price" class="price_cal right"><span>원</span>
+                            <input type="text" style="width:180px" name="sr_month_price" id="sr_month_price" class="price_cal right" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"><span>원</span>
                         </li>
                     </ul>
                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px;display:none" class="rental_yn">
-                        <li class="dib">임대 형태(*) <i class="fas fa-info-circle"></i></li>
+                        <li class="dib">임대 형태(*) <i class="fas fa-info-circle" title="소유권 이전형 임대이면, 소유권 이전에 체크하고 소유권 이전이 되는 개월 수를 입력하세요." rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 10px">
-                            <input type="radio" name="sr_rental_type" value="1" checked> 영구임대 <input type="radio" name="sr_rental_type" value="2"> 소유권 이전 &nbsp;&nbsp;&nbsp;&nbsp; <input type="text" style="width:30px" name="sr_rental_date" id="sr_rental_date"> 개월
+                            <input type="radio" name="sr_rental_type" value="1" checked> 영구임대 <input type="radio" name="sr_rental_type" value="2"> 소유권 이전 &nbsp;&nbsp;&nbsp;&nbsp; <input type="text" style="width:30px;opacity:0" name="sr_rental_date" id="sr_rental_date" class="rentaltype2"> <span class="rentaltype2" style=";opacity:0">개월</span>
                         </li>
 
-                        <li class="dib" style="padding-left:96px">소유권 이전 후 월 요금(*) <i class="fas fa-info-circle"></i></li>
-                        <li class="dib" style="padding:0px 40px 0px 10px">
-                            <input type="text" style="width:180px" name="sr_after_price" id="sr_after_price" class="right"><span id="sr_after_price_str">원/월</span>
+                        <li class="dib rentaltype2" style="padding-left:96px;opacity:0">소유권 이전 후 월 요금(*) <i class="fas fa-info-circle" title="소유권 이전이 완료된 후 변경할 월 단위 청구 금액을 입력하세요." rel="tooltip"></i></li>
+                        <li class="dib rentaltype2" style="padding:0px 40px 0px 10px;opacity:0">
+                            <input type="text" style="width:180px" name="sr_after_price" id="sr_after_price" class="right" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"><span id="sr_after_price_str" >원/월</span>
                         </li>
                     </ul>
                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px">
-                        <li class="dib">상품 매입처 <i class="fas fa-info-circle"></i></li>
+                        <li class="dib">상품 매입처 <i class="fas fa-info-circle" title="상품 선택 시 등록된 매입처를 자동으로 불러옵니다. (수정 가능)<br>재고 사용이면 '재고' 선택, 나중에 입력하려면 공란으로 두세요." rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 10px">
                             <input type="text" style="width:146px" name="sr_c_seq_str" id="sr_c_seq_str" readonly><button class="btn btn-brown" type="button" onclick='$("#searchSeq").val("");$( "#dialogClientSearch" ).dialog("open");$("#dialogClientSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
                         </li>
 
-                        <li class="dib" style="padding-left:194px">상품 매입가 <i class="fas fa-info-circle"></i></li>
+                        <li class="dib" style="padding-left:194px">상품 매입가 <i class="fas fa-info-circle" title="상품 선택 시 등록된 매입가를 자동으로 불러옵니다. (수정 가능)<br>재고 사용이면 '0' 입력, 나중에 입력하려면 공란으로 두세요." rel="tooltip"></i></li>
                         <li class="dib" style="padding:0px 40px 0px 10px">
-                            <input type="text" style="width:180px" name="sr_input_price" id="sr_input_price" class="right"><span id="sr_input_price_text">원<span style='color:transparent'>/월</span></span>
+                            <input type="text" style="width:180px" name="sr_input_price" id="sr_input_price" class="right" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"><span id="sr_input_price_text">원<span style='color:transparent'>/월</span></span>
                         </li>
                     </ul>
                 </div>
@@ -392,7 +441,7 @@
                         <div class="price-label"><div style="padding-left:10px">일회성 요금 (신청 시 1회 청구)</div></div>
                         <ul style="list-style:none;padding:0;margin:0">
                             <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:160px" name="sp_once_price" id="sp_once_price" class="price_cal2 right" readonly> 원</li>
-                            <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd;color:red"> - <input type="text" style="width:160px" name="sp_once_dis_price" id="sp_once_dis_price" class="price_cal2 right"> 원</li>
+                            <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd;color:red"> - <input type="text" style="width:160px" name="sp_once_dis_price" id="sp_once_dis_price" class="price_cal2 right" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> 원</li>
                             <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:160px" name="sp_once_dis_msg"></li>
                             <li style="line-height:35px;font-size:11px;padding-left:12px"><input type="checkbox" name="sp_discount_yn" id="sp_discount_yn" value="Y"> 할인적용(<span id="sr_register_discount_str">0</span>%)</li>
                             <li style="line-height:35px;background:#eee;padding-left:5px;border-bottom:1px solid #ddd;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:160px" name="sp_once_total_price" id="sp_once_total_price" class="price_cal4 right" readonly> 원</li>
@@ -401,11 +450,11 @@
                     <div style="width:32%;float:left;vertical-align:top; ">
                         <div class="price-label"><div style="padding-left:10px">월 요금(<span class="auto_payment_str">[[자동 청구일]]</span>일 청구)</div></div>
                         <ul style="list-style:none;padding:0;margin:0">
-                            <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:180px" name="sp_month_price" id="sp_month_price" class="price_cal3 right" readonly> 원 / <span class="sp_payment_str">결주</span></li>
-                            <li style="line-height:35px;padding-left:5px;color:red;border-left:1px solid #ddd"> - <input type="text" style="width:180px" name="sp_month_dis_price" id="sp_month_dis_price" value="0" class="price_cal price_cal3 right"><span style=";color:red"> 원 / 월</span></li>
+                            <li style="line-height:35px;padding-left:5px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:180px" name="sp_month_price" id="sp_month_price" class="price_cal3 right" readonly> 원 / <span class="sp_payment_str">1개월</span></li>
+                            <li style="line-height:35px;padding-left:5px;color:red;border-left:1px solid #ddd"> - <input type="text" style="width:180px" name="sp_month_dis_price" id="sp_month_dis_price" value="0" class="price_cal price_cal3 right" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"><span style=";color:red"> 원 / 월</span></li>
                             <li style="line-height:35px;padding-left:4px;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:180px" name="sp_month_dis_msg"></li>
-                            <li style="line-height:35px;padding-left:5px;color:red"> - <input type="text" style="width:180px" name="sp_discount_price" id="sp_discount_price" class="price_cal3 right" readonly> 원 / <span class="sp_payment_str" >[[결제]]</span></li>
-                            <li style="line-height:35px;background:#eee;padding-left:4px;border-bottom:1px solid #ddd;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:180px" name="sp_month_total_price" id="sp_month_total_price" class="price_cal4 right" readonly> 원 / <span class="sp_payment_str">[[결제]]</span></li>
+                            <li style="line-height:35px;padding-left:5px;color:red"> - <input type="text" style="width:180px" name="sp_discount_price" id="sp_discount_price" class="price_cal3 right" readonly> 원 / <span class="sp_payment_str" >1개월</span></li>
+                            <li style="line-height:35px;background:#eee;padding-left:4px;border-bottom:1px solid #ddd;border-left:1px solid #ddd"> &nbsp;&nbsp; <input type="text" style="width:180px" name="sp_month_total_price" id="sp_month_total_price" class="price_cal4 right" readonly> 원 / <span class="sp_payment_str">1개월</span></li>
                         </ul>
                     </div>
                     <div style="clear:both;width:100%;background-color:#EBE9E4;height:50px;border-left:1px solid #ddd">
@@ -460,7 +509,10 @@
 
                 <select name="memberSearchType" class="select2" style="width:100px">
                     <option value="mb_name" selected>회원명</option>
-
+                    <option value="mb_id">아이디</option>
+                    <option value="mb_number">사업자번호/생년월일</option>
+                    <option value="mb_phone">연락처</option>
+                    <option value="mb_email">이메일</option>
                 </select>
 
             </li>
@@ -501,7 +553,7 @@
         </ul>
     </div>
     </form>
-    <div class="modal_search_list" style="height:230px">
+    <div class="modal_search_list" style="height:230px;overflow:auto">
         <table class="table">
             <thead>
             <tr>
@@ -525,7 +577,7 @@
         </div>
         <div class="type-add-right" style="padding-left:30px">
             <div style="display:inline-block">END User</div>
-            <div style="display:inline-block"><input type="text" name="eu_name" id="eu_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-end-add" type="submit" style="padding:5.5px 7px;margin-bottom:3px">신규 등록</button></div>
+            <div style="display:inline-block"><input type="text" name="eu_name" id="add_eu_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-end-add" type="submit" style="padding:5.5px 7px;margin-bottom:3px">신규 등록</button></div>
         </div>
     </div>
     </form>
@@ -544,7 +596,7 @@
         </ul>
     </div>
     </form>
-    <div class="modal_search_list" style="height:230px">
+    <div class="modal_search_list" style="height:230px;overflow:auto">
         <table class="table" >
             <thead>
             <tr>
@@ -568,7 +620,7 @@
         </div>
         <div class="type-add-right" style="padding-left:30px">
             <div style="display:inline-block">분류명</div>
-            <div style="display:inline-block"><input type="text" name="ct_name" id="ct_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-type-add" type="submit" style="padding:5.5px 7px;margin-bottom:3px">신규 등록</button></div>
+            <div style="display:inline-block"><input type="text" name="ct_name" id="add_ct_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-type-add" type="submit" style="padding:5.5px 7px;margin-bottom:3px">신규 등록</button></div>
         </div>
     </div>
     </form>
@@ -589,7 +641,7 @@
         </ul>
     </div>
     </form>
-    <div class="modal_search_list" style="height:150px">
+    <div class="modal_search_list" style="height:280px;overflow:auto">
         <table class="table">
             <thead>
             <tr>
@@ -597,7 +649,7 @@
                 <th>매입처 명</th>
             </tr>
             </thead>
-            <tbody style="height:150px" id="modalSearchClient">
+            <tbody style="height:230px" id="modalSearchClient">
 
             </tbody>
         </table>
@@ -666,4 +718,31 @@
     </form>
 
     <div class="modal-close-btn"><button class="btn btn-black btn-small btn-price-policy">적용</button> <button class="btn btn-default btn-small" onclick="$('#dialogFirstSetting').dialog('close')">닫기</button></div>
+</div>
+<div id="dialogAllProduct" class="dialog" style="padding:5px">
+    <div class="modal_search">
+        <ul>
+            <li >
+                전체 상품 카테고리
+            </li>
+
+        </ul>
+    </div>
+    <div style="padding-top:10px;overflow:auto;height:415px">
+        <table cellpadding=0 cellspacing=0 border=0 style="width:100%;font-size:12px;">
+            <thead>
+                <tr style="background:#eee">
+                    <td style="width:148px;border-top:1px solid #ddd;height:30px">&nbsp;&nbsp;&nbsp;&nbsp;서비스 종류</td>
+                    <td style="width:200px;border-top:1px solid #ddd;height:30px;border-left:1px solid #ddd">&nbsp;&nbsp;&nbsp;&nbsp;제품군</td>
+                    <td style="width:250px;border-top:1px solid #ddd;height:30px;border-left:1px solid #ddd">&nbsp;&nbsp;&nbsp;&nbsp;상품명</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="allProduct" colspan=3 style=";border-top:1px solid #ddd"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-close-btn"><button class="btn btn-default btn-small" onclick="$('#dialogAllProduct').dialog('close')">닫기</button></div>
 </div>

@@ -41,7 +41,7 @@ class Member extends CI_Controller {
         $layout["left"] = $this->load->view("layout/left", '',true);
 
         $data["info"] = $this->api_model->selectMember($mb_seq);
-        $data["service_list"] = $this->api_model->fetchMemberService($mb_seq);
+        // $data["service_list"] = $this->api_model->fetchMemberService($mb_seq);
         $data["payment_list"] = $this->api_model->fetchMemberPayment($mb_seq);
         $data["claim_list"] = $this->api_model->fetchPayment($mb_seq);
         $data["paycom_list"] = $this->api_model->fetchPaymentPaycom($mb_seq);

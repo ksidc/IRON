@@ -194,7 +194,29 @@ $(function(){
                 if(response.result == true){
                     alert("추가 되었습니다.");
 
-                    $("#dialogDiv").dialog("close")
+                    // $("#dialogDiv").dialog("close")
+                    var url = "/api/productDivList/"+$("#pc_seq").val();
+                    $.ajax({
+                        url : url,
+                        type : 'GET',
+                        dataType : 'JSON',
+                        success:function(response){
+                            var html = "";
+                            for(var i =0;i< response.length;i++){
+                                html += '<table class="table">';
+                                html += '<tr id="parent_div_'+response[i].pd_seq+'">\
+                                <td style="width:50px">'+response[i].pd_sort+'<input type="hidden" name="pd_seq[]" value="'+response[i].pd_seq+'"></td>\
+                                <td style="text-align:left;padding-left:10px"><i class="fas fa-caret-down fa-2x viewSubDiv" style="vertical-align:middle" data-pdseq="'+response[i].pd_seq+'" data-clicktype="1"></i> (대분류) <span id="input_'+response[i].pd_seq+'">'+response[i].pd_name+'</span></td>\
+                                <td style="width:10%"><i class="fas fa-plus addSubDiv" data-pdseq="'+response[i].pd_seq+'" title="소분류 추가"></i></td>\
+                                <td style="width:10%" class="editDiv" data-seq="'+response[i].pd_seq+'" data-name="'+response[i].pd_name+'"><i class="fas fa-edit"></i></td>\
+                                <td style="width:10%" class="deleteDiv" data-seq="'+response[i].pd_seq+'"><i class="fas fa-trash"></i></td>\
+                                </tr>';
+                                html += '</table>';
+                            }
+                            $("#modal_div_list").html(html);
+
+                        }
+                    });
                 }else{
                     alert(response.msg);
                 }
@@ -216,6 +238,7 @@ $(function(){
                 dataType : 'JSON',
                 success:function(response){
                     // $('#dialogCategory').dialog('close');
+                    $(".children_div_"+that.data("seq")).remove();
                     that.parent().remove();
                     // getTabInfo();
                 }
@@ -288,9 +311,9 @@ $(function(){
             $viewSub.trigger("click");
 
         var pd_seq = $(this).data("pdseq");
-        var html = '<tr>\
+        var html = '<tr class="add_children_div_'+pd_seq+'">\
         <td></td>\
-        <td style="text-align:left;padding-left:30px">ㄴ <span class="clearable"><input type="text" name="add_ps_name[]" placeholder="소분류 명을 입력하세요"><i class="clearable__clear">&times;</i></span></td>\
+        <td style="text-align:left;padding-left:30px">ㄴ <span class="clearable"><input type="text" name="add_ps_name[]" placeholder="소분류 명을 입력하세요" class="add_ps_name"><i class="clearable__clear">&times;</i></span></td>\
         <td></td>\
         <td></td>\
         <td></td>\
@@ -303,6 +326,20 @@ $(function(){
     })
 
     $(".btn-div-sub-save").click(function(){
+        var register = true;
+        $(".add_ps_name").each(function(){
+            if($(this).val() == ""){
+                alert("소분류명을 입력하시기 바랍니다.");
+                $(this).focus();
+                register =false;
+                return false;
+            }
+        })
+
+
+        if(!register){
+            return false;
+        }
         var url = "/api/productDivSubRegister";
         var datas = $("#divSortSub").serialize();
         $.ajax({
@@ -314,7 +351,40 @@ $(function(){
                 // console.log(response);
                 if(response.result == true){
                     alert("저장되었습니다.");
-                    $('#dialogDiv').dialog('close');
+                    // $("#divSortSub").reset();
+                    // $('#dialogDiv').dialog('close');
+                    $(".viewSubDiv").each(function(){
+                        var that = $(this);
+                        var pd_seq = $(this).data("pdseq");
+                        // if($(this).hasClass("fa-caret-up")){
+                            var url = "/api/productDivSubList/"+$(this).data("pdseq");
+                            $.ajax({
+                                url : url,
+                                type : 'GET',
+                                dataType : 'JSON',
+                                success:function(response){
+                                    console.log(response);
+                                    // $('#dialogCategory').dialog('close');
+                                    // that.parent().remove();
+                                    // getTabInfo();
+                                    $(".children_div_"+pd_seq).remove();
+                                    $(".add_children_div_"+pd_seq).remove();
+                                    var html = "";
+                                    for(var i =0;i< response.length;i++){
+                                        html += '<tr class="children_div_'+response[i].ps_pd_seq+' " >\
+                                        <td></td>\
+                                        <td style="text-align:left;padding-left:30px">ㄴ (소분류) <span id="input_childred_'+response[i].ps_seq+'">'+response[i].ps_name+'</span></td>\
+                                        <td></td>\
+                                        <td class="editDivSub" data-seq="'+response[i].ps_seq+'" data-name="'+response[i].ps_name+'"><i class="fas fa-edit"></i></td>\
+                                        <td class="deleteDivSub" data-seq="'+response[i].ps_seq+'"><i class="fas fa-trash"></i></td>\
+                                        </tr>';
+                                    }
+                                    $("#parent_div_"+pd_seq).after(html);
+                                    that.data("clicktype","2");
+                                }
+                            });
+                        // }
+                    })
                 }
                 // $('#dialogDiv').dialog('close');
                 // getTabInfo();
@@ -367,13 +437,13 @@ $(function(){
     });
 
     $(".btn-product-register").click(function(){
-        var specs = "left=10,top=10,width=1000,height=600";
+        var specs = "left=10,top=10,width=1600,height=670";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=no";
         window.open("/product/make/"+$("#pc_seq").val(), 'make', specs);
     })
 
     $("body").on("click",".btn-modify",function(){
-        var specs = "left=10,top=10,width=1000,height=600";
+        var specs = "left=10,top=10,width=1600,height=670";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=no";
         window.open("/product/make/"+$("#pc_seq").val()+"/"+$(this).data("seq"), 'make', specs);
     })

@@ -9,14 +9,28 @@
 .claim_payment {display:none;}
 .paycom_payment {display:none;}
 </style>
-
+<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 <div class="content">
+    <h2 class="title">
+        <i class="fa fa-file"></i> 회원 상세 정보
+    </h2>
     <div style="border:1px solid #eee;background:#fff;border-radius:6px;height:550px;margin-top:20px">
         <form id="update1">
             <input type="hidden" name="mb_seq" id="mb_seq" value="<?=$info["mb_seq"]?>">
+            <input type="hidden" name="b_mb_type" id="b_mb_type" value="<?=$info["mb_type"]?>">
+            <input type="hidden" name="b_mb_name" id="b_mb_name" value="<?=$info["mb_name"]?>">
+            <input type="hidden" name="b_mb_number" id="b_mb_number" value="<?=$info["mb_number"]?>">
+            <input type="hidden" name="b_mb_ceo" id="b_mb_ceo" value="<?=$info["mb_ceo"]?>">
+            <input type="hidden" name="b_mb_zipcode" id="b_mb_zipcode" value="<?=$info["mb_zipcode"]?>">
+            <input type="hidden" name="b_mb_address" id="b_mb_address" value="<?=$info["mb_address"]?>">
+            <input type="hidden" name="b_mb_detail_address" id="b_mb_detail_address" value="<?=$info["mb_detail_address"]?>">
+            <input type="hidden" name="b_mb_tel" id="b_mb_tel" value="<?=$info["mb_tel"]?>">
+            <input type="hidden" name="b_mb_phone" id="b_mb_phone" value="<?=$info["mb_phone"]?>">
+            <input type="hidden" name="b_mb_email" id="b_mb_email" value="<?=$info["mb_email"]?>">
+            <input type="hidden" name="b_mb_fax" id="b_mb_fax" value="<?=$info["mb_fax"]?>">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left">회원정보</div>
-            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate1()"></i> <i class=""></i></div>
+            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate1('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
         </div>
         <div class="view-body" style="clear:both;width:100%">
             <div style="width:33.3%;float:left;">
@@ -61,7 +75,7 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div>주소</div></div>
                             <div class="input padd">
-                                <input type="text" class="width-button" name="mb_zipcode" id="mb_zipcode" readonly value="<?=$info["mb_zipcode"]?>"><button class="btn btn-brown " type="button" onclick="daumApi()">검색</button>
+                                <input type="text" class="width-button" name="mb_zipcode" id="mb_zipcode"  value="<?=$info["mb_zipcode"]?>"><button class="btn btn-brown " type="button" onclick="daumApi()">검색</button>
                             </div>
                         </div>
                     </div>
@@ -69,7 +83,7 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div></div></div>
                             <div class="input padd">
-                                <input type="text" class="width-button" name="mb_address" id="mb_address" readonly value="<?=$info["mb_address"]?>">
+                                <input type="text" class="width-button" name="mb_address" id="mb_address"  value="<?=$info["mb_address"]?>">
                             </div>
                         </div>
                     </div>
@@ -101,7 +115,7 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div>이메일</div></div>
                             <div class="input padd">
-                                <input type="text" name="mb_email" id="mb_email" class="width-button" value="<?=$info["mb_email"]?>">
+                                <input type="text" name="mb_email" id="mb_email" class="width-button" value="<?=$info["mb_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_email").val());$( "#dialogEmail" ).dialog("open");'></i>
                             </div>
                         </div>
                     </div>
@@ -189,7 +203,7 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div>휴대폰번호</div></div>
                             <div class="input padd">
-                                <input type="text" name="mb_phone" id="mb_phone" class="width-button" value="<?=$info["mb_phone"]?>"> <input type="checkbox">
+                                <input type="text" name="mb_phone" id="mb_phone" class="width-button" value="<?=$info["mb_phone"]?>"> <i class="fas fa-mobile-alt"></i>
                             </div>
                         </div>
                     </div>
@@ -268,7 +282,7 @@
             <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left">회원 계좌 정보</div>
-            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate2()"></i> <i class=""></i></div>
+            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate2('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
         </div>
         <div class="view-body" style="clear:both;width:100%">
 
@@ -318,7 +332,7 @@
             <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left">결제 계좌 정보</div>
-            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate3()"></i> <i class=""></i></div>
+            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate3('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
         </div>
         <div class="view-body" style="clear:both;width:100%">
 
@@ -356,9 +370,13 @@
     <div style="width:33.1%;float:left;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:20px">
         <form id="update4">
             <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
+            <input type="hidden" name="b_mb_contract_name" id="b_mb_contract_name" value="<?=$info["mb_contract_name"]?>">
+            <input type="hidden" name="b_mb_contract_email" id="b_mb_contract_email" value="<?=$info["mb_contract_email"]?>">
+            <input type="hidden" name="b_mb_contract_tel" id="b_mb_contract_tel" value="<?=$info["mb_contract_tel"]?>">
+            <input type="hidden" name="b_mb_contract_phone" id="b_mb_contract_phone" value="<?=$info["mb_contract_phone"]?>">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left"><div>계약 담당자</div></div>
-            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate4()"></i> <i class=""></i></div>
+            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate4('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
         </div>
         <div class="view-body" style="clear:both;width:100%">
 
@@ -375,7 +393,7 @@
                     <div class="modal-field-input full">
                         <div class="label padd"><div>이메일</div></div>
                         <div class="input padd">
-                            <input type="text" class="width-button" name="mb_contract_email" id="mb_contract_email" value="<?=$info["mb_contract_email"]?>">
+                            <input type="text" class="width-button" name="mb_contract_email" id="mb_contract_email" value="<?=$info["mb_contract_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_contract_email").val());$( "#dialogEmail" ).dialog("open");'></i>
                         </div>
                     </div>
                 </div>
@@ -399,7 +417,7 @@
                     <div class="modal-field-input full">
                         <div class="label padd"><div>휴대폰번호</div></div>
                         <div class="input padd">
-                            <input type="text" class="width-button" name="mb_contract_phone" id="mb_contract_phone" value="<?=$info["mb_contract_phone"]?>">
+                            <input type="text" class="width-button" name="mb_contract_phone" id="mb_contract_phone" value="<?=$info["mb_contract_phone"]?>"> <i class="fas fa-mobile-alt"></i>
                         </div>
                     </div>
                 </div>
@@ -420,9 +438,13 @@
     <div style="width:33.1%;float:left;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:20px">
         <form id="update5">
             <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
+            <input type="hidden" name="b_mb_service_name" id="b_mb_service_name" value="<?=$info["mb_service_name"]?>">
+            <input type="hidden" name="b_mb_service_email" id="b_mb_service_email" value="<?=$info["mb_service_email"]?>">
+            <input type="hidden" name="b_mb_service_tel" id="b_mb_service_tel" value="<?=$info["mb_service_tel"]?>">
+            <input type="hidden" name="b_mb_service_phone" id="b_mb_service_phone" value="<?=$info["mb_service_phone"]?>">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left" >운영 담당자</div>
-            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate5()"></i> <i class=""></i></div>
+            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate5('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
         </div>
         <div class="view-body" style="clear:both;width:100%">
 
@@ -439,7 +461,7 @@
                     <div class="modal-field-input full">
                         <div class="label padd"><div>이메일</div></div>
                         <div class="input padd">
-                            <input type="text" class="width-button" name="mb_service_email" id="mb_service_email" value="<?=$info["mb_service_email"]?>">
+                            <input type="text" class="width-button" name="mb_service_email" id="mb_service_email" value="<?=$info["mb_service_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_service_email").val());$( "#dialogEmail" ).dialog("open");'></i>
                         </div>
                     </div>
                 </div>
@@ -463,7 +485,7 @@
                     <div class="modal-field-input full">
                         <div class="label padd"><div>휴대폰번호</div></div>
                         <div class="input padd">
-                            <input type="text" class="width-button" name="mb_service_phone" id="mb_service_phone" value="<?=$info["mb_service_phone"]?>">
+                            <input type="text" class="width-button" name="mb_service_phone" id="mb_service_phone" value="<?=$info["mb_service_phone"]?>"> <i class="fas fa-mobile-alt"></i>
                         </div>
                     </div>
                 </div>
@@ -484,9 +506,13 @@
     <div style="width:33.1%;float:left;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:20px;margin-bottom:20px">
         <form id="update6">
             <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
+            <input type="hidden" name="b_mb_payment_name" id="b_mb_payment_name" value="<?=$info["mb_payment_name"]?>">
+            <input type="hidden" name="b_mb_payment_email" id="b_mb_payment_email" value="<?=$info["mb_payment_email"]?>">
+            <input type="hidden" name="b_mb_payment_tel" id="b_mb_payment_tel" value="<?=$info["mb_payment_tel"]?>">
+            <input type="hidden" name="b_mb_payment_phone" id="b_mb_payment_phone" value="<?=$info["mb_payment_phone"]?>">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left;" >요금 담당자</div>
-            <div style="float:right;"><i class="fa fa-edit"  onclick="memberUpdate6()"></i> <i class=""></i></div>
+            <div style="float:right;"><i class="fa fa-edit"  onclick="memberUpdate6('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
         </div>
         <div class="view-body" style="clear:both;width:100%">
 
@@ -503,7 +529,7 @@
                     <div class="modal-field-input full">
                         <div class="label padd"><div>이메일</div></div>
                         <div class="input padd">
-                            <input type="text" class="width-button" name="mb_payment_email" id="mb_payment_email" value="<?=$info["mb_payment_email"]?>">
+                            <input type="text" class="width-button" name="mb_payment_email" id="mb_payment_email" value="<?=$info["mb_payment_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_payment_email").val());$( "#dialogEmail" ).dialog("open");'></i>
                         </div>
                     </div>
                 </div>
@@ -527,7 +553,7 @@
                     <div class="modal-field-input full">
                         <div class="label padd"><div>휴대폰번호</div></div>
                         <div class="input padd">
-                            <input type="text" class="width-button" name="mb_payment_phone" id="mb_payment_phone" value="<?=$info["mb_payment_phone"]?>">
+                            <input type="text" class="width-button" name="mb_payment_phone" id="mb_payment_phone" value="<?=$info["mb_payment_phone"]?>"> <i class="fas fa-mobile-alt"></i>
                         </div>
                     </div>
                 </div>
@@ -545,7 +571,7 @@
         </div>
         </form>
     </div>
-    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:40px">
+    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;min-height:300px;margin-top:40px">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left">서비스 정보</div>
             <div style="float:right">
@@ -576,7 +602,7 @@
                             <th class="basic">계약만료일(연장)</th>
                             <th>서비스 종류</th>
                             <th>제품군</th>
-                            <th><i class="fa fa-plus"></i></th>
+                            <th style="cursor:pointer" class="allView" data-allview='N'><i class="fa fa-plus"></i></th>
                             <th>상품명</th>
                             <th class="basic">대분류</th>
                             <th>소분류</th>
@@ -597,95 +623,8 @@
                             <th>문서</th>
                         </tr>
                     </thead>
-                    <tbody id="tbody-list">
-                        <?php if(count($service_list) >0): ?>
-                        <?php foreach($service_list as $row): ?>
-                            <?php
-                            // $num = parseInt(response.total) - ((start-1)*end) - i;
-                            $startdate = $row["sv_contract_start"];
-                            $enddate = $row["sv_contract_end"];
-                            // $diff = Date.getFormattedDateDiff(startdate, enddate);
-                            if($row["sv_rental"] == "N"){
-                                $sr_rental = "구매";
-                            }else{
-                                if($row["sv_rental_type"] == "1"){
-                                    $sr_rental = "영구임대";
-                                }else{
-                                    $sr_rental = "소유권이전";
-                                }
-                            }
-                            if($row["sv_auto_extension"] == "1"){
-                                $sr_auto = $row["sv_auto_extension_month"];
-                                // $sr_auto_end = moment($row["sv_contract_end"]).add(sr_auto,'months').subtract(1, "days").format("YYYY-MM-DD")
-                            }else{
-                                $sr_auto = "-";
-                                $sr_auto_end = $row["sv_contract_end"];
-                            }
-                            $priceinfo = explode("|",$row["priceinfo"]);
-                            $firstPrice = $priceinfo[0];
-                            $monthPrice = $priceinfo[1]-$priceinfo[2]-$priceinfo[3];
-                            ?>
-                            <tr>
-                                <td><input type="checkbox" class="listCheck" name="sr_seq[]" value="<?=$row["sv_seq"]?>"></td>
-                                <td></td>
-                                <td><?=$row["mb_name"]?></td>
-                                <td><?=$row["sv_charger"]?></td>
-                                <td class="basic"><?=$row["eu_name"]?></td>
-                                <td><?=$row["sv_code"]?></td>
-                                <td><?=$row["sv_contract_start"]?></td>
-                                <td class="basic"><?=$row["sv_contract_end"]?></td>
-                                <td></td>
-                                <td class="basic"><?=$sr_auto?></td>
-                                <td class="basic"><?=$sr_auto_end?></td>
-                                <td><?=$row["pc_name"]?></td>
-                                <td><?=$row["pi_name"]?></td>
-                                <td class="option_extend" data-seq="<?=$row["sv_seq"]?>" style="width:30px;height:30px;background:#414860;font-size:16px;color:#fff;margin:2px"> + </td>
-                                <td><?=$row["pr_name"]?></td>
-                                <td class="basic"><?=$row["pd_name"]?></td>
-                                <td><?=$row["ps_name"]?></td>
-                                <td><?=$sr_rental?></td>
-                                <td><?=$row["sv_number"]?></td>
-                                <td class="payment"><?=$row["sv_claim_name"]?></td>
-                                <td class="payment oneprice" data-oneprice="<?=$row["svp_first_price"]?>" data-allprice="<?=$firstPrice?>"><?=$firstPrice?></td>
-                                <td class="payment monthprice" data-oneprice="<?=$row["svp_month_price"]-$row["svp_month_dis_price"]-$row["svp_discount_price"]?>" data-allprice="<?=$monthPrice?>"><?=$monthPrice?></td>
-                                <td class="payment"><?=$row["sv_payment_period"]?>개월</td>
-                                <td class="payment"><?=$row["sv_input_price"]?></td>
-                                <td class="payment"></td>
-                                <td class="payment"><?=$row["c_name"]?></td>
-                                <td><?=$row["sv_regdate"]?><br></td>
-                                <td><?=($row["sv_status"] == 0 ? "<span class='statusEdit' style='cursor:pointer;color:#0070C0' data-seq='".$row["sv_seq"]."'>등록</span>":"<span style='color:#FF0000'>신청완료</span>")?></td>
-                                <td class="basic"></td>
-                                <td><?=$row["sv_account_start"]?><br><?=$row["sv_account_end"]?></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr style="border-bottom:0px;display:none" id="child_add_<?=$row["sv_seq"]?>">
-                                <td colspan=9 class="addcol"></td>
-                                <th style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9;" colspan=2>부가항목명</th>
-                                <th class="basic" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></th>
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스번호</td>
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">청구명</td>
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">초기일회성</td>
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">월(기준)요금</td>
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제주기</td>
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입가</td>
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입 단위</td>
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입처</td>
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스신청일<br>서비스개시일</td>
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9" class="basic">제품출고일</td>
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스상태</td>
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">과금시작일<br>과금만료일</td>
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제상태</td>
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">문서</td>
-                            </tr>
-                        <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="19" style="text-align:center">서비스가 없습니다.</td>
-                            </tr>
-                        <?php endif; ?>
+                    <tbody id="payment-list">
+                        
                     </tbody>
                 </table>
                 </form>
@@ -696,7 +635,7 @@
 
         </div>
     </div>
-    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:40px">
+    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;min-height:300px;margin-top:40px">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left">요금 정보</div>
             <div style="float:right">
@@ -714,7 +653,7 @@
                         <tr>
                             <th><input type="checkbox" id="all_payment"></th>
                             <th>No</th>
-                            <th>회원명</th>
+                           <!--  <th>회원명</th> -->
                             <th>계약번호</th>
                             <th>서비스 종류</th>
                             <th>상품명</th>
@@ -742,19 +681,37 @@
                     </thead>
                     <tbody id="payment-tbody-list">
                     <?php if(count($payment_list) > 0): ?>
+                        <?php $i = 0; ?>
                     <?php foreach($payment_list as $row): ?>
+                        <?php $num = count($payment_list) -  $i;?>
                         <?php $once_price = ($row["svp_once_price"]-$row["svp_once_dis_price"]) ?>
-                        <?php $price = ($row["svp_month_price"]-$row["svp_month_dis_price"]-$row["svp_discount_price"]); ?>
-                        <?php $price2 = (($row["svp_month_price"]-$row["svp_month_dis_price"]-$row["svp_discount_price"])*1.1)-($row["svp_month_price"]-$row["svp_month_dis_price"]-$row["svp_discount_price"]); ?>
+                        <?php $price = ( ($row["svp_month_price"]-$row["svp_month_dis_price"])*$row["svp_payment_period"]-$row["svp_discount_price"]); ?>
+                        <?php $price2 = ((($row["svp_month_price"]-$row["svp_month_dis_price"])*$row["svp_payment_period"]-$row["svp_discount_price"])*1.1)-(($row["svp_month_price"]-$row["svp_month_dis_price"])*$row["svp_payment_period"]-$row["svp_discount_price"]); ?>
+                        <!-- <?=$row["svp_discount_price"]?> -->
+
+                        <?php 
+                            if($row["svp_discount_price"] > 0){
+                                $price_1 = ($row["svp_month_price"]-$row["svp_month_dis_price"]-($row["svp_discount_price"]/$row["svp_payment_period"]));
+                                $price2_1 = (($row["svp_month_price"]-$row["svp_month_dis_price"]-($row["svp_discount_price"]/$row["svp_payment_period"]))*1.1)-($row["svp_month_price"]-$row["svp_month_dis_price"]-($row["svp_discount_price"]/$row["svp_payment_period"]));
+                            }else{
+                                $price_1 = ($row["svp_month_price"]-$row["svp_month_dis_price"]);
+                                $price2_1 = (($row["svp_month_price"]-$row["svp_month_dis_price"])*1.1)-($row["svp_month_price"]-$row["svp_month_dis_price"]);
+                            }
+                        ?>
+                        
                         <tr class="payment_tr" data-price="<?=$price?>">
-                            <td><input type="checkbox" class="payment_check" value="<?=$row["sv_seq"]?>" data-price1="<?=$row["svp_once_price"]?>" data-price2="<?=$row["svp_once_dis_price"]?>" data-price3="<?=$once_price?>" data-price4="<?=$row["svp_month_price"]?>" data-price5="<?=$row["svp_month_dis_price"]?>" data-price6="<?=$row["svp_discount_price"]?>" data-price7="<?=$price?>" data-price8="<?=$price2?>" data-price9="<?=($once_price+$price+$price2)?>"></td>
-                            <td>1</td>
-                            <td><?=$row["mb_name"]?></td>
+                            <?php if($row["svp_display_yn"] == "Y"):?>
+                            <td><input type="checkbox" class="payment_check" value="<?=$row["sv_seq"]?>" data-price1="<?=$row["svp_once_price"]?>" data-price2="<?=$row["svp_once_dis_price"]?>" data-price3="<?=$once_price?>" data-price4="<?=$row["svp_month_price"]?>" data-price5="<?=$row["svp_month_dis_price"]?>" data-price6="<?=$row["svp_discount_price"]/$row["svp_payment_period"]?>" data-price7="<?=$price_1?>" data-price8="<?=$price2_1?>" data-price9="<?=($price_1+$price2_1)?>"></td>
+                            <?php else: ?>
+                            <td><input type="checkbox" disabled></td>
+                            <?php endif; ?>
+                            <td><?=$num?></td>
+                            <!-- <td><?=$row["mb_name"]?></td> -->
                             <td class="once_number"><?=$row["sv_code"]?></td>
                             <td class="once_service"><?=($row["sva_seq"] == "" ? $row["pc_name"]:"부가항목")?></td>
                             <td class="once_product"><?=($row["sva_seq"] == "" ? $row["pr_name"]:$row["sva_name"])?></td>
                             <td><?=($row["sva_seq"] == "" ? $row["ps_name"]:"")?></td>
-                            <td class="once_service_number"><?=$row["sv_number"]?></td>
+                            <td class="once_service_number"><?=($row["sva_seq"] == "" ? $row["sv_number"]:$row["sva_number"])?></td>
                             <td>
                                 <?php if($row["sv_payment_type"] == "1"): ?>
                                 무통장
@@ -764,20 +721,20 @@
                                 CMS
                                 <?php endif; ?>
                             </td>
-                            <td><?=($row["sva_seq"] == "" ? $row["sv_payment_period"]:$row["sva_pay_day"])?>개월</td>
-                            <td class="payment-basic"><?=$row["svp_once_price"]?></td>
-                            <td class="payment-basic"><?=$row["svp_once_dis_price"]?></td>
+                            <td><?=$row["svp_payment_period"]?>개월</td>
+                            <td class="payment-basic right"><?=number_format($row["svp_once_price"])?> 원</td>
+                            <td class="payment-basic right" style="color:#FF5353"> - <?=number_format($row["svp_once_dis_price"])?> 원</td>
 
-                            <td><?=number_format($once_price)?></td>
-                            <td class="payment-basic"><?=$row["svp_month_price"]?></td>
-                            <td class="payment-basic"><?=$row["svp_month_dis_price"]?></td>
-                            <td class="payment-basic"><?=$row["svp_discount_price"]?></td>
+                            <td style="color:#404040" class="right"><?=number_format($once_price)?> 원</td>
+                            <td class="payment-basic right"><?=number_format($row["svp_month_price"]*$row["svp_payment_period"])?> 원</td>
+                            <td class="payment-basic right" style="color:#FF5353"> - <?=number_format($row["svp_month_dis_price"]*$row["svp_payment_period"])?> 원</td>
+                            <td class="payment-basic right" style="color:#FF7053"> - <?=number_format($row["svp_discount_price"])?> 원</td>
 
-                            <td><?=number_format($price)?></td>
-                            <td>
-                                <?=number_format($price2)?>
+                            <td style="color:#404040" class="right"><?=number_format($price)?> 원</td>
+                            <td class="right">
+                                <?=number_format($price2)?> 원
                             </td>
-                            <td><?=number_format($once_price+$price+$price2)?></td>
+                            <td class="right"><?=number_format($price+$price2)?> 원</td>
                             <td>
                                 <?php if($row["sv_pay_type"] == "0"): ?>
                                     전월
@@ -827,6 +784,7 @@
                             <?php endif; ?>
                             <td></td>
                         </tr>
+                        <?php $i++;?>
                     <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
@@ -852,15 +810,15 @@
                         <td style="background:#ddd;width:100px">총 월 요금 합계</td>
                     </tr>
                     <tr>
-                        <td class="payment-basic payment_price1"></td>
-                        <td class="payment-basic payment_price2" ></td>
-                        <td class="payment_price3"></td>
-                        <td class="payment-basic payment_price4"></td>
-                        <td class="payment-basic payment_price5"></td>
-                        <td class="payment-basic payment_price6"></td>
-                        <td class="payment_price7"></td>
-                        <td class="payment_price8"></td>
-                        <td class="payment_price9"></td>
+                        <td class="payment-basic payment_price1 right"></td>
+                        <td class="payment-basic payment_price2 right" style="color:#FF5353"></td>
+                        <td class="payment_price3 right" style="color:#404040"></td>
+                        <td class="payment-basic payment_price4 right"></td>
+                        <td class="payment-basic payment_price5 right" style="color:#FF5353"></td>
+                        <td class="payment-basic payment_price6 right" style="color:#FF7053"></td>
+                        <td class="payment_price7 right" style="color:#404040"></td>
+                        <td class="payment_price8 right"></td>
+                        <td class="payment_price9 right"></td>
                     </tr>
                 </table>
             </div>
@@ -870,7 +828,7 @@
             </div>
         </div>
     </div>
-    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:40px">
+    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;min-height:300px;margin-top:40px">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left">청구 내역 <img src="/assets/images/Picture1.png" class="memo" style="width:20px"> <img src="/assets/images/Picture2.png" class="" style="width:20px"></div>
             <div style="float:right">
@@ -922,10 +880,12 @@
                     <tbody id="tbody2-list">
                         <?php if(count($claim_list) > 0): ?>
                             <?php $b_pm_ca_seq = ""?>
+                            <?php $i = 0;?>
                         <?php foreach($claim_list as $row): ?>
+                            <?php $num = count($claim_list) -  $i;?>
                         <tr>
                             <td><input type="checkbox" class="claim_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]?>" data-price6="<?=$row["pm_service_dis_price"]?>" data-price7="<?=$row["pm_payment_dis_price"]?>" data-price8="" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$row["pm_total_price"]?>" data-price11="<?=$row["pm_surtax_price"]?>" data-price12="<?=$row["pm_total_price"]+$row["pm_surtax_price"]?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
-                            <td>1</td>
+                            <td><?=$num?></td>
                             <td><?=($row["pm_type"] == "1" ? "서비스비용":"일회성비용")?></td>
                             <td><?=$row["pm_code"]?></td>
                             <td>
@@ -962,7 +922,15 @@
                             <td><?=$row["pm_surtax_price"]?></td>
                             <td><?=$row["pm_total_price"]+$row["pm_surtax_price"]?></td>
                             <td><?=$row["pm_end_date"]?></td>
-                            <td><?=($row["pm_end_date"] >= date("Y-m-d") ? "청구":"미납")?></td>
+                            <td>
+                                <?php if($row["pm_status"] == "1"): ?>
+                                    완납
+                                <?php elseif($row["pm_status"] == "0"): ?>
+                                    <?=($row["pm_end_date"] >= date("Y-m-d") ? "청구":"미납")?>
+                                <?php elseif($row["pm_status"] == "9"):?>
+                                    가결제
+                                <?php endif; ?>    
+                            </td>
                             <?php if($b_pm_ca_seq != $row["pm_ca_seq"]): ?>
                             <td rowspan="<?=$row["pm_ca_total"]?>"><i class="fas fa-edit claimView" data-seq="<?=$row["pm_ca_seq"]?>"></i></td>
                             <td class="billView" data-seq="<?=$row["pm_ca_seq"]?>" rowspan="<?=$row["pm_ca_total"]?>">
@@ -978,6 +946,7 @@
                             <td></td>
                         </tr>
                         <?php $b_pm_ca_seq = $row["pm_ca_seq"]?>
+                        <?php $i++;?>
                         <?php endforeach; ?>
                         <?php else: ?>
                         <tr>
@@ -1031,7 +1000,7 @@
             </div>
         </div>
     </div>
-    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:40px">
+    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;min-height:300px;margin-top:40px">
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left">결제 내역 </div>
             <div style="float:right">
@@ -1083,10 +1052,12 @@
                     <tbody id="tbody3-list">
                         <?php if(count($paycom_list) > 0): ?>
                             <?php $b_pm_ca_seq = ""?>
+                            <?php $i = 0 ?>
                         <?php foreach($paycom_list as $row): ?>
+                            <?php $num = count($paycom_list) -  $i;?>
                         <tr>
                             <td><input type="checkbox" class="paycom_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]?>" data-price6="<?=$row["pm_service_dis_price"]?>" data-price7="<?=$row["pm_payment_dis_price"]?>" data-price8="" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$row["pm_total_price"]?>" data-price11="<?=$row["pm_surtax_price"]?>" data-price12="<?=$row["pm_total_price"]+$row["pm_surtax_price"]?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
-                            <td>1</td>
+                            <td><?=$num?></td>
                             <td><?=($row["pm_type"] == "1" ? "서비스비용":"일회성비용")?></td>
                             <td><?=$row["pm_code"]?></td>
                             <td>
@@ -1137,6 +1108,7 @@
                             <td></td>
                         </tr>
                         <?php $b_pm_ca_seq = $row["pm_ca_seq"]?>
+                        <?php $i++?>
                         <?php endforeach; ?>
                         <?php else: ?>
                         <tr>
@@ -1184,7 +1156,7 @@
             </div>
             <div style="clear:both;text-align:center;padding-top:20px">
 
-                <button class="btn btn-default btn-check-delete" type="button">선택 삭제</button>
+                <button class="btn btn-default btn-paycomcheck-delete" type="button">선택 삭제</button>
 
             </div>
         </div>
@@ -1800,6 +1772,105 @@
     </div>
     <div class="modal-close-btn" style="margin-top:5px"><button class="btn btn-black btn-small btn-bill-reg" type="button">수정</button> <button class="btn btn-default btn-small" onclick="$('#dialogBill').dialog('close')" type="button">닫기</button></div>
 </div>
+<div id="dialogEmail" class="dialog">
+    <form name="emailForm" id="emailForm">
+        <input type="hidden" name="content" id="content">
+        <div class="modal-title text-center" style="padding:5px 0px">
+            <div style="display:inline-block"><button class="btn btn-black btn-mail-send" type="submit">보내기</button></div>
+            <div style="display:inline-block"><button class="btn btn-default btn-mail-view" type="button">미리보기</button></div>
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full">
+                <div class="label padd"><div>보내는 사람</div></div>
+                <div class="input padd"><input type="text" name="from" id="from"></div>
+            </div>
+
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full" >
+                <div class="label padd"><div>받는 사람</div></div>
+                <div class="input padd"><input type="text" name="to" id="to"></div>
+            </div>
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full" >
+                <div class="label padd"><div>휴대폰번호</div></div>
+                <div class="input padd"><input type="text" name="phone" id="phone"></div>
+            </div>
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full" >
+                <div class="label padd"><div><input type="checkbox" name="sms_yn" id="sms_yn" value="Y"> SMS 발송 | 내용</div></div>
+                <div class="input padd"><input type="text" name="sms" id="sms" style="width:70%" > <span class="bytes">0</span>byte / 80byte</div>
+            </div>
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full" >
+                <div class="label padd"><div>제목</div></div>
+                <div class="input padd"><input type="text" name="subject" id="subject"></div>
+            </div>
+        </div>
+
+        <div class="modal-title">
+            <div class="modal-title-text">메일 내용</div>
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full" style="width:99%">
+                <!-- <textarea style="width:90%;height:200px" name="content" id="content"></textarea> -->
+                <div id="summernote"></div>
+
+            </div>
+
+        </div>
+        <div class="modal-title">
+            <div class="modal-title-text" style="display:inline-block">첨부 파일</div>
+            <div style="float:right;padding-top:5px;padding-right:5px">
+
+                <div class="input">파일 <span id="attachedCnt"></span>개 | 용량 <span id="attachedSize"></span> / 20MB</div>
+            </div>
+        </div>
+
+
+        <div class="modal-field" style="border-top:2px solid #ddd">
+            <div class="modal-field-input full">
+                <div class="label padd" style="vertical-align:top"><div>첨부 파일</div></div>
+                <div class="input padd">
+                    <div>
+                        <button class="btn btn-default" type="button" onclick="$('#mf_file').trigger('click')">추가</button>
+                        <button class="btn btn-default btn-addfile-delete" type="button">삭제</button>
+                    </div>
+                    <div id="mail_add_file" style="padding-left:53px;padding-top:10px">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-title text-center" style="padding:5px 0px;margin-top:10px">
+            <div style="display:inline-block"><button class="btn btn-black btn-mail-send" type="submit">보내기</button></div>
+            <div style="display:inline-block"><button class="btn btn-default btn-mail-view" type="button">미리보기</button></div>
+        </div>
+    </form>
+    <form name="fileMailUpload" id="fileMailUpload" method="post">
+        <input type="hidden" name="mf_eh_seq" id="mf_eh_seq">
+        <input type="file" name="mf_file[]" id="mf_file" style="border:0;display:none;width:0;height:0" multiple visbility="hidden">
+    </form>
+</div>
+<div id="dialogMailPreview" class="dialog" style="padding:5px">
+
+    <div class="modal_search">
+        <ul>
+            <li>
+                Mail 미리보기
+            </li>
+
+        </ul>
+    </div>
+
+    <div id="preview_content">
+
+    </div>
+    <div class="modal-close-btn"><button class="btn btn-black btn-small" onclick="$('#dialogMailPreview').dialog('close')">닫기</button></div>
+</div>
 <input type="hidden" id="start" value=1>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>
-<script type="text/javascript" src="/assets/js/memberView.js"></script>
+<script type="text/javascript" src="/assets/js/memberView.js?time=<?=time()?>"></script>

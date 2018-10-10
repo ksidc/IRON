@@ -12,8 +12,10 @@ $(function(){
                 data : datas,
                 success:function(response){
                     console.log(response);
-                    if(response.result)
+                    if(response.result){
+                        alert("수정완료");
                         document.location.reload();
+                    }
                 },
                 error:function(error){
                     console.log(error);

@@ -43,7 +43,7 @@ $(function(){
             $("#policy_text").hide();
             $("#policy_text_2").show();
         }
-        if($("#sv_payment_period").val() != "" && $("#sv_account_start").val() != ""){
+        if($("#svp_payment_period").val() != "" && $("#sv_account_start").val() != ""){
             priceInfoDate();
         }
 
@@ -203,7 +203,7 @@ $(function(){
         onSelect: function(selectedDate) {
             // console.log(selectedDate);
                 calculatePrice();
-                if($("#sv_payment_period").val() != "" && $("#sv_account_start").val() != ""){
+                if($("#svp_payment_period").val() != "" && $("#sv_account_start").val() != ""){
                     priceInfoDate();
                 }
                 // if($("#sv_account_start").val() != ""){
@@ -219,12 +219,33 @@ $(function(){
 
         }
     });
-    $("#sv_payment_period").change(function(){
-        $(".total_contract").html($(this).val())
-        calculatePrice();
-        if($("#sv_payment_period").val() != "" && $("#sv_account_start").val() != ""){
-            priceInfoDate();
-        }
+    $("#svp_payment_period").change(function(){
+        var $this = $(this);
+        var url = "/api/basicPolicyDetail/"+$("#sv_payment_type").val()
+        $.ajax({
+            url : url,
+            type : 'GET',
+            dataType : 'JSON',
+            data : "period="+$("#svp_payment_period").val(),
+            success:function(response){
+                if(response.result === null){
+                    $("#svp_register_discount").val(0);
+                    // $("#sr_register_discount_str").html(0);
+                }else{
+                    $("#svp_register_discount").val(response.result.discount);
+                    // $("#sr_register_discount_str").html(response.result.discount);
+                }
+                $(".total_contract").html($this.val())
+                calculatePrice();
+                if($("#svp_payment_period").val() != "" && $("#sv_account_start").val() != ""){
+                    priceInfoDate();
+                }
+            },
+            error:function(error){
+                console.log(error);
+            }
+        });
+        
     });
 
     $(".btn-payment-modify").click(function(){
@@ -269,7 +290,7 @@ $(function(){
         }
     })
 
-    $("#sv_register_discount").change(function(){
+    $("#svp_register_discount").change(function(){
         calculatePrice();
     })
     $("#defaultRegister").click(function(){
@@ -279,13 +300,13 @@ $(function(){
                 url : url,
                 type : 'GET',
                 dataType : 'JSON',
-                data : "period="+$("#sv_payment_period").val(),
+                data : "period="+$("#svp_payment_period").val(),
                 success:function(response){
                     if(response.result === null){
-                        $("#sv_register_discount").val(0);
+                        $("#svp_register_discount").val(0);
                         // $("#sr_register_discount_str").html(0);
                     }else{
-                        $("#sv_register_discount").val(response.result.sb_discount);
+                        $("#svp_register_discount").val(response.result.discount);
                         // $("#sr_register_discount_str").html(response.result.discount);
                     }
                     calculatePrice();
@@ -296,30 +317,65 @@ $(function(){
             });
         }
     })
+
+    $("#sv_payment_type").change(function(){
+        
+        var url = "/api/basicPolicyDetail/"+$(this).val()
+        $.ajax({
+            url : url,
+            type : 'GET',
+            dataType : 'JSON',
+            data : "period="+$("#svp_payment_period").val(),
+            success:function(response){
+                console.log(response);
+                if(response.result === null){
+                    $("#svp_register_discount").val(0);
+                    // $("#sr_register_discount_str").html(0);
+                }else{
+                    $("#svp_register_discount").val(response.result.discount);
+                    // $("#sr_register_discount_str").html(response.result.discount);
+                }
+                calculatePrice();
+            },
+            error:function(error){
+                console.log(error);
+            }
+        });
+        
+    })
+    $("#svp_payment_period").trigger("change");
+
+    $("#sv_rental_type").change(function(){
+        if($(this).val() == "1"){
+            $(".retaltype2").hide();
+        }else{
+            $(".retaltype2").show();
+        }
+    })
 })
 
 var basic_date_info = [];
 
 var calculatePrice = function(){
-    var sv_register_discount = parseInt($("#sv_register_discount").val() || 0); // 결제방법 할인
-    var sv_payment_period = parseInt($("#sv_payment_period").val() || 0); // 결제주기
-    var sv_month_price = parseInt($("#svp_month_price").val() || 0); // 월금액
-    var sv_month_dis_price = parseInt($("#svp_month_dis_price").val() || 0); // 월금액 할인
+    var sv_register_discount = parseInt($("#svp_register_discount").val() || 0); // 결제방법 할인
+    var sv_payment_period = parseInt($("#svp_payment_period").val() || 0); // 결제주기
+    var sv_month_price = parseInt($("#svp_month_price").val().replace(/,/gi, "") || 0); // 월금액
+    var sv_month_dis_price = parseInt($("#svp_month_dis_price").val().replace(/,/gi, "") || 0); // 월금액 할인
 
     if($("#svp_discount_yn").is(":checked")){ // 결제방법할인 체크
         var price = Math.floor((sv_month_price-sv_month_dis_price)*sv_register_discount/100*sv_payment_period);
-        $("#month_price3").html($.number(price));
-        $("#svp_register_discount").val(price);
+        $("#month_price3").html(" - "+$.number(price));
+        $("#svp_discount_price").val(price);
     }else{
-        $("#month_price3").html(0);
-        $("#svp_register_discount").val(0);
+        $("#month_price3").html(" - 0");
+        $("#svp_discount_price").val(0);
     }
 
-    var sp_once_price = parseInt($("#svp_once_price").val()|| 0);
-    var sp_once_dis_price = parseInt($("#svp_once_dis_price").val() || 0);
+    var sp_once_price = parseInt($("#svp_once_price").val().replace(/,/gi, "")|| 0);
+    var sp_once_dis_price = parseInt($("#svp_once_dis_price").val().replace(/,/gi, "") || 0);
 
     var once_price = Math.floor((sp_once_price-sp_once_dis_price));
-    $("#first_sum").val(once_price);
+    $("#first_sum").html($.number(once_price));
 
     var first_surtax = once_price*0.1;
     $("#first_surtax").html( $.number(Math.round(first_surtax)) )
@@ -329,7 +385,7 @@ var calculatePrice = function(){
     // $("#show_all_once_total").val(price);
 
     if($("#svp_discount_yn").is(":checked")){
-        var sv_discount_price = parseInt($("#svp_register_discount").val() || 0);
+        var sv_discount_price = parseInt($("#svp_discount_price").val() || 0);
     }else{
         var sv_discount_price = 0;
     }
@@ -337,6 +393,7 @@ var calculatePrice = function(){
     var total_price2 = total_price1*sv_payment_period; // 결제 기간 합계
 
     var total_price = parseInt(sv_month_price-(sv_month_dis_price*sv_payment_period)-sv_discount_price);
+    var total_price_1 = parseInt(sv_month_price*sv_payment_period-(sv_month_dis_price*sv_payment_period)-sv_discount_price);
     if($("#sv_account_format").val() == "1"){
         if($("#sv_account_format_policy").val() == "1"){ // 버림
             var price = Math.floor(total_price/10)*10;
@@ -375,11 +432,11 @@ var calculatePrice = function(){
     $("#month_price1").html($.number(total_price1));
     $("#month_price2").html($.number(total_price2));
 
-    var month_surtax = price*0.1;
-    $("#month_price4").html($.number(price));
+    var month_surtax = total_price_1*0.1;
+    $("#month_price4").html($.number(total_price_1));
     $("#month_price5").html($.number(month_surtax));
-    $("#month_price_total").html($.number(price+month_surtax));
-    $("#sv_month_total_price").val(price+month_surtax);
+    $("#month_price_total").html($.number(total_price_1+month_surtax));
+    $("#sv_month_total_price").val(total_price_1+month_surtax);
     // $("#show_month_total").val(total_price);
 
     // var sp_once_total_price = parseInt($("#sp_once_total_price").val() || 0);
@@ -407,7 +464,7 @@ function priceInfoDate(){
     var sv_account_policy = $("#sv_account_policy").val();
     var sv_account_start_day = $("#sv_account_start_day").val();
     var date_array = selectedDate.split("-");
-    var period = parseInt($("#sv_payment_period").val());
+    var period = parseInt($("#svp_payment_period").val());
 
     var start_str = [];
     var end_str = [];
@@ -646,7 +703,7 @@ function contractPriceDateInfo(){
             // var one_day_price = parseInt($("#sp_month_total_price").val())/month_total_date;
             // var total_price = one_day_price*basic_date_info[0].period;
 
-            var month_price = parseInt($("#svp_month_price").val())/parseInt($("#sv_payment_period").val());
+            var month_price = parseInt($("#svp_month_price").val())/parseInt($("#svp_payment_period").val());
             var dis_price = parseInt($("#svp_month_dis_price").val());
             var dis_per = parseInt($("#svp_register_discount").val());
             var period_day = parseInt(basic_date_info[0].period);
@@ -709,7 +766,7 @@ function contractPriceDateInfo(){
             // var one_day_price = parseInt($("#sp_month_total_price").val())/month_total_date;
             // var total_price = one_day_price*basic_date_info[0].period;
 
-        var month_price = parseInt($("#svp_month_price").val())/parseInt($("#sv_payment_period").val());
+        var month_price = parseInt($("#svp_month_price").val())/parseInt($("#svp_payment_period").val());
         var dis_price = parseInt($("#svp_month_dis_price").val());
         var dis_per = parseInt($("#svp_register_discount").val());
         var period_day = parseInt(basic_date_info[0].period);
@@ -757,7 +814,7 @@ function contractPriceDateInfo(){
 
         basic_date_info[0].price = price;
         var month2 = parseInt($("#sv_month_total_price").val());
-        var period_month = parseInt($("#sv_payment_period").val());
+        var period_month = parseInt($("#svp_payment_period").val());
         var once_period = basic_date_info[1].period;
         // console.log(period_month+":"+once_period)
         var price2 = month2 / period_month * once_period;

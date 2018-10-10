@@ -179,7 +179,7 @@
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
                     <div class="label" style="width:35%"><div>할인 금액</div></div>
-                    <div class="input" style="width:45%"><input type="text" name="pm_service_dis_price" class="border-no" value="<?=$info["pm_service_dis_price"]?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></div>
+                    <div class="input" style="width:45%"> - <input type="text" name="pm_service_dis_price" class="border-no" value="<?=$info["pm_service_dis_price"]?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></div>
                     <div style="display:inline-block">원 / 월</div>
                 </div>
             </div>
@@ -277,7 +277,7 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input" style="width:100%">
-                <textarea name="" style="width:98%;height:150px"></textarea>
+                <textarea name="pm_memo" style="width:98%;height:150px"><?=$info["pm_memo"]?></textarea>
             </div>
         </div>
         <div class="modal-button">

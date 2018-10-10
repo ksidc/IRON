@@ -99,6 +99,27 @@
         <input type="hidden" name="mb_seq" id="mb_seq">
         <input type="hidden" name="dupleIdYn" id="dupleIdYn" value="N">
         <input type="hidden" name="dupleNumberYn" id="dupleNumberYn" value="N">
+        <input type="hidden" name="b_mb_type" id="b_mb_type">
+        <input type="hidden" name="b_mb_name" id="b_mb_name">
+        <input type="hidden" name="b_mb_number" id="b_mb_number">
+        <input type="hidden" name="b_mb_ceo" id="b_mb_ceo">
+        <input type="hidden" name="b_mb_zipcode" id="b_mb_zipcode">
+        <input type="hidden" name="b_mb_address" id="b_mb_address">
+        <input type="hidden" name="b_mb_detail_address" id="b_mb_detail_address">
+        <input type="hidden" name="b_mb_tel" id="b_mb_tel">
+        <input type="hidden" name="b_mb_phone" id="b_mb_phone">
+        <input type="hidden" name="b_mb_email" id="b_mb_email">
+        <input type="hidden" name="b_mb_fax" id="b_mb_fax">
+        <input type="hidden" name="b_mb_business_conditions" id="b_mb_business_conditions">
+        <input type="hidden" name="b_mb_business_type" id="b_mb_business_type">
+        <input type="hidden" name="b_mb_contract_name" id="b_mb_contract_name">
+        <input type="hidden" name="b_mb_contract_email" id="b_mb_contract_email">
+        <input type="hidden" name="b_mb_contract_tel" id="b_mb_contract_tel">
+        <input type="hidden" name="b_mb_contract_phone" id="b_mb_contract_phone">
+        <input type="hidden" name="b_mb_payment_name" id="b_mb_payment_name">
+        <input type="hidden" name="b_mb_payment_email" id="b_mb_payment_email">
+        <input type="hidden" name="b_mb_payment_tel" id="b_mb_payment_tel">
+        <input type="hidden" name="b_mb_payment_phone" id="b_mb_payment_phone">
         <div class="modal-title">
             <div class="modal-title-text">로그인 정보</div>
         </div>
