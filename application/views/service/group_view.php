@@ -146,9 +146,20 @@
                         <td><?=$row["pr_name"]?></td>
                         <td><?=$row["ps_name"]?></td>
                         <td class="right"><?=number_format($row["svp_once_price"]-$row["svp_once_dis_price"])?> 원</td>
+                        <?php if($row["svp_discount_price"] > 0): ?>
                         <td class="right"><?=number_format($row["svp_month_price"]-$row["svp_month_dis_price"]-($row["svp_discount_price"]/$row["svp_payment_period"]))?> 원</td>
+                        <?php else: ?>
+                        <td class="right"><?=number_format($row["svp_month_price"]-$row["svp_month_dis_price"]-$row["svp_discount_price"])?> 원</td>
+                        <?php endif; ?>
                         <?php $totalprice1 = $totalprice1+$row["svp_once_price"]-$row["svp_once_dis_price"]; ?>
-                        <?php $totalprice2 = $totalprice2+$row["svp_month_price"]-$row["svp_month_dis_price"]-($row["svp_discount_price"]/$row["svp_payment_period"]); ?>
+
+                        <?php 
+                        if($row["svp_discount_price"] > 0){
+                            $totalprice2 = $totalprice2+$row["svp_month_price"]-$row["svp_month_dis_price"]-($row["svp_discount_price"]/$row["svp_payment_period"]); 
+                        }else{
+                            $totalprice2 = $totalprice2+$row["svp_month_price"]-$row["svp_month_dis_price"]-$row["svp_discount_price"];
+                        }
+                        ?>
                     </tr>
                     <?php endforeach; ?>
                     <tr>
