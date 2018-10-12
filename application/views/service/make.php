@@ -288,6 +288,7 @@
                 <input type="hidden" name="sp_first_month_price" id="sp_first_month_price" value=0>
                 <input type="hidden" name="sp_first_month_start" id="sp_first_month_start">
                 <input type="hidden" name="sp_first_month_end" id="sp_first_month_end">
+                <input type="hidden" name="sp_first_month_period" id="sp_first_month_period">
             </div>
             <div class="modal-title">
                 <div class="modal-title-text" style="width:45%;float:left">기본 서비스 정보 </div>

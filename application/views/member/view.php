@@ -887,6 +887,7 @@
                             <td><input type="checkbox" class="claim_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]?>" data-price6="<?=$row["pm_service_dis_price"]?>" data-price7="<?=$row["pm_payment_dis_price"]?>" data-price8="" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$row["pm_total_price"]?>" data-price11="<?=$row["pm_surtax_price"]?>" data-price12="<?=$row["pm_total_price"]+$row["pm_surtax_price"]?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
                             <td><?=$num?></td>
                             <td><?=($row["pm_type"] == "1" ? "서비스비용":"일회성비용")?></td>
+
                             <td><?=$row["pm_code"]?></td>
                             <td>
                                 <?=$row["pm_date"]?>
@@ -894,10 +895,14 @@
                             <td>
                                 <?=$row["pm_service_start"]?> ~ <?=$row["pm_service_end"]?>
                             </td>
-                            <td><?=$row["pc_name"]?></td>
+                            <td ><?=($row["sva_seq"] == "" ? $row["pc_name"]:"부가항목")?></td>
+                            <td ><?=($row["sva_seq"] == "" ? $row["pr_name"]:$row["sva_name"])?></td>
+                            <td><?=($row["sva_seq"] == "" ? $row["ps_name"]:"")?></td>
+                            <td ><?=($row["sva_seq"] == "" ? $row["sv_number"]:$row["sva_number"])?></td>
+                            <!-- <td><?=$row["pc_name"]?></td>
                             <td><?=$row["pr_name"]?></td>
                             <td><?=$row["ps_name"]?></td>
-                            <td><?=$row["sv_number"]?></td>
+                            <td><?=$row["sv_number"]?></td> -->
                             <td>
                                 <?php if($row["sv_payment_type"] == "1"): ?>
                                     무통장

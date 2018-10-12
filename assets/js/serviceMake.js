@@ -370,7 +370,7 @@ $(function(){
             var seq = $(this).data("seq");
             var pi_name = $(this).data("piname");
             var pis_name = $(this).data("name");
-            var addoptionprice = '<div style="clear:both;width:100%;border-top:1px solid #ddd" id="addoptionprice_'+seq+'" class="addoptionprice" data-seq="'+seq+'"><input type="hidden" name="sap_seq[]" id="sap_seq_'+seq+'"><input type="hidden" name="etc_yn_v[]" id="etc_yn_v_'+seq+'"><input type="hidden" name="pis_seq_add[]" id="pis_seq_add_'+seq+'" value="'+seq+'"><input type="hidden" name="sp_discount_yn_add[]" id="sp_discount_yn_add'+seq+'" value="N"><input type="hidden" name="sap_first_price_add[]" id="sap_first_price_'+seq+'" value=0><input type="hidden" name="sap_first_start_add[]" id="sap_first_start_'+seq+'"><input type="hidden" name="sap_first_end_add[]" id="sap_first_end_'+seq+'"><input type="hidden" name="sap_first_month_price_add[]" id="sap_first_month_price_'+seq+'" value=0><input type="hidden" name="sap_first_month_start_add[]" id="sap_first_start_'+seq+'"><input type="hidden" name="sap_first_month_end_add[]" id="sap_first_month_end_'+seq+'">\
+            var addoptionprice = '<div style="clear:both;width:100%;border-top:1px solid #ddd" id="addoptionprice_'+seq+'" class="addoptionprice" data-seq="'+seq+'"><input type="hidden" name="sap_seq[]" id="sap_seq_'+seq+'"><input type="hidden" name="etc_yn_v[]" id="etc_yn_v_'+seq+'"><input type="hidden" name="pis_seq_add[]" id="pis_seq_add_'+seq+'" value="'+seq+'"><input type="hidden" name="sp_discount_yn_add[]" id="sp_discount_yn_add'+seq+'" value="N"><input type="hidden" name="sap_first_price_add[]" id="sap_first_price_'+seq+'" value=0><input type="hidden" name="sap_first_start_add[]" id="sap_first_start_'+seq+'"><input type="hidden" name="sap_first_end_add[]" id="sap_first_end_'+seq+'"><input type="hidden" name="sap_first_month_price_add[]" id="sap_first_month_price_'+seq+'" value=0><input type="hidden" name="sap_first_month_start_add[]" id="sap_first_month_start_'+seq+'"><input type="hidden" name="sap_first_month_end_add[]" id="sap_first_month_end_'+seq+'">\
                     <div style="width:10%;float:left;vertical-align:top; ">\
                         <p style="text-align:center;padding-top:100px">부가'+num+'</p>\
                     </div>\
@@ -1548,7 +1548,7 @@ function priceInfoDate(){
                 basic_date_info.push(date_info1);
                 end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
                 if(period > 1){
-                    date_info2.start_date = moment(end_date).format("YYYY-MM-01");
+                    date_info2.start_date = moment(date_info1.end_date).add(1,'months').format("YYYY-MM-01");
 
                     end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
 
@@ -1618,7 +1618,7 @@ function priceInfoDate(){
 
 
                 end_period[1] = period+"개월";
-
+                console.log(1)
 
                 date_info2.end_date = end_date;
                 date_info2.period = period;
@@ -1628,6 +1628,7 @@ function priceInfoDate(){
 
                 $("#view_add").show();
             }else{
+                // console.log(2)
                 var lastDay = ( new Date( date_array[0], date_array[1], 0) ).getDate();
                 var end_date = date_array[0]+"-"+date_array[1]+"-"+lastDay;
 
@@ -1652,7 +1653,7 @@ function priceInfoDate(){
                     }
 
                     if(period > 1){
-                        date_info2.start_date = moment(end_date).format("YYYY-MM-01");
+                        date_info2.start_date = moment(date_info1.end_date).add(1,'months').format("YYYY-MM-01");
 
                         end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
 
@@ -1721,12 +1722,13 @@ function priceInfoDate(){
 
     $("#start_date_str_0_2").html(start_str[1]);
     $("#end_date_str_0_2").html(end_str[1]+" ("+end_period[1]+")");
-
+    console.log(basic_date_info);
     if(basic_date_info.length > 1){
-        $("#sp_first_start").val(start_str[0]);
+        $("#sp_first_start").val(basic_date_info[0].start_date);
         $("#sp_first_end").val(basic_date_info[0].end_date);
-        $("#sp_first_month_start").val(start_str[1]);
+        $("#sp_first_month_start").val(basic_date_info[1].start_date);
         $("#sp_first_month_end").val(basic_date_info[1].end_date);
+        $("#sp_first_month_period").val(basic_date_info[1].period);
         // console.log(start_str[0]+"::"+basic_date_info[0].end_date+"::"+basic_date_info[1].end_date);
     }else{
         if(basic_date_info[0].interval == "day"){
@@ -1734,11 +1736,13 @@ function priceInfoDate(){
             $("#sp_first_end").val(basic_date_info[0].end_date);
             $("#sp_first_month_start").val("");
             $("#sp_first_month_end").val("");
+            $("#sp_first_month_period").val(0);
         }else{
             $("#sp_first_start").val("");
             $("#sp_first_end").val("");
-            $("#sp_first_month_start").val(start_str[0]);
+            $("#sp_first_month_start").val(basic_date_info[0].start_date);
             $("#sp_first_month_end").val(basic_date_info[0].end_date);
+            $("#sp_first_month_period").val(basic_date_info[0].period);
         }
 
         // console.log(start_str[0]+"::"+basic_date_info[0].end_date);
@@ -1959,7 +1963,8 @@ function contractPriceDateInfoAdd(seq){
             $("#use_price_str_add_0_1_"+seq).html($.number($("#sp_month_total_price_add"+seq).val().replace(/,/gi, "")));
             basic_date_info_add[seq][0].price = $("#sp_month_total_price_add"+seq).val().replace(/,/gi, "");
             $("#sap_first_price_"+seq).val(0);
-            $("#sap_first_month_price_"+seq).val($.number(price));
+
+            $("#sap_first_month_price_"+seq).val(basic_date_info_add[seq][0].price);
         }
 
     }else if(basic_date_info_add[seq].length == 2){
@@ -2078,7 +2083,7 @@ function priceInfoDateAdd(pis_seq){
                 basic_date_info_add[pis_seq].push(date_info1);
                 end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
                 if(period > 1){
-                    date_info2.start_date = moment(end_date).format("YYYY-MM-01");
+                    date_info2.start_date = moment(date_info1.end_date).add(1,'months').format("YYYY-MM-01");
 
                     end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
 
@@ -2205,7 +2210,7 @@ function priceInfoDateAdd(pis_seq){
                     }
                     // console.log(period);
                     if(period > 1){
-                        date_info2.start_date = moment(end_date).format("YYYY-MM-01");
+                        date_info2.start_date = moment(date_info1.end_date).add(1,'months').format("YYYY-MM-01");
 
                         end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
 
@@ -2273,23 +2278,23 @@ function priceInfoDateAdd(pis_seq){
     $("#end_date_str_add_0_2_"+pis_seq).html(end_str[1]+" ("+end_period[1]+")");
 
     if(basic_date_info_add[pis_seq].length > 1){
-        $("#sap_first_start_"+pis_seq).val(start_str[0]);
+        $("#sap_first_start_"+pis_seq).val(basic_date_info_add[pis_seq][0].start_date);
         $("#sap_first_end_"+pis_seq).val(basic_date_info_add[pis_seq][0].end_date);
-        $("#sap_first_month_start_"+pis_seq).val(start_str[1]);
+        $("#sap_first_month_start_"+pis_seq).val(basic_date_info_add[pis_seq][1].start_date);
         $("#sap_first_month_end_"+pis_seq).val(basic_date_info_add[pis_seq][1].end_date);
         // console.log(start_str[0]+"::"+basic_date_info_add[pis_seq][0].end_date+"::"+basic_date_info_add[pis_seq][1].end_date);
     }else{
         $("#sap_first_start_"+pis_seq).val("");
         $("#sap_first_end_"+pis_seq).val("");
         if(basic_date_info_add[pis_seq][0].interval == "day"){
-            $("#sap_first_start_"+pis_seq).val(start_str[0]);
+            $("#sap_first_start_"+pis_seq).val(basic_date_info_add[pis_seq][0].start_date);
             $("#sap_first_end_"+pis_seq).val(basic_date_info_add[pis_seq][0].end_date);
             $("#sap_first_month_start_"+pis_seq).val("");
             $("#sap_first_month_end_"+pis_seq).val("");
         }else{
             $("#sap_first_start_"+pis_seq).val("");
             $("#sap_first_end_"+pis_seq).val("");
-            $("#sap_first_month_start_"+pis_seq).val(start_str[0]);
+            $("#sap_first_month_start_"+pis_seq).val(basic_date_info_add[pis_seq][0].start_date);
             $("#sap_first_month_end_"+pis_seq).val(basic_date_info_add[pis_seq][0].end_date);
         }
         // console.log(start_str[0]+"::"+basic_date_info_add[pis_seq][0].end_date);

@@ -7,6 +7,7 @@
     <form name="serviceAddUpdate" id="serviceAddUpdate">
         <input type="hidden" name="mb_seq" id="mb_seq" value="<?=$info["mb_seq"]?>">
         <input type="hidden" name="sv_seq" class="sv_seq" value="<?=$info["sv_seq"]?>">
+        <input type="hidden" name="sva_seq" class="sva_seq" value="<?=$info["sva_seq"]?>">
         <input type="hidden" name="svp_seq" class="svp_seq" value="<?=$info["svp_seq"]?>">
         <input type="hidden" name="sv_account_type" id="sv_account_type" value="<?=$info["sv_account_type"]?>">
         <input type="hidden" name="sv_account_policy" id="sv_account_policy" value="<?=$info["sv_account_policy"]?>">
@@ -64,7 +65,7 @@
             <div class="modal-field-input">
                 <div class="label"><div>계산서 품목 분류</div></div>
                 <div class="input">
-                    <select name="sva_claim_type" id="s" class="select2" style="width:120px">
+                    <select name="sva_claim_type" id="sva_claim_type" class="select2" style="width:120px">
                         <option value="0" <?=($info["sva_claim_type"] == 0 ? "selected":"")?>>분류</option>
                         <option value="1" <?=($info["sva_claim_type"] == 1 ? "selected":"")?>>미분류</option>
                     </select>
@@ -201,14 +202,14 @@
                 <div class="modal-field">
                     <div class="modal-field-input" style="width:100%">
                         <div class="label" style="width:35%"><div>초기 청구 요금</div></div>
-                        <div class="input" style="width:45%"><input type="text" name="svp_once_price" id="svp_once_price" style="text-align:right" value="<?=$info["svp_once_price"]?>"></div>
+                        <div class="input" style="width:45%"><input type="text" name="svp_once_price" id="svp_once_price" style="text-align:right" value="<?=number_format($info["svp_once_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></div>
                         <div style="display:inline-block">원</div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input" style="width:100%">
                         <div class="label" style="width:35%"><div>할인 금액</div></div>
-                        <div class="input" style="width:45%"><input type="text" name="svp_once_dis_price" id="svp_once_dis_price" style="text-align:right" value="<?=$info["svp_once_dis_price"]?>"> </div>
+                        <div class="input" style="width:45%"><input type="text" name="svp_once_dis_price" id="svp_once_dis_price" style="text-align:right" value="<?=number_format($info["svp_once_dis_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> </div>
                         <div style="display:inline-block">원</div>
                     </div>
                 </div>
@@ -248,14 +249,14 @@
                 <div class="modal-field">
                     <div class="modal-field-input" style="width:100%">
                         <div class="label" style="width:35%"><div>서비스 월 요금</div></div>
-                        <div class="input" style="width:45%"><input type="text" name="svp_month_price" id="svp_month_price" style="text-align:right" value="<?=$info["svp_month_price"]?>"> </div>
+                        <div class="input" style="width:45%"><input type="text" name="svp_month_price" id="svp_month_price" style="text-align:right" value="<?=number_format($info["svp_month_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> </div>
                         <div style="display:inline-block">원 / 월</div>
                     </div>
                 </div>
                 <div class="modal-field">
                     <div class="modal-field-input" style="width:100%">
                         <div class="label" style="width:35%"><div>할인 금액</div></div>
-                        <div class="input" style="width:45%"><input type="text" name="svp_month_dis_price" id="svp_month_dis_price" style="text-align:right" value="<?=$info["svp_month_dis_price"]?>"></div>
+                        <div class="input" style="width:45%"><input type="text" name="svp_month_dis_price" id="svp_month_dis_price" style="text-align:right" value="<?=number_format($info["svp_month_dis_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></div>
                         <div style="display:inline-block">원 / 월</div>
                     </div>
                 </div>
@@ -337,7 +338,7 @@
 
             <div class="modal-field-input">
                 <div class="label"><div>매입가</div></div>
-                <div class="input"><input type="text" name="sva_input_price" id="sva_input_price" value="<?=$info["sv_input_price"]?>"></div>
+                <div class="input"><input type="text" name="sva_input_price" id="sva_input_price" value="<?=number_format($info["sv_input_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></div>
             </div>
         </div>
         <div class="modal-field">
@@ -362,7 +363,7 @@
             </div>
         </div>
         <div class="modal-button">
-            <button class="btn btn-black btn-payment-modify" type="button">수정</button>
+            <button class="btn btn-black btn-payment-modify-add" type="button">수정</button>
         </div>
     </form>
     </div>

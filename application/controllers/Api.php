@@ -1598,6 +1598,18 @@ class Api extends CI_Controller {
         echo json_encode($arr);
     }
 
+    public function claimUpdate($cl_seq){
+        $result = $this->api_model->updateClaimAdd($cl_seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function claimDel($seq){
+        $result = $this->api_model->deleteClaimDel($seq);
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
     public function paymentClaim(){
         $result = $this->api_model->paymentClaim($pm_seq);
         echo json_encode($result);
@@ -1891,6 +1903,11 @@ class Api extends CI_Controller {
             "list" => $list
         ];
 
+        echo json_encode($result);
+    }
+
+    public function claimDetail(){
+        $result = $this->api_model->fetchClaimDetail();
         echo json_encode($result);
     }
 

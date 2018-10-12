@@ -669,19 +669,19 @@ $(function(){
     $(".detailView").click(function(){
         var specs = "left=10,top=10,width=1000,height=700";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
-        window.open("/member/payment_view/"+$(this).data("seq"), 'serviceMake', specs);
+        window.open("/member/payment_view/"+$(this).data("seq"), 'serviceMake1', specs);
     });
 
     $(".detailPView").click(function(){
         var specs = "left=10,top=10,width=1000,height=700";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
-        window.open("/member/claim_view/"+$(this).data("seq"), 'serviceMake', specs);
+        window.open("/member/claim_view/"+$(this).data("seq"), 'serviceMake2', specs);
     });
 
     $(".detailCView").click(function(){
         var specs = "left=10,top=10,width=1000,height=700";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
-        window.open("/member/paycom_view/"+$(this).data("seq"), 'serviceMake', specs);
+        window.open("/member/paycom_view/"+$(this).data("seq"), 'serviceMake3', specs);
     });
 
     $(".memo").click(function(){

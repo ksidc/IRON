@@ -315,7 +315,7 @@
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>서비스 요금 합계</div></div>
+                    <div class="label" style="width:35%"><div>서비스 청구 합계</div></div>
                     <div class="input" id="month_price4" style="text-align:right;width:43%;padding-right:10px"><?=number_format($month_price)?></div>
                     <div style="display:inline-block">원 / <span class="total_contract"></span>개월</div>
                 </div>

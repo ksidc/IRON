@@ -38,6 +38,7 @@ $(function(){
             }
             addList.push(info);
             $(this).parent().hide();
+            var svpseq = $(this).parent().data("svpseq");
             if(info.sv_payment_type == "1"){
                 var payment_type = "무통장";
             }else if(info.sv_payment_type == "2"){
@@ -54,7 +55,7 @@ $(function(){
                 var pay_type = "익월 "+info.sv_pay_day+"일";
             }
 
-            var html = '<tr><input type="hidden" name="cd_main[]" id="cd_main_'+view_length+'" value="'+info.view_type+'">\
+            var html = '<tr class="dynamicclaim" data-svpseq="'+svpseq+'"><input type="hidden" name="cd_main[]" id="cd_main_'+view_length+'" value="'+info.view_type+'"><input type="hidden" name="cd_seq[]" id="cd_seq_'+view_length+'" value="">\
                             <td>'+info.sv_number+'</td>\
                             <td>'+payment_type+'</td>\
                             <td>'+pay_type+'</td>\
@@ -63,9 +64,9 @@ $(function(){
                             <td><select name="cd_num[]" class="select2 item_num" data-index="'+view_length+'" id="view_select_'+view_length+'"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></td>\
                             <td><input type="checkbox" name="cd_main_check[]" class="view_type_change" id="main_'+view_length+'" data-index="'+view_length+'" '+(info.view_type == "M" ? "checked":"")+'></td>\
                             <td><input type="text" name="cd_name[]" id="bill_name_'+view_length+'" value="'+(info.sva_seq === null ? info.sv_bill_name:info.sva_bill_name) +'"></td>\
-                            <td>올리기</td>\
+                            <td class="btn-del-bill" ><i class="fa fa-caret-up fa-2x" aria-hidden="true"></i></td>\
                         </tr>';
-            $("#after-list").append(html);
+            $("#after-list"+$("#active_payment").val()).append(html);
             setPayment();
         }
         if(info.sv_pay_publish_type == 0){
@@ -76,6 +77,41 @@ $(function(){
         setNum();
         $(".select2").select();
     });
+
+    $("body").on("click",".btn-del-bill",function(){
+        var trdata = $(this).parent();
+        if(trdata.hasClass("dynamicclaim")){
+            var svpseq = trdata.data("svpseq");
+            $(".noclaim").each(function(){
+                if(svpseq == $(this).svpseq){
+                    $(this).show();
+                }
+            })
+            trdata.remove();
+            addList.forEach(function(one,i){
+                if(one.svp_seq == svpseq){
+                    addList.splice(i,1);
+                }
+            })
+        }else{
+            var svpseq = trdata.data("svpseq");
+            // console.log(svpseq);
+            $(".noclaim").each(function(){
+                if(svpseq == $(this).data("svpseq")){
+                    $(this).show();
+                }
+            })
+            trdata.remove();
+            addList.forEach(function(one,i){
+                if(one.svp_seq == svpseq){
+                    addList.splice(i,1);
+                }
+            })
+        }
+        setNum();
+        setPayment();
+        console.log(addList);
+    })
 
     $("body").on("change",".item_num",function(){
         // console.log($(this).data("index"));
@@ -156,9 +192,9 @@ $(function(){
     $("body").on("click",".content-tab-item",function(){
         if($(this).hasClass("add")){
             $(".payment_claim").hide();
-            var length = $(".payment_claim").length+1;
+            var length = $(".payment_claim").length;
 
-            var html = "<table width='700' cellpadding='0' cellspacing='0' align='center' class='border_all payment_claim' id='payment"+length+"' >\
+            var html = "<table width='700' cellpadding='0' cellspacing='0' align='center' class='border_all payment_claim' id='payment"+length+"' data-seq=''>\
                             <tr>\
                                 <td width='100%'>\
                                     <table cellpadding='0' cellspacing='0' height='65' width='100%'>\
@@ -188,10 +224,10 @@ $(function(){
                                 <td>\
                                     <table cellpadding='0' cellspacing='0' width='700'>\
                                         <tr>\
-                                            <td class='border_up' align='center' width='17' rowspan='4'>공<br><br><br>급<br><br><br>자</td>\
+                                            <td class='border_up' align='center' width='17' rowspan='7'>공<br><br><br>급<br><br><br>자</td>\
                                             <td class='border_up' align='center' width='55' height='33'>등록번호</td>\
                                             <td class='border_up' align='center' width='278' colspan='5'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='17' rowspan='4'>공<br>급<br>받<br>는<br>자</td>\
+                                            <td class='border_up' align='center' width='17' rowspan='7'>공<br>급<br>받<br>는<br>자</td>\
                                             <td class='border_up' align='center' width='55'>등록번호</td>\
                                             <td class='border_top' align='center' width='278' colspan='5'>&nbsp;</td>\
                                         </tr>\
@@ -220,6 +256,26 @@ $(function(){
                                             <td class='border_up' align='center' width='148' colspan='1'>&nbsp;</td>\
                                             <td class='border_up' align='center' width='12' colspan='1'>종<br>목</td>\
                                             <td class='border_top' align='center' width='106' colspan='3'>&nbsp;</td>\
+                                        </tr>\
+                                        <tr>\
+                                            <td class='border_up' align='center' width='55' height='33'>담당부서</td>\
+                                            <td class='border_up' align='center' width='148' colspan='1'>&nbsp;</td>\
+                                            <td class='border_up' align='center' width='12' colspan='1'>성명</td>\
+                                            <td class='border_up' align='center' width='106' colspan='3'>&nbsp;</td>\
+                                            <td class='border_up' align='center' width='55'>담당부서</td>\
+                                            <td class='border_up' align='center' width='148' colspan='1'></td>\
+                                            <td class='border_up' align='center' width='12' colspan='1'>성명</td>\
+                                            <td class='border_top' align='center' width='106' colspan='3'></td>\
+                                        </tr>\
+                                        <tr>\
+                                            <td class='border_up' align='center' width='55' height='53' rowspan=2>이메일</td>\
+                                            <td class='border_up' align='center' width='266' colspan='5' rowspan=2>&nbsp;</td>\
+                                            <td class='border_up' align='center' width='55'>이메일</td>\
+                                            <td class='border_up' align='center' width='266' colspan='5'></td>\
+                                        </tr>\
+                                        <tr>\
+                                            <td class='border_up' align='center' width='55'>이메일</td>\
+                                            <td class='border_up' align='center' width='266' colspan='5'></td>\
                                         </tr>\
                                     </table>\
                                 </td>\
@@ -369,57 +425,137 @@ $(function(){
 
 
             $("#payment").append(html);
+            var addhtml = '<form id="addClaim'+length+'">\
+                <table class="table table_claim" id="table'+length+'" style="display:none">\
+                    <thead>\
+                        <tr>\
+                            <th>서비스번호</th>\
+                            <th>납부방법</th>\
+                            <th>청구일</th>\
+                            <th>TaxCode</th>\
+                            <th>품목번호</th>\
+                            <th>품목대표</th>\
+                            <th>계약서 품목명</th>\
+                            <th></th>\
+                        </tr>\
+                    </thead>\
+                    <tbody id="after-list'+length+'">\
+                    </tbody>\
+                </table>\
+                </form>\
+            ';
+
+            $(".table-list").after(addhtml);
             // $(".border_all").last().attr("id","payment"+length);
             // $(".border_all").last().addClass("payment_claim");
-            $(this).before("<li class='content-tab-item' data-index='"+length+"'>계산서"+length+"</li>")
+            $(this).before("<li class='content-tab-item' data-index='"+length+"'>계산서"+(length+1)+"</li>")
         }else{
 
             $(".content-tab-item").removeClass("active");
             $(this).addClass("active");
             var index = $(this).data("index");
+            var clseq = $(this).data("clseq");
             // console.log(index);
             $("#active_payment").val(index);
             $(".payment_claim").hide();
+            $(".table_claim").hide();
             $("#payment"+index).show();
-            $("#after-list").html("");
-            addList = [];
-            $(".btn-add-bill").each(function(){
-                if($(this).data("clcode") != ""){
-                    // console.log($(this).data("clcode"));
-                    if($("#active_payment").val() == $(this).data("clcode")){
-                        console.log("111>>>>>>>"+$("#active_payment").val());
-                        $("#payment"+$("#active_payment").val()).find(".reset").html("");
-                        // if($("#price"+$(this).data("clcode")+"_1").html() == "&nbsp;"){
-                        $(this).trigger("click");
-                        // }
-                    }else{
-                        $(this).hide();
-                    }
-                }
-            })
+            $("#table"+index).show();
+            $("#cl_seq").val(clseq);
+            // $("#after-list").html("");
+            // addList = [];
+            // $(".btn-add-bill").each(function(){
+            //     if($(this).data("clcode") != ""){
+            //         // console.log($(this).data("clcode"));
+            //         if($("#active_payment").val() == $(this).data("clcode")){
+            //             // console.log("111>>>>>>>"+$("#active_payment").val());
+            //             $("#payment"+$("#active_payment").val()).find(".reset").html("");
+            //             // if($("#price"+$(this).data("clcode")+"_1").html() == "&nbsp;"){
+            //             $(this).trigger("click");
+            //             // }
+            //         }else{
+            //             $(this).hide();
+            //         }
+            //     }
+            // })
             // $("#pc_seq").val($(this).data("pcseq"));
             // getList();
             // getItemList();
+            setPayment();
         }
     })
     $(".btn-save").click(function(){
-        var url = "/api/claimAdd/"+$(this).data("mbseq");
-        var datas = $("#addClaim").serialize();
-        $.ajax({
-            url : url,
-            type : 'POST',
-            dataType : 'JSON',
-            data : datas,
-            success:function(response){
-                console.log(response);
-                // document.location.reload();
-            },
-            error : function(error){
-                console.log(error);
-            }
-        });
+        var seq = $("#payment"+$("#active_payment").val()).data("seq");
+        // console.log(seq);
+        if(seq == ""){
+            var url = "/api/claimAdd/"+$(this).data("mbseq");
+            var datas = $("#addClaim"+$("#active_payment").val()).serialize();
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : datas+"&cl_code="+(parseInt($("#active_payment").val())+1),
+                success:function(response){
+                    console.log(response);
+                    if(response.result){
+                        alert("저장 되었습니다.");
+                    }
+                    // document.location.reload();
+                },
+                error : function(error){
+                    console.log(error);
+                }
+            });
+        }else{
+            console.log($("#cl_seq").val());
+            var url = "/api/claimUpdate/"+$("#cl_seq").val();
+            var datas = $("#addClaim"+$("#active_payment").val()).serialize();
+            
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : datas+"&seq="+seq,
+                success:function(response){
+                    console.log(response);
+                    if(response.result){
+                        alert("저장 되었습니다.");
+                    }
+                    // document.location.reload();
+                },
+                error : function(error){
+                    console.log(error);
+                }
+            });
+        }
     });
 
+    $(".btn-delete").click(function(){
+        var seq = $("#payment"+$("#active_payment").val()).data("seq");
+        if(seq !== undefined){
+            var url = "/api/claimDel/"+seq;
+            // var datas = $("#addClaim").serialize();
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                success:function(response){
+                    console.log(response);
+                    if(response.result){
+                        alert("삭제 되었습니다.");
+                        document.location.reload();
+                    }
+                    // document.location.reload();
+                },
+                error : function(error){
+                    console.log(error);
+                }
+            });  
+        }else{
+            $("#payment"+$("#active_payment").val()).remove();
+        }
+          
+    })
 
 })
 function setNum(){
@@ -430,7 +566,7 @@ function setNum(){
         }else{
             var code_add = "S";
         }
-        var code = "T0"+$("#active_payment").val()+"-"+$("#view_select_"+$(this).data("index")).val()+code_add;
+        var code = "T0"+(parseInt($("#active_payment").val())+1)+"-"+$("#view_select_"+$(this).data("index")).val()+code_add;
         $(this).html(code)
     })
 }
@@ -466,9 +602,10 @@ function setPayment(){
     $("#item_oprice4_"+active_payment).html("");
     $("#item_sprice4_"+active_payment).html("");
     $("#item_msg4_"+active_payment).html("");
+    
     addList.forEach(function(one){
         if(one.active_payment == active_payment){
-
+            // console.log(one);
             var insertYn = false;
             var addName = "";
             // console.log(one.item_num);
@@ -481,7 +618,7 @@ function setPayment(){
                     insertYn = false;
                     addName = " 외";
                 }
-                item1_price = parseInt(item1_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price) - parseInt(one.svp_discount_price));
+                item1_price = parseInt(item1_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+(parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price))*parseInt(one.svp_payment_period) - parseInt(one.svp_discount_price));
             }else if(one.item_num == 2){
                 item2++;
                 if(item2 == 1){
@@ -490,7 +627,7 @@ function setPayment(){
                     insertYn = false;
                     addName = " 외";
                 }
-                item2_price = parseInt(item2_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price) - parseInt(one.svp_discount_price));
+                item2_price = parseInt(item2_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+(parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price))*parseInt(one.svp_payment_period) - parseInt(one.svp_discount_price));
             }else if(one.item_num == 3){
                 item3++;
                 if(item3 == 1){
@@ -499,7 +636,7 @@ function setPayment(){
                     insertYn = false;
                     addName = " 외";
                 }
-                item3_price = parseInt(item3_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price) - parseInt(one.svp_discount_price));
+                item3_price = parseInt(item3_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+(parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price))*parseInt(one.svp_payment_period) - parseInt(one.svp_discount_price));
             }else if(one.item_num == 4){
                 item4++;
                 if(item4 == 1){
@@ -508,15 +645,19 @@ function setPayment(){
                     insertYn = false;
                     addName = " 외";
                 }
-                item4_price = parseInt(item4_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price) - parseInt(one.svp_discount_price));
+                item4_price = parseInt(item4_price)+(parseInt(one.svp_once_price)-parseInt(one.svp_once_dis_price)+(parseInt(one.svp_month_price)-parseInt(one.svp_month_dis_price))*parseInt(one.svp_payment_period) - parseInt(one.svp_discount_price));
             }
             totalprice = item1_price + item2_price + item3_price + item4_price;
             surtaxprice = (item1_price*0.1) + (item2_price*0.1) + (item3_price*0.1) + (item4_price*0.1);
             // console.log(insertYn);
+            var today = moment(new Date()).format("M/D");
             if(insertYn){
+                // console.log(one.sv_bill_name);
+                // console.log(one.sva_seq);
                 // console.log(one.item_num);
-                $("#item_date"+one.item_num+"_"+active_payment).html("8/3");
-                $("#item_name"+one.item_num+"_"+active_payment).html((one.sva_seq === null ? one.sv_bill_name:one.sva_bill_name)+addName);
+                $("#item_date"+one.item_num+"_"+active_payment).html(today);
+                if(one.view_type == "M")
+                    $("#item_name"+one.item_num+"_"+active_payment).html((one.sva_seq === null ? one.sv_bill_name:one.sva_bill_name));
                 // $("#item_etc"+i+"_1").html();
                 // $("#item_cnt"+i+"_1").html();
                 // $("#item_price"+i+"_1").html();
@@ -537,8 +678,10 @@ function setPayment(){
                 $("#item_sprice"+one.item_num+"_"+active_payment).html();
                 $("#item_msg"+one.item_num+"_"+active_payment).html();
             }else{
-                $("#item_date"+one.item_num+"_"+active_payment).html("8/3");
-                $("#item_name"+one.item_num+"_"+active_payment).html((one.sva_seq === null ? one.sv_bill_name:one.sva_bill_name)+addName);
+                // console.log(one.sva_seq);
+                $("#item_date"+one.item_num+"_"+active_payment).html(today);
+                if(one.view_type == "M")
+                    $("#item_name"+one.item_num+"_"+active_payment).html((one.sva_seq === null ? one.sv_bill_name:one.sva_bill_name));
 
                 if(one.item_num == "1"){
                     $("#item_oprice1_"+active_payment).html(item1_price);
@@ -570,4 +713,86 @@ function setPayment(){
 
         }
     });
+    if(item1 > 1){
+        $("#item_name1_"+active_payment).html($("#item_name1_"+active_payment).html()+" 외");
+    }
+    if(item2 > 1){
+        $("#item_name2_"+active_payment).html($("#item_name2_"+active_payment).html()+" 외");
+    }
+    if(item3 > 1){
+        $("#item_name3_"+active_payment).html($("#item_name3_"+active_payment).html()+" 외");
+    }
+    if(item4 > 1){
+        $("#item_name4_"+active_payment).html($("#item_name4_"+active_payment).html()+" 외");
+    }
+}
+
+function getClaimDetail(cl_seq,idx){
+    console.log(idx);
+    var url = "/api/claimDetail/";
+    // var datas = $("#addClaim").serialize();
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        data : "cl_seq="+cl_seq,
+        success:function(response){
+            // console.log(response);
+            for(var i = 0; i < response.length;i++){
+                var info = response[i];
+                info.active_payment = idx;
+                info.item_num = info.cd_num;
+                // var view_length = addList.length;
+                info.view_type = info.cd_main;
+                addList.push(info);
+                if(info.sv_payment_type == "1"){
+                    var payment_type = "무통장";
+                }else if(info.sv_payment_type == "2"){
+                    var payment_type = "카드";
+                }else{
+                    var payment_type = "CMS";
+                }
+
+                if(info.sv_pay_type == "0"){
+                    var pay_type = "전월 "+info.sv_pay_day+"일";
+                }else if(info.sv_pay_type == "1"){
+                    var pay_type = "당월 "+info.sv_pay_day+"일";
+                }else{
+                    var pay_type = "익월 "+info.sv_pay_day+"일";
+                }
+                var view_length = i;
+                var html = '<tr class="showclaim" data-svpseq="'+info.svp_seq+'"><input type="hidden" name="cd_main[]" id="cd_main_'+view_length+'" value="'+info.cd_main+'"><input type="hidden" name="cd_seq[]" id="cd_seq_'+view_length+'" value="'+info.cd_seq+'">\
+                                <td>'+info.sv_number+'</td>\
+                                <td>'+payment_type+'</td>\
+                                <td>'+pay_type+'</td>\
+                                <td class="code_'+idx+'" data-index="'+view_length+'">T0'+info.cl_code+'-1'+info.cd_main+'</td>\
+                                <input type="hidden" name="cd_svp_seq[]" value="'+info.svp_seq+'">\
+                                <td><select name="cd_num[]" class="select2 item_num" data-index="'+view_length+'" id="view_select_'+view_length+'"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></td>\
+                                <td><input type="checkbox" name="cd_main_check[]" class="view_type_change" id="main_'+view_length+'" data-index="'+view_length+'" '+(info.cd_main == "M" ? "checked":"")+'></td>\
+                                <td><input type="text" name="cd_name[]" id="bill_name_'+view_length+'" value="'+(info.sva_seq === null ? info.sv_bill_name:info.sva_bill_name) +'"></td>\
+                                <td class="btn-del-bill" ><i class="fa fa-caret-up fa-2x" aria-hidden="true"></i></td>\
+                            </tr>';
+                $("#after-list"+idx).append(html);
+                $(".noclaim").each(function(){
+                    if($(this).data("svpseq") == info.svp_seq){
+                        $(this).hide();
+                    }
+                })
+                if(info.sv_pay_publish_type == 0){
+                    $("#paytype"+$("#active_payment").val()).html("영수");
+                }else{
+                    $("#paytype"+$("#active_payment").val()).html("청구");
+                }
+              
+                
+            }
+             setPayment();
+             setNum();
+             $(".select2").select();
+            // document.location.reload();
+        },
+        error : function(error){
+            console.log(error);
+        }
+    });  
 }

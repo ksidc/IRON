@@ -286,6 +286,13 @@
                 <div style="width:45%;float:right;text-align:right;padding:5px 5px 0px 0px"><button class="btn btn-brown btn-small" type="button" onclick='getAllProduct();$( "#dialogAllProduct" ).dialog("open");$("#dialogAllProduct").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>전체 상품 카테고리 보기</button></div>
 
             </div>
+            <input type="hidden" name="sp_first_price" id="sp_first_price" value=0>
+                <input type="hidden" name="sp_first_start" id="sp_first_start">
+                <input type="hidden" name="sp_first_end" id="sp_first_end">
+                <input type="hidden" name="sp_first_month_price" id="sp_first_month_price" value=0>
+                <input type="hidden" name="sp_first_month_start" id="sp_first_month_start">
+                <input type="hidden" name="sp_first_month_end" id="sp_first_month_end">
+                <input type="hidden" name="sp_first_month_period" id="sp_first_month_period">
             <div class="modal-title" style="background:#ddd">
                 <div class="modal-title-text" style="display:inline-block;background:#ddd;font-size:12px;font-weight:normal">서비스 정보</div>
             </div>
