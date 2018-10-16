@@ -88,7 +88,12 @@ class Service_model extends CI_Model {
         $this->db->select("*, (select count(*) from payment where pm_sv_seq = '".$sv_seq."' and pm_status = 0 and date_format(NOW(),'%Y-%m-%d') >= pm_end_date) as leftCount",true);
         $this->db->from("payment");
         $this->db->where("pm_sv_seq" , $sv_seq);
-        $this->db->order_by("pm_date desc");
+        // if($sva_seq != ""){
+        //     $this->db->where("pm_sva_seq" , $sva_seq);
+        // }else{
+        $this->db->where("(pm_sva_seq is null or pm_sva_seq = 0 )");
+        // }
+        $this->db->order_by("pm_seq desc");
         $this->db->limit(1);
         $query = $this->db->get();
 
@@ -109,6 +114,7 @@ class Service_model extends CI_Model {
         $this->db->select("*");
         $this->db->from("service a");
         $this->db->join("service_price ap","a.sv_seq=ap.svp_sv_seq","left" );
+        $this->db->join("service_addoption ad","ap.svp_sva_seq = ad.sva_seq","left");
         $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
         $this->db->join("end_users c","a.sv_eu_seq = c.eu_seq","left");
         $this->db->join("company_type cc","a.sv_ct_seq = cc.ct_seq","left");
@@ -121,6 +127,16 @@ class Service_model extends CI_Model {
 
         $this->db->where("sv_code like '".$sv_code."-%' ");
 
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function fetchServiceHistory($sv_code){
+        $this->db->select("*");
+        $this->db->from("service_history");
+        $this->db->where("sh_sv_code LIKE '".$sv_code."-01' ");
+        $this->db->order_by("sh_seq");
         $query = $this->db->get();
 
         return $query->result_array();

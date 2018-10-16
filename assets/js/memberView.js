@@ -98,6 +98,16 @@ $(function(){
         paymentCal();
     })
 
+    $(".claim_check").click(function(){
+        // alert(1);
+        claimCal();
+    })
+
+    $(".paycom_check").click(function(){
+        // alert(1);
+        paycomCal();
+    })
+
     $("#service_display").click(function(){
         if($(this).is(":checked")){
             $(".payment_tr").each(function(){
@@ -110,198 +120,241 @@ $(function(){
         }
     })
     $("#all_payment").trigger("click");
+    $("#claim_all").trigger("click");
 
 
     $("body").on("click",".option_extend",function(){
-            var seq = $(this).data("seq");
-            // console.log($(this).text());
-            if($(this).text() == " + "){
-                $("#child_add_"+seq).show();
-                $(this).text(" - ");
-                var oneprice = $(this).parent().find(".oneprice").data("oneprice");
-                var monthprice = $(this).parent().find(".monthprice").data("oneprice");
-                $(this).parent().find(".oneprice").html($.number(oneprice)+" 원");
-                $(this).parent().find(".monthprice").html($.number(monthprice)+" 원");
-                var url = "/api/serviceAddList/"+seq;
-                if($(".child_add_content_"+seq).length > 0){
-                    $(".child_add_content_"+seq).show();
-                }else{
-                    $.ajax({
-                        url : url,
-                        type : 'GET',
-                        dataType : 'JSON',
-                        success:function(response){
-                            console.log(response);
-                            var html = "";
-                            if($(".basic").css("display") != "none"){
-                                var col = "13";
+        var seq = $(this).data("seq");
+        // console.log($(this).text());
+        if($(this).text() == " + "){
+            $("#child_add_"+seq).show();
+            $(this).text(" - ");
+            $(this).attr("title","부가 항목 숨기기");
+            var oneprice = $(this).parent().find(".oneprice").data("oneprice");
+            var monthprice = $(this).parent().find(".monthprice").data("oneprice");
+            $(this).parent().find(".oneprice").html($.number(oneprice)+" 원");
+            $(this).parent().find(".monthprice").html($.number(monthprice)+" 원");
+            var url = "/api/serviceAddList/"+seq;
+            if($(".child_add_content_"+seq).length > 0){
+                $(".child_add_content_"+seq).show();
+            }else{
+                $.ajax({
+                    url : url,
+                    type : 'GET',
+                    dataType : 'JSON',
+                    success:function(response){
+                        console.log(response);
+                        var html = "";
+                        if($(".basic").css("display") != "none"){
+                            var col = "13";
 
-                            }else{
-                                var col = "9";
+                        }else{
+                            var col = "9";
 
+                        }
+                        $(".child_add_content_"+seq).remove();
+
+                        for(var i = 0; i < response.length;i++){
+                            if(response[i].sv_status == "0"){
+                                var sv_status = '입금대기중';
+                            }else if(response[i].sv_status == "1"){
+                                var sv_status = '서비스준비중';
+                            }else if(response[i].sv_status == "2"){
+                                var sv_status = '서비스작업중';
+                            }else if(response[i].sv_status == "3"){
+                                var sv_status = '서비스중';
+                            }else if(response[i].sv_status == "4"){
+                                var sv_status = '서비스중지';
+                            }else if(response[i].sv_status == "5"){
+                                var sv_status = '서비스해지';
+                            }else if(response[i].sv_status == "6"){
+                                var sv_status = '직권중지';
+                            }else if(response[i].sv_status == "7"){
+                                var sv_status = '직권해지';
                             }
-                            $(".child_add_content_"+seq).remove();
+                            // console.log(response[i].paymentinfo);
+                            if(response[i].paymentinfo !== null){
+                                var paymentinfo = response[i].paymentinfo.split("|");
+                            }else{
+                                var paymentinfo = [];
+                            }
 
-                            for(var i = 0; i < response.length;i++){
-                                if(response[i].sv_status == "0"){
-                                    var sv_status = '입금대기중';
-                                }else if(response[i].sv_status == "1"){
-                                    var sv_status = '서비스준비중';
-                                }else if(response[i].sv_status == "2"){
-                                    var sv_status = '서비스작업중';
-                                }else if(response[i].sv_status == "3"){
-                                    var sv_status = '서비스중';
-                                }else if(response[i].sv_status == "4"){
-                                    var sv_status = '서비스중지';
-                                }else if(response[i].sv_status == "5"){
-                                    var sv_status = '서비스해지';
-                                }else if(response[i].sv_status == "6"){
-                                    var sv_status = '직권중지';
-                                }else if(response[i].sv_status == "7"){
-                                    var sv_status = '직권해지';
-                                }
-                                // console.log(response[i].paymentinfo);
-                                if(response[i].paymentinfo !== null){
-                                    var paymentinfo = response[i].paymentinfo.split("|");
-                                }else{
-                                    var paymentinfo = [];
-                                }
+                            var pm_status = paymentinfo[0];
+                            var pm_pay_period = paymentinfo[1];
+                            var pm_date = paymentinfo[2];
+                            var pm_end_date = paymentinfo[3];
+                            var pm_input_date = paymentinfo[4];
 
-                                var pm_status = paymentinfo[0];
-                                var pm_pay_period = paymentinfo[1];
-                                var pm_date = paymentinfo[2];
-                                var pm_end_date = paymentinfo[3];
-                                var pm_input_date = paymentinfo[4];
-
-                                if(pm_status == "0"){
-                                    if(pm_pay_period > 1){
-                                        var custom_end_date = moment(pm_date).add(1,'months').format("YYYY-MM-DD");
-                                        if(moment().format("YYYY-MM-DD") >= custom_end_date){
-                                            var payment_status = "연체";
-                                        }else{
-                                            if(pm_end_date >= moment().format("YYYY-MM-DD")){
-                                                var payment_status = "청구("+pm_pay_period+"개월)";
-                                            }else{
-                                                var payment_status = "미납("+pm_pay_period+"개월)";
-                                            }
-                                        }
+                            if(pm_status == "0"){
+                                if(pm_pay_period > 1){
+                                    var custom_end_date = moment(pm_date).add(1,'months').format("YYYY-MM-DD");
+                                    if(moment().format("YYYY-MM-DD") >= custom_end_date){
+                                        var payment_status = "연체";
                                     }else{
-                                        // 연체 로직 추가
                                         if(pm_end_date >= moment().format("YYYY-MM-DD")){
                                             var payment_status = "청구("+pm_pay_period+"개월)";
                                         }else{
                                             var payment_status = "미납("+pm_pay_period+"개월)";
                                         }
-
                                     }
-                                }else if(pm_status == "1"){
-                                    var payment_status = "가결제("+pm_pay_period+"개월) " +pm_input_date
                                 }else{
-                                    var payment_status = "완납";
+                                    // 연체 로직 추가
+                                    if(pm_end_date >= moment().format("YYYY-MM-DD")){
+                                        var payment_status = "청구("+pm_pay_period+"개월)";
+                                    }else{
+                                        var payment_status = "미납("+pm_pay_period+"개월)";
+                                    }
+
                                 }
+                            }else if(pm_status == "1"){
+                                var payment_status = "가결제("+pm_pay_period+"개월) " +pm_input_date
+                            }else{
+                                var payment_status = "완납";
+                            }
 
-                                html += '<tr class="child_add_content_'+seq+'" style="border:0px">\
-                                            <td colspan='+col+' class="addcol2"></td>\
-                                            <td style="border-bottom: 1px solid #d9d9d9;text-align:left;padding-left:30px;" colspan=2>'+response[i].sva_name+'</td>\
-                                            <td class="basic" style="border-bottom: 1px solid #d9d9d9"></td>\
-                                            <td style="border-bottom: 1px solid #d9d9d9"></td>\
-                                            <td style="border-bottom: 1px solid #d9d9d9"></td>\
-                                            <td style="border-bottom: 1px solid #d9d9d9">'+response[i].sva_number+'</td>\
-                                            <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9" >'+response[i].sva_claim_name+'</td>\
-                                            <td class="payment payment2 right" style="border-bottom: 1px solid #d9d9d9">'+$.number(response[i].svp_once_price - response[i].svp_once_dis_price)+' 원</td>\
-                                            <td class="payment payment2 right" style="border-bottom: 1px solid #d9d9d9">'+$.number(response[i].svp_month_price-response[i].svp_month_dis_price-(response[i].svp_discount_price/response[i].svp_payment_period))+' 원</td>\
-                                            <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+response[i].svp_payment_period+'</td>\
-                                            <td class="payment payment2 right" style="border-bottom: 1px solid #d9d9d9">'+$.number(response[i].sva_input_price)+' 원</td>\
-                                            <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+(response[i].sva_input_unit != "" ? response[i].sva_input_unit:"1")+'개월</td>\
-                                            <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+response[i].c_name+'</td>\
-                                            <td style="border-bottom: 1px solid #d9d9d9">'+moment(response[i].sv_regdate).format("YYYY-MM-DD")+'<br>'+(response[i].sv_service_start !== null ? response[i].sv_service_start.substring(0,10):'')+'</td>\
-                                            <td style="border-bottom: 1px solid #d9d9d9" class="basic">'+response[i].sva_input_date+'</td>\
-                                            <td style="border-bottom: 1px solid #d9d9d9">'+sv_status+'</td>\
-                                            <td style="border-bottom: 1px solid #d9d9d9">'+moment(response[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
-                                            <td style="border-bottom: 1px solid #d9d9d9">'+payment_status+'</td>\
-                                            <td style="border-bottom: 1px solid #d9d9d9"></td>\
-                                        </tr>';
-                            }
-                            $("#child_add_"+seq).after(html);
-                            if($(".payment1").css("display") != "none"){
-                                $(".payment2").show();
-                            }
+                            html += '<tr class="child_add_content_'+seq+'" style="border:0px">\
+                                        <td colspan='+col+' class="addcol2"></td>\
+                                        <td style="border-bottom: 1px solid #d9d9d9;text-align:left;padding-left:30px;" colspan=2>'+response[i].sva_name+'</td>\
+                                        <td class="basic" style="border-bottom: 1px solid #d9d9d9"></td>\
+                                        <td style="border-bottom: 1px solid #d9d9d9"></td>\
+                                        <td style="border-bottom: 1px solid #d9d9d9"></td>\
+                                        <td style="border-bottom: 1px solid #d9d9d9">'+response[i].sva_number+'</td>\
+                                        <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9" >'+response[i].sva_claim_name+'</td>\
+                                        <td class="payment payment2 right" style="border-bottom: 1px solid #d9d9d9">'+$.number(response[i].svp_once_price-response[i].svp_once_dis_price)+' 원</td>\
+                                        <td class="payment payment2 right" style="border-bottom: 1px solid #d9d9d9">'+$.number(response[i].svp_month_price-response[i].svp_month_dis_price-(response[i].svp_discount_price/response[i].svp_payment_period))+' 원</td>\
+                                        <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+response[i].svp_payment_period+'개월</td>\
+                                        <td class="payment payment2 right" style="border-bottom: 1px solid #d9d9d9">'+$.number(response[i].sva_input_price)+' 원</td>\
+                                        <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+(response[i].sva_input_unit != "" ? response[i].sva_input_unit:"1")+'개월</td>\
+                                        <td class="payment payment2" style="border-bottom: 1px solid #d9d9d9">'+response[i].c_name+'</td>\
+                                        <td style="border-bottom: 1px solid #d9d9d9">'+moment(response[i].sv_regdate).format("YYYY-MM-DD")+'<br>'+(response[i].sv_service_start !== null ? response[i].sv_service_start.substring(0,10):'')+'</td>\
+                                        <td style="border-bottom: 1px solid #d9d9d9" class="basic">'+response[i].sva_input_date+'</td>\
+                                        <td style="border-bottom: 1px solid #d9d9d9">'+sv_status+'</td>\
+                                        <td style="border-bottom: 1px solid #d9d9d9">'+moment(response[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
+                                        <td style="border-bottom: 1px solid #d9d9d9">'+payment_status+'</td>\
+                                        <td style="border-bottom: 1px solid #d9d9d9"></td>\
+                                    </tr>';
                         }
-                    });
-                }
-            }else{
-                $("#child_add_"+seq).hide();
-                $(".child_add_content_"+seq).hide();
-                $(this).text(" + ");
-                var oneprice = $(this).parent().find(".oneprice").data("allprice");
-                var monthprice = $(this).parent().find(".monthprice").data("allprice");
-                $(this).parent().find(".oneprice").html($.number(oneprice));
-                $(this).parent().find(".monthprice").html($.number(monthprice));
+                        $("#child_add_"+seq).after(html);
+                        if($(".payment1").css("display") != "none"){
+                            $(".payment2").show();
+                        }
+                        if($(".basic").css("display") != "none"){
+                            $(".basic").show();
+
+                        }
+                        // console.log($(".basic").css("display"));
+                        
+                            
+                    }
+                });
             }
+        }else{
+            $("#child_add_"+seq).hide();
+            $(".child_add_content_"+seq).hide();
+            $(this).text(" + ");
+            var oneprice = $(this).parent().find(".oneprice").data("allprice");
+            var monthprice = $(this).parent().find(".monthprice").data("allprice");
+            $(this).parent().find(".oneprice").html($.number(oneprice));
+            $(this).parent().find(".monthprice").html($.number(monthprice));
+        }
 
 
-        })
+    })
     $("#pm_service_price").keyup(function(){
-        if($("#pm_service_dis_price").val() > 0){
-            var price = parseInt($(this).val()) - parseInt($("#pm_service_dis_price").val());
-            $("#once_price_info").html(price+"원");
-            $("#once_surtax_info").html((price*0.1)+"원");
+
+        if($("#pm_service_dis_price").val().replace(/,/gi, "") != ""){
+            var price = parseInt($(this).val().replace(/,/gi, "")) - parseInt($("#pm_service_dis_price").val().replace(/,/gi, ""));
+            $("#once_price_info").html($.number(price)+"원");
             if($("#pm_surtax_type").val() == "0"){
-                $("#once_total_price").html( (price+(price*0.1))+"원" );
+                $("#once_surtax_info").html(($.number(price*0.1,0))+"원");
             }else{
-                $("#once_total_price").html( price+"원" );
+                $("#once_surtax_info").html("0원");
+            }
+            
+            if($("#pm_surtax_type").val() == "0"){
+                $("#once_total_price").html( $.number((price+(price*0.1)))+"원" );
+            }else{
+                $("#once_total_price").html( $.number(price)+"원" );
             }
         }
     })
 
     $("#pm_service_dis_price").keyup(function(){
-        if($("#pm_service_price").val() > 0){
-            var price = parseInt($("#pm_service_price").val()) - parseInt($(this).val());
-            $("#once_price_info").html(price+"원");
-            $("#once_surtax_info").html((price*0.1)+"원");
+        if($("#pm_service_price").val().replace(/,/gi, "") != ""){
+            var price = parseInt($("#pm_service_price").val().replace(/,/gi, "")) - parseInt($(this).val().replace(/,/gi, ""));
+            $("#once_price_info").html($.number(price)+"원");
             if($("#pm_surtax_type").val() == "0"){
-                $("#once_total_price").html( (price+(price*0.1))+"원" );
+                $("#once_surtax_info").html(($.number(price*0.1,0))+"원");
             }else{
-                $("#once_total_price").html( price+"원" );
+                $("#once_surtax_info").html("0원");
+            }
+            if($("#pm_surtax_type").val() == "0"){
+                $("#once_total_price").html( ($.number(price+(price*0.1)))+"원" );
+            }else{
+                $("#once_total_price").html( $.number(price)+"원" );
             }
         }
     })
 
     $("#pm_surtax_type").change(function(){
         if($(this).val() == 0){
-            if($("#pm_service_price").val() > 0 && $("#pm_service_dis_price").val() > 0 ){
-                var price = parseInt($("#pm_service_price").val()) - parseInt($("#pm_service_dis_price").val());
-
-                $("#once_total_price").html( (price+(price*0.1))+"원" );
+            if($("#pm_service_price").val() != "" && $("#pm_service_dis_price").val() != "" ){
+                var price = parseInt($("#pm_service_price").val().replace(/,/gi, "")) - parseInt($("#pm_service_dis_price").val().replace(/,/gi, ""));
+                $("#once_surtax_info").html(($.number(price*0.1,0))+"원");
+                $("#once_total_price").html( $.number(price+(price*0.1))+"원" );
 
             }
         }else{
-            if($("#pm_service_price").val() > 0 && $("#pm_service_dis_price").val() > 0 ){
-                var price = parseInt($("#pm_service_price").val()) - parseInt($("#pm_service_dis_price").val());
-
-                $("#once_total_price").html( price+"원" );
+            if($("#pm_service_price").val() != "" && $("#pm_service_dis_price").val() != "" ){
+                var price = parseInt($("#pm_service_price").val().replace(/,/gi, "")) - parseInt($("#pm_service_dis_price").val().replace(/,/gi, ""));
+                 $("#once_surtax_info").html("0원");
+                $("#once_total_price").html( $.number(price)+"원" );
 
             }
         }
     });
 
     $(".btn-once-reg").click(function(){
-        var url = "/api/paymentOnceAdd";
-        var datas = $("#onceInput").serialize();
-        $.ajax({
-            url : url,
-            type : 'POST',
-            dataType : 'JSON',
-            data : datas,
-            success:function(response){
-                console.log(response);
-                if(response.result){
-                    alert("청구 완료");
-                    document.location.reload();
+        if($("#pm_claim_name").val() == ""){
+            alert("일회성 청구명을 입력해주시기 바랍니다.");
+            return false;
+        }
+        if($("#pm_bill_name").val() == ""){
+            alert("계산서 품목명을 입력해주시기 바랍니다.");
+            return false;
+        }
+        if($("#pm_bill_name").val() == ""){
+            alert("계산서 품목명을 입력해주시기 바랍니다.");
+            return false;
+        }
+
+        if($("#pm_service_price").val() == 0 || $("#pm_service_price").val() == ""){
+            alert("청구 금액을 0원 이상으로 입력하시기 바랍니다.");
+            return false;
+        }
+
+        if($("#pm_end_date").val() == ""){
+            alert("결제기한을 선택해 주시기 바랍니다.");
+            return false;
+        }
+        if(confirm("일회성 요금을 청구하시겠습니까?")){
+            var url = "/api/paymentOnceAdd";
+            var datas = $("#onceInput").serialize();
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : datas,
+                success:function(response){
+                    console.log(response);
+                    if(response.result){
+                        alert("청구 완료");
+                        document.location.reload();
+                    }
+                    // document.location.reload();
                 }
-                // document.location.reload();
-            }
-        });
+            });
+        }{}
     });
 
     $(".btn-payment-modify").click(function(){
@@ -703,8 +756,17 @@ $(function(){
             dataType : 'JSON',
             data : datas,
             success:function(response){
-                alert("등록되었습니다.");
+                if($("#po_seq").val() == ""){
+                    alert("등록되었습니다.");
+                }else{
+                    alert("수정되었습니다.");
+                }
                 getPaymentMemo();
+                $("#po_seq").val("");
+                $("#po_input_date").val("");
+                $("#po_memo").val("");
+                $(".btn-memo-reg").html("등록");
+                $(this).data("edit","N");
                 // $('#dialogInput').dialog('close');
                 // document.location.reload();
             },
@@ -900,78 +962,99 @@ $(function(){
     $("#mb_auto_claim_yn").click(function(){
         if($(this).is(":checked")){
             var value_ = "Y";
+            var msg = "서비스 비용 자동 청구를 설정 하시겠습니까?";
         }else{
             var value_ = "N";
+            var msg = "서비스 비용 자동 청구를 해제 하시겠습니까?";
         }
-        var url = "/api/memberAutoClaim";
-        $.ajax({
-            url : url,
-            type : 'POST',
-            dataType : 'JSON',
-            data : "mb_seq="+$("#mb_seq").val()+"&mb_auto_claim_yn="+value_,
-            success:function(response){
-                console.log(response);
-                // alert("삭제되었습니다.");
-                // getPaymentMemo();
-                // $('#dialogInput').dialog('close');
-                // document.location.reload();
-            },
-            error : function(error){
-                console.log(error);
-            }
-        });
+        if(confirm(msg)){
+            var url = "/api/memberAutoClaim";
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : "mb_seq="+$("#mb_seq").val()+"&mb_auto_claim_yn="+value_,
+                success:function(response){
+                    console.log(response);
+                    if(response.result){
+                        alert("적용 되었습니다.");
+                    }
+                    // alert("삭제되었습니다.");
+                    // getPaymentMemo();
+                    // $('#dialogInput').dialog('close');
+                    // document.location.reload();
+                },
+                error : function(error){
+                    console.log(error);
+                }
+            });
+        }
 
     })
 
     $("#mb_auto_email_yn").click(function(){
         if($(this).is(":checked")){
             var value_ = "Y";
+            var msg = "메일 자동 발송을 설정 하시겠습니까?";
         }else{
             var value_ = "N";
+            var msg = "메일 자동 발송을 해제 하시겠습니까?";
         }
-        var url = "/api/memberAutoEmail";
-        $.ajax({
-            url : url,
-            type : 'POST',
-            dataType : 'JSON',
-            data : "mb_seq="+$("#mb_seq").val()+"&mb_auto_email_yn="+value_,
-            success:function(response){
-                console.log(response);
-                // alert("삭제되었습니다.");
-                // getPaymentMemo();
-                // $('#dialogInput').dialog('close');
-                // document.location.reload();
-            },
-            error : function(error){
-                console.log(error);
-            }
-        });
+        if(confirm(msg)){
+            var url = "/api/memberAutoEmail";
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : "mb_seq="+$("#mb_seq").val()+"&mb_auto_email_yn="+value_,
+                success:function(response){
+                    console.log(response);
+                    if(response.result){
+                        alert("적용 되었습니다.");
+                    }
+                    // alert("삭제되었습니다.");
+                    // getPaymentMemo();
+                    // $('#dialogInput').dialog('close');
+                    // document.location.reload();
+                },
+                error : function(error){
+                    console.log(error);
+                }
+            });
+        }
 
     })
 
     $("#mb_over_pay_yn").click(function(){
         if($(this).is(":checked")){
             var value_ = "Y";
+            var msg = "연체 수수료 부과를 설정 하시겠습니까?";
         }else{
             var value_ = "N";
+            var msg = "연체 수수료 부과를 해제 하시겠습니까?";
         }
-        var url = "/api/memberOverPay";
-        $.ajax({
-            url : url,
-            type : 'POST',
-            dataType : 'JSON',
-            data : "mb_seq="+$("#mb_seq").val()+"&mb_over_pay_yn="+value_,
-            success:function(response){
-                console.log(response);
-                // alert("삭제되었습니다.");
-                // getPaymentMemo();
-                // $('#dialogInput').dialog('close');
-                // document.location.reload();
-            },
-            error : function(error){
-                console.log(error);
-            }
-        });
+        if(confirm(msg)){
+            var url = "/api/memberOverPay";
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : "mb_seq="+$("#mb_seq").val()+"&mb_over_pay_yn="+value_,
+                success:function(response){
+                    console.log(response);
+                    if(response.result){
+                        alert("적용 되었습니다.");
+                    }
+                    // alert("삭제되었습니다.");
+                    // getPaymentMemo();
+                    // $('#dialogInput').dialog('close');
+                    // document.location.reload();
+                },
+                error : function(error){
+                    console.log(error);
+                }
+            });
+        }
 
     });
 
@@ -992,7 +1075,7 @@ $(function(){
             alert("내용을 입력해 주시기 바랍니다.");
             return false;
         }
-        var url = "/api/sendEmail";
+        var url = "/api/memberSendEmail";
         $("#content").val($('#summernote').summernote('code'));
         // console.log($('#summernote').summernote('code'));
         // return false;
@@ -1007,6 +1090,7 @@ $(function(){
             }
 
         });
+        return false;
     })
 
     $("body").on("click",".fileCount",function(){
@@ -1024,7 +1108,7 @@ $(function(){
                         checkSeq.push(valueArray[0]);
                     }
                 })
-                var url = "/api/estimateEmailFileDelete";
+                var url = "/api/emailFileDelete";
                 $.ajax({
                     url : url,
                     type : 'GET',
@@ -1081,17 +1165,41 @@ $(function(){
         if($(this).data("allview") == "N"){
             $(this).data("allview","Y");
             $(this).html('<i class="fa fa-minus" ></i>');
+            $(this).attr("title","부가 항목 숨기기");
             $(".option_extend").each(function(){
                 $(this).trigger("click");
             })
         }else{
             $(this).data("allview","N");
             $(this).html('<i class="fa fa-plus" ></i>');
+            $(this).attr("title","부가 항목 보이기");
             $(".option_extend").each(function(){
                 $(this).trigger("click");
             })
         }
 
+    })
+    $.widget("ui.tooltip", $.ui.tooltip, {
+         options: {
+             content: function () {
+                 return $(this).prop('title');
+             }
+         }
+     });
+    $( '[rel=tooltip]' ).tooltip({
+        position: {
+            my: "center bottom-10",
+            at: "center top",
+            using: function( position, feedback ) {
+                console.log(this);
+                $( this ).css( position );
+                $( "<div>" )
+                    .addClass( "arrow" )
+                    .addClass( feedback.vertical )
+                    .addClass( feedback.horizontal )
+                    .appendTo( this );
+            }
+        }
     });
 
     $("#mf_file").change(function(evt){
@@ -1102,7 +1210,7 @@ $(function(){
             enctype : "multipart/form-data", // 파일 업로드 처리
             dataType : "json", // 전송 타입 및 리턴 타입 설정
             error : function(xhr,option,error){ // 에러 처리
-                console.log(error);
+                console.log(xhr);
             },
             success : function(data){ // 성공 처리
                 var html = '';
@@ -1126,46 +1234,12 @@ $(function(){
         return false;
     });
 
-    $(".btn-addfile-delete").click(function(){
-        if($(".add_file").length > 0){
-            if(confirm("삭제 하시겠습니까?")){
-                var checkSeq = [];
-                $(".add_file").each(function(){
-                    if($(this).prop("checked") == true){
-                        var valueArray = $(this).val().split("|");
-
-                        checkSeq.push(valueArray[0]);
-                    }
-                })
-                var url = "/api/emailFileDelete";
-                $.ajax({
-                    url : url,
-                    type : 'GET',
-                    dataType : 'JSON',
-                    data : "checkSeq="+checkSeq.join(","),
-                    success:function(response){
-                        // console.log(response);
-                        if(response.result){
-                            alert("삭제 완료");
-                            $(".add_file").each(function(){
-                                if($(this).prop("checked") == true){
-                                    $(this).parent().remove();
-                                }
-                            })
-                        }else{
-                            alert("오류가 발생했습니다.");
-                        }
-
-                    },
-                    error : function(error){
-                        console.log(error);
-                    }
-
-                });
-
-            }
+    $("#sameBill").click(function(){
+        if($(this).is(":checked")){
+            $("#pm_bill_name").val($("#pm_claim_name").val());
         }
     });
+    
 })
 
 var fileCheck = function(){
@@ -1261,10 +1335,10 @@ function oncePayment(){
             checkCnt++;
         }
     })
-    if(checkCnt == 0){
-        alert("서비스를 선택해 주세요");
-        return false;
-    }
+    // if(checkCnt == 0){
+    //     alert("서비스를 선택해 주세요");
+    //     return false;
+    // }
 
     if(checkCnt > 1){
         alert("서비스를 하나만 선택해 주세요");
@@ -1277,8 +1351,17 @@ function oncePayment(){
             $("#once_number").html($(this).parent().parent().children(".once_number").text());
             $("#once_product").html($(this).parent().parent().children(".once_product").text());
             $("#once_service_number").html($(this).parent().parent().children(".once_service_number").text());
+            $("#pm_com_type").val($(this).data("paymenttype"));
+            $("#pm_payment_publish").val($(this).data("paypublish"));
+            $("#pm_payment_publish_type").val($(this).data("paypublishtype"));
+            $("#pm_end_date").val($(this).data("pmdate"));
         }
     })
+    if(checkCnt == 0){
+        $(".service0").hide();
+    }else{
+        $(".service0").show();
+    }
     $( "#dialogOnce" ).dialog("open");$("#dialogOnce").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
 }
 
@@ -1288,7 +1371,7 @@ function servicePayment(mb_seq){
     $(".payment_check").each(function(){
         if($(this).is(":checked")){
             checkCnt++;
-            checkSeq.push($(this).val());
+            checkSeq.push($(this).val()+"|"+$(this).data("svaseq"));
         }
     })
     if(checkCnt == 0){
@@ -1300,25 +1383,26 @@ function servicePayment(mb_seq){
     //     alert("서비스를 하나만 선택해 주세요");
     //     return false;
     // }
-
-    var url = "/api/claimMake/"+mb_seq;
-    $.ajax({
-        url : url,
-        type : 'POST',
-        dataType : 'JSON',
-        data : "pm_sv_seq="+checkSeq.join(","),
-        success:function(response){
-            console.log(response);
-            if(response.result){
-                alert("청구 되었습니다.");
-                document.location.reload();
+    if(confirm("서비스 비용 청구를 하시겠습니까?")){
+        var url = "/api/claimMake/"+mb_seq;
+        $.ajax({
+            url : url,
+            type : 'POST',
+            dataType : 'JSON',
+            data : "pm_sv_seq="+checkSeq.join(","),
+            success:function(response){
+                console.log(response);
+                if(response.result){
+                    alert("청구 되었습니다.");
+                    document.location.reload();
+                }
+                //
+            },
+            error:function(error){
+                console.log(error);
             }
-            //
-        },
-        error:function(error){
-            console.log(error);
-        }
-    });
+        });
+    }
     // $( "#dialogService" ).dialog("open");$("#dialogOnce").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
 }
 
@@ -1481,39 +1565,41 @@ function claimCal(){
     var price11 = 0;
     var price12 = 0;
     $(".claim_check").each(function(){
-        var sumprice1 = parseInt($(this).data("price1")) || 0;
-        var sumprice2 = parseInt($(this).data("price2")) || 0;
-        var sumprice3 = parseInt($(this).data("price3")) || 0;
-        var sumprice4 = parseInt($(this).data("price4")) || 0;
-        var sumprice5 = parseInt($(this).data("price5")) || 0;
-        var sumprice6 = parseInt($(this).data("price6")) || 0;
-        var sumprice7 = parseInt($(this).data("price7")) || 0;
-        var sumprice8 = parseInt($(this).data("price8")) || 0;
-        var sumprice9 = parseInt($(this).data("price9")) || 0;
-        var sumprice10 = parseInt($(this).data("price10")) || 0;
-        var sumprice11 = parseInt($(this).data("price11")) || 0;
-        var sumprice12 = parseInt($(this).data("price12")) || 0;
+        if($(this).is(":checked")){
+            var sumprice1 = parseInt($(this).data("price1")) || 0;
+            var sumprice2 = parseInt($(this).data("price2")) || 0;
+            var sumprice3 = parseInt($(this).data("price3")) || 0;
+            var sumprice4 = parseInt($(this).data("price4")) || 0;
+            var sumprice5 = parseInt($(this).data("price5")) || 0;
+            var sumprice6 = parseInt($(this).data("price6")) || 0;
+            var sumprice7 = parseInt($(this).data("price7")) || 0;
+            var sumprice8 = parseInt($(this).data("price8")) || 0;
+            var sumprice9 = parseInt($(this).data("price9")) || 0;
+            var sumprice10 = parseInt($(this).data("price10")) || 0;
+            var sumprice11 = parseInt($(this).data("price11")) || 0;
+            var sumprice12 = parseInt($(this).data("price12")) || 0;
 
-        price1 = price1 + sumprice1;
-        price2 = price2 + sumprice2;
-        price3 = price3 + sumprice3;
-        price4 = price4 + sumprice4;
-        price5 = price5 + sumprice5;
-        price6 = price6 + sumprice6;
-        price7 = price7 + sumprice7;
-        price8 = price8 + sumprice8;
-        price9 = price9 + sumprice9;
-        price10 = price10 + sumprice10;
-        price11 = price11 + sumprice11;
-        price12 = price12 + sumprice12;
+            price1 = price1 + sumprice1;
+            price2 = price2 + sumprice2;
+            price3 = price3 + sumprice3;
+            price4 = price4 + sumprice4;
+            price5 = price5 + sumprice5;
+            price6 = price6 + sumprice6;
+            price7 = price7 + sumprice7;
+            price8 = price8 + sumprice8;
+            price9 = price9 + sumprice9;
+            price10 = price10 + sumprice10;
+            price11 = price11 + sumprice11;
+            price12 = price12 + sumprice12;
+        }
     })
     $(".claim_price1").html($.number(price1)+" 원");
-    $(".claim_price2").html($.number(price2)+" 원");
+    $(".claim_price2").html("- "+$.number(price2)+" 원");
     $(".claim_price3").html($.number(price3)+" 원");
     $(".claim_price4").html($.number(price4)+" 원");
     $(".claim_price5").html($.number(price5)+" 원");
-    $(".claim_price6").html($.number(price6)+" 원");
-    $(".claim_price7").html($.number(price7)+" 원");
+    $(".claim_price6").html("- "+$.number(price6)+" 원");
+    $(".claim_price7").html("- "+$.number(price7)+" 원");
     $(".claim_price8").html($.number(price8)+" 원");
     $(".claim_price9").html($.number(price9)+" 원");
     $(".claim_price10").html($.number(price10)+" 원");
@@ -1535,31 +1621,33 @@ function paycomCal(){
     var price11 = 0;
     var price12 = 0;
     $(".paycom_check").each(function(){
-        var sumprice1 = parseInt($(this).data("price1")) || 0;
-        var sumprice2 = parseInt($(this).data("price2")) || 0;
-        var sumprice3 = parseInt($(this).data("price3")) || 0;
-        var sumprice4 = parseInt($(this).data("price4")) || 0;
-        var sumprice5 = parseInt($(this).data("price5")) || 0;
-        var sumprice6 = parseInt($(this).data("price6")) || 0;
-        var sumprice7 = parseInt($(this).data("price7")) || 0;
-        var sumprice8 = parseInt($(this).data("price8")) || 0;
-        var sumprice9 = parseInt($(this).data("price9")) || 0;
-        var sumprice10 = parseInt($(this).data("price10")) || 0;
-        var sumprice11 = parseInt($(this).data("price11")) || 0;
-        var sumprice12 = parseInt($(this).data("price12")) || 0;
+        if($(this).is(":checked")){
+            var sumprice1 = parseInt($(this).data("price1")) || 0;
+            var sumprice2 = parseInt($(this).data("price2")) || 0;
+            var sumprice3 = parseInt($(this).data("price3")) || 0;
+            var sumprice4 = parseInt($(this).data("price4")) || 0;
+            var sumprice5 = parseInt($(this).data("price5")) || 0;
+            var sumprice6 = parseInt($(this).data("price6")) || 0;
+            var sumprice7 = parseInt($(this).data("price7")) || 0;
+            var sumprice8 = parseInt($(this).data("price8")) || 0;
+            var sumprice9 = parseInt($(this).data("price9")) || 0;
+            var sumprice10 = parseInt($(this).data("price10")) || 0;
+            var sumprice11 = parseInt($(this).data("price11")) || 0;
+            var sumprice12 = parseInt($(this).data("price12")) || 0;
 
-        price1 = price1 + sumprice1;
-        price2 = price2 + sumprice2;
-        price3 = price3 + sumprice3;
-        price4 = price4 + sumprice4;
-        price5 = price5 + sumprice5;
-        price6 = price6 + sumprice6;
-        price7 = price7 + sumprice7;
-        price8 = price8 + sumprice8;
-        price9 = price9 + sumprice9;
-        price10 = price10 + sumprice10;
-        price11 = price11 + sumprice11;
-        price12 = price12 + sumprice12;
+            price1 = price1 + sumprice1;
+            price2 = price2 + sumprice2;
+            price3 = price3 + sumprice3;
+            price4 = price4 + sumprice4;
+            price5 = price5 + sumprice5;
+            price6 = price6 + sumprice6;
+            price7 = price7 + sumprice7;
+            price8 = price8 + sumprice8;
+            price9 = price9 + sumprice9;
+            price10 = price10 + sumprice10;
+            price11 = price11 + sumprice11;
+            price12 = price12 + sumprice12;
+        }
     })
     $(".paycom_price1").html($.number(price1)+" 원");
     $(".paycom_price2").html($.number(price2)+" 원");
@@ -1585,11 +1673,12 @@ function getPaymentMemo(){
 
             var html = "";
             for(var i = 0;i < response.list.length;i++){
+                var num = parseInt(response.list.length) - i;
                 html += '<tr>\
-                            <td>1</td>\
+                            <td>'+num+'</td>\
                             <td>'+response.list[i].po_memo+'</td>\
                             <td>'+response.list[i].po_regdate+'</td>\
-                            <td>'+response.list[i].po_input_date+'</td>\
+                            <td>'+(response.list[i].po_input_date == "0000-00-00" ? "":response.list[i].po_input_date)+'</td>\
                             <td></td>\
                             <td><i class="fas fa-edit memo_mode" data-edit="N" data-inputdate="'+response.list[i].po_input_date+'" data-memo="'+response.list[i].po_memo+'" data-seq="'+response.list[i].po_seq+'"></i> <i class="fas fa-trash memo_del" data-seq="'+response.list[i].po_seq+'"></i></td>\
                         </tr>';
@@ -1640,209 +1729,472 @@ function daumApi() {
     }).open();
 }
 
+// function getPaymentList(){
+//     // var start = $("#start").val();
+//     // // console.log(start);
+//     // var end = 5;
+//     var url = "/api/memberService/"+$("#mb_seq").val();
+//     // var searchForm = $("#searchForm").serialize();
+//     // // console.log(searchForm);
+//     // console.log(url);
+//     $.ajax({
+//         url : url,
+//         type : 'GET',
+//         dataType : 'JSON',
+//         success:function(response){
+//             console.log(response);
+//             var html = "";
+//             if($(".basic").css("display") != "none"){
+//                 var basicView = true;
+//             }else{
+//                 var basicView = false;
+//             }
+//             if($(".payment").css("display") != "none"){
+//                 var paymentView = true;
+//             }else{
+//                 var paymentView = false;
+//             }
+
+//             if(response.length > 0){
+//                 for(var i = 0; i < response.length;i++){
+//                     // console.log(start);
+//                     var num = parseInt(response.length) - i;
+//                     var startdate = new Date(response[i].sv_contract_start);
+//                     var enddate = new Date(response[i].sv_contract_end);
+//                     var diffenddate = moment(enddate).add(2,'days').format('YYYY-MM-DD');
+//                     // console.log(diffenddate);
+//                     var diff = Date.getFormattedDateDiff(startdate, diffenddate);
+
+//                     if(response[i].sv_rental == "N"){
+//                         var sv_rental = "-";
+//                     }else{
+//                         if(response[i].sv_rental_type == "1"){
+//                             var sv_rental = "영구임대";
+//                         }else{
+//                             var sv_rental = "소유권이전<br>("+response[i].sv_rental_date+"개월)";
+//                         }
+//                     }
+//                     if(response[i].sv_auto_extension == "1"){
+//                         var sv_auto = response[i].sv_auto_extension_month+"개월";
+//                         var sv_auto_end = moment(response[i].sv_contract_end).add(sv_auto,'months').subtract(1, "days").format("YYYY-MM-DD")
+//                     }else{
+//                         var sv_auto = "-";
+//                         var sv_auto_end = response[i].sv_contract_end;
+//                     }
+//                     if(response[i].priceinfo !== null){
+//                         var priceinfo = response[i].priceinfo.split("|");
+//                     }else{
+//                         var priceinfo = [0,0,0,0,0];
+//                     }
+//                     var firstPrice = parseInt(priceinfo[0])-parseInt(priceinfo[1]);
+//                     var monthPrice = parseInt(priceinfo[2])-parseInt(priceinfo[3])-parseInt(priceinfo[4]);
+
+//                     if(response[i].sv_status == "0"){
+//                         var sv_status = '입금대기중';
+//                     }else if(response[i].sv_status == "1"){
+//                         var sv_status = '서비스준비중';
+//                     }else if(response[i].sv_status == "2"){
+//                         var sv_status = '서비스작업중';
+//                     }else if(response[i].sv_status == "3"){
+//                         var sv_status = '서비스중';
+//                     }else if(response[i].sv_status == "4"){
+//                         var sv_status = '서비스중지';
+//                     }else if(response[i].sv_status == "5"){
+//                         var sv_status = '서비스해지';
+//                     }else if(response[i].sv_status == "6"){
+//                         var sv_status = '직권중지';
+//                     }else if(response[i].sv_status == "7"){
+//                         var sv_status = '직권해지';
+//                     }
+//                     if(response[i].paymentinfo !== null){
+//                         var paymentinfo = response[i].paymentinfo.split("|");
+//                     }else{
+//                         var paymentinfo = [];
+//                     }
+//                     var pm_status = paymentinfo[0];
+//                     var pm_pay_period = paymentinfo[1];
+//                     var pm_date = paymentinfo[2];
+//                     var pm_end_date = paymentinfo[3];
+//                     var pm_input_date = paymentinfo[4];
+
+//                     if(pm_status == "0"){
+//                         if(pm_pay_period > 1){
+//                             var custom_end_date = moment(pm_date).add(1,'months').format("YYYY-MM-DD");
+//                             if(moment().format("YYYY-MM-DD") >= custom_end_date){
+//                                 var payment_status = "연체";
+//                             }else{
+//                                 if(pm_end_date >= moment().format("YYYY-MM-DD")){
+//                                     var payment_status = "청구("+pm_pay_period+"개월)";
+//                                 }else{
+//                                     var payment_status = "미납("+pm_pay_period+"개월)";
+//                                 }
+//                             }
+//                         }else{
+//                             // 연체 로직 추가
+//                             if(pm_end_date >= moment().format("YYYY-MM-DD")){
+//                                 var payment_status = "청구("+pm_pay_period+"개월)";
+//                             }else{
+//                                 var payment_status = "미납("+pm_pay_period+"개월)";
+//                             }
+
+//                         }
+//                     }else if(pm_status == "9"){
+//                         var payment_status = "가결제("+pm_pay_period+"개월) " +pm_input_date
+//                     }else{
+//                         var payment_status = "완납";
+//                     }
+
+//                     if(response[i].sv_input_unit == 0){
+//                         var sv_input_unit = "구매";
+//                     }else if(response[i].sv_input_unit == 1){
+//                         var sv_input_unit = "월";
+//                     }else{
+//                         var sv_input_unit = "";
+//                     }
+//                     var file_array = [];
+//                     if(response[i].file1 != ""){
+//                         file_array.push("A");
+//                     }
+//                     if(response[i].file2 != ""){
+//                         file_array.push("R");
+//                     }
+//                     if(response[i].file3 != ""){
+//                         file_array.push("T");
+//                     }
+//                     if(response[i].file4 != ""){
+//                         file_array.push("I");
+//                     }
+//                     if(response[i].file6 != ""){
+//                         file_array.push("C");
+//                     }
+//                     if(response[i].file8 != ""){
+//                         file_array.push("O");
+//                     }
+//                     console.log(response[i].sv_service_start );
+//                     html += '<tr>\
+//                                 <td><input type="checkbox" class="listCheck" name="sv_seq[]" value="'+response[i].sv_seq+'"></td>\
+//                                 <td>'+num+'</td>\
+//                                 <td><a href="/member/view/'+response[i].mb_seq+'">'+response[i].mb_name+'</a></td>\
+//                                 <td class="basic">'+response[i].eu_name+'</td>\
+//                                 <td>'+response[i].sv_charger+'</td>\
+//                                 <td><a href="javascript:void(0)" onclick="openGroupView(\''+response[i].sv_code+'\')">'+response[i].sv_code+'</a></td>\
+//                                 <td>'+response[i].sv_contract_start+'</td>\
+//                                 <td class="basic">'+response[i].sv_contract_end+'</td>\
+//                                 <td>'+diff[0]+"개월 "+diff[1]+"일"+'</td>\
+//                                 <td class="basic">'+sv_auto+'</td>\
+//                                 <td class="basic">'+sv_auto_end+'</td>\
+//                                 <td>'+response[i].pc_name+'</td>\
+//                                 <td>'+response[i].pi_name+'</td>\
+//                                 <td '+(response[i].addoptionTotal > 0 ? "class=\"option_extend\"":"")+'  data-seq="'+response[i].sv_seq+'" style="cursor:pointer;width:30px;height:30px;background:#414860;font-size:16px;color:#fff;margin:2px'+(response[i].addoptionTotal > 0 ? "":";opacity:0")+'"> + </td>\
+//                                 <td><a href="javascript:void(0)" onclick="openProductView('+response[i].sv_seq+')">'+response[i].pr_name+'</a></td>\
+//                                 <td class="basic">'+response[i].pd_name+'</td>\
+//                                 <td>'+response[i].ps_name+'</td>\
+//                                 <td>'+sv_rental+'</td>\
+//                                 <td><a href="/service/view/'+response[i].sv_seq+'">'+response[i].sv_number+'</a></td>\
+//                                 <td class="payment">'+response[i].sv_claim_name+'</td>\
+//                                 <td class="payment oneprice right" data-oneprice="'+(response[i].svp_once_price-response[i].svp_once_dis_price)+'" data-allprice="'+firstPrice+'">'+$.number(firstPrice)+' 원</td>\
+//                                 <td class="payment monthprice right" data-oneprice="'+(response[i].svp_month_price-response[i].svp_month_dis_price-(response[i].svp_discount_price/response[i].svp_payment_period))+'" data-allprice="'+monthPrice+'">'+$.number(monthPrice)+' 원</td>\
+//                                 <td class="payment">'+response[i].svp_payment_period+'개월</td>\
+//                                 <td class="payment right">'+$.number(response[i].sv_input_price)+' 원</td>\
+//                                 <td class="payment">'+sv_input_unit+'</td>\
+//                                 <td class="payment">'+response[i].c_name+'</td>\
+//                                 <td>'+moment(response[i].sv_regdate).format("YYYY-MM-DD")+'<br>'+(response[i].sv_service_start !== null ? response[i].sv_service_start.substring(0,10):'')+'</td>\
+//                                 <td class="basic"></td>\
+//                                 <td>'+sv_status+'</td>\
+//                                 <td>'+moment(response[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
+//                                 <td>'+payment_status+'</td>\
+//                                 <td>'+file_array.join(" ")+'</td>\
+//                             </tr>\
+//                             <tr style="border-bottom:0px;display:none" id="child_add_'+response[i].sv_seq+'">\
+//                                 <td colspan=10 class="addcol"></td>\
+//                                 <th style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9;text-align:left;padding-left:30px" colspan=2>부가항목명</th>\
+//                                 <th class="basic" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></th>\
+//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
+//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
+//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스번호</td>\
+//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">청구명</td>\
+//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">초기일회성</td>\
+//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">월(기준)요금</td>\
+//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제주기</td>\
+//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입가</td>\
+//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입 단위</td>\
+//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입처</td>\
+//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스신청일<br>서비스개시일</td>\
+//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9" class="basic">제품출고일</td>\
+//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스상태</td>\
+//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">과금시작일<br>과금만료일</td>\
+//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제상태</td>\
+//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9s">문서</td>\
+//                             </tr>\
+//                             ';
+//                 }
+
+                
+//             }else{
+//                 html += '<tr><td colspan="17" style="text-align:center">서비스가 없습니다.</td></tr>';
+//             }
+//             $("#payment-list").html(html);
+
+//             if($(".allView").data("allview") == "Y"){
+                
+//                 $(".option_extend").each(function(){
+//                     $(this).trigger("click");
+//                 })
+//             }
+
+//             if(basicView)
+//                 $(".basic").show();
+
+//             if(paymentView)
+//                 $(".payment").show();
+//         }
+//     });
+//     return false;
+// }
+
 function getPaymentList(){
-    // var start = $("#start").val();
-    // // console.log(start);
-    // var end = 5;
-    var url = "/api/memberService/"+$("#mb_seq").val();
-    // var searchForm = $("#searchForm").serialize();
-    // // console.log(searchForm);
-    // console.log(url);
-    $.ajax({
-        url : url,
-        type : 'GET',
-        dataType : 'JSON',
-        success:function(response){
-            console.log(response);
-            var html = "";
-            if($(".basic").css("display") != "none"){
-                var basicView = true;
-            }else{
-                var basicView = false;
-            }
-            if($(".payment").css("display") != "none"){
-                var paymentView = true;
-            }else{
-                var paymentView = false;
-            }
+        var url = "/api/memberService/"+$("#mb_seq").val();
+        // console.log(searchForm);
+        // console.log(url);
+        $.ajax({
+            url : url,
+            type : 'GET',
+            dataType : 'JSON',
+            success:function(response){
+                console.log(response);
+                var html = "";
+                if($(".basic").css("display") != "none"){
+                    var basicView = true;
+                }else{
+                    var basicView = false;
+                }
+                if($(".payment").css("display") != "none"){
+                    var paymentView = true;
+                }else{
+                    var paymentView = false;
+                }
 
-            if(response.length > 0){
-                for(var i = 0; i < response.length;i++){
-                    // console.log(start);
-                    var num = parseInt(response.length) - i;
-                    var startdate = new Date(response[i].sv_contract_start);
-                    var enddate = new Date(response[i].sv_contract_end);
-                    var diffenddate = moment(enddate).add(2,'days').format('YYYY-MM-DD');
-                    // console.log(diffenddate);
-                    var diff = Date.getFormattedDateDiff(startdate, diffenddate);
+                if(response.length > 0){
+                    for(var i = 0; i < response.length;i++){
+                        // console.log(start);
+                        var num = parseInt(response.length) - i;
+                        var startdate = new Date(response[i].sv_contract_start);
+                        var enddate = new Date(response[i].sv_contract_end);
+                        var diffenddate = moment(enddate).add(2,'days').format('YYYY-MM-DD');
+                        // console.log(diffenddate);
+                        var diff = Date.getFormattedDateDiff(startdate, diffenddate);
 
-                    if(response[i].sv_rental == "N"){
-                        var sv_rental = "-";
-                    }else{
-                        if(response[i].sv_rental_type == "1"){
-                            var sv_rental = "영구임대";
+                        if(response[i].sv_rental == "N"){
+                            var sv_rental = "-";
                         }else{
-                            var sv_rental = "소유권이전<br>("+response[i].sv_rental_date+"개월)";
-                        }
-                    }
-                    if(response[i].sv_auto_extension == "1"){
-                        var sv_auto = response[i].sv_auto_extension_month+"개월";
-                        var sv_auto_end = moment(response[i].sv_contract_end).add(sv_auto,'months').subtract(1, "days").format("YYYY-MM-DD")
-                    }else{
-                        var sv_auto = "-";
-                        var sv_auto_end = response[i].sv_contract_end;
-                    }
-                    if(response[i].priceinfo !== null){
-                        var priceinfo = response[i].priceinfo.split("|");
-                    }else{
-                        var priceinfo = [0,0,0,0,0];
-                    }
-                    var firstPrice = parseInt(priceinfo[0])-parseInt(priceinfo[1]);
-                    var monthPrice = parseInt(priceinfo[2])-parseInt(priceinfo[3])-parseInt(priceinfo[4]);
-
-                    if(response[i].sv_status == "0"){
-                        var sv_status = '입금대기중';
-                    }else if(response[i].sv_status == "1"){
-                        var sv_status = '서비스준비중';
-                    }else if(response[i].sv_status == "2"){
-                        var sv_status = '서비스작업중';
-                    }else if(response[i].sv_status == "3"){
-                        var sv_status = '서비스중';
-                    }else if(response[i].sv_status == "4"){
-                        var sv_status = '서비스중지';
-                    }else if(response[i].sv_status == "5"){
-                        var sv_status = '서비스해지';
-                    }else if(response[i].sv_status == "6"){
-                        var sv_status = '직권중지';
-                    }else if(response[i].sv_status == "7"){
-                        var sv_status = '직권해지';
-                    }
-                    if(response[i].paymentinfo !== null){
-                        var paymentinfo = response[i].paymentinfo.split("|");
-                    }else{
-                        var paymentinfo = [];
-                    }
-                    var pm_status = paymentinfo[0];
-                    var pm_pay_period = paymentinfo[1];
-                    var pm_date = paymentinfo[2];
-                    var pm_end_date = paymentinfo[3];
-                    var pm_input_date = paymentinfo[4];
-
-                    if(pm_status == "0"){
-                        if(pm_pay_period > 1){
-                            var custom_end_date = moment(pm_date).add(1,'months').format("YYYY-MM-DD");
-                            if(moment().format("YYYY-MM-DD") >= custom_end_date){
-                                var payment_status = "연체";
+                            if(response[i].sv_rental_type == "1"){
+                                var sv_rental = "영구임대";
                             }else{
+                                var sv_rental = "소유권이전<br>("+response[i].sv_rental_date+"개월)";
+                            }
+                        }
+                        if(response[i].sv_auto_extension == "1"){
+                            var sv_auto = response[i].sv_auto_extension_month+"개월";
+                            var sv_auto_end = moment(response[i].sv_contract_end).add(sv_auto,'months').subtract(1, "days").format("YYYY-MM-DD")
+                        }else{
+                            var sv_auto = "-";
+                            var sv_auto_end = response[i].sv_contract_end;
+                        }
+                        if(response[i].priceinfo !== null){
+                            var priceinfo = response[i].priceinfo.split("|");
+                        }else{
+                            var priceinfo = [0,0,0,0,0];
+                        }
+                        var firstPrice = parseInt(priceinfo[0])-parseInt(priceinfo[1]);
+                        var monthPrice = parseInt(priceinfo[2])-parseInt(priceinfo[3])-parseInt(priceinfo[4]);
+
+                        if(response[i].sv_status == "0"){
+                            var sv_status = '입금대기중';
+                        }else if(response[i].sv_status == "1"){
+                            var sv_status = '서비스준비중';
+                        }else if(response[i].sv_status == "2"){
+                            var sv_status = '서비스작업중';
+                        }else if(response[i].sv_status == "3"){
+                            var sv_status = '서비스중';
+                        }else if(response[i].sv_status == "4"){
+                            var sv_status = '서비스중지';
+                        }else if(response[i].sv_status == "5"){
+                            var sv_status = '서비스해지';
+                        }else if(response[i].sv_status == "6"){
+                            var sv_status = '직권중지';
+                        }else if(response[i].sv_status == "7"){
+                            var sv_status = '직권해지';
+                        }
+                        if(response[i].paymentinfo !== null){
+                            var paymentinfo = response[i].paymentinfo.split("|");
+                        }else{
+                            var paymentinfo = [];
+                        }
+                        var pm_status = paymentinfo[0];
+                        var pm_pay_period = paymentinfo[1];
+                        var pm_date = paymentinfo[2];
+                        var pm_end_date = paymentinfo[3];
+                        var pm_input_date = paymentinfo[4];
+
+                        if(pm_status == "0"){
+                            if(pm_pay_period > 1){
+                                var custom_end_date = moment(pm_date).add(1,'months').format("YYYY-MM-DD");
+                                if(moment().format("YYYY-MM-DD") >= custom_end_date){
+                                    var payment_status = "연체";
+                                }else{
+                                    if(pm_end_date >= moment().format("YYYY-MM-DD")){
+                                        var payment_status = "청구("+pm_pay_period+"개월)";
+                                    }else{
+                                        var payment_status = "미납("+pm_pay_period+"개월)";
+                                    }
+                                }
+                            }else{
+                                // 연체 로직 추가
                                 if(pm_end_date >= moment().format("YYYY-MM-DD")){
                                     var payment_status = "청구("+pm_pay_period+"개월)";
                                 }else{
                                     var payment_status = "미납("+pm_pay_period+"개월)";
                                 }
+
                             }
+                        }else if(pm_status == "1"){
+                            var payment_status = "가결제("+pm_pay_period+"개월) " +pm_input_date
                         }else{
-                            // 연체 로직 추가
-                            if(pm_end_date >= moment().format("YYYY-MM-DD")){
-                                var payment_status = "청구("+pm_pay_period+"개월)";
-                            }else{
-                                var payment_status = "미납("+pm_pay_period+"개월)";
-                            }
-
+                            var payment_status = "완납";
                         }
-                    }else if(pm_status == "1"){
-                        var payment_status = "가결제("+pm_pay_period+"개월) " +pm_input_date
-                    }else{
-                        var payment_status = "완납";
+
+                        if(response[i].sv_input_unit == 0){
+                            var sv_input_unit = "구매";
+                        }else if(response[i].sv_input_unit == 1){
+                            var sv_input_unit = "월";
+                        }else{
+                            var sv_input_unit = "";
+                        }
+
+                        var file_array = [];
+                        if(response[i].file1 != ""){
+                            file_array.push("A");
+                        }
+                        if(response[i].file2 != ""){
+                            file_array.push("R");
+                        }
+                        if(response[i].file3 != ""){
+                            file_array.push("T");
+                        }
+                        if(response[i].file4 != ""){
+                            file_array.push("I");
+                        }
+                        if(response[i].file6 != ""){
+                            file_array.push("C");
+                        }
+                        if(response[i].file8 != ""){
+                            file_array.push("O");
+                        }
+
+                        console.log(response[i].sv_service_start );
+                        html += '<tr>\
+                                    <td><input type="checkbox" class="listCheck" name="sv_seq[]" value="'+response[i].sv_seq+'"></td>\
+                                    <td>'+num+'</td>\
+                                    <td><a href="/member/view/'+response[i].mb_seq+'">'+response[i].mb_name+'</a></td>\
+                                    <td class="basic">'+response[i].eu_name+'</td>\
+                                    <td>'+response[i].sv_charger+'</td>\
+                                    <td><a href="javascript:void(0)" onclick="openGroupView(\''+response[i].sv_code+'\')">'+response[i].sv_code+'</a></td>\
+                                    <td>'+response[i].sv_contract_start+'</td>\
+                                    <td class="basic">'+response[i].sv_contract_end+'</td>\
+                                    <td>'+diff[0]+"개월 "+diff[1]+"일"+'</td>\
+                                    <td class="basic">'+sv_auto+'</td>\
+                                    <td class="basic">'+sv_auto_end+'</td>\
+                                    <td>'+response[i].pc_name+'</td>\
+                                    <td>'+response[i].pi_name+'</td>\
+                                    <td '+(response[i].addoptionTotal > 0 ? "class=\"option_extend\"":"")+'  data-seq="'+response[i].sv_seq+'" style="cursor:pointer;width:30px;height:30px;background:#516381;font-size:16px;color:#fff;margin:2px'+(response[i].addoptionTotal > 0 ? "":";opacity:0")+'" title="부가 항목 보이기" rel="tooltip"> + </td>\
+                                    <td><a href="javascript:void(0)" onclick="openProductView('+response[i].sv_seq+')">'+response[i].pr_name+'</a></td>\
+                                    <td class="basic">'+response[i].pd_name+'</td>\
+                                    <td>'+response[i].ps_name+'</td>\
+                                    <td>'+sv_rental+'</td>\
+                                    <td><a href="/service/view/'+response[i].sv_seq+'">'+response[i].sv_number+'</a></td>\
+                                    <td class="payment">'+response[i].sv_claim_name+'</td>\
+                                    <td class="payment oneprice right" data-oneprice="'+(response[i].svp_once_price-response[i].svp_once_dis_price)+'" data-allprice="'+firstPrice+'">'+$.number(firstPrice)+' 원</td>\
+                                    <td class="payment monthprice right" data-oneprice="'+(response[i].svp_month_price-response[i].svp_month_dis_price-response[i].svp_discount_price)+'" data-allprice="'+monthPrice+'">'+$.number(monthPrice)+' 원</td>\
+                                    <td class="payment">'+response[i].svp_payment_period+'개월</td>\
+                                    <td class="payment right">'+$.number(response[i].sv_input_price)+' 원</td>\
+                                    <td class="payment">'+sv_input_unit+'</td>\
+                                    <td class="payment">'+response[i].c_name+'</td>\
+                                    <td>'+moment(response[i].sv_regdate).format("YYYY-MM-DD")+'<br>'+(response[i].sv_service_start !== null ? response[i].sv_service_start.substring(0,10):'')+'</td>\
+                                    <td class="basic">'+response[i].sv_out_date.substring(0,10)+'</td>\
+                                    <td>'+sv_status+'</td>\
+                                    <td>'+moment(response[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
+                                    <td>'+payment_status+'</td>\
+                                    <td>'+file_array.join(" ")+'</td>\
+                                </tr>\
+                                <tr style="border-bottom:0px;display:none" id="child_add_'+response[i].sv_seq+'">\
+                                    <td colspan=9 class="addcol"></td>\
+                                    <th style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9;text-align:left;padding-left:30px" colspan=2>부가항목명</th>\
+                                    <th class="basic" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9"></th>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">서비스번호</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">청구명</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">초기일회성</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">월(기준)요금</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">결제주기</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">매입가</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">매입 단위</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">매입처</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">서비스신청일<br>서비스개시일</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9" class="basic">제품출고일</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">서비스상태</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">과금시작일<br>과금만료일</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">결제상태</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9s">문서</td>\
+                                </tr>\
+                                ';
                     }
 
-                    if(response[i].sv_input_unit == 0){
-                        var sv_input_unit = "구매";
-                    }else if(response[i].sv_input_unit == 1){
-                        var sv_input_unit = "월";
-                    }else{
-                        var sv_input_unit = "";
-                    }
-                    console.log(response[i].sv_service_start );
-                    html += '<tr>\
-                                <td><input type="checkbox" class="listCheck" name="sv_seq[]" value="'+response[i].sv_seq+'"></td>\
-                                <td>'+num+'</td>\
-                                <td><a href="/member/view/'+response[i].mb_seq+'">'+response[i].mb_name+'</a></td>\
-                                <td class="basic">'+response[i].eu_name+'</td>\
-                                <td>'+response[i].sv_charger+'</td>\
-                                <td><a href="javascript:void(0)" onclick="openGroupView(\''+response[i].sv_code+'\')">'+response[i].sv_code+'</a></td>\
-                                <td>'+response[i].sv_contract_start+'</td>\
-                                <td class="basic">'+response[i].sv_contract_end+'</td>\
-                                <td>'+diff[0]+"개월 "+diff[1]+"일"+'</td>\
-                                <td class="basic">'+sv_auto+'</td>\
-                                <td class="basic">'+sv_auto_end+'</td>\
-                                <td>'+response[i].pc_name+'</td>\
-                                <td>'+response[i].pi_name+'</td>\
-                                <td '+(response[i].addoptionTotal > 0 ? "class=\"option_extend\"":"")+'  data-seq="'+response[i].sv_seq+'" style="cursor:pointer;width:30px;height:30px;background:#414860;font-size:16px;color:#fff;margin:2px'+(response[i].addoptionTotal > 0 ? "":";opacity:0")+'"> + </td>\
-                                <td><a href="javascript:void(0)" onclick="openProductView('+response[i].sv_seq+')">'+response[i].pr_name+'</a></td>\
-                                <td class="basic">'+response[i].pd_name+'</td>\
-                                <td>'+response[i].ps_name+'</td>\
-                                <td>'+sv_rental+'</td>\
-                                <td><a href="/service/view/'+response[i].sv_seq+'">'+response[i].sv_number+'</a></td>\
-                                <td class="payment">'+response[i].sv_claim_name+'</td>\
-                                <td class="payment oneprice right" data-oneprice="'+(response[i].svp_once_price-response[i].svp_once_dis_price)+'" data-allprice="'+firstPrice+'">'+$.number(firstPrice)+' 원</td>\
-                                <td class="payment monthprice right" data-oneprice="'+(response[i].svp_month_price-response[i].svp_month_dis_price-(response[i].svp_discount_price/response[i].svp_payment_period))+'" data-allprice="'+monthPrice+'">'+$.number(monthPrice)+' 원</td>\
-                                <td class="payment">'+response[i].svp_payment_period+'개월</td>\
-                                <td class="payment right">'+$.number(response[i].sv_input_price)+' 원</td>\
-                                <td class="payment">'+sv_input_unit+'</td>\
-                                <td class="payment">'+response[i].c_name+'</td>\
-                                <td>'+moment(response[i].sv_regdate).format("YYYY-MM-DD")+'<br>'+(response[i].sv_service_start !== null ? response[i].sv_service_start.substring(0,10):'')+'</td>\
-                                <td class="basic"></td>\
-                                <td>'+sv_status+'</td>\
-                                <td>'+moment(response[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
-                                <td>'+payment_status+'</td>\
-                                <td></td>\
-                            </tr>\
-                            <tr style="border-bottom:0px;display:none" id="child_add_'+response[i].sv_seq+'">\
-                                <td colspan=9 class="addcol"></td>\
-                                <th style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9;text-align:left;padding-left:30px" colspan=2>부가항목명</th>\
-                                <th class="basic" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></th>\
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스번호</td>\
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">청구명</td>\
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">초기일회성</td>\
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">월(기준)요금</td>\
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제주기</td>\
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입가</td>\
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입 단위</td>\
-                                <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입처</td>\
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스신청일<br>서비스개시일</td>\
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9" class="basic">제품출고일</td>\
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스상태</td>\
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">과금시작일<br>과금만료일</td>\
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제상태</td>\
-                                <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9s">문서</td>\
-                            </tr>\
-                            ';
+                    
+                }else{
+                    html += '<tr><td colspan="17" style="text-align:center">서비스가 없습니다.</td></tr>';
+                }
+                $("#payment-list").html(html);
+
+                if($(".allView").data("allview") == "Y"){
+                    
+                    $(".option_extend").each(function(){
+                        $(this).trigger("click");
+                    })
                 }
 
-                
-            }else{
-                html += '<tr><td colspan="17" style="text-align:center">서비스가 없습니다.</td></tr>';
+                if(basicView)
+                    $(".basic").show();
+
+                if(paymentView)
+                    $(".payment").show();
+
+                $.widget("ui.tooltip", $.ui.tooltip, {
+                     options: {
+                         content: function () {
+                             return $(this).prop('title');
+                         }
+                     }
+                 });
+                $( '[rel=tooltip]' ).tooltip({
+                    position: {
+                        my: "center bottom-10",
+                        at: "center top",
+                        using: function( position, feedback ) {
+                            console.log(this);
+                            $( this ).css( position );
+                            $( "<div>" )
+                                .addClass( "arrow" )
+                                .addClass( feedback.vertical )
+                                .addClass( feedback.horizontal )
+                                .appendTo( this );
+                        }
+                    }
+                });
             }
-            $("#payment-list").html(html);
-
-            if($(".allView").data("allview") == "Y"){
-                
-                $(".option_extend").each(function(){
-                    $(this).trigger("click");
-                })
-            }
-
-            if(basicView)
-                $(".basic").show();
-
-            if(paymentView)
-                $(".payment").show();
-        }
-    });
-    return false;
-}
+        });
+        return false;
+    }
 
 Date.getFormattedDateDiff = function(date1, date2) {
     var b = moment(date1),
@@ -1858,3 +2210,16 @@ Date.getFormattedDateDiff = function(date1, date2) {
     }
     return out;
 };
+
+function openGroupView(sv_code){
+
+    var specs = "left=10,top=10,width=1000,height=700";
+    specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
+    window.open("/service/numberGroupView/"+sv_code, 'serviceProductView', specs);
+}
+
+function openProductView(sv_seq){
+        var specs = "left=10,top=10,width=1000,height=700";
+        specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
+        window.open("/service/product_view/"+sv_seq, 'serviceProductView', specs);
+    }

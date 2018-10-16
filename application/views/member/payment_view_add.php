@@ -344,7 +344,7 @@
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label"><div>매입 시작일</div></div>
-                <div class="input"><input type="text" name="sva_input_start" id="sva_input_start" value="<?=$info["sv_input_start"]?>"></div>
+                <div class="input"><input type="text" name="sva_input_start" id="sva_input_start" value="<?=$info["sv_input_start"]?>" class="datepicker3"></div>
             </div>
 
             <div class="modal-field-input">

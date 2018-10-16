@@ -10,6 +10,7 @@
 .paycom_payment {display:none;}
 </style>
 <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
 <div class="content">
     <h2 class="title">
         <i class="fa fa-file"></i> 회원 상세 정보
@@ -115,7 +116,7 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div>이메일</div></div>
                             <div class="input padd">
-                                <input type="text" name="mb_email" id="mb_email" class="width-button" value="<?=$info["mb_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_email").val());$( "#dialogEmail" ).dialog("open");'></i>
+                                <input type="text" name="mb_email" id="mb_email" class="width-button" value="<?=$info["mb_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_email").val());$("#phone").val($("#mb_phone").val());$( "#dialogEmail" ).dialog("open");'></i>
                             </div>
                         </div>
                     </div>
@@ -393,7 +394,7 @@
                     <div class="modal-field-input full">
                         <div class="label padd"><div>이메일</div></div>
                         <div class="input padd">
-                            <input type="text" class="width-button" name="mb_contract_email" id="mb_contract_email" value="<?=$info["mb_contract_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_contract_email").val());$( "#dialogEmail" ).dialog("open");'></i>
+                            <input type="text" class="width-button" name="mb_contract_email" id="mb_contract_email" value="<?=$info["mb_contract_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_contract_email").val());$("#phone").val($("#mb_contract_phone").val());$( "#dialogEmail" ).dialog("open");'></i>
                         </div>
                     </div>
                 </div>
@@ -461,7 +462,7 @@
                     <div class="modal-field-input full">
                         <div class="label padd"><div>이메일</div></div>
                         <div class="input padd">
-                            <input type="text" class="width-button" name="mb_service_email" id="mb_service_email" value="<?=$info["mb_service_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_service_email").val());$( "#dialogEmail" ).dialog("open");'></i>
+                            <input type="text" class="width-button" name="mb_service_email" id="mb_service_email" value="<?=$info["mb_service_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_service_email").val());$("#phone").val($("#mb_service_phone").val());$( "#dialogEmail" ).dialog("open");'></i>
                         </div>
                     </div>
                 </div>
@@ -529,7 +530,7 @@
                     <div class="modal-field-input full">
                         <div class="label padd"><div>이메일</div></div>
                         <div class="input padd">
-                            <input type="text" class="width-button" name="mb_payment_email" id="mb_payment_email" value="<?=$info["mb_payment_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_payment_email").val());$( "#dialogEmail" ).dialog("open");'></i>
+                            <input type="text" class="width-button" name="mb_payment_email" id="mb_payment_email" value="<?=$info["mb_payment_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_payment_email").val());$("#phone").val($("#mb_payment_phone").val());$( "#dialogEmail" ).dialog("open");'></i>
                         </div>
                     </div>
                 </div>
@@ -701,17 +702,17 @@
                         
                         <tr class="payment_tr" data-price="<?=$price?>">
                             <?php if($row["svp_display_yn"] == "Y"):?>
-                            <td><input type="checkbox" class="payment_check" value="<?=$row["sv_seq"]?>" data-price1="<?=$row["svp_once_price"]?>" data-price2="<?=$row["svp_once_dis_price"]?>" data-price3="<?=$once_price?>" data-price4="<?=$row["svp_month_price"]?>" data-price5="<?=$row["svp_month_dis_price"]?>" data-price6="<?=$row["svp_discount_price"]/$row["svp_payment_period"]?>" data-price7="<?=$price_1?>" data-price8="<?=$price2_1?>" data-price9="<?=($price_1+$price2_1)?>"></td>
+                            <td><input type="checkbox" class="payment_check" value="<?=$row["sv_seq"]?>" data-price1="<?=$row["svp_once_price"]?>" data-price2="<?=$row["svp_once_dis_price"]?>" data-price3="<?=$once_price?>" data-price4="<?=$row["svp_month_price"]?>" data-price5="<?=$row["svp_month_dis_price"]?>" data-price6="<?=$row["svp_discount_price"]/$row["svp_payment_period"]?>" data-price7="<?=$price_1?>" data-price8="<?=$price2_1?>" data-price9="<?=($price_1+$price2_1)?>" data-svaseq="<?=$row["sva_seq"]?>" data-paypublish="<?=$row["sv_pay_publish"]?>" data-paypublishtype="<?=$row["sv_pay_publish_type"]?>" data-paymenttype="<?=$row["sv_payment_type"]?>" data-pmdate="<?=date('Y-m-d')?>"></td>
                             <?php else: ?>
                             <td><input type="checkbox" disabled></td>
                             <?php endif; ?>
                             <td><?=$num?></td>
                             <!-- <td><?=$row["mb_name"]?></td> -->
-                            <td class="once_number"><?=$row["sv_code"]?></td>
+                            <td class="once_number"><a href="javascript:void(0)" onclick="openGroupView('<?=$row["sv_code"]?>')"><?=$row["sv_code"]?></td>
                             <td class="once_service"><?=($row["sva_seq"] == "" ? $row["pc_name"]:"부가항목")?></td>
-                            <td class="once_product"><?=($row["sva_seq"] == "" ? $row["pr_name"]:$row["sva_name"])?></td>
+                            <td class="once_product" ><a href="javascript:void(0)" onclick="openProductView('<?=$row["sv_seq"]?>')"><?=($row["sva_seq"] == "" ? $row["pr_name"]:$row["sva_name"])?></a></td>
                             <td><?=($row["sva_seq"] == "" ? $row["ps_name"]:"")?></td>
-                            <td class="once_service_number"><?=($row["sva_seq"] == "" ? $row["sv_number"]:$row["sva_number"])?></td>
+                            <td class="once_service_number"><a href="/service/view/<?=$row["sv_seq"]?>"><?=($row["sva_seq"] == "" ? $row["sv_number"]:$row["sva_number"])?></a></td>
                             <td>
                                 <?php if($row["sv_payment_type"] == "1"): ?>
                                 무통장
@@ -832,9 +833,9 @@
         <div class="header-title" style="padding:10px;background:#ddd;height:25px">
             <div style="float:left">청구 내역 <img src="/assets/images/Picture1.png" class="memo" style="width:20px"> <img src="/assets/images/Picture2.png" class="" style="width:20px"></div>
             <div style="float:right">
-                <input type="checkbox" name="mb_auto_claim_yn" id="mb_auto_claim_yn" value="Y" <?=($info["mb_auto_claim_yn"] == "Y" ? "checked":"")?>> 서비스 비용 자동 청구
-                <input type="checkbox" name="mb_auto_email_yn" id="mb_auto_email_yn" value="Y" <?=($info["mb_auto_email_yn"] == "Y" ? "checked":"")?>> 메일 자동 발송
-                <input type="checkbox" name="mb_over_pay_yn" id="mb_over_pay_yn" value="Y" <?=($info["mb_over_pay_yn"] == "Y" ? "checked":"")?>> 연체 수수료 부과
+                <input type="checkbox" name="mb_auto_claim_yn" id="mb_auto_claim_yn" value="Y" <?=($info["mb_auto_claim_yn"] == "Y" || $info["mb_auto_claim_yn"] == "" ? "checked":"")?>> 서비스 비용 자동 청구
+                <input type="checkbox" name="mb_auto_email_yn" id="mb_auto_email_yn" value="Y" <?=($info["mb_auto_email_yn"] == "Y" || $info["mb_auto_email_yn"] == "" ? "checked":"")?>> 메일 자동 발송
+                <input type="checkbox" name="mb_over_pay_yn" id="mb_over_pay_yn" value="Y" <?=($info["mb_over_pay_yn"] == "Y" || $info["mb_over_pay_yn"] == "" ? "checked":"")?>> 연체 수수료 부과
 
             </div>
         </div>
@@ -882,9 +883,50 @@
                             <?php $b_pm_ca_seq = ""?>
                             <?php $i = 0;?>
                         <?php foreach($claim_list as $row): ?>
+                            <?php 
+                            if($row["sva_seq"] == ""){
+                                $sv_claim_name = $row["sv_claim_name"];
+                            }else{
+                                $sv_claim_name = $row["sva_claim_name"];
+                            }
+                            ?>
                             <?php $num = count($claim_list) -  $i;?>
+                            <?php 
+                            if($row["pm_first_month_start"] == "" || $row["pm_first_month_start"] == "0000-00-00"){
+                                $month = 0;
+                            }else{
+                                $date1 = date('Y-m-d', strtotime($row["pm_first_month_end"] . ' +1 day'));
+
+                                $date1 = new DateTime($date1);
+                                $date2 = new DateTime($row["pm_first_month_start"]);
+
+                                $diff = $date1->diff($date2);
+                                // print_r($diff);
+                                $month = (($diff->format('%y') * 12) + $diff->format('%m'));
+                                if($month == 0){
+                                    $month = 1;
+                                }
+                            }
+                            ?>
+                            <?php $once_price = ($row["pm_once_price"]-$row["pm_once_dis_price"]) ?>
+                            <?php if($row["pm_payment_dis_price"] > 0): ?>
+                                <?php $price = $row["pm_first_day_price"]+$once_price+( ($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month); ?>
+                                <?php $price2 = ((($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)*1.1)-(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month); ?>
+                            <?php else: ?>
+                                <?php $price = $row["pm_first_day_price"]+$once_price+( ($row["pm_service_price"]-$row["pm_service_dis_price"])*$month); ?>
+                                <?php $price2 = ((($row["pm_service_price"]-$row["pm_service_dis_price"])*$month)*1.1)-(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month); ?>
+                            <?php endif; ?>
+                            <?php 
+                                if($row["pm_payment_dis_price"] > 0){
+                                    $price_1 = ($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]));
+                                    $price2_1 = (($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]))*1.1)-($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]));
+                                }else{
+                                    $price_1 = ($row["pm_service_price"]-$row["pm_service_dis_price"]);
+                                    $price2_1 = (($row["pm_service_price"]-$row["pm_service_dis_price"])*1.1)-($row["pm_service_price"]-$row["pm_service_dis_price"]);
+                                }
+                            ?>
                         <tr>
-                            <td><input type="checkbox" class="claim_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]?>" data-price6="<?=$row["pm_service_dis_price"]?>" data-price7="<?=$row["pm_payment_dis_price"]?>" data-price8="" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$row["pm_total_price"]?>" data-price11="<?=$row["pm_surtax_price"]?>" data-price12="<?=$row["pm_total_price"]+$row["pm_surtax_price"]?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
+                            <td><input type="checkbox" class="claim_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]*$month?>" data-price6="<?=$row["pm_service_dis_price"]*$month?>" data-price7="<?=($row["pm_payment_dis_price"] == 0 ? 0:($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?>" data-price8="<?=($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month?>" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$price?>" data-price11="<?=($price*0.1)?>" data-price12="<?=($price*1.1)?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
                             <td><?=$num?></td>
                             <td><?=($row["pm_type"] == "1" ? "서비스비용":"일회성비용")?></td>
 
@@ -913,19 +955,19 @@
                                 <?php endif; ?>
                             </td>
                             <td><?=$row["pm_pay_period"]?>개월</td>
-                            <td class="claim_payment">청구명</td>
-                            <td class="claim_payment"><?=$row["pm_once_price"]?></td>
-                            <td class="claim_payment"><?=$row["pm_once_dis_price"]?></td>
-                            <td class="claim_payment"><?=$row["pm_once_price"]-$row["pm_once_dis_price"]?></td>
-                            <td class="claim_payment"><?=$row["pm_first_day_price"]?></td>
-                            <td class="claim_payment"><?=$row["pm_service_price"]?></td>
-                            <td class="claim_payment"><?=$row["pm_service_dis_price"]?></td>
-                            <td class="claim_payment"><?=$row["pm_payment_dis_price"]?></td>
-                            <td class="claim_payment">서비스 청구 합계</td>
-                            <td class="claim_payment"><?=$row["pm_delay_price"]?></td>
-                            <td><?=$row["pm_total_price"]?></td>
-                            <td><?=$row["pm_surtax_price"]?></td>
-                            <td><?=$row["pm_total_price"]+$row["pm_surtax_price"]?></td>
+                            <td class="claim_payment"><?=($row["pm_claim_name"] == "" ? $sv_claim_name:$row["pm_claim_name"])?></td>
+                            <td class="claim_payment right"><?=number_format($row["pm_once_price"])?> 원</td>
+                            <td class="claim_payment right" style="color:#FF5353"> - <?=number_format($row["pm_once_dis_price"])?> 원</td>
+                            <td class="claim_payment right" style="color:#404040"><?=number_format($once_price)?> 원</td>
+                            <td class="claim_payment right"><?=number_format($row["pm_first_day_price"])?> 원</td>
+                            <td class="claim_payment right"><?=number_format($row["pm_service_price"]*$month)?> 원</td>
+                            <td class="claim_payment right" style="color:#FF5353"> - <?=number_format($row["pm_service_dis_price"]*$month)?> 원</td>
+                            <td class="claim_payment right" style="color:#FF7053"> - <?=number_format($row["pm_payment_dis_price"]/$row["pm_pay_period"]*$month)?> 원</td>
+                            <td class="claim_payment right" style="color:#404040"><?=number_format(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?> 원</td>
+                            <td class="claim_payment right"><?=$row["pm_delay_price"]?></td>
+                            <td class="right"><?=number_format($price)?> 원</td>
+                            <td class="right"><?=number_format($price*0.1)?> 원</td>
+                            <td class="right"><?=number_format($price*1.1)?> 원</td>
                             <td><?=$row["pm_end_date"]?></td>
                             <td>
                                 <?php if($row["pm_status"] == "1"): ?>
@@ -983,13 +1025,13 @@
                     </tr>
                     <tr>
                         <td class="claim_price1 claim_payment"></td>
-                        <td class="claim_price2 claim_payment"></td>
-                        <td class="claim_price3 claim_payment"></td>
+                        <td class="claim_price2 claim_payment" style="color:#FF5353"></td>
+                        <td class="claim_price3 claim_payment" style="color:#404040"></td>
                         <td class="claim_price4 claim_payment"></td>
                         <td class="claim_price5 claim_payment"></td>
-                        <td class="claim_price6 claim_payment"></td>
-                        <td class="claim_price7 claim_payment"></td>
-                        <td class="claim_price8 claim_payment"></td>
+                        <td class="claim_price6 claim_payment" style="color:#FF5353"></td>
+                        <td class="claim_price7 claim_payment" style="color:#FF7053"></td>
+                        <td class="claim_price8 claim_payment" style="color:#404040"></td>
                         <td class="claim_price9 claim_payment"></td>
                         <td class="claim_price10"></td>
                         <td class="claim_price11"></td>
@@ -1060,8 +1102,43 @@
                             <?php $i = 0 ?>
                         <?php foreach($paycom_list as $row): ?>
                             <?php $num = count($paycom_list) -  $i;?>
+
+                            <?php 
+                            if($row["pm_first_month_start"] == "" || $row["pm_first_month_start"] == "0000-00-00"){
+                                $month = 0;
+                            }else{
+                                $date1 = date('Y-m-d', strtotime($row["pm_first_month_end"] . ' +1 day'));
+
+                                $date1 = new DateTime($date1);
+                                $date2 = new DateTime($row["pm_first_month_start"]);
+
+                                $diff = $date1->diff($date2);
+                                // print_r($diff);
+                                $month = (($diff->format('%y') * 12) + $diff->format('%m'));
+                                if($month == 0){
+                                    $month = 1;
+                                }
+                            }
+                            ?>
+                            <?php $once_price = ($row["pm_once_price"]-$row["pm_once_dis_price"]) ?>
+                            <?php if($row["pm_payment_dis_price"] > 0): ?>
+                                <?php $price = $row["pm_first_day_price"]+$once_price+( ($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month); ?>
+                                <?php $price2 = ((($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)*1.1)-(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month); ?>
+                            <?php else: ?>
+                                <?php $price = $row["pm_first_day_price"]+$once_price+( ($row["pm_service_price"]-$row["pm_service_dis_price"])*$month); ?>
+                                <?php $price2 = ((($row["pm_service_price"]-$row["pm_service_dis_price"])*$month)*1.1)-(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month); ?>
+                            <?php endif; ?>
+                            <?php 
+                                if($row["pm_payment_dis_price"] > 0){
+                                    $price_1 = ($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]));
+                                    $price2_1 = (($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]))*1.1)-($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]));
+                                }else{
+                                    $price_1 = ($row["pm_service_price"]-$row["pm_service_dis_price"]);
+                                    $price2_1 = (($row["pm_service_price"]-$row["pm_service_dis_price"])*1.1)-($row["pm_service_price"]-$row["pm_service_dis_price"]);
+                                }
+                            ?>
                         <tr>
-                            <td><input type="checkbox" class="paycom_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]?>" data-price6="<?=$row["pm_service_dis_price"]?>" data-price7="<?=$row["pm_payment_dis_price"]?>" data-price8="" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$row["pm_total_price"]?>" data-price11="<?=$row["pm_surtax_price"]?>" data-price12="<?=$row["pm_total_price"]+$row["pm_surtax_price"]?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
+                            <td><input type="checkbox" class="paycom_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]*$month?>" data-price6="<?=$row["pm_service_dis_price"]*$month?>" data-price7="<?=($row["pm_payment_dis_price"] == 0 ? 0:($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?>" data-price8="<?=($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month?>" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$price?>" data-price11="<?=($price*0.1)?>" data-price12="<?=($price*1.1)?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
                             <td><?=$num?></td>
                             <td><?=($row["pm_type"] == "1" ? "서비스비용":"일회성비용")?></td>
                             <td><?=$row["pm_code"]?></td>
@@ -1086,18 +1163,18 @@
                                 <?php endif; ?>
                             </td>
                             <td class="paycom_payment">청구명</td>
-                            <td class="paycom_payment"><?=$row["pm_once_price"]?></td>
-                            <td class="paycom_payment"><?=$row["pm_once_dis_price"]?></td>
-                            <td class="paycom_payment"><?=$row["pm_once_price"]-$row["pm_once_dis_price"]?></td>
-                            <td class="paycom_payment"><?=$row["pm_first_day_price"]?></td>
-                            <td class="paycom_payment"><?=$row["pm_service_price"]?></td>
-                            <td class="paycom_payment"><?=$row["pm_service_dis_price"]?></td>
-                            <td class="paycom_payment"><?=$row["pm_payment_dis_price"]?></td>
-                            <td class="paycom_payment">서비스 청구 합계</td>
-                            <td class="paycom_payment"><?=$row["pm_delay_price"]?></td>
-                            <td><?=$row["pm_total_price"]?></td>
-                            <td><?=$row["pm_surtax_price"]?></td>
-                            <td><?=$row["pm_total_price"]+$row["pm_surtax_price"]?></td>
+                            <td class="paycom_payment right"><?=number_format($row["pm_once_price"])?> 원</td>
+                            <td class="paycom_payment right"><?=number_format($row["pm_once_dis_price"])?> 원</td>
+                            <td class="paycom_payment right"><?=number_format($row["pm_once_price"]-$row["pm_once_dis_price"])?> 원</td>
+                            <td class="paycom_payment right"><?=number_format($row["pm_first_day_price"])?> 원</td>
+                            <td class="paycom_payment right"><?=number_format($row["pm_service_price"]*$month)?> 원</td>
+                            <td class="paycom_payment right"><?=number_format($row["pm_service_dis_price"]*$month)?> 원</td>
+                            <td class="paycom_payment right"><?=number_format($row["pm_payment_dis_price"]/$row["pm_pay_period"]*$month)?> 원</td>
+                            <td class="paycom_payment right"><?=number_format(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?> 원</td>
+                            <td class="paycom_payment right"><?=number_format($row["pm_delay_price"])?> 원</td>
+                            <td class="right"><?=number_format($price)?> 원</td>
+                            <td class="right"><?=number_format($price*0.1)?> 원</td>
+                            <td class="right"><?=number_format($price*1.1)?> 원</td>
                             <?php if($b_pm_ca_seq != $row["pm_ca_seq"]): ?>
                             <td rowspan="<?=$row["pm_ca_total"]?>"><i class="fas fa-edit claimView" data-seq="<?=$row["pm_ca_seq"]?>"></i></td>
                             <td class="billView" data-seq="<?=$row["pm_ca_seq"]?>" rowspan="<?=$row["pm_ca_total"]?>">
@@ -1208,7 +1285,7 @@
             <div class="modal-field-input">
                 <div class="label"><div>메모</div></div>
                 <div class="input">
-                    <div><input type="text" name="po_memo" id="po_memo" style="width:95%""></div>
+                    <div><input type="text" name="po_memo" id="po_memo" style="width:95%"></div>
                 </div>
             </div>
         </div>
@@ -1244,12 +1321,12 @@
 
         </ul>
     </div>
-    <div style="font-size:12px;padding:5px 5px 20px 5px">요금 납부 방법 및 계산서 발행, 결제 기한은 체크한 서비스와 동일하게 불러옵니다.</div>
+    <div style="font-size:12px;padding:5px 5px 20px 5px" ><p class="service0">요금 납부 방법 및 계산서 발행, 결제 기한은 체크한 서비스와 동일하게 불러옵니다.</p></div>
     <form id="onceInput">
         <input type="hidden" name="pm_type" value="2">
         <input type="hidden" name="pm_mb_seq" value="<?=$info["mb_seq"]?>">
         <input type="hidden" name="pm_sv_seq" id="pm_sv_seq" value="">
-        <div class="modal-field">
+        <div class="modal-field service0">
             <div class="modal-field-input">
                 <div class="label padd"><div>서비스 종류</div></div>
                 <div class="input padd" id="once_service">
@@ -1262,7 +1339,7 @@
                 <div class="input padd" id="once_number"></div>
             </div>
         </div>
-        <div class="modal-field">
+        <div class="modal-field service0">
             <div class="modal-field-input">
                 <div class="label padd"><div>상품명</div></div>
                 <div class="input padd" id="once_product">
@@ -1285,14 +1362,14 @@
             <div class="modal-field-input">
                 <div class="label padd"><div>계산서 품목명</div></div>
 
-                <div class="input padd"><input type="text" name="pm_bill_name" id="pm_bill_name"></div>
+                <div class="input padd"><input type="text" name="pm_bill_name" id="pm_bill_name" style="width:50%"> <input type="checkbox" id="sameBill"> 청구명과 동일</div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label padd"><div>요금 납부 방법</div></div>
                 <div class="input padd">
-                    <select name="pm_com_type" class="select2">
+                    <select name="pm_com_type" id="pm_com_type" class="select2">
                         <option value="1">무통장</option>
                         <option value="2">카드</option>
                         <option value="3">CMS</option>
@@ -1322,20 +1399,20 @@
             <div class="modal-field-input">
                 <div class="label padd"><div>청구 금액</div></div>
                 <div class="input padd">
-                    <input type="text" name="pm_service_price" id="pm_service_price">
+                    <input type="text" name="pm_service_price" id="pm_service_price" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)" class="right" style="width:84%" value="0"> 원
                 </div>
             </div>
             <div class="modal-field-input">
                 <div class="label padd"><div>일회성 청구 합계</div></div>
 
-                <div class="input padd" id="once_price_info">원</div>
+                <div class="input padd right" id="once_price_info">0 원</div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label padd"><div>할인 금액</div></div>
                 <div class="input padd">
-                    <input type="text" name="pm_service_dis_price" id="pm_service_dis_price">
+                    - <input type="text" name="pm_service_dis_price" id="pm_service_dis_price" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)" class="right" style="width:80%" value="0"> 원
                 </div>
             </div>
             <div class="modal-field-input">
@@ -1344,7 +1421,7 @@
                 <div class="input padd">
                     <select name="pm_surtax_type" id="pm_surtax_type" class="select2" style="width:40%">
                         <option selected value="0">포함</option>
-                        <option value="1">불포함</option>
+                        <option value="1">미포함</option>
 
                     </select>
                 </div>
@@ -1360,20 +1437,20 @@
             <div class="modal-field-input">
                 <div class="label padd"><div>부가세</div></div>
 
-                <div class="input padd" id="once_surtax_info"></div>
+                <div class="input padd right" id="once_surtax_info"></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label padd"><div>결제기한</div></div>
                 <div class="input padd">
-                    <input type="text" name="pm_end_date" id="pm_end_date">
+                    <input type="text" name="pm_end_date" id="pm_end_date" class="datepicker3">
                 </div>
             </div>
             <div class="modal-field-input">
                 <div class="label padd"><div>총 청구 합계</div></div>
 
-                <div class="input padd" id="once_total_price"></div>
+                <div class="input padd right" id="once_total_price"></div>
             </div>
         </div>
     </form>

@@ -1,4 +1,51 @@
+<style>
+  .ui-tooltip, .arrow:after {
+    background: black;
 
+  }
+  .ui-tooltip {
+    padding: 10px 20px;
+    color: white;
+    border-radius: 2px;
+    font-size:11px;
+    text-transform: uppercase;
+    box-shadow: 0 0 0px black;
+    width:auto;
+    background-color:rgba(0,0,0,0.8);
+  }
+  .arrow {
+    width: 60px;
+    height: 16px;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin-left: -28px;
+    bottom: -16px;
+  }
+  .arrow.top {
+    top: -16px;
+    bottom: auto;
+  }
+  .arrow.left {
+    left: 20%;
+  }
+  .arrow:after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: -20px;
+    width: 25px;
+    height: 25px;
+    box-shadow: 6px 5px 9px -9px black;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+  .arrow.top:after {
+    bottom: -20px;
+    top: auto;
+  }
+  </style>
 <!-- uniform 최신 jquery 오류 처리 include 파일 -->
 <script src="//code.jquery.com/jquery-migrate-1.2.1.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
@@ -114,7 +161,7 @@
                         <th class="basic">계약만료일(연장)</th>
                         <th>서비스 종류</th>
                         <th>제품군</th>
-                        <th style="cursor:pointer" class="allView" data-allview='N'><i class="fa fa-plus" ></i></th>
+                        <th style="cursor:pointer" class="allView" data-allview='N' title="부가 항목 보이기" rel="tooltip"><i class="fa fa-plus" ></i></th>
                         <th>상품명</th>
                         <th class="basic">대분류</th>
                         <th>소분류</th>
@@ -270,6 +317,7 @@
             if($(this).text() == " + "){
                 $("#child_add_"+seq).show();
                 $(this).text(" - ");
+                $(this).attr("title","부가 항목 숨기기");
                 var oneprice = $(this).parent().find(".oneprice").data("oneprice");
                 var monthprice = $(this).parent().find(".monthprice").data("oneprice");
                 $(this).parent().find(".oneprice").html($.number(oneprice)+" 원");
@@ -378,6 +426,13 @@
                             if($(".payment1").css("display") != "none"){
                                 $(".payment2").show();
                             }
+                            if($(".basic").css("display") != "none"){
+                                $(".basic").show();
+
+                            }
+                            // console.log($(".basic").css("display"));
+                            
+                                
                         }
                     });
                 }
@@ -414,18 +469,42 @@
             if($(this).data("allview") == "N"){
                 $(this).data("allview","Y");
                 $(this).html('<i class="fa fa-minus" ></i>');
+                $(this).attr("title","부가 항목 숨기기");
                 $(".option_extend").each(function(){
                     $(this).trigger("click");
                 })
             }else{
                 $(this).data("allview","N");
                 $(this).html('<i class="fa fa-plus" ></i>');
+                $(this).attr("title","부가 항목 보이기");
                 $(".option_extend").each(function(){
                     $(this).trigger("click");
                 })
             }
 
         })
+        $.widget("ui.tooltip", $.ui.tooltip, {
+             options: {
+                 content: function () {
+                     return $(this).prop('title');
+                 }
+             }
+         });
+        $( '[rel=tooltip]' ).tooltip({
+            position: {
+                my: "center bottom-10",
+                at: "center top",
+                using: function( position, feedback ) {
+                    console.log(this);
+                    $( this ).css( position );
+                    $( "<div>" )
+                        .addClass( "arrow" )
+                        .addClass( feedback.vertical )
+                        .addClass( feedback.horizontal )
+                        .appendTo( this );
+                }
+            }
+        });
     })
 
     function search(q){
@@ -607,6 +686,27 @@
                         }else{
                             var sv_input_unit = "";
                         }
+
+                        var file_array = [];
+                        if(response.list[i].file1 != ""){
+                            file_array.push("A");
+                        }
+                        if(response.list[i].file2 != ""){
+                            file_array.push("R");
+                        }
+                        if(response.list[i].file3 != ""){
+                            file_array.push("T");
+                        }
+                        if(response.list[i].file4 != ""){
+                            file_array.push("I");
+                        }
+                        if(response.list[i].file6 != ""){
+                            file_array.push("C");
+                        }
+                        if(response.list[i].file8 != ""){
+                            file_array.push("O");
+                        }
+
                         console.log(response.list[i].sv_service_start );
                         html += '<tr>\
                                     <td><input type="checkbox" class="listCheck" name="sv_seq[]" value="'+response.list[i].sv_seq+'"></td>\
@@ -622,7 +722,7 @@
                                     <td class="basic">'+sv_auto_end+'</td>\
                                     <td>'+response.list[i].pc_name+'</td>\
                                     <td>'+response.list[i].pi_name+'</td>\
-                                    <td '+(response.list[i].addoptionTotal > 0 ? "class=\"option_extend\"":"")+'  data-seq="'+response.list[i].sv_seq+'" style="cursor:pointer;width:30px;height:30px;background:#414860;font-size:16px;color:#fff;margin:2px'+(response.list[i].addoptionTotal > 0 ? "":";opacity:0")+'"> + </td>\
+                                    <td '+(response.list[i].addoptionTotal > 0 ? "class=\"option_extend\"":"")+'  data-seq="'+response.list[i].sv_seq+'" style="cursor:pointer;width:30px;height:30px;background:#516381;font-size:16px;color:#fff;margin:2px'+(response.list[i].addoptionTotal > 0 ? "":";opacity:0")+'" title="부가 항목 보이기" rel="tooltip"> + </td>\
                                     <td><a href="javascript:void(0)" onclick="openProductView('+response.list[i].sv_seq+')">'+response.list[i].pr_name+'</a></td>\
                                     <td class="basic">'+response.list[i].pd_name+'</td>\
                                     <td>'+response.list[i].ps_name+'</td>\
@@ -640,28 +740,28 @@
                                     <td>'+sv_status+'</td>\
                                     <td>'+moment(response.list[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response.list[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
                                     <td>'+payment_status+'</td>\
-                                    <td></td>\
+                                    <td>'+file_array.join(" ")+'</td>\
                                 </tr>\
                                 <tr style="border-bottom:0px;display:none" id="child_add_'+response.list[i].sv_seq+'">\
                                     <td colspan=9 class="addcol"></td>\
-                                    <th style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9;text-align:left;padding-left:30px" colspan=2>부가항목명</th>\
-                                    <th class="basic" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></th>\
-                                    <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
-                                    <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
-                                    <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스번호</td>\
-                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">청구명</td>\
-                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">초기일회성</td>\
-                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">월(기준)요금</td>\
-                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제주기</td>\
-                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입가</td>\
-                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입 단위</td>\
-                                    <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입처</td>\
-                                    <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스신청일<br>서비스개시일</td>\
-                                    <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9" class="basic">제품출고일</td>\
-                                    <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스상태</td>\
-                                    <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">과금시작일<br>과금만료일</td>\
-                                    <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제상태</td>\
-                                    <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9s">문서</td>\
+                                    <th style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9;text-align:left;padding-left:30px" colspan=2>부가항목명</th>\
+                                    <th class="basic" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9"></th>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">서비스번호</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">청구명</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">초기일회성</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">월(기준)요금</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">결제주기</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">매입가</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">매입 단위</td>\
+                                    <td class="payment payment1" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">매입처</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">서비스신청일<br>서비스개시일</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9" class="basic">제품출고일</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">서비스상태</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">과금시작일<br>과금만료일</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9">결제상태</td>\
+                                    <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9s">문서</td>\
                                 </tr>\
                                 ';
                     }
@@ -699,6 +799,29 @@
 
                 if(paymentView)
                     $(".payment").show();
+
+                $.widget("ui.tooltip", $.ui.tooltip, {
+                     options: {
+                         content: function () {
+                             return $(this).prop('title');
+                         }
+                     }
+                 });
+                $( '[rel=tooltip]' ).tooltip({
+                    position: {
+                        my: "center bottom-10",
+                        at: "center top",
+                        using: function( position, feedback ) {
+                            console.log(this);
+                            $( this ).css( position );
+                            $( "<div>" )
+                                .addClass( "arrow" )
+                                .addClass( feedback.vertical )
+                                .addClass( feedback.horizontal )
+                                .appendTo( this );
+                        }
+                    }
+                });
             }
         });
         return false;

@@ -142,9 +142,9 @@
                                 직권해지
                             <?php endif;?>
                         </td>
-                        <td><?=$row["pc_name"]?></td>
-                        <td><?=$row["pr_name"]?></td>
-                        <td><?=$row["ps_name"]?></td>
+                        <td><?=($row["sva_seq"] == "" ? $row["pc_name"]:"부가항목")?></td>
+                        <td><?=($row["sva_seq"] == "" ? $row["pr_name"]:$row["sva_name"])?></td>
+                        <td><?=($row["sva_seq"] == "" ? $row["ps_name"]:"")?></td>
                         <td class="right"><?=number_format($row["svp_once_price"]-$row["svp_once_dis_price"])?> 원</td>
                         <?php if($row["svp_discount_price"] > 0): ?>
                         <td class="right"><?=number_format($row["svp_month_price"]-$row["svp_month_dis_price"]-($row["svp_discount_price"]/$row["svp_payment_period"]))?> 원</td>
@@ -187,26 +187,60 @@
                 </tr>
                 </thead>
                 <tbody>
+                    <?php foreach($history_list as $i=>$row): ?>
+                        <?php $num = $i+1;?>
+                    <tr>
+                        <td><?=$num?></td>
+                        <td>
+                            <?php if($row["sh_type"] == "0"): ?>
+                                최초계약
+                            <?php elseif($row["sh_type"] == "1"): ?>
+                                변경계약
+                            <?php elseif($row["sh_type"] == "2"): ?>
+                                수동연장
+                            <?php elseif($row["sh_type"] == "3"): ?>
+                                계약해지
+                            <?php elseif($row["sh_type"] == "4"): ?>
+                                자동연장
+                            <?php endif; ?>
+                        </td>
+                        <td><?=$row["sh_date"]?></td>
+                        <td><?=$row["sh_service_start"]?> ~ <?=$row["sh_service_end"]?></td>
+                        <td>
+                            <?php if($row["sh_auto_extension"] == "1"): ?>
+                                <?=$row["sh_auto_extension_month"]?>개월
+                            <?php else: ?>
+                                재 계약 필요
+                            <?php endif; ?>
+                        </td>
+                        <td><?=$row["sh_link"]?></td>
+                        <td><i class="fa fa-edit historyEdit" data-seq="<?=$row["sh_seq"]?>" data-shtype="<?=$row["sh_type"]?>" data-shservicestart="<?=$row["sh_service_start"]?>" data-shserviceend="<?=$row["sh_service_end"]?>" data-shlink="<?=$row["sh_link"]?>"></i> <i class="fa fa-trash historyDel" data-seq="<?=$row["sh_seq"]?>"></i></td>
+                    </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
-        <div>
-            <div style="display:inline-block">
-                <select name="" class="select2">
+        <form id="historyAdd">
+            <input type="hidden" id="sh_sv_code" name="sh_sv_code" value="<?=$sv_code?>">
+            <input type="hidden" id="sh_seq" name="sh_seq" value="">
+        <div style="font-size:12px;padding:5px 0px">
+            <div style="display:inline-block;width:18%;">
+                <select name="sh_type" id="sh_type" class="select2" style="width:80%">
                     <option value="">선택</option>
                     <option value="1">변경 계약</option>
                     <option value="2">수동 연장</option>
                     <option value="3">계약 해지</option>
                 </select>
             </div>
-            <div style="display:inline-block">
+            <div style="display:inline-block;width:32%;text-align:center" id="contract_date">
                 계약 기간
-                <input type="text" name="" class="datepicker3"> ~ <input type="text" name="" class="datepicker3">
+                <input type="text" name="sh_service_start" id="sh_service_start" class="datepicker3" style="width:30%" value="<?=date("Y-m-d")?>"> ~ <input type="text" name="sh_service_end" id="sh_service_end" class="datepicker3" style="width:30%" value="<?=date("Y-m-d")?>">
             </div>
-            <div style="display:inline-block">
-                <i></i><input type="text"><button class="btn btn-small">등록</button>
+            <div style="display:inline-block;width:48%">
+                <i></i><input type="text" name="sh_link" id="sh_link" style="width:80%"><button class="btn btn-brown btn-history-add" type="button">등록</button>
             </div>
         </div>
+        </form>
         <div class="modal-title" style="clear:both">
             <div class="modal-title-text"><div>메모</div></div>
         </div>
@@ -242,6 +276,7 @@
     </div>
 </div>
 <input type="hidden" id="memo_start" value=1>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
 <script>
 $(function(){
     getMemo()
@@ -349,6 +384,82 @@ $(function(){
             });
         }
     });
+
+    $(".btn-history-add").click(function(){
+        if($("#sh_seq").val() == ""){
+            var url = "/api/serviceHistoryAdd";
+            var msg = "등록하시겠습니까?";
+        }else{
+            var url = "/api/serviceHistoryEdit";
+            var msg = "수정하시겠습니까?";
+        }
+        if(confirm(msg)){
+            
+            var datas = $("#historyAdd").serialize();
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : datas,
+                success:function(response){
+                    if(response.result){
+                        if($("#sh_seq").val() == ""){
+                            alert("등록 되었습니다.");
+                        }else{
+                            alert("수정 되었습니다.");
+                        }
+                        document.location.reload();
+                    }else{
+                        alert("오류발생")
+                    }
+                }
+            });
+        }
+    });
+
+    $("body").on("click",".historyDel",function(){
+        if(confirm("삭제하시겠습니까?")){
+            var sh_seq = $(this).data("seq");
+            var url = "/api/serviceHistoryDel";
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : "sh_seq="+sh_seq,
+                success:function(response){
+                    if(response.result){
+                        alert("삭제 되었습니다.");
+                        document.location.reload();
+                    }else{
+                        alert("오류발생")
+                    }
+                }
+            });
+        }
+    })
+
+    $("body").on("click",".historyEdit",function(){
+        var sh_type = $(this).data("shtype");
+        var sh_service_start = $(this).data("shservicestart");
+        var sh_service_end = $(this).data("shserviceend");
+        var sh_link = $(this).data("shlink");
+        var sh_seq = $(this).data("seq");
+
+        $("#sh_type").val(sh_type).trigger("change");
+        $("#sh_service_start").val(sh_service_start);
+        $("#sh_service_end").val(sh_service_end);
+        $("#sh_link").val(sh_link);
+        $("#sh_seq").val(sh_seq);
+        $(".btn-history-add").text("수정");
+    })
+
+    $("#sh_type").change(function(){
+        if($(this).val() == "3"){
+            $("#contract_date").css("opacity",0);
+        }else{
+            $("#contract_date").css("opacity",1);
+        }
+    })
 });
 
 function getMemo(){

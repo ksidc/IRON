@@ -21,6 +21,29 @@ $(function(){
         height : 450
     });
 
+    $('#dialogEmail').dialog({
+        autoOpen: false,
+        title: '이메일 발송',
+        modal: true,
+        width: '800px',
+        draggable: true
+    });
+
+    $('#summernote').summernote({
+        placeholder: '',
+        tabsize: 2,
+        height: 300,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+    });
+
     $("body").on("click",".clickEnd",function(){
         $("#eu_name").val($(this).data("name"));
         $("#sv_eu_seq").val($(this).data("seq"));
@@ -72,7 +95,12 @@ $(function(){
             alert("제품 시리얼을 입력해 주세요");
             return false;
         }
-        if(confirm("등록하시겠습니까?")){
+        if($(this).data("modify") == "0"){
+            var msg = "등록하시겠습니까?";
+        }else{
+            var msg = "수정하시겠습니까?";
+        }
+        if(confirm(msg)){
             var url = "/api/updateServiceOutInfo";
             $.ajax({
                 url : url,
@@ -949,7 +977,7 @@ $(function(){
     };
 
     $("#sv_rental_type").change(function(){
-        if($(this).val() == "0"){
+        if($(this).val() == "1"){
             $("#sv_rental_date").hide();
             $(".sv_rental_date").hide();
         }else{
@@ -957,6 +985,141 @@ $(function(){
             $(".sv_rental_date").show();
         }
     })
+
+    $("#mf_file").change(function(evt){
+        var url="/api/emailFile";
+        // $("#em_es_code").val($("#currentMailCode").val());
+        $("#fileMailUpload").ajaxForm({ // submit 액션 생성
+            url : url, // url 입력
+            enctype : "multipart/form-data", // 파일 업로드 처리
+            dataType : "json", // 전송 타입 및 리턴 타입 설정
+            error : function(xhr,option,error){ // 에러 처리
+                console.log(xhr);
+            },
+            success : function(data){ // 성공 처리
+                var html = '';
+
+                for(var i = 0; i < data.list.length;i++){
+                    html += '<div style="height:30px" class="fileCount" data-filesize="'+data.list[i].mf_file_size+'">\
+                                <input type="checkbox" name="add_file[]" class="add_file checkfile" value="'+data.list[i].mf_seq+'|'+data.list[i].mf_origin_file+'|'+data.list[i].mf_file+'" checked> '+data.list[i].mf_origin_file+'\
+                            </div>';
+                }
+                $("#mail_add_file").html(html);
+                // $("#attachedCnt").html($(".fileCount").length);
+                fileCheck();
+            }
+        });
+        // console.log($("#fileForm").serialize());
+        // return false;
+
+        $("#fileMailUpload").submit();
+        $("#mf_file").val('');
+
+        return false;
+    });
+    $(".btn-mail-view").click(function(){
+        $("#preview_content").html($('#summernote').summernote('code'));
+        $('#dialogMailPreview').dialog({
+            title: '',
+            modal: true,
+            width: '800px',
+            draggable: true
+        });
+
+        $("#dialogMailPreview").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
+    });
+
+    $('#sms').keyup(function(){
+        cut_80(this);
+    });
+
+    $('#sms').click(function(){
+        var str_length = getTextLength($('#sms').val());
+        if(str_length > 80){
+            alert("문자는 80바이트 이하로 적어 주세요.");
+            return false;
+        }
+    });
+
+    $("#emailForm").submit(function(){
+        if($("#from").val() == ""){
+            alert("보내는 사람을 입력해 주세요");
+            return false;
+        }
+        if($("#to").val() == ""){
+            alert("받는 사람을 입력해 주세요");
+            return false;
+        }
+        if($("#subject").val() == ""){
+            alert("제목을 입력해 주세요");
+            return false;
+        }
+        if($('#summernote').summernote('code') == ""){
+            alert("내용을 입력해 주시기 바랍니다.");
+            return false;
+        }
+        var url = "/api/memberSendEmail";
+        $("#content").val($('#summernote').summernote('code'));
+        // console.log($('#summernote').summernote('code'));
+        // return false;
+        var emailForm = $("#emailForm").serialize();
+        $.ajax({
+            url : url,
+            type : 'POST',
+            dataType : 'JSON',
+            data : emailForm,
+            success:function(response){
+                console.log(response);
+            }
+
+        });
+        return false;
+    })
+
+    $("body").on("click",".fileCount",function(){
+        fileCheck();
+    });
+
+    $(".btn-addfile-delete").click(function(){
+        if($(".add_file").length > 0){
+            if(confirm("삭제 하시겠습니까?")){
+                var checkSeq = [];
+                $(".add_file").each(function(){
+                    if($(this).prop("checked") == true){
+                        var valueArray = $(this).val().split("|");
+
+                        checkSeq.push(valueArray[0]);
+                    }
+                })
+                var url = "/api/emailFileDelete";
+                $.ajax({
+                    url : url,
+                    type : 'GET',
+                    dataType : 'JSON',
+                    data : "checkSeq="+checkSeq.join(","),
+                    success:function(response){
+                        // console.log(response);
+                        if(response.result){
+                            alert("삭제 완료");
+                            $(".add_file").each(function(){
+                                if($(this).prop("checked") == true){
+                                    $(this).parent().remove();
+                                }
+                            })
+                        }else{
+                            alert("오류가 발생했습니다.");
+                        }
+
+                    },
+                    error : function(error){
+                        console.log(error);
+                    }
+
+                });
+
+            }
+        }
+    });
 })
 
 var getEndUserNextNumber = function(){
@@ -1018,11 +1181,12 @@ function serviceForceEnd(){
     }
 }
 function setServiceDate(){
-    if($("#view_service_open").css("display") == ""){
+    if($("#view_service_open").css("display") != "none"){
         $("#view_service_open").hide();
         $("#edit_service_open").show();
     }else{
-        var url = "/api/updateServiceOpenTime";
+        if(configm("수정 하시겠습니까?")){
+            var url = "/api/updateServiceOpenTime";
             $.ajax({
                 url : url,
                 type : 'POST',
@@ -1037,6 +1201,7 @@ function setServiceDate(){
                     }
                 }
             });
+        }
     }
 }
 
@@ -1095,3 +1260,56 @@ function openProductView(sv_seq){
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
         window.open("/service/product_view/"+sv_seq, 'serviceProductView', specs);
     }
+
+var fileCheck = function(){
+    var count = 0;
+    var fileTotalSize = 0;
+    $(".fileCount").each(function(){
+        // console.log($(this).data("filesize"));
+        // console.log($(this).children(".checkfile").length);
+        if($(this).children(".checkfile").length > 0){
+            // console.log($(this).children(".checkfile").prop("checked"));
+            if($(this).children(".checkfile").prop("checked") == true){
+                count++;
+                // console.log($(this).data("filesize"));
+                fileTotalSize = fileTotalSize + parseInt($(this).data("filesize"));
+            }
+        }else{
+            count++;
+            fileTotalSize = fileTotalSize + parseInt($(this).data("filesize"));
+        }
+
+    });
+
+    $("#attachedCnt").html(count);
+    $("#attachedSize").html(formatBytes(fileTotalSize));
+}
+
+var formatBytes = function(bytes) {
+    if(bytes < 1024) return bytes + " Bytes";
+    else if(bytes < 1048576) return(bytes / 1024).toFixed(2) + " KB";
+    else if(bytes < 1073741824) return(bytes / 1048576).toFixed(2) + " MB";
+    else return(bytes / 1073741824).toFixed(2) + " GB";
+};
+
+function getTextLength(str) {
+    var len = 0;
+    for (var i = 0; i < str.length; i++) {
+        if (escape(str.charAt(i)).length == 6) {
+            len++;
+        }
+        len++;
+    }
+    return len;
+}
+
+function cut_80(obj){
+    var text = $(obj).val();
+    var leng = text.length;
+    while(getTextLength(text) > 80){
+        leng--;
+        text = text.substring(0, leng);
+    }
+    $(obj).val(text);
+    $('.bytes').text(getTextLength(text));
+}

@@ -49,6 +49,8 @@ class Service extends CI_Controller {
         $data["info"] = $this->service_model->selectService($sv_seq);
         // 마지막 결제
         $data["payment"] = $this->service_model->selectPaymentLast($sv_seq);
+        $data["memberInfo"] = $this->api_model->selectMember($data["info"]["sv_mb_seq"]);
+        // echo $sv_seq;
         //첨부파일
         $data["files"] = $this->service_model->serviceFileAllFetch($sv_seq);
         $layout["content"] = $this->load->view("service/view", $data,true);
@@ -68,6 +70,7 @@ class Service extends CI_Controller {
         $sv_code = explode("-",$sv_code);
         $data["sv_code"] = $sv_code[0];
         $data["list"] = $this->service_model->fetchServiceCode($sv_code[0]);
+        $data["history_list"] = $this->service_model->fetchServiceHistory($sv_code[0]);
         $array1 = array(); // enduser
         $array2 = array(); // company type
         $array3 = array(); // team

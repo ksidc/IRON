@@ -1,7 +1,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>
 <div style="background:#fff;width:100%;overflow-x:hidden">
     <div class="popup_title" style="padding:10px">
-         요금 정보
+          서비스 요금 상세
     </div>
     <div style="padding:5px">
     <form name="serviceUpdate" id="serviceUpdate">
@@ -307,7 +307,7 @@
             ?>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>결제 방법 할인(<input type="checkbox" name="svp_discount_yn" id="svp_discount_yn" value="Y" <?=($info["svp_discount_yn"] == "Y" ? "checked":"")?>> 작용)</div></div>
+                    <div class="label" style="width:35%"><div>결제 방법 할인(<input type="checkbox" name="svp_discount_yn" id="svp_discount_yn" value="Y" <?=($info["svp_discount_yn"] == "Y" ? "checked":"")?>> 적용)</div></div>
                     <div class="input" id="month_price3" style="text-align:right;width:43%;padding-right:10px"><?=number_format($info["svp_discount_price"])?></div>
                     <div style="display:inline-block">원</div>
                     <input type="hidden" name="svp_discount_price" id="svp_discount_price" value="<?=number_format($info["svp_discount_price"])?>">

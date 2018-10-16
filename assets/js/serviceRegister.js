@@ -212,10 +212,10 @@ $(function(){
 
         // var status = $(this).data("status");
         // console.log(status);
-        if(status.length > 0){
-            alert("이미 신청 처리가 된 서비스가 있습니다");
-            return false;
-        }
+        // if(status.length > 0){
+        //     alert("이미 신청 처리가 된 서비스가 있습니다");
+        //     return false;
+        // }
 
         if(confirm("선택한 서비스를 신청 처리하시겠습니까?")){
             var url = "/api/serviceMake/";

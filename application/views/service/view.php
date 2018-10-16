@@ -176,9 +176,9 @@
                     <?php else: ?>
                     <select name="sv_rental_type" id="sv_rental_type" class="select2" style="width:120px">
                         
-                        <option value="0" <?=($info["sv_rental_type"] == "0" ? "selected":"")?>>영구 임대</option>
-                        <option value="1" <?=($info["sv_rental_type"] == "1" ? "selected":"")?>>소유권 이전</option>
-                    </select> <input type="text" name="sv_rental_date" id="sv_rental_date" value="<?=$info["sv_rental_date"]?>" <?=($info["sv_rental_type"] == "0" ? 'style="width:40px;display:none"':'style="width:40px"')?>> <span <?=($info["sv_rental_type"] == "0" ? 'style="display:none"':'style=""')?> class="sv_rental_date">개월</span>
+                        <option value="1" <?=($info["sv_rental_type"] == "1" ? "selected":"")?>>영구 임대</option>
+                        <option value="2" <?=($info["sv_rental_type"] == "2" ? "selected":"")?>>소유권 이전</option>
+                    </select> <input type="text" name="sv_rental_date" id="sv_rental_date" value="<?=$info["sv_rental_date"]?>" <?=($info["sv_rental_type"] == "1" ? 'style="width:40px;display:none"':'style="width:40px"')?>> <span <?=($info["sv_rental_type"] == "1" ? 'style="display:none"':'style=""')?> class="sv_rental_date">개월</span>
                     <?php endif; ?>
                 </div>
             </div>
@@ -188,10 +188,12 @@
                     <?php if($info["sv_rental"] == "N"):?>
 
                     <?php else: ?>
-                        <?php
-                        $sv_rental_end_date = date("Y-m-d",mktime(0,0,0,substr($info["sv_contract_start"],5,2)+$info["sv_rental_date"], substr($info["sv_contract_start"],8,2),substr($info["sv_contract_start"],0,4))) ;
-                        ?>
-                        <input type="text" class="datepicker3" name="sv_rental_end_date" id="sv_rental_end_date" value="<?=$sv_rental_end_date?>">
+                        <?php if($info["sv_rental_type"] == "2"): ?>
+                            <?php
+                            $sv_rental_end_date = date("Y-m-d",mktime(0,0,0,substr($info["sv_contract_start"],5,2)+$info["sv_rental_date"], substr($info["sv_contract_start"],8,2),substr($info["sv_contract_start"],0,4))) ;
+                            ?>
+                            <input type="text" class="datepicker3 sv_rental_date" name="sv_rental_end_date" id="sv_rental_end_date" value="<?=$sv_rental_end_date?>">
+                        <?php endif; ?>
                     <?php endif; ?>
 
                 </div>
@@ -202,15 +204,15 @@
                 <div class="label padd"><div>기술/관제 담당자</div></div>
                 <div class="input">
                     <select name="sv_engineer_part" id="sv_engineer_part" class="select2" style="width:120px">
-                        <option value="">팀을 선택해주세요</option>
-                        <option value="1">기술팀</option>
+                        <option value="">선택</option>
+                        <option value="1" <?=($info["sv_engineer_part"] == "1" ? "selected":"") ?>>기술팀</option>
                     </select>
                     <select name="sv_engineer_charger" id="sv_engineer_charger" class="select2" style="width:120px">
-                        <option value="">팀을 선택해주세요</option>
-                        <option value="1">노성민</option>
+                        <option value="">선택</option>
+                        <option value="1" <?=($info["sv_engineer_charger"] == "1" ? "selected":"") ?>>노성민</option>
                     </select>
                     <button class="btn btn-brown btn-small btn-manager-change" type="button">담당자 지정</button>
-                    <button class="btn btn-black btn-small" type="button">이메일 발송</button>
+                    <button class="btn btn-black btn-small" type="button" onclick='$("#to").val("<?=$memberInfo["mb_contract_email"]?>");$("#phone").val("<?=$memberInfo["mb_contract_phone"]?>");$( "#dialogEmail" ).dialog("open");'>이메일 발송</button>
                 </div>
             </div>
         </div>
@@ -322,24 +324,26 @@
                 <div class="modal-field-input full">
                     <div class="label label2 padd"><div>제품 출고일</div></div>
                     <div class="input input2">
-                        <?php if($info["sv_out_date"] == "" || $info["sv_out_date"] == "0000-00-00 00:00:00"):?>
-                            <?php $inputdate = date("Y-m-d");?>
-                            <div style="display:inline-block;width:50%" id="sv_out_date_str">
+                        
+                            <?php if($info["sv_out_date"] == "" || $info["sv_out_date"] == "0000-00-00 00:00:00"):?>
+                                <?php $inputdate = date("Y-m-d");?>
+                                <div style="display:inline-block;width:50%" id="sv_out_date_str">
 
-                            </div>
-                            <div style="text-align:right;display:inline-block;width:45%">
-                                <button class="btn btn-black" onclick='$( "#dialogOut" ).dialog("open");$("#dialogOut").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();' type="button">제품 출고</button>
-                            </div>
-                        <?php else: ?>
-                            <?php $inputdate = substr($info["sv_out_date"],0,10);?>
-                            <div style="display:inline-block;width:50%" id="sv_out_date">
-                                <?=substr($info["sv_out_date"],0,10)?>
-                            </div>
-                            <div style="text-align:right;display:inline-block;width:45%">
-                                <i class="fa fa-edit" onclick='$( "#dialogOut" ).dialog("open");$("#dialogOut").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();' type="button"></i>
-                            </div>
+                                </div>
+                                <div style="text-align:right;display:inline-block;width:45%">
+                                    <button class="btn btn-black" onclick='$( "#dialogOut" ).dialog("open");$("#dialogOut").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();' type="button">제품 출고</button>
+                                </div>
+                            <?php else: ?>
+                                <?php $inputdate = substr($info["sv_out_date"],0,10);?>
+                                <div style="display:inline-block;width:50%" id="sv_out_date_str">
+                                    <?=substr($info["sv_out_date"],0,10)?>
+                                </div>
+                                <div style="text-align:right;display:inline-block;width:45%">
+                                    <i class="fa fa-edit" onclick='$( "#dialogOut" ).dialog("open");$("#dialogOut").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();' type="button"></i>
+                                </div>
 
-                        <?php endif;?>
+                            <?php endif;?>
+                       
                     </div>
                 </div>
 
@@ -348,42 +352,44 @@
                 <div class="modal-field-input full">
                     <div class="label label2 padd"><div>서비스 개시일</div></div>
                     <div class="input input2">
-                        <?php if($info["sv_service_start"] == "" || $info["sv_service_start"] == "0000-00-00 00:00:00"):?>
+                        <?php if($info["sv_status"] != "0" && $info["sv_status"] != "1"): ?>
+                            <?php if($info["sv_service_start"] == "" || $info["sv_service_start"] == "0000-00-00 00:00:00"):?>
 
-                            <?php if($info["sv_status"] == "2"): ?>
-                            <div style="display:inline-block;width:50%">
+                                <?php if($info["sv_status"] == "2"): ?>
+                                <div style="display:inline-block;width:50%">
 
-                            </div>
-                            <div style="text-align:right;display:inline-block;width:45%">
-                                <button class="btn btn-black btn-service-open"  type="button">서비스 개시</button>
-                            </div>
-                            <?endif; ?>
-                        <?php else: ?>
-                            <div style="display:inline-block;width:80%">
-                                <div id="view_service_open"><?=substr($info["sv_service_start"],0,10)?></div>
-                                <div id="edit_service_open" style="display:none">
-                                    <input type="text" name="sv_service_start1" id="sv_service_start1" style="width:100px">
-                                    <select name="sv_service_start2" class="select2" id="sv_service_start2" style="width:60px">
-                                        <?php for($i = 0; $i < 24;$i++): ?>
-                                        <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],11,2) ? "":"")?>><?=$i?></option>
-                                        <?php endfor;?>
-                                    </select> 시
-                                    <select name="sv_service_start3" class="select2" id="sv_service_start3" style="width:60px">
-                                        <?php for($i = 0; $i < 59;$i++): ?>
-                                        <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],13,2) ? "":"")?>><?=$i?></option>
-                                        <?php endfor;?>
-                                    </select> 분
-                                    <select name="sv_service_start4" class="select2" id="sv_service_start4" style="width:60px">
-                                        <?php for($i = 0; $i < 59;$i++): ?>
-                                        <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],15,2) ? "":"")?>><?=$i?></option>
-                                        <?php endfor;?>
-                                    </select> 초
                                 </div>
-                            </div>
-                            <div style="text-align:right;display:inline-block;width:18%">
-                                <i class="fa fa-edit"  type="button" onclick="setServiceDate()"></i>
-                            </div>
-                        <?php endif;?>
+                                <div style="text-align:right;display:inline-block;width:45%">
+                                    <button class="btn btn-black btn-service-open"  type="button">서비스 개시</button>
+                                </div>
+                                <?endif; ?>
+                            <?php else: ?>
+                                <div style="display:inline-block;width:90%">
+                                    <div id="view_service_open"><?=substr($info["sv_service_start"],0,10)?></div>
+                                    <div id="edit_service_open" style="display:none">
+                                        <input type="text" name="sv_service_start1" id="sv_service_start1" style="width:120px" class="datepicker3" value="<?=substr($info["sv_service_start"],0,10)?>">
+                                        <!-- <select name="sv_service_start2" class="select2" id="sv_service_start2" style="width:45px">
+                                            <?php for($i = 0; $i < 24;$i++): ?>
+                                            <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],11,2) ? "":"")?>><?=$i?></option>
+                                            <?php endfor;?>
+                                        </select> 시
+                                        <select name="sv_service_start3" class="select2" id="sv_service_start3" style="width:45px">
+                                            <?php for($i = 0; $i < 59;$i++): ?>
+                                            <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],13,2) ? "":"")?>><?=$i?></option>
+                                            <?php endfor;?>
+                                        </select> 분
+                                        <select name="sv_service_start4" class="select2" id="sv_service_start4" style="width:45px">
+                                            <?php for($i = 0; $i < 59;$i++): ?>
+                                            <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],15,2) ? "":"")?>><?=$i?></option>
+                                            <?php endfor;?>
+                                        </select> 초 -->
+                                    </div>
+                                </div>
+                                <div style="text-align:right;display:inline-block;width:8%">
+                                    <i class="fa fa-edit"  type="button" onclick="setServiceDate()"></i>
+                                </div>
+                            <?php endif;?>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -928,7 +934,11 @@
             </div>
         </div>
     </form>
-    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-out-reg">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogOut').dialog('close')">닫기</button></div>
+    <?php if($info["sv_out_date"] == "" || $info["sv_out_date"] == "0000-00-00 00:00:00"):?>
+        <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-out-reg" data-modify="0">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogOut').dialog('close')">닫기</button></div>
+    <?php else: ?>
+        <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-out-reg" data-modify="1">수정</button> <button class="btn btn-default btn-small" onclick="$('#dialogOut').dialog('close')">닫기</button></div>
+    <?php endif; ?>
 </div>
 
 <div id="dialogStop" class="dialog" style="padding:5px">
@@ -1042,5 +1052,104 @@
 
     </form>
     <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-forceend-reg">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogOut').dialog('close')">닫기</button></div>
+</div>
+<div id="dialogEmail" class="dialog">
+    <form name="emailForm" id="emailForm">
+        <input type="hidden" name="content" id="content">
+        <div class="modal-title text-center" style="padding:5px 0px">
+            <div style="display:inline-block"><button class="btn btn-black btn-mail-send" type="submit">보내기</button></div>
+            <div style="display:inline-block"><button class="btn btn-default btn-mail-view" type="button">미리보기</button></div>
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full">
+                <div class="label padd"><div>보내는 사람</div></div>
+                <div class="input padd"><input type="text" name="from" id="from"></div>
+            </div>
+
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full" >
+                <div class="label padd"><div>받는 사람</div></div>
+                <div class="input padd"><input type="text" name="to" id="to"></div>
+            </div>
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full" >
+                <div class="label padd"><div>휴대폰번호</div></div>
+                <div class="input padd"><input type="text" name="phone" id="phone"></div>
+            </div>
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full" >
+                <div class="label padd"><div><input type="checkbox" name="sms_yn" id="sms_yn" value="Y"> SMS 발송 | 내용</div></div>
+                <div class="input padd"><input type="text" name="sms" id="sms" style="width:70%" > <span class="bytes">0</span>byte / 80byte</div>
+            </div>
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full" >
+                <div class="label padd"><div>제목</div></div>
+                <div class="input padd"><input type="text" name="subject" id="subject"></div>
+            </div>
+        </div>
+
+        <div class="modal-title">
+            <div class="modal-title-text">메일 내용</div>
+        </div>
+        <div class="modal-field">
+            <div class="modal-field-input full" style="width:99%">
+                <!-- <textarea style="width:90%;height:200px" name="content" id="content"></textarea> -->
+                <div id="summernote"></div>
+
+            </div>
+
+        </div>
+        <div class="modal-title">
+            <div class="modal-title-text" style="display:inline-block">첨부 파일</div>
+            <div style="float:right;padding-top:5px;padding-right:5px">
+
+                <div class="input">파일 <span id="attachedCnt"></span>개 | 용량 <span id="attachedSize"></span> / 20MB</div>
+            </div>
+        </div>
+
+
+        <div class="modal-field" style="border-top:2px solid #ddd">
+            <div class="modal-field-input full">
+                <div class="label padd" style="vertical-align:top"><div>첨부 파일</div></div>
+                <div class="input padd">
+                    <div>
+                        <button class="btn btn-default" type="button" onclick="$('#mf_file').trigger('click')">추가</button>
+                        <button class="btn btn-default btn-addfile-delete" type="button">삭제</button>
+                    </div>
+                    <div id="mail_add_file" style="padding-left:53px;padding-top:10px">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-title text-center" style="padding:5px 0px;margin-top:10px">
+            <div style="display:inline-block"><button class="btn btn-black btn-mail-send" type="submit">보내기</button></div>
+            <div style="display:inline-block"><button class="btn btn-default btn-mail-view" type="button">미리보기</button></div>
+        </div>
+    </form>
+    <form name="fileMailUpload" id="fileMailUpload" method="post">
+        <input type="hidden" name="mf_eh_seq" id="mf_eh_seq">
+        <input type="file" name="mf_file[]" id="mf_file" style="border:0;display:none;width:0;height:0" multiple visbility="hidden">
+    </form>
+</div>
+<div id="dialogMailPreview" class="dialog" style="padding:5px">
+
+    <div class="modal_search">
+        <ul>
+            <li>
+                Mail 미리보기
+            </li>
+
+        </ul>
+    </div>
+
+    <div id="preview_content">
+
+    </div>
+    <div class="modal-close-btn"><button class="btn btn-black btn-small" onclick="$('#dialogMailPreview').dialog('close')">닫기</button></div>
 </div>
 <input type="hidden" id="memo_start" value=1>

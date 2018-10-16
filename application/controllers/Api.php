@@ -1739,6 +1739,18 @@ class Api extends CI_Controller {
         echo json_encode($arr);
     }
 
+    public function serviceHistoryEdit(){
+        $result = $this->api_model->serviceHistoryEdit();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
+    public function serviceHistoryDel(){
+        $result = $this->api_model->serviceHistoryDel();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
+
     public function claimView($pm_ca_seq){
         $arr["info"] = $this->api_model->claimView($pm_ca_seq);
         $arr["list"] = $this->api_model->claimViewList($pm_ca_seq);
@@ -1858,8 +1870,8 @@ class Api extends CI_Controller {
 
     public function emailFile(){
         $result = $this->api_model->emailFile();
-        // $list = $this->api_model->emailFileList($this->input->post("em_es_seq"));
-        $arr = array('result'=>$result);
+        $list = $this->api_model->emailFileList();
+        $arr = array('result'=>$result,"list"=>$list);
         echo json_encode($arr);
     }
 
@@ -1911,4 +1923,35 @@ class Api extends CI_Controller {
         echo json_encode($result);
     }
 
+    public function memberSendEmail(){
+        $this->api_model->insertEmailHistory();
+        //추가 파일
+        $add_file = $this->input->post("add_file");
+
+        $this->load->library('email');
+
+
+        $config['mailtype'] = 'html';
+        $this->email->initialize($config);
+
+        $this->email->from($this->input->post("from"), 'Eyeon');
+        $this->email->to($this->input->post("to"));
+        // $this->email->cc('another@another-example.com');
+        // $this->email->bcc('them@their-example.com');
+
+        for($i = 0; $i < count($add_file);$i++){
+            $fileinfo = explode("|",$add_file[$i]);
+            $this->email->attach($_SERVER["DOCUMENT_ROOT"]."/uploads/email_file/".$fileinfo[2], 'attachment', $fileinfo[1]);
+        }
+
+        $this->email->subject($this->input->post("subject"));
+        $this->email->message($this->input->post("content"));
+
+        $this->email->send();
+
+        $result = true;
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+
+    }
 }
