@@ -1954,4 +1954,10 @@ class Api extends CI_Controller {
         echo json_encode($arr);
 
     }
+
+    public function paymentListUpdate(){
+        $result = $this->api_model->paymentListUpdate();
+        $arr = array('result'=>$result);
+        echo json_encode($arr);
+    }
 }

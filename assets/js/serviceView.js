@@ -1185,7 +1185,7 @@ function setServiceDate(){
         $("#view_service_open").hide();
         $("#edit_service_open").show();
     }else{
-        if(configm("수정 하시겠습니까?")){
+        if(confirm("수정 하시겠습니까?")){
             var url = "/api/updateServiceOpenTime";
             $.ajax({
                 url : url,

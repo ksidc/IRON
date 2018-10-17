@@ -115,7 +115,7 @@
             <div class="modal-field-input">
                 <div class="label padd"><div>계약 만료일(연장)</div></div>
                 <div class="input padd">
-                    <?=$info["sv_contract_end"]?>
+                    <?=($info["sv_contract_extension_end"] == "0000-00-00" ? "":$info["sv_contract_extension_end"])?>
                 </div>
             </div>
         </div>
@@ -255,29 +255,31 @@
                         <?php if($payment["pm_pay_period"] > 1): ?>
                             <?php $custom_end_date = date("Y-m-d",mktime(0,0,0,substr($payment["pm_date"],5,2)+1,substr($payment["pm_date"],8,2), substr($payment["pm_date"],0,4))); ?>
                             <?php if(date("Y-m-d") >= $custom_end_date):?>
-                                연체
+                                <span style='color:#FF0000'>연체</span>
                             <?php else: ?>
                                 <?php if($payment["pm_end_date"] >= date("Y-m-d")): ?>
-                                    청구(<?=$payment["pm_pay_period"]?>개월)
+                                    <span style='color:#0070C0'>청구(<?=$payment["pm_pay_period"]?>개월)</span>
                                 <?php else: ?>
-                                    미납(<?=$payment["pm_pay_period"]?>개월)
+                                    <span style='color:#FF0000'>미납(<?=$payment["pm_pay_period"]?>개월)</span>
                                 <?php endif; ?>
                             <?php endif; ?>
                         <?php else: ?>
                             <?php if($payment["leftCount"] > 1): ?>
-                                연체(<?=$payment["leftCount"]?>개월)
+                                <span style='color:#FF0000'>연체(<?=$payment["leftCount"]?>개월)</span>
                             <?php else: ?>
                                 <?php if($payment["pm_end_date"] >= date("Y-m-d")): ?>
-                                    청구(<?=$payment["pm_pay_period"]?>개월)
+                                    <span style='color:#0070C0'>청구(<?=$payment["pm_pay_period"]?>개월)</span>
                                 <?php else: ?>
-                                    미납(<?=$payment["pm_pay_period"]?>개월)
+                                    <span style='color:#FF0000'>미납(<?=$payment["pm_pay_period"]?>개월)</span>
                                 <?php endif; ?>
                             <?php endif; ?>
                         <?php endif; ?>
                     <?php elseif($payment["pm_status"] == "9"):?>
-                        가결제(<?=$payment["pm_pay_period"]?>개월) <?=$payment["pm_input_date"]?>
-                    <?php else: ?>
+                        <span style='color:#548235'>가결제(<?=$payment["pm_pay_period"]?>개월) <?=$payment["pm_input_date"]?></span>
+                    <?php elseif($payment["pm_status"] == "1"): ?>
                         완납
+                    <?php else: ?>
+                        청구내역 없음
                     <?php endif; ?>
                 </div>
             </div>
@@ -291,21 +293,21 @@
                     <div class="label label2 padd"><div>서비스 상태</div></div>
                     <div class="input input2">
                         <?php if($info["sv_status"] == "0"): ?>
-                            입금대기중
+                            <span style="color:#9E0000">입금대기중</span>
                         <?php elseif($info["sv_status"] == "1"): ?>
-                            서비스준비중
+                            <span style="color:#0070C0">서비스준비중</span>
                         <?php elseif($info["sv_status"] == "2"): ?>
-                            서비스작업중
+                            <span style="color:#548235">서비스작업중</span>
                         <?php elseif($info["sv_status"] == "3"): ?>
-                            서비스중
+                            <span style="color:#000000">서비스중</span>
                         <?php elseif($info["sv_status"] == "4"): ?>
-                            서비스중지
+                            <span style="color:#FF0000">서비스중지</span>
                         <?php elseif($info["sv_status"] == "5"): ?>
-                            서비스해지
+                            <span style="color:#808080">서비스해지</span>
                         <?php elseif($info["sv_status"] == "6"): ?>
-                            직권중지
+                            <span style="color:#FF0000">직권중지</span>
                         <?php elseif($info["sv_status"] == "7"): ?>
-                            직권해지
+                            <span style="color:#808080">직권해지</span>
                         <?php endif;?>
                     </div>
                 </div>
@@ -318,7 +320,6 @@
                         <?=$info["sv_regdate"] ?>
                     </div>
                 </div>
-
             </div>
             <div class="modal-field">
                 <div class="modal-field-input full">
@@ -343,7 +344,7 @@
                                 </div>
 
                             <?php endif;?>
-                       
+                
                     </div>
                 </div>
 

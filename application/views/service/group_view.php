@@ -205,7 +205,11 @@
                             <?php endif; ?>
                         </td>
                         <td><?=$row["sh_date"]?></td>
+                        <?php if($row["sh_service_start"] == "0000-00-00"): ?>
+                        <td></td>
+                        <?php else:?>
                         <td><?=$row["sh_service_start"]?> ~ <?=$row["sh_service_end"]?></td>
+                        <?php endif; ?>
                         <td>
                             <?php if($row["sh_auto_extension"] == "1"): ?>
                                 <?=$row["sh_auto_extension_month"]?>개월

@@ -5,6 +5,11 @@
     <div style="padding:5px">
         <form name="payForm" id="payForm">
         <input type="hidden" name="pm_seq" id="p_pm_seq" value="<?=$info["pm_seq"]?>">
+        <input type="hidden" id="pm_pay_period" value="<?=$info["pm_pay_period"]?>">
+        <input type="hidden" id="pm_register_discount" value="<?=$info["svp_register_discount"]?>">
+        <input type="hidden" name="pm_end_date" id="pm_end_date" value="<?=$info["pm_end_date"]?>">
+        <input type="hidden" id="sv_payment_day" value="<?=$info["sv_payment_day"]?>">
+        <input type="hidden" id="pm_first_day_price" value="<?=$info["pm_first_day_price"]?>">
         <div class="modal-title">
             <div class="modal-title-text">서비스 기본 정보</div>
         </div>
@@ -73,7 +78,7 @@
             <div class="modal-field-input">
                 <div class="label"><div>요금 납부 방법</div></div>
                 <div class="input">
-                    <select name="pm_pay_type" id="p_pm_pay_type" class="select2" style="width:90px">
+                    <select name="pm_pay_type" id="pm_pay_type" class="select2" style="width:90px">
                         <option value="1" <?=($info["sv_payment_type"] == "1" ? "selected":"")?> >무통장</option>
                         <option value="2" <?=($info["sv_payment_type"] == "2" ? "selected":"")?>>카드</option>
                         <option value="3" <?=($info["sv_payment_type"] == "3" ? "selected":"")?>>CMS</option>
@@ -82,13 +87,13 @@
             </div>
             <div class="modal-field-input">
                 <div class="label"><div>결제 주기</div></div>
-                <div class="input" id="p_pm_payment_period"><?=$info["pm_pay_period"]?> 개월</div>
+                <div class="input" id="pm_payment_period"><?=$info["pm_pay_period"]?> 개월</div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label"><div>청구일</div></div>
-                <div class="input"><span id="p_pm_pay_day"><input type="text" name="pm_date" value="<?=$info["pm_date"]?>" class="datepicker3"></span>
+                <div class="input"><span id="p_pm_pay_day"><input type="text" name="pm_date" value="<?=$info["pm_date"]?>" class="datepicker2"></span>
                     <?php if($info["sv_pay_type"] == "0"): ?>
                         전월 <?=$info["sv_pay_day"]?>일
                     <?php elseif($info["sv_pay_type"] == "1"):?>
@@ -109,11 +114,15 @@
             <div class="modal-field-input">
                 <div class="label"><div>계산서 발행</div></div>
                 <div class="input" id="p_pm_payment_publish">
-                    <?php if($info["pm_payment_publish_type"] == "0"): ?>
-                        영수발행
+                    <?php if($info["pm_payment_publish"] == "0"): ?>
+                        <?php if($info["pm_payment_publish_type"] == "0"): ?>
+                            영수발행
+                        <?php else: ?>
+                            청구발행
+                        <?php endif; ?>
                     <?php else: ?>
-                        청구발행
-                    <?php endif; ?>
+                        미발행
+                    <?php endif;?>
                 </div>
             </div>
             <div class="modal-field-input">
@@ -131,20 +140,20 @@
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
                     <div class="label" style="width:35%"><div>일회성 항목명</div></div>
-                    <div class="input right" id="p_pm_first_bill_name" style="width:48%"><?=$info["svp_first_claim_name"]?></div>
+                    <div class="input right" id="pm_first_bill_name" style="width:48%"><?=$info["svp_first_claim_name"]?></div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
                     <div class="label" style="width:35%"><div>일회성 요금</div></div>
-                    <div class="input" style="width:45%"><input type="text" name="pm_once_price" class="border-no right" value="<?=number_format($info["pm_once_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" > </div>
+                    <div class="input" style="width:45%"><input type="text" name="pm_once_price" id="pm_once_price" class="border-no right" value="<?=number_format($info["pm_once_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" > </div>
                     <div style="display:inline-block">원</div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
                     <div class="label" style="width:35%"><div>할인 금액</div></div>
-                    <div class="input" style="width:45%"> - <input type="text" name="pm_once_dis_price" class="border-no right" value="<?=number_format($info["pm_once_dis_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" > </div>
+                    <div class="input" style="width:45%"> - <input type="text" name="pm_once_dis_price" id="pm_once_dis_price" class="border-no right" value="<?=number_format($info["pm_once_dis_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" > </div>
                     <div style="display:inline-block">원</div>
                 </div>
             </div>
@@ -188,14 +197,14 @@
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
                     <div class="label" style="width:35%"><div>서비스 월 요금</div></div>
-                    <div class="input" style="width:45%"><input type="text" name="pm_service_price" class="border-no right" value="<?=number_format($info["pm_service_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></div>
+                    <div class="input" style="width:45%"><input type="text" name="pm_service_price" id="pm_service_price" class="border-no right" value="<?=number_format($info["pm_service_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></div>
                     <div style="display:inline-block">원 / 월</div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
                     <div class="label" style="width:35%"><div>할인 금액</div></div>
-                    <div class="input" style="width:45%"> - <input type="text" name="pm_service_dis_price" class="border-no right" value="<?=number_format($info["pm_service_dis_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></div>
+                    <div class="input" style="width:45%"> - <input type="text" name="pm_service_dis_price" id="pm_service_dis_price" class="border-no right" value="<?=number_format($info["pm_service_dis_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></div>
                     <div style="display:inline-block">원 / 월</div>
                 </div>
             </div>
@@ -239,7 +248,7 @@
 
 
                 </div>
-            </div>
+            </div><input type="hidden" id="month" value="<?=$month?>">
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
                     <div class="label" style="width:35%"><div>일할 외 청구기간 합계</div></div>
@@ -250,14 +259,22 @@
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
                     <div class="label" style="width:35%"><div>결제 방법 할인</div></div>
+                    <?php if($info["pm_payment_dis_price"] > 0): ?>
                     <div class="input" id="p_month_price3" style="text-align:right;width:45%"> - <?=number_format(($info["pm_payment_dis_price"]/$info["pm_pay_period"])*$month)?></div>
+                    <?php else: ?>
+                    <div class="input" id="p_month_price3" style="text-align:right;width:45%"> - 0</div>
+                    <?php endif; ?>
                     <div style="display:inline-block">원</div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
                     <div class="label" style="width:35%"><div>서비스 청구 합계</div></div>
+                    <?php if($info["pm_payment_dis_price"] > 0): ?>
                     <div class="input" id="p_month_price4" style="text-align:right;width:45%"><?=number_format(($info["pm_service_price"]-$info["pm_service_dis_price"])*$month-($info["pm_payment_dis_price"]/$info["pm_pay_period"])*$month)?></div>
+                    <?php else: ?>
+                    <div class="input" id="p_month_price4" style="text-align:right;width:45%"><?=number_format(($info["pm_service_price"]-$info["pm_service_dis_price"])*$month)?></div>
+                    <?php endif; ?>
                     <div style="display:inline-block">원 / <span class="total_contract"><?=$month?></span>개월</div>
                 </div>
             </div>
@@ -275,7 +292,11 @@
 
             <div class="modal-field-input">
                 <div class="label"><div>청구 합계</div></div>
+                <?php if($info["pm_payment_dis_price"] > 0): ?>
                 <div class="input right" id="p_pm_total_price2"><?=number_format($info["pm_once_price"]-$info["pm_once_dis_price"]+$info["pm_first_day_price"]+(($info["pm_service_price"]-$info["pm_service_dis_price"])*$month)-($info["pm_payment_dis_price"]/$info["pm_pay_period"])*$month)?> 원</div>
+                <?php else: ?>
+                <div class="input right" id="p_pm_total_price2"><?=number_format($info["pm_once_price"]-$info["pm_once_dis_price"]+$info["pm_first_day_price"]+(($info["pm_service_price"]-$info["pm_service_dis_price"])*$month))?> 원</div>
+                <?php endif; ?>
             </div>
         </div>
         <div class="modal-field">
@@ -286,22 +307,38 @@
 
             <div class="modal-field-input">
                 <div class="label"><div>부가세</div></div>
+                <?php if($info["pm_payment_dis_price"] > 0): ?>
                 <div class="input right" id="p_pm_total_price4">
                     <?=number_format(($info["pm_once_price"]-$info["pm_once_dis_price"]+$info["pm_first_day_price"]+(($info["pm_service_price"]-$info["pm_service_dis_price"])*$month)-($info["pm_payment_dis_price"]/$info["pm_pay_period"])*$month)*0.1)?> 원
                 </div>
+                <?php else: ?>
+                <div class="input right" id="p_pm_total_price4">
+                    <?=number_format(($info["pm_once_price"]-$info["pm_once_dis_price"]+$info["pm_first_day_price"]+(($info["pm_service_price"]-$info["pm_service_dis_price"])*$month))*0.1)?> 원
+                </div>
+                <?php endif; ?>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label"><div>서비스 청구 합계</div></div>
+                <?php if($info["pm_payment_dis_price"] > 0): ?>
                 <div class="input right" id="p_pm_total_price5"><?=number_format(($info["pm_service_price"]-$info["pm_service_dis_price"])*$month-($info["pm_payment_dis_price"]/$info["pm_pay_period"])*$month)?> 원</div>
+                <?php else: ?>
+                <div class="input right" id="p_pm_total_price5"><?=number_format(($info["pm_service_price"]-$info["pm_service_dis_price"])*$month)?> 원</div>
+                <?php endif; ?>
             </div>
 
             <div class="modal-field-input">
                 <div class="label"><div>총 청구 합계</div></div>
+                <?php if($info["pm_payment_dis_price"] > 0): ?>
                 <div class="input right" id="p_pm_total_price6">
                     <?=number_format(($info["pm_once_price"]-$info["pm_once_dis_price"]+$info["pm_first_day_price"]+(($info["pm_service_price"]-$info["pm_service_dis_price"])*$month)-($info["pm_payment_dis_price"]/$info["pm_pay_period"])*$month)*1.1)?> 원
                 </div>
+                <?php else: ?>
+                <div class="input right" id="p_pm_total_price6">
+                    <?=number_format(($info["pm_once_price"]-$info["pm_once_dis_price"]+$info["pm_first_day_price"]+(($info["pm_service_price"]-$info["pm_service_dis_price"])*$month))*1.1)?> 원
+                </div>
+                <?php endif;?>
             </div>
         </div>
         <div class="modal-title">
@@ -319,4 +356,5 @@
     </div>
 
 </div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>
 <script src="/assets/js/memberClaimView.js?date=<?=time()?>"></script>

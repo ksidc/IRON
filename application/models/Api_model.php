@@ -3278,6 +3278,7 @@ class Api_model extends CI_Model {
             "sv_contract_type" => $row["sr_contract_type"],
             "sv_contract_start" => $row["sr_contract_start"],
             "sv_contract_end" => $row["sr_contract_end"],
+            "sv_contract_extension_end" => $row["sr_contract_end"],
             "sv_auto_extension" => $row["sr_auto_extension"],
             "sv_auto_extension_month" => $row["sr_auto_extension_month"],
             "sv_register_discount" => $row["sr_register_discount"],
@@ -4244,7 +4245,8 @@ class Api_model extends CI_Model {
             "pm_payment_dis_price" => str_replace(",","",$this->input->post("pm_payment_dis_price")),
             "pm_total_price" => str_replace(",","",$this->input->post("pm_total_price")),
             "pm_surtax_price" => str_replace(",","",$this->input->post("pm_surtax_price")),
-            "pm_memo" => $this->input->post("pm_memo")
+            "pm_memo" => $this->input->post("pm_memo"),
+            "pm_end_date" => $this->input->post("pm_end_date")
         );
         $this->db->where("pm_seq",$this->input->post("pm_seq"));
         return $this->db->update("payment",$data);
@@ -4262,7 +4264,7 @@ class Api_model extends CI_Model {
         $this->db->where("pm_mb_seq",$pm_mb_seq);
         $this->db->where("pm_status != '1'");
 
-        $this->db->order_by("pm_ca_seq desc, sv_seq desc, pm_seq desc ");
+        $this->db->order_by("pm_type desc, pm_ca_seq desc, sv_seq desc, pm_seq desc ");
         $query = $this->db->get();
 
         return $query->result_array();
@@ -4303,6 +4305,68 @@ class Api_model extends CI_Model {
             $pm_code = $max_row1.sprintf("%07d",$max_row2);
         }
 
+        $this->db->select("*");
+        $this->db->from("members");
+        $this->db->where("mb_seq",$this->input->post("pm_mb_seq"));
+        $query = $this->db->get();
+        $row_member = $query->row_array();
+
+        if($this->input->post("pm_surtax_type") == "0"){
+            $total_price = str_replace(",","",$this->input->post("pm_service_price")) - str_replace(",","",$this->input->post("pm_service_dis_price"));
+            $total_surtax = floor($total_price*0.1);
+            $total_price2 = floor($total_price*1.1);
+        }else{
+            $total_price = str_replace(",","",$this->input->post("pm_service_price")) - str_replace(",","",$this->input->post("pm_service_dis_price"));
+            $total_surtax = 0;
+            $total_price2 = $total_price;
+        }
+        $data_claim = array(
+            "ca_from_number" => "215-87-70318",
+            "ca_to_number" => $row_member["mb_number"],
+            "ca_from_name" => "아이온 시큐리티",
+            "ca_to_name" => $row_member["mb_name"],
+            "ca_from_ceo" => "김성혁",
+            "ca_to_ceo" => $row_member["mb_ceo"],
+            "ca_from_address" => "서울특별시 서초구 서초대로 255",
+            "ca_to_address"=> $row_member["mb_address"],
+            "ca_from_condition" => "서비스 외",
+            "ca_to_condition" => $row_member["mb_business_conditions"],
+            "ca_from_type" => "보안서비스 및 용역제공",
+            "ca_to_type" => $row_member["mb_business_type"],
+            "ca_from_team" => "영업2팀",
+            "ca_to_team" => $row_member["mb_payment_team"],
+            "ca_from_charger" => "전이준",
+            "ca_to_charger" => $row_member["mb_payment_name"],
+            "ca_from_tel" => "",
+            "ca_to_tel" => $row_member["mb_payment_tel"],
+            "ca_from_email" => "ijjun@eyeonsec.co.kr",
+            "ca_to_email" => $row_member["mb_payment_email"],
+            "ca_date" => date("Y-m-d"),
+            "ca_price" => $total_price,
+            "ca_surtax" => $total_surtax,
+            "ca_total_price" => $total_price2,
+            "ca_empty_size" => 11-strlen($total_price2),
+            "ca_price_info1" => $total_price2,
+            "ca_price_info2" => $total_price2,
+            "ca_price_info3" => 0,
+            "ca_price_info4" => 0,
+            "ca_price_info5" => 0,
+            "ca_payment_type" => $this->input->post("pm_payment_publish_type"),
+            "ca_mb_seq" => $this->input->post("pm_mb_seq")
+        );
+        $this->db->insert("payment_claim",$data_claim);
+        $pm_ca_seq = $this->db->insert_id();
+
+        $data_claim_d = array(
+            "cl_ca_seq" => $pm_ca_seq,
+            "ca_item_name" => $this->input->post("pm_bill_name"),
+            "ca_item_price" => $total_price,
+            "ca_item_surtax" => $total_surtax,
+            "ca_sort" => 1,
+            "ca_m_sv_num" => ""
+        );
+        $this->db->insert("payment_claim_list",$data_claim_d);
+
         $data = array(
             "pm_type" => $this->input->post("pm_type"),
             "pm_code" => $pm_code,
@@ -4312,14 +4376,18 @@ class Api_model extends CI_Model {
             "pm_bill_name" => $this->input->post("pm_bill_name"),
             "pm_payment_publish" => $this->input->post("pm_payment_publish"),
             "pm_payment_publish_type" => $this->input->post("pm_payment_publish_type"),
-            "pm_service_price" => str_replace(",","",$this->input->post("pm_service_price")),
-            "pm_service_dis_price" => str_replace(",","",$this->input->post("pm_service_dis_price")),
+            "pm_once_price" => str_replace(",","",$this->input->post("pm_service_price")),
+            "pm_once_dis_price" => str_replace(",","",$this->input->post("pm_service_dis_price")),
+            "pm_service_price" => 0,
+            "pm_service_dis_price" => 0,
+            "pm_payment_dis_price" => 0,
             "pm_surtax_type" => $this->input->post("pm_surtax_type"),
-            "pm_dis_msg" => $this->input->post("pm_dis_msg"),
+            "pm_once_dis_msg" => $this->input->post("pm_dis_msg"),
             "pm_date" => date("Y-m-d"),
             "pm_end_date" => $this->input->post("pm_end_date"),
             "pm_com_type" => $this->input->post("pm_com_type"),
-            "pm_status" => 0
+            "pm_status" => 0,
+            "pm_ca_seq"=>$pm_ca_seq
         );
 
         return $this->db->insert("payment",$data);
@@ -4331,10 +4399,10 @@ class Api_model extends CI_Model {
             "pm_bill_name" => $this->input->post("pm_bill_name"),
             "pm_payment_publish" => $this->input->post("pm_payment_publish"),
             "pm_payment_publish_type" => $this->input->post("pm_payment_publish_type"),
-            "pm_service_price" => $this->input->post("pm_service_price"),
-            "pm_service_dis_price" => $this->input->post("pm_service_dis_price"),
+            "pm_once_price" => $this->input->post("pm_service_price"),
+            "pm_once_dis_price" => $this->input->post("pm_service_dis_price"),
             "pm_surtax_type" => $this->input->post("pm_surtax_type"),
-            "pm_dis_msg" => $this->input->post("pm_dis_msg"),
+            "pm_once_dis_msg" => $this->input->post("pm_dis_msg"),
             "pm_date" => $this->input->post("pm_date"),
             "pm_end_date" => $this->input->post("pm_end_date"),
             "pm_com_type" => $this->input->post("pm_com_type")
@@ -5124,12 +5192,25 @@ class Api_model extends CI_Model {
 
         $row = $query->row_array();
 
+        if($this->input->post("sh_type") == "1" || $this->input->post("sh_type") == "2"){
+            $sh_service_start = $this->input->post("sh_service_start");
+            $sh_service_end = $this->input->post("sh_service_end");
+            $data_update["sv_contract_extension_end"] = $this->input->post("sh_service_end");
+            $this->db->where("sv_code LIKE '".$this->input->post("sh_sv_code")."-"."%' ");
+            $this->db->update("service",$data_update);
+        }else{
+            $sh_service_start = "";
+            $sh_service_end = "";
+            $data_update["sv_contract_extension_end"] = $sh_service_end;
+            $this->db->where("sv_code LIKE '".$this->input->post("sh_sv_code")."-"."%' ");
+            $this->db->update("service",$data_update);
+        }
         $data = array(
             "sh_sv_code" => $this->input->post("sh_sv_code")."-01",
             "sh_type" => $this->input->post("sh_type"),
             "sh_date" => date("Y-m-d H:i:s"),
-            "sh_service_start" => $this->input->post("sh_service_start"),
-            "sh_service_end" => $this->input->post("sh_service_end"),
+            "sh_service_start" => $sh_service_start,
+            "sh_service_end" => $sh_service_end,
             "sh_auto_extension" => $row["sv_auto_extension"],
             "sh_auto_extension_month" => $row["sv_auto_extension_month"],
             "sh_link" => $this->input->post("sh_link")
@@ -5139,6 +5220,11 @@ class Api_model extends CI_Model {
     }
 
     public function serviceHistoryEdit(){
+        if($this->input->post("sh_type") == "1" || $this->input->post("sh_type") == "2"){
+            $data_update["sv_contract_extension_end"] = $this->input->post("sh_service_end");
+            $this->db->where("sv_code LIKE '".$this->input->post("sh_sv_code")."-"."%' ");
+            $this->db->update("service",$data_update);
+        }
         $data = array(
             "sh_type" => $this->input->post("sh_type"),
             "sh_service_start" => $this->input->post("sh_service_start"),
@@ -5150,8 +5236,31 @@ class Api_model extends CI_Model {
     }
 
     public function serviceHistoryDel(){
+        $this->db->select("*");
+        $this->db->from("service_history");
         $this->db->where("sh_seq",$this->input->post("sh_seq"));
-        return $this->db->delete("service_history");
+        $query = $this->db->get();
+        $row = $query->row_array();
+
+        $this->db->where("sh_seq",$this->input->post("sh_seq"));
+        $this->db->delete("service_history");
+
+        $this->db->select("*");
+        $this->db->from("service_history");
+        $this->db->where("sh_sv_code = '".$row["sh_sv_code"]."' ");
+        $this->db->order_by("sh_seq desc");
+        $this->db->limit(1);
+
+        $query = $this->db->get();
+        $row2 = $query->row_array();
+
+        if($row2["sh_type"] == "0" || $row2["sh_type"] == "1" || $row2["sh_type"] == "2"){
+            $data_update["sv_contract_extension_end"] = $row2["sh_service_end"];
+            $sh_sv_code = explode("-",$row2["sh_sv_code"]);
+            $this->db->where("sv_code LIKE '".$sh_sv_code[0]."-"."%' ");
+            $this->db->update("service",$data_update);
+        }
+        return true;
     }
 
     public function claimView($pm_ca_seq){
@@ -5405,7 +5514,7 @@ class Api_model extends CI_Model {
                         $this->db->where("pm_date",$claim_date);
                         $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
                         $this->db->where("pm_end_date",$end_date);
-                        $this->db->where("pm_status != 'Y'");
+                        $this->db->where("pm_status = '0'");
                         $this->db->limit(1);
                         $query_claim = $this->db->get();
                         if($query_claim->num_rows() > 0){
@@ -5663,7 +5772,7 @@ class Api_model extends CI_Model {
                         $this->db->where("pm_date",$claim_date);
                         $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
                         $this->db->where("pm_end_date",$end_date);
-                        $this->db->where("pm_status != 'Y'");
+                        $this->db->where("pm_status = '0'");
                         $this->db->limit(1);
                         $query_claim = $this->db->get();
                         if($query_claim->num_rows() > 0){
@@ -5966,7 +6075,7 @@ class Api_model extends CI_Model {
                         $this->db->where("pm_date",$claim_date);
                         $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
                         $this->db->where("pm_end_date",$end_date);
-                        $this->db->where("pm_status != 'Y'");
+                        $this->db->where("pm_status = '0'");
                         $this->db->limit(1);
                         $query_claim = $this->db->get();
                         if($query_claim->num_rows() > 0){
@@ -6224,7 +6333,7 @@ class Api_model extends CI_Model {
                         $this->db->where("pm_date",$claim_date);
                         $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
                         $this->db->where("pm_end_date",$end_date);
-                        $this->db->where("pm_status != 'Y'");
+                        $this->db->where("pm_status = '0'");
                         $this->db->limit(1);
                         $query_claim = $this->db->get();
                         if($query_claim->num_rows() > 0){
@@ -6726,6 +6835,24 @@ class Api_model extends CI_Model {
             $this->db->where("mf_seq",$fileinfo[0]);
             $this->db->update("email_files",$data1);
         }
+        return true;
+    }
+
+    public function paymentListUpdate(){
+        $pm_seq = $this->input->post("pm_seq");
+        $pm_date = $this->input->post("pm_date");
+        $pm_service_start = $this->input->post("pm_service_start");
+        $pm_service_end = $this->input->post("pm_service_end");
+        for($i = 0;$i < count($pm_seq);$i++){
+            $data = array(
+                "pm_date" => $pm_date[$i],
+                "pm_service_start" => $pm_service_start[$i],
+                "pm_service_end" => $pm_service_end[$i]
+            );
+            $this->db->where("pm_seq",$pm_seq[$i]);
+            $this->db->update("payment",$data);
+        }
+
         return true;
     }
 }

@@ -94,7 +94,7 @@
             </div>
             <div style="clear:both;padding:5px 0px">
                 서비스 상태
-                <input type="checkbox" name="sv_status_all" id="sv_status_all" value="Y"> 전체 <input type="checkbox" name="sv_status[]" value='0' class="sv_status"> 입금대기중 <input type="checkbox" name="sv_status[]" value='1' class="sv_status"> 서비스준비중 <input type="checkbox" name="sv_status[]" value='2' class="sv_status"> 서비스작업중 <input type="checkbox" name="sv_status[]" value='3' class="sv_status"> 서비스중 <input type="checkbox" name="sv_status[]" value='4' class="sv_status"> 서비스중지 <input type="checkbox" name="sv_status[]" value='5' class="sv_status"> 서비스해지 <input type="checkbox" name="sv_status[]" value='6' class="sv_status"> 직권중지 <input type="checkbox" name="sv_status[]" value='7' class="sv_status"> 직권해지
+                <input type="checkbox" name="sv_status_all" id="sv_status_all" value="Y"> 전체 <input type="checkbox" name="sv_status[]" value='0' class="sv_status"> <span style="color:#9E0000">입금대기중</span> <input type="checkbox" name="sv_status[]" value='1' class="sv_status"> <span style="color:#0070C0">서비스준비중</span> <input type="checkbox" name="sv_status[]" value='2' class="sv_status"> <span style="color:#548235">서비스작업중</span> <input type="checkbox" name="sv_status[]" value='3' class="sv_status"> <span style="color:#000000">서비스중</span> <input type="checkbox" name="sv_status[]" value='4' class="sv_status"> <span style="color:#FF0000">서비스중지</span> <input type="checkbox" name="sv_status[]" value='5' class="sv_status"> <span style="color:#808080">서비스해지</span> <input type="checkbox" name="sv_status[]" value='6' class="sv_status"> <span style="color:#FF0000">직권중지</span> <input type="checkbox" name="sv_status[]" value='7' class="sv_status"> <span style="color:#808080">직권해지</span>
             </div>
             <div style="padding-bottom:5px">
                 날짜 검색
@@ -343,22 +343,23 @@
                             $(".child_add_content_"+seq).remove();
 
                             for(var i = 0; i < response.length;i++){
+                                
                                 if(response[i].sv_status == "0"){
-                                    var sv_status = '입금대기중';
+                                    var sv_status = '<span style="color:#9E0000">입금대기중</span>';
                                 }else if(response[i].sv_status == "1"){
-                                    var sv_status = '서비스준비중';
+                                    var sv_status = '<span style="color:#0070C0">서비스준비중</span>';
                                 }else if(response[i].sv_status == "2"){
-                                    var sv_status = '서비스작업중';
+                                    var sv_status = '<span style="color:#548235">서비스작업중</span>';
                                 }else if(response[i].sv_status == "3"){
-                                    var sv_status = '서비스중';
+                                    var sv_status = '<span style="color:#000000">서비스중</span>';
                                 }else if(response[i].sv_status == "4"){
-                                    var sv_status = '서비스중지';
+                                    var sv_status = '<span style="color:#FF0000">서비스중지</span>';
                                 }else if(response[i].sv_status == "5"){
-                                    var sv_status = '서비스해지';
+                                    var sv_status = '<span style="color:#808080">서비스해지</span>';
                                 }else if(response[i].sv_status == "6"){
-                                    var sv_status = '직권중지';
+                                    var sv_status = '<span style="color:#FF0000">직권중지</span>';
                                 }else if(response[i].sv_status == "7"){
-                                    var sv_status = '직권해지';
+                                    var sv_status = '<span style="color:#808080">직권해지</span>';
                                 }
                                 // console.log(response[i].paymentinfo);
                                 if(response[i].paymentinfo !== null){
@@ -377,27 +378,29 @@
                                     if(pm_pay_period > 1){
                                         var custom_end_date = moment(pm_date).add(1,'months').format("YYYY-MM-DD");
                                         if(moment().format("YYYY-MM-DD") >= custom_end_date){
-                                            var payment_status = "연체";
+                                            var payment_status = "<span style='color:#FF0000'>연체</span>";
                                         }else{
                                             if(pm_end_date >= moment().format("YYYY-MM-DD")){
-                                                var payment_status = "청구("+pm_pay_period+"개월)";
+                                                var payment_status = "<span style='color:#0070C0'>청구("+pm_pay_period+"개월)</span>";
                                             }else{
-                                                var payment_status = "미납("+pm_pay_period+"개월)";
+                                                var payment_status = "<span style='color:#FF0000'>미납("+pm_pay_period+"개월)</span>";
                                             }
                                         }
                                     }else{
                                         // 연체 로직 추가
                                         if(pm_end_date >= moment().format("YYYY-MM-DD")){
-                                            var payment_status = "청구("+pm_pay_period+"개월)";
+                                            var payment_status = "<span style='color:#0070C0'>청구("+pm_pay_period+"개월)</span>";
                                         }else{
-                                            var payment_status = "미납("+pm_pay_period+"개월)";
+                                            var payment_status = "<span style='color:#FF0000'>미납("+pm_pay_period+"개월)</span>";
                                         }
 
                                     }
+                                }else if(pm_status == "9"){
+                                    var payment_status = "<span style='color:#548235'>가결제("+pm_pay_period+"개월) " +pm_input_date+"</span>";
                                 }else if(pm_status == "1"){
-                                    var payment_status = "가결제("+pm_pay_period+"개월) " +pm_input_date
-                                }else{
                                     var payment_status = "완납";
+                                }else{
+                                    var payment_status = "청구내역없음";
                                 }
 
                                 html += '<tr class="child_add_content_'+seq+'" style="border:0px">\
@@ -611,10 +614,15 @@
                         }
                         if(response.list[i].sv_auto_extension == "1"){
                             var sv_auto = response.list[i].sv_auto_extension_month+"개월";
-                            var sv_auto_end = moment(response.list[i].sv_contract_end).add(sv_auto,'months').subtract(1, "days").format("YYYY-MM-DD")
+                            // var sv_auto_end = moment(response.list[i].sv_contract_end).add(response.list[i].sv_auto_extension_month,'months').format("YYYY-MM-DD")
                         }else{
                             var sv_auto = "-";
-                            var sv_auto_end = response.list[i].sv_contract_end;
+                            // var sv_auto_end = response.list[i].sv_contract_end;
+                        }
+                        if(response.list[i].sv_contract_extension_end != "0000-00-00"){
+                            var sv_auto_end = response.list[i].sv_contract_extension_end;
+                        }else{
+                            var sv_auto_end = "";
                         }
                         if(response.list[i].priceinfo !== null){
                             var priceinfo = response.list[i].priceinfo.split("|");
@@ -625,21 +633,21 @@
                         var monthPrice = parseInt(priceinfo[2])-parseInt(priceinfo[3])-parseInt(priceinfo[4]);
 
                         if(response.list[i].sv_status == "0"){
-                            var sv_status = '입금대기중';
+                            var sv_status = '<span style="color:#9E0000">입금대기중</span>';
                         }else if(response.list[i].sv_status == "1"){
-                            var sv_status = '서비스준비중';
+                            var sv_status = '<span style="color:#0070C0">서비스준비중</span>';
                         }else if(response.list[i].sv_status == "2"){
-                            var sv_status = '서비스작업중';
+                            var sv_status = '<span style="color:#548235">서비스작업중</span>';
                         }else if(response.list[i].sv_status == "3"){
-                            var sv_status = '서비스중';
+                            var sv_status = '<span style="color:#000000">서비스중</span>';
                         }else if(response.list[i].sv_status == "4"){
-                            var sv_status = '서비스중지';
+                            var sv_status = '<span style="color:#FF0000">서비스중지</span>';
                         }else if(response.list[i].sv_status == "5"){
-                            var sv_status = '서비스해지';
+                            var sv_status = '<span style="color:#808080">서비스해지</span>';
                         }else if(response.list[i].sv_status == "6"){
-                            var sv_status = '직권중지';
+                            var sv_status = '<span style="color:#FF0000">직권중지</span>';
                         }else if(response.list[i].sv_status == "7"){
-                            var sv_status = '직권해지';
+                            var sv_status = '<span style="color:#808080">직권해지</span>';
                         }
                         if(response.list[i].paymentinfo !== null){
                             var paymentinfo = response.list[i].paymentinfo.split("|");
@@ -656,27 +664,29 @@
                             if(pm_pay_period > 1){
                                 var custom_end_date = moment(pm_date).add(1,'months').format("YYYY-MM-DD");
                                 if(moment().format("YYYY-MM-DD") >= custom_end_date){
-                                    var payment_status = "연체";
+                                    var payment_status = "<span style='color:#FF0000'>연체</span>";
                                 }else{
                                     if(pm_end_date >= moment().format("YYYY-MM-DD")){
-                                        var payment_status = "청구("+pm_pay_period+"개월)";
+                                        var payment_status = "<span style='color:#0070C0'>청구("+pm_pay_period+"개월)</span>";
                                     }else{
-                                        var payment_status = "미납("+pm_pay_period+"개월)";
+                                        var payment_status = "<span style='color:#FF0000'>미납("+pm_pay_period+"개월)</span>";
                                     }
                                 }
                             }else{
                                 // 연체 로직 추가
                                 if(pm_end_date >= moment().format("YYYY-MM-DD")){
-                                    var payment_status = "청구("+pm_pay_period+"개월)";
+                                    var payment_status = "<span style='color:#0070C0'>청구("+pm_pay_period+"개월)</span>";
                                 }else{
-                                    var payment_status = "미납("+pm_pay_period+"개월)";
+                                    var payment_status = "<span style='color:#FF0000'>미납("+pm_pay_period+"개월)</span>";
                                 }
 
                             }
+                        }else if(pm_status == "9"){
+                            var payment_status = "<span style='color:#548235'>가결제("+pm_pay_period+"개월) " +pm_input_date+"</span>";
                         }else if(pm_status == "1"){
-                            var payment_status = "가결제("+pm_pay_period+"개월) " +pm_input_date
-                        }else{
                             var payment_status = "완납";
+                        }else{
+                            var payment_status = "청구내역없음";
                         }
 
                         if(response.list[i].sv_input_unit == 0){

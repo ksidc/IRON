@@ -8,6 +8,10 @@
 
 .claim_payment {display:none;}
 .paycom_payment {display:none;}
+
+.border-trans {
+    border:2px solid transparent;
+}
 </style>
 <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
@@ -841,7 +845,8 @@
         </div>
         <div class="view-body" style="clear:both;width:100%">
             <div class="table-list" style="margin-top:0px">
-                <form id="listForm" method="POST" action="/api/estimateExport">
+                <form id="listFormP" method="POST" onsubmit="return listModify()">
+                    <button type="submit" style="display:none"></button>
                 <table class="table">
                     <thead>
                         <tr>
@@ -925,22 +930,26 @@
                                     $price2_1 = (($row["pm_service_price"]-$row["pm_service_dis_price"])*1.1)-($row["pm_service_price"]-$row["pm_service_dis_price"]);
                                 }
                             ?>
-                        <tr>
+                        <tr><input type="hidden" name="pm_seq[]" value="<?=$row["pm_seq"]?>">
+                            <?php if($row["pm_payment_dis_price"] > 0):?>
                             <td><input type="checkbox" class="claim_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]*$month?>" data-price6="<?=$row["pm_service_dis_price"]*$month?>" data-price7="<?=($row["pm_payment_dis_price"] == 0 ? 0:($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?>" data-price8="<?=($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month?>" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$price?>" data-price11="<?=($price*0.1)?>" data-price12="<?=($price*1.1)?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
+                            <?php else: ?>
+                            <td><input type="checkbox" class="claim_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]*$month?>" data-price6="<?=$row["pm_service_dis_price"]*$month?>" data-price7="<?=($row["pm_payment_dis_price"] == 0 ? 0:($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?>" data-price8="<?=($row["pm_service_price"]-$row["pm_service_dis_price"])*$month?>" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$price?>" data-price11="<?=($price*0.1)?>" data-price12="<?=($price*1.1)?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>    
+                            <?php endif; ?>
                             <td><?=$num?></td>
                             <td><?=($row["pm_type"] == "1" ? "서비스비용":"일회성비용")?></td>
 
                             <td><?=$row["pm_code"]?></td>
                             <td>
-                                <?=$row["pm_date"]?>
+                                <input type="text" name="pm_date[]" class="border-trans datepicker3" value="<?=$row["pm_date"]?>" style="width:80px;font-size:9pt;color:#7f7f7f" onfocus="$(this).removeClass('border-trans')" onfocusout="$(this).addClass('border-trans')" >
                             </td>
                             <td>
-                                <?=$row["pm_service_start"]?> ~ <?=$row["pm_service_end"]?>
+                                 <input type="text" name="pm_service_start[]" class="border-trans datepicker3" value="<?=$row["pm_service_start"]?>" style="width:80px;font-size:9pt;color:#7f7f7f" onfocus="$(this).removeClass('border-trans')" onfocusout="$(this).addClass('border-trans')"> ~ <input type="text" name="pm_service_end[]" class="border-trans datepicker3" value="<?=$row["pm_service_end"]?>" style="width:80px;font-size:9pt;color:#7f7f7f" onfocus="$(this).removeClass('border-trans')" onfocusout="$(this).addClass('border-trans')">
                             </td>
                             <td ><?=($row["sva_seq"] == "" ? $row["pc_name"]:"부가항목")?></td>
-                            <td ><?=($row["sva_seq"] == "" ? $row["pr_name"]:$row["sva_name"])?></td>
+                            <td ><a href="javascript:void(0)" onclick="openProductView('<?=$row["sv_seq"]?>')"><?=($row["sva_seq"] == "" ? $row["pr_name"]:$row["sva_name"])?></a></td>
                             <td><?=($row["sva_seq"] == "" ? $row["ps_name"]:"")?></td>
-                            <td ><?=($row["sva_seq"] == "" ? $row["sv_number"]:$row["sva_number"])?></td>
+                            <td ><a href="/service/view/<?=$row["sv_seq"]?>"><?=($row["sva_seq"] == "" ? $row["sv_number"]:$row["sva_number"])?></a></td>
                             <!-- <td><?=$row["pc_name"]?></td>
                             <td><?=$row["pr_name"]?></td>
                             <td><?=$row["ps_name"]?></td>
@@ -962,8 +971,14 @@
                             <td class="claim_payment right"><?=number_format($row["pm_first_day_price"])?> 원</td>
                             <td class="claim_payment right"><?=number_format($row["pm_service_price"]*$month)?> 원</td>
                             <td class="claim_payment right" style="color:#FF5353"> - <?=number_format($row["pm_service_dis_price"]*$month)?> 원</td>
+                            <?php if($row["pm_payment_dis_price"] > 0):?>
                             <td class="claim_payment right" style="color:#FF7053"> - <?=number_format($row["pm_payment_dis_price"]/$row["pm_pay_period"]*$month)?> 원</td>
                             <td class="claim_payment right" style="color:#404040"><?=number_format(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?> 원</td>
+                            <?php else: ?>
+                            <td class="claim_payment right" style="color:#FF7053"> - 0 원</td>
+                            <td class="claim_payment right" style="color:#404040"><?=number_format(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month)?> 원</td>
+                            <?php endif; ?>
+                            
                             <td class="claim_payment right"><?=$row["pm_delay_price"]?></td>
                             <td class="right"><?=number_format($price)?> 원</td>
                             <td class="right"><?=number_format($price*0.1)?> 원</td>
@@ -988,7 +1003,7 @@
                                 <?php endif; ?>
                             </td>
                             <?php endif; ?>
-                            <td><i class="fas fa-edit detailPView" data-seq="<?=$row["pm_seq"]?>"></i></td>
+                            <td><i class="fas fa-edit detailPView" data-seq="<?=$row["pm_seq"]?>" data-pmtype="<?=$row["pm_type"]?>"></i></td>
 
                             <td></td>
                         </tr>
