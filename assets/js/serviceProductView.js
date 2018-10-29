@@ -2,6 +2,7 @@ $(function(){
     getServiceUrl();
     getServiceLicense();
     getServiceModule();
+    getLog();
     $("body").on("click",".serviceIpDel",function(){
         var url = "/api/serviceInstallIpDel";
         console.log($(this).data("seq"));
@@ -20,21 +21,62 @@ $(function(){
     })
 
     $(".btn-edit").click(function(){
-        var url = "/api/serviceInstallEdit";
-        var datas = $("#installForm").serialize();
+        var url = "/api/productItemSub/"+$("#sv_pi_seq").val();
         $.ajax({
             url : url,
-            type : 'POST',
+            type : 'GET',
             dataType : 'JSON',
-            data : datas,
             success:function(response){
-                alert("수정 되었습니다.");
-                // getServiceUrl();
+                // console.log(response);
+                // console.log($("#b_sv_pi_seq").val());
+                // console.log($("#sv_pi_seq").val());
+                // return false;
+                if($("#b_sv_pi_seq").val() != $("#sv_pi_seq").val()){
+                    if(response.length > 0){
+                        alert("부가항목이 있는 제품군으로 변경은 불가합니다");
+                        return false;
+                    }
+                }
+
+                if(confirm("상품/기술/관제 정보를 수정하시겠습니까?")){
+                    var url = "/api/serviceInstallEdit";
+                    var datas = $("#edit").serialize();
+                    $.ajax({
+                        url : url,
+                        type : 'POST',
+                        dataType : 'JSON',
+                        data : datas,
+                        success:function(response){
+                            alert("수정 되었습니다.");
+                            document.location.reload();
+                            // getServiceUrl();
+                        }
+                    });
+                }
+                
             }
+
         });
+        
     })
 
     $(".licenseAdd").click(function(){
+        if($("#sl_license_name").val() == ""){
+            alert("라이선스명을 입력하세요");
+            return false;
+        }
+        if($("#sl_start_date").val() == ""){
+            alert("기간을 입력하세요");
+            return false;
+        }
+        if($("#sl_end_date").val() == ""){
+            alert("기간을 입력하세요");
+            return false;
+        }
+        if($("#sl_contract_number").val() == ""){
+            alert("계약 등록 코드를 입력하세요");
+            return false;
+        }
         var url = "/api/serviceLicenseAdd";
         var datas = $("#licenseForm").serialize();
         $.ajax({
@@ -54,6 +96,22 @@ $(function(){
     })
 
     $(".moduleAdd").click(function(){
+        if($("#sm_name").val() == ""){
+            alert("모듈명을 입력하세요");
+            return false;
+        }
+        if($("#sm_cnt").val() == ""){
+            alert("수량을 선택하세요");
+            return false;
+        }
+        if($("#sm_div").val() == ""){
+            alert("분류를 선택하세요");
+            return false;
+        }
+        if($("#sm_date").val() == ""){
+            alert("추가 장착일을 입력하세요");
+            return false;
+        }
         var url = "/api/serviceModuleAdd";
         var datas = $("#moduleForm").serialize();
         $.ajax({
@@ -179,7 +237,143 @@ $(function(){
                 });
             }
         }
+    });
+
+    $("#sv_pc_seq").change(function(){
+        if($(this).val() != ""){
+            var url = "/api/productItemSearch/"+$(this).val();
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                success:function(response){
+                    $('select[name="sv_pi_seq"]').empty().append('<option value="">선택</option>');
+                    $("#sv_pi_seq_str").html("선택");
+                    for(var i in response){
+                        $('select[name="sv_pi_seq"]').append('<option value="'+response[i].pi_seq+'" >'+response[i].pi_name+'</option>');
+                    }
+
+                    // if(allPiSeq != ""){
+                    //     $('select[name="sv_pi_seq"]').val(allPiSeq).trigger("change");
+                    // }
+                }
+
+            });
+        }else{
+            $('select[name="sv_pi_seq"]').empty().append('<option value="">선택</option>');
+            $("#sv_pi_seq_str").html("선택");
+
+            $('select[name="sv_pr_seq"]').empty().append('<option value="">선택</option>');
+            $("#sv_pr_seq_str").html("선택");
+
+            $("#sv_pr_name").html("상품명");
+
+            $('select[name="sv_pd_seq"]').empty().append('<option value="">선택</option>');
+            $("#sv_pd_seq_str").html("선택");
+
+            $('select[name="sv_ps_seq"]').empty().append('<option value="">선택</option>');
+            $("#sv_ps_seq_str").html("선택");
+        }
     })
+
+    $("#sv_pi_seq").change(function(){
+        if($(this).val() != ""){
+            var url = "/api/productSearch/"+$("#sv_pc_seq").val();
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                data:"pi_seq="+$(this).val(),
+                success:function(response){
+                    $('select[name="sv_pr_seq"]').empty().append('<option value="">선택</option>');
+                    $("#sv_pr_seq_str").html("선택");
+                    for(var i in response){
+                        $('select[name="sv_pr_seq"]').append('<option value="'+response[i].pr_seq+'" data-cseq="'+response[i].pr_c_seq+'" data-cname="'+response[i].c_name+'">'+response[i].pr_name+'</option>');
+                    }
+
+                    // if(allPrSeq != ""){
+                    //     $('select[name="sv_pr_seq"]').val(allPrSeq).trigger("change");
+                    // }
+                }
+
+            });
+
+            
+        }else{
+            $('select[name="sv_pr_seq"]').empty().append('<option value="">선택</option>');
+            $("#sv_pr_seq_str").html("선택");
+
+            $("#sv_pr_name").html("상품명");
+
+            $('select[name="sv_pd_seq"]').empty().append('<option value="">선택</option>');
+            $("#sv_pd_seq_str").html("선택");
+
+            $('select[name="sv_ps_seq"]').empty().append('<option value="">선택</option>');
+            $("#sv_ps_seq_str").html("선택");
+        }
+    })
+
+    $("#sv_pr_seq").change(function(){
+        if($(this).val() != ""){
+            $("#sv_pr_name").html($("#sv_pr_seq option:selected").text());
+            $("#sv_c_seq_str").val($("#sv_pr_seq option:selected").data("cname"));
+            $("#sv_c_seq").val($("#sv_pr_seq option:selected").data("cseq"));
+            var url = "/api/productSubDepth1Search/"+$(this).val();
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                success:function(response){
+                    $('select[name="sv_pd_seq"]').empty().append('<option value="">선택</option>');
+                    $("#sv_pd_seq_str").html("선택");
+                    for(var i in response){
+                        $('select[name="sv_pd_seq"]').append('<option value="'+response[i].pd_seq+'" >'+response[i].pd_name+'</option>');
+                    }
+                }
+
+            });
+        }else{
+            $("#sv_pr_name").html("상품명");
+            $('select[name="sv_pd_seq"]').empty().append('<option value="">선택</option>');
+            $("#sv_pd_seq_str").html("선택");
+
+            $('select[name="sv_ps_seq"]').empty().append('<option value="">선택</option>');
+            $("#sv_ps_seq_str").html("선택");
+        }
+    })
+
+    $("#sv_pd_seq").change(function(){
+        if($(this).val() != ""){
+            var url = "/api/productSubDepth2Search/"+$("#sv_pr_seq").val()+"/"+$(this).val();
+            $.ajax({
+                url : url,
+                type : 'GET',
+                dataType : 'JSON',
+                success:function(response){
+                    // console.log(response);
+                    $('select[name="sv_ps_seq"]').empty().append('<option value="">선택</option>');
+                    $("#sv_ps_seq_str").html("선택");
+                    for(var i in response){
+                        $('select[name="sv_ps_seq"]').append('<option value="'+response[i].ps_seq+'" data-price="'+response[i].prs_price+'" data-prsoneprice="'+response[i].prs_one_price+'" data-prsmonthprice="'+response[i].prs_month_price+'" data-prsdiv="'+response[i].prs_div+'" data-prsonedisprice="'+response[i].prs_one_dis_price+'" data-prsmonthdisprice="'+response[i].prs_month_dis_price+'">'+response[i].ps_name+'</option>');
+                    }
+                }
+
+            });
+        }else{
+            $('select[name="sv_ps_seq"]').empty().append('<option value="">선택</option>');
+            $("#sv_ps_seq_str").html("선택");
+        }
+    });
+
+    $("#sv_ps_seq").change(function(){
+        if($(this).val() == ""){
+            $("#sv_ps_name").html("소분류");
+        }else{
+            $("#sv_ps_name").html($("#sv_ps_seq option:selected").text());
+            
+        }
+
+    });
 })
 
 function addServiceUrl(){
@@ -212,7 +406,7 @@ function getServiceUrl(){
             console.log(response);
             var html = "";
             for(var i = 0; i < response.length;i++){
-                html += '<ul style="list-style:none;padding:0;margin:0;height:30px">\
+                html += '<ul style="list-style:none;padding:0;margin:0;height:20px">\
                     <li style="float:left;width:80%"><input type="text" id="addUrl_'+response[i].sii_ip+'" class="border-no" value="'+response[i].sii_ip+'" readonly data-seq="'+response[i].sii_seq+'" style="width:85%"></li>\
                     <li style="float:left;padding-top:5px"><i class="fas fa-edit serviceIpEdit"></i>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-trash serviceIpDel" data-seq="'+response[i].sii_seq+'"></i></li>\
                 </ul>';
@@ -232,15 +426,19 @@ function getServiceLicense(){
         success:function(response){
             // console.log(response);
             var html = "";
-            for(var i = 0; i < response.length;i++){
-                html += '<tr>\
-                <td>1</td>\
-                <td><input type="text" id="sl_license_name_'+response[i].sl_seq+'" value="'+response[i].sl_license_name+'" class="border-no" readonly></td>\
-                <td><input type="text" id="sl_start_date_'+response[i].sl_seq+'" value="'+response[i].sl_start_date+'" class="border-no" readonly> ~ <input type="text" id="sl_end_date_'+response[i].sl_seq+'" value="'+response[i].sl_end_date+'" class="border-no" readonly></td>\
-                <td><input type="text" id="sl_start_date_'+response[i].sl_seq+'" value="'+response[i].sl_contract_number+'" class="border-no" readonly></td>\
-                <td><i class="fas fa-edit serviceLicenseEdit" data-seq="'+response[i].sl_seq+'"></i></td>\
-                <td><i class="fas fa-trash serviceLicenseDel" data-seq="'+response[i].sl_seq+'"></i></td>\
-                </tr>';
+            if(response.length > 0){
+                for(var i = 0; i < response.length;i++){
+                    var num = response.length -i;
+                    html += '<tr>\
+                    <td class="text-center">'+num+'</td>\
+                    <td><input type="text" id="sl_license_name_'+response[i].sl_seq+'" value="'+response[i].sl_license_name+'" class="border-no" readonly style="font-size:9pt;color:#7f7f7f;width:100%;"></td>\
+                    <td class="text-center"><input type="text" id="sl_start_date_'+response[i].sl_seq+'" value="'+response[i].sl_start_date+'" class="border-no text-center" readonly style="font-size:9pt;color:#7f7f7f;width:80px;"> ~ <input type="text" id="sl_end_date_'+response[i].sl_seq+'" value="'+response[i].sl_end_date+'" class="border-no text-center" readonly style="font-size:9pt;color:#7f7f7f;width:80px;"></td>\
+                    <td><input type="text" id="sl_start_date_'+response[i].sl_seq+'" value="'+response[i].sl_contract_number+'" class="border-no" readonly style="font-size:9pt;color:#7f7f7f;width:100%;"></td>\
+                    <td class="text-center"><i class="fas fa-edit serviceLicenseEdit" data-seq="'+response[i].sl_seq+'"></i> <i class="fas fa-trash serviceLicenseDel" data-seq="'+response[i].sl_seq+'"></i></td>\
+                    </tr>';
+                }
+            }else{
+                html += '<tr><td colspan=6 align=center>내용이 없습니다</td></tr>';
             }
             $("#licenseList").html(html);
         }
@@ -257,51 +455,121 @@ function getServiceModule(){
         success:function(response){
             // console.log(response);
             var html = "";
-            for(var i = 0; i < response.length;i++){
-                if(response[i].sm_div == "1"){
-                    var sm_div = "임대";
-                }else if(response[i].sm_div == "2"){
-                    var sm_div = "판매";
-                }else{
-                    var sm_div = "고객 구매";
+            if(response.length > 0){
+                for(var i = 0; i < response.length;i++){
+                    var num = response.length -i;
+                    if(response[i].sm_div == "1"){
+                        var sm_div = "임대";
+                    }else if(response[i].sm_div == "2"){
+                        var sm_div = "판매";
+                    }else{
+                        var sm_div = "고객 구매";
+                    }
+                    html += '<tr>\
+                    <td class="text-center">'+num+'</td>\
+                    <td><input type="text" id="sm_name_'+response[i].sm_seq+'" value="'+response[i].sm_name+'" class="border-no" readonly style="font-size:9pt;color:#7f7f7f;width:100%;"></td>\
+                    <td class="text-center">\
+                        <div>'+response[i].sm_cnt+'</div>\
+                        <div style="display:none">\
+                            <select id="sm_cnt_'+response[i].sm_seq+'" class="select2" style="width:160px" style="font-size:9pt;color:#7f7f7f">\
+                                <option value="1" '+(response[i].sm_cnt == "1" ? "selected":"")+'>1</option>\
+                                <option value="2" '+(response[i].sm_cnt == "2" ? "selected":"")+'>2</option>\
+                                <option value="3" '+(response[i].sm_cnt == "3" ? "selected":"")+'>3</option>\
+                                <option value="4" '+(response[i].sm_cnt == "4" ? "selected":"")+'>4</option>\
+                                <option value="5" '+(response[i].sm_cnt == "5" ? "selected":"")+'>5</option>\
+                                <option value="6" '+(response[i].sm_cnt == "6" ? "selected":"")+'>6</option>\
+                                <option value="7" '+(response[i].sm_cnt == "7" ? "selected":"")+'>7</option>\
+                                <option value="8" '+(response[i].sm_cnt == "8" ? "selected":"")+'>8</option>\
+                                <option value="9" '+(response[i].sm_cnt == "9" ? "selected":"")+'>9</option>\
+                                <option value="10" '+(response[i].sm_cnt == "10" ? "selected":"")+'>10</option>\
+                            </select>\
+                        </div>\
+                    </td>\
+                    <td class="text-center">\
+                        <div>'+sm_div+'</div>\
+                        <div style="display:none" >\
+                            <select id="sm_div_'+response[i].sm_seq+'" class="select2" style="width:160px;font-size:9pt;color:#7f7f7f";width:120px;>\
+                                <option value="1" '+(response[i].sm_div == "1" ? "selected":"")+'>임대</option>\
+                                <option value="2" '+(response[i].sm_div == "2" ? "selected":"")+'>판매</option>\
+                                <option value="3" '+(response[i].sm_div == "3" ? "selected":"")+'>고객 구매</option>\
+                            </select>\
+                        </div>\
+                    </td>\
+                    <td class="text-center"><input type="text" id="sm_date_'+response[i].sm_seq+'" value="'+response[i].sm_date+'" class="border-no text-center" readonly style="font-size:9pt;color:#7f7f7f;width:80px;"></td>\
+                    <td class="text-center"><i class="fas fa-edit serviceModuleEdit" data-seq="'+response[i].sm_seq+'"></i> <i class="fas fa-trash serviceModuleDel" data-seq="'+response[i].sm_seq+'"></i></td>\
+                    </tr>';
                 }
-                html += '<tr>\
-                <td>1</td>\
-                <td><input type="text" id="sm_name_'+response[i].sm_seq+'" value="'+response[i].sm_name+'" class="border-no" readonly></td>\
-                <td>\
-                    <div>'+response[i].sm_cnt+'</div>\
-                    <div style="display:none">\
-                        <select id="sm_cnt_'+response[i].sm_seq+'" class="select2" style="width:160px">\
-                            <option value="1" '+(response[i].sm_cnt == "1" ? "selected":"")+'>1</option>\
-                            <option value="2" '+(response[i].sm_cnt == "2" ? "selected":"")+'>2</option>\
-                            <option value="3" '+(response[i].sm_cnt == "3" ? "selected":"")+'>3</option>\
-                            <option value="4" '+(response[i].sm_cnt == "4" ? "selected":"")+'>4</option>\
-                            <option value="5" '+(response[i].sm_cnt == "5" ? "selected":"")+'>5</option>\
-                            <option value="6" '+(response[i].sm_cnt == "6" ? "selected":"")+'>6</option>\
-                            <option value="7" '+(response[i].sm_cnt == "7" ? "selected":"")+'>7</option>\
-                            <option value="8" '+(response[i].sm_cnt == "8" ? "selected":"")+'>8</option>\
-                            <option value="9" '+(response[i].sm_cnt == "9" ? "selected":"")+'>9</option>\
-                            <option value="10" '+(response[i].sm_cnt == "10" ? "selected":"")+'>10</option>\
-                        </select>\
-                    </div>\
-                </td>\
-                <td>\
-                    <div>'+sm_div+'</div>\
-                    <div style="display:none">\
-                        <select id="sm_div_'+response[i].sm_seq+'" class="select2" style="width:160px">\
-                            <option value="1" '+(response[i].sm_div == "1" ? "selected":"")+'>임대</option>\
-                            <option value="2" '+(response[i].sm_div == "2" ? "selected":"")+'>판매</option>\
-                            <option value="3" '+(response[i].sm_div == "3" ? "selected":"")+'>고객 구매</option>\
-                        </select>\
-                    </div>\
-                </td>\
-                <td><input type="text" id="sm_date_'+response[i].sm_seq+'" value="'+response[i].sm_date+'" class="border-no" readonly></td>\
-                <td><i class="fas fa-edit serviceModuleEdit" data-seq="'+response[i].sm_seq+'"></i></td>\
-                <td><i class="fas fa-trash serviceModuleDel" data-seq="'+response[i].sm_seq+'"></i></td>\
-                </tr>';
+            }else{
+                html += '<tr><td colspan=7 align=center>내용이 없습니다.</td></tr>';
             }
             $("#moduleList").html(html);
             $(".select2").select2();
+        }
+    });
+}
+
+function getLog(){
+
+    var url = "/api/fetchLogs/5/"+$("#sv_seq").val();
+    var end = 5;
+    var start = $("#log_start").val();
+// alert(start);
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        data : "sv_seq="+$("#sv_seq").val()+"&start="+start+"&end="+end,
+        success:function(response){
+            console.log(response);
+            var html = "";
+            for(var i = 0;i<response.list.length;i++){
+                var num = parseInt(response.total) - (($("#log_start").val()-1)*end) - i;
+                html += '<tr>\
+                            <td>'+num+'</td>\
+                            <td>'+response.list[i].lo_regdate+'</td>\
+                            <td>'+response.list[i].lo_type+'</td>\
+                            <td>'+response.list[i].lo_item+'</td>\
+                            <td>'+response.list[i].lo_origin+'</td>\
+                            <td>'+response.list[i].lo_after+'</td>\
+                            <td>';
+                                if(response.list[i].lo_user == "1"){
+                                    html += "ADMIN";
+                                }else if(response.list[i].lo_user == "2"){
+                                    html += "SYSTEM";
+                                }else{
+                                    html += "USER";
+                                }
+                            html += '</td>\
+                            <td></td>\
+                            <td>'+response.list[i].lo_ip+'</td>\
+                        </tr>';
+                
+            }
+            if(html == ""){
+                html = "<tr><td colspan=9 align=center>내용이 없습니다.</td></tr>";
+            }
+            console.log(html);
+            $("#log-list").html(html);
+
+            $("#logPaging").bootpag({
+                total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
+                page : $("#log_start").val(), // 현재 페이지 default = 1
+                maxVisible:5, // 페이지 숫자 노출 개수
+                wrapClass : "pagination",
+                next : ">",
+                prev : "<",
+                nextClass : "last",
+                prevClass : "first",
+                activeClass : "active"
+
+            }).on('page', function(event,num){ // 이벤트 액션
+                // document.location.href='/pageName/'+num; // 페이지 이동
+                $("#log_start").val(num);
+                getLog();
+            })
+        },
+        error: function(error){
+            console.log(error);
         }
     });
 }

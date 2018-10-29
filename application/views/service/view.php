@@ -10,9 +10,9 @@
 <script src="/assets/js/serviceView.js?date=<?=time()?>"></script>
 <script src="/assets/js/moment.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>
-<div class="content">
+<div class="content" style="width:1200px;">
     <h2 class="title">
-        <i class="fa fa-file"></i> 서비스 상세 정보
+        <i class="fa fa-folder-open"></i> 서비스 상세 정보
     </h2>
     <form id="edit" method="post" action="/api/serviceViewUpdate">
     <input type="hidden" name="sv_seq" id="sv_seq" value="<?=$info["sv_seq"]?>">
@@ -34,10 +34,10 @@
     <input type="hidden" id="b_sv_code" value="<?=$info["sv_code"]?>">
     <input type="hidden" id="dupleNumberYn" value="N">
 
-    <div style="border:1px solid #eee;background:#fff;border-radius:6px;margin-top:20px;width:70%">
+    <div class="header-box">
             
-        <div class="modal-title">
-            <div class="modal-title-text"><div>신청 회원 정보</div></div>
+        <div class="header-title">
+            <div><div>신청 회원 정보</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -49,7 +49,7 @@
             <div class="modal-field-input">
                 <div class="label padd"><div>End User</div></div>
                 <div class="input">
-                    <input type="text" class="width-button" name="eu_name" id="eu_name" value="<?=$info["eu_name"]?>" readonly><button class="btn btn-brown " type="button" onclick='getEndUserNextNumber();$( "#dialogEndSearch" ).dialog("open");$("#dialogEndSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
+                    <input type="text" class="width-button" name="eu_name" id="eu_name" value="<?=$info["eu_name"]?>" readonly><button class="btn btn-brown btn-small" type="button" onclick='getEndUserNextNumber();$( "#dialogEndSearch" ).dialog("open");$("#dialogEndSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
                 </div>
             </div>
         </div>
@@ -63,7 +63,7 @@
             <div class="modal-field-input">
                 <div class="label padd"><div>업체 분류</div></div>
                 <div class="input">
-                    <input type="text" class="width-button" name="ct_name" id="ct_name" value="<?=$info["ct_name"]?>" readonly><button class="btn btn-brown " type="button" onclick='typeGetList();$( "#dialogTypeSearch" ).dialog("open");$("#dialogTypeSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
+                    <input type="text" class="width-button" name="ct_name" id="ct_name" value="<?=$info["ct_name"]?>" readonly><button class="btn btn-brown btn-small" type="button" onclick='typeGetList();$( "#dialogTypeSearch" ).dialog("open");$("#dialogTypeSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>검색</button>
                 </div>
             </div>
         </div>
@@ -119,8 +119,10 @@
                 </div>
             </div>
         </div>
-        <div class="modal-title">
-            <div class="modal-title-text"><div>상품 정보</div></div>
+	</div>
+	<div class="header-box">
+        <div class="header-title">
+            <div><div>상품 정보</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -201,7 +203,7 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label padd"><div>기술/관제 담당자</div></div>
+                <div class="label padd" style="width:19.1%;"><div>기술/관제 담당자</div></div>
                 <div class="input">
                     <select name="sv_engineer_part" id="sv_engineer_part" class="select2" style="width:120px">
                         <option value="">선택</option>
@@ -211,20 +213,22 @@
                         <option value="">선택</option>
                         <option value="1" <?=($info["sv_engineer_charger"] == "1" ? "selected":"") ?>>노성민</option>
                     </select>
-                    <button class="btn btn-brown btn-small btn-manager-change" type="button">담당자 지정</button>
-                    <button class="btn btn-black btn-small" type="button" onclick='$("#to").val("<?=$memberInfo["mb_contract_email"]?>");$("#phone").val("<?=$memberInfo["mb_contract_phone"]?>");$( "#dialogEmail" ).dialog("open");'>이메일 발송</button>
+                    <button class="btn btn-brown btn-small btn-manager-change" type="button" style="background:#548235;border:1px solid #548235">담당자 지정</button>
+                    <button class="btn btn-black btn-small" type="button" onclick='$("#to").val("<?=$memberInfo["mb_service_email"]?>");$("#phone").val("<?=$memberInfo["mb_service_phone"]?>");$( "#dialogEmail" ).dialog("open");'>이메일 발송</button>
                 </div>
             </div>
         </div>
-        <div style="text-align:center;padding:10px 0px">
+	</div>
+        <div style="text-align:center;padding:20px 0px">
             <button class="btn btn-default" type="button" onclick="document.location.href='/service/list'">목록</button>
             <button class="btn btn-default btn-edit" type="button">수정</button>
             <button class="btn btn-default btn-delete" data-seq="<?=$info["sv_seq"]?>" type="button">삭제</button>
         </div>
 
     </form>
-        <div class="modal-title">
-            <div class="modal-title-text"><div>결제 상태 정보</div></div>
+	<div class="header-box">
+        <div class="header-title">
+            <div><div>결제 상태 정보</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -284,14 +288,16 @@
                 </div>
             </div>
         </div>
-        <div style="width:49.8%;float:left">
-            <div class="modal-title">
-                <div class="modal-title-text"><div>처리 일자 정보 / 서비스 상태 변경</div></div>
+	</div>
+	<div class="header-group">
+        <div class="header-box" style="width:48.8%;float:left">
+            <div class="header-title">
+                <div><div>처리 일자 정보 / 서비스 상태 변경</div></div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input full">
                     <div class="label label2 padd"><div>서비스 상태</div></div>
-                    <div class="input input2">
+                    <div class="input input2" id="sv_status_str">
                         <?php if($info["sv_status"] == "0"): ?>
                             <span style="color:#9E0000">입금대기중</span>
                         <?php elseif($info["sv_status"] == "1"): ?>
@@ -331,8 +337,11 @@
                                 <div style="display:inline-block;width:50%" id="sv_out_date_str">
 
                                 </div>
-                                <div style="text-align:right;display:inline-block;width:45%">
-                                    <button class="btn btn-black" onclick='$( "#dialogOut" ).dialog("open");$("#dialogOut").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();' type="button">제품 출고</button>
+                                <div style="text-align:right;display:inline-block;width:45%" id="sv_out_date_first">
+                                    <button class="btn btn-black" onclick='$( "#dialogOut" ).dialog("open");$("#dialogOut").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();' type="button" style="background:#8C8482;border:1px solid #8C8482">제품 출고</button>
+                                </div>
+                                <div style="text-align:right;display:none;width:45%" id="sv_out_date_second">
+                                    <i class="fa fa-edit" onclick='$( "#dialogOut" ).dialog("open");$("#dialogOut").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();' type="button"></i>
                                 </div>
                             <?php else: ?>
                                 <?php $inputdate = substr($info["sv_out_date"],0,10);?>
@@ -357,39 +366,94 @@
                             <?php if($info["sv_service_start"] == "" || $info["sv_service_start"] == "0000-00-00 00:00:00"):?>
 
                                 <?php if($info["sv_status"] == "2"): ?>
-                                <div style="display:inline-block;width:50%">
+                                <div style="display:inline-block;width:50%" class="no_input">
 
                                 </div>
-                                <div style="text-align:right;display:inline-block;width:45%">
+                                <div style="text-align:right;display:inline-block;width:45%" class="no_input">
                                     <button class="btn btn-black btn-service-open"  type="button">서비스 개시</button>
                                 </div>
-                                <?endif; ?>
-                            <?php else: ?>
-                                <div style="display:inline-block;width:90%">
-                                    <div id="view_service_open"><?=substr($info["sv_service_start"],0,10)?></div>
+                                <div style="width:90%;display:none" class="yes_input">
+                                    <div id="view_service_open"></div>
                                     <div id="edit_service_open" style="display:none">
-                                        <input type="text" name="sv_service_start1" id="sv_service_start1" style="width:120px" class="datepicker3" value="<?=substr($info["sv_service_start"],0,10)?>">
-                                        <!-- <select name="sv_service_start2" class="select2" id="sv_service_start2" style="width:45px">
+                                        <input type="text" name="sv_service_start1" id="sv_service_start1" style="width:80px" class="datepicker3" value="">
+                                        <select name="sv_service_start2" class="select2" id="sv_service_start2" style="width:45px">
                                             <?php for($i = 0; $i < 24;$i++): ?>
-                                            <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],11,2) ? "":"")?>><?=$i?></option>
+                                            <option value="<?=$i?>" ><?=$i?></option>
                                             <?php endfor;?>
                                         </select> 시
                                         <select name="sv_service_start3" class="select2" id="sv_service_start3" style="width:45px">
                                             <?php for($i = 0; $i < 59;$i++): ?>
-                                            <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],13,2) ? "":"")?>><?=$i?></option>
+                                            <option value="<?=$i?>" ><?=$i?></option>
                                             <?php endfor;?>
                                         </select> 분
                                         <select name="sv_service_start4" class="select2" id="sv_service_start4" style="width:45px">
                                             <?php for($i = 0; $i < 59;$i++): ?>
-                                            <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],15,2) ? "":"")?>><?=$i?></option>
+                                            <option value="<?=$i?>" ><?=$i?></option>
                                             <?php endfor;?>
-                                        </select> 초 -->
+                                        </select> 초
+                                    </div>
+                                </div>
+                                <div style="text-align:right;width:8%;display:none" class="yes_input">
+                                    <i class="fa fa-edit"  type="button" onclick="setServiceDate()"></i>
+                                </div>
+                                <?endif; ?>
+                            <?php else: ?>
+                                <div style="display:inline-block;width:90%">
+                                    <div id="view_service_open"><?=$info["sv_service_start"]?></div>
+                                    <div id="edit_service_open" style="display:none">
+                                        <input type="text" name="sv_service_start1" id="sv_service_start1" style="width:80px" class="datepicker3" value="<?=substr($info["sv_service_start"],0,10)?>">
+                                        <select name="sv_service_start2" class="select2" id="sv_service_start2" style="width:45px">
+                                            <?php for($i = 0; $i < 24;$i++): ?>
+                                            <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],11,2) ? "selected":"")?>><?=$i?></option>
+                                            <?php endfor;?>
+                                        </select> 시
+                                        <select name="sv_service_start3" class="select2" id="sv_service_start3" style="width:45px">
+                                            <?php for($i = 0; $i < 59;$i++): ?>
+                                            <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],14,2) ? "selected":"")?>><?=$i?></option>
+                                            <?php endfor;?>
+                                        </select> 분
+                                        <select name="sv_service_start4" class="select2" id="sv_service_start4" style="width:45px">
+                                            <?php for($i = 0; $i < 59;$i++): ?>
+                                            <option value="<?=$i?>" <?=($i == substr($info["sv_service_start"],17,2) ? "selected":"")?>><?=$i?></option>
+                                            <?php endfor;?>
+                                        </select> 초
                                     </div>
                                 </div>
                                 <div style="text-align:right;display:inline-block;width:8%">
                                     <i class="fa fa-edit"  type="button" onclick="setServiceDate()"></i>
                                 </div>
                             <?php endif;?>
+                        <?php else: ?>
+                            <div style="display:none;width:50%" class="no_input">
+
+                            </div>
+                            <div style="text-align:right;display:none;width:45%" class="no_input">
+                                <button class="btn btn-black btn-service-open"  type="button">서비스 개시</button>
+                            </div>
+                            <div style="width:90%;display:none" class="yes_input">
+                                <div id="view_service_open"></div>
+                                <div id="edit_service_open" style="display:none">
+                                    <input type="text" name="sv_service_start1" id="sv_service_start1" style="width:80px" class="datepicker3" value="">
+                                    <select name="sv_service_start2" class="select2" id="sv_service_start2" style="width:45px">
+                                        <?php for($i = 0; $i < 24;$i++): ?>
+                                        <option value="<?=$i?>" ><?=$i?></option>
+                                        <?php endfor;?>
+                                    </select> 시
+                                    <select name="sv_service_start3" class="select2" id="sv_service_start3" style="width:45px">
+                                        <?php for($i = 0; $i < 59;$i++): ?>
+                                        <option value="<?=$i?>" ><?=$i?></option>
+                                        <?php endfor;?>
+                                    </select> 분
+                                    <select name="sv_service_start4" class="select2" id="sv_service_start4" style="width:45px">
+                                        <?php for($i = 0; $i < 59;$i++): ?>
+                                        <option value="<?=$i?>" ><?=$i?></option>
+                                        <?php endfor;?>
+                                    </select> 초
+                                </div>
+                            </div>
+                            <div style="text-align:right;width:8%;display:none" class="yes_input">
+                                <i class="fa fa-edit"  type="button" onclick="setServiceDate()"></i>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -400,17 +464,39 @@
                     <div class="label label2 padd"><div>서비스 중지일</div></div>
                     <div class="input input2">
                         <?php if($info["sv_service_stop"] == "" || $info["sv_service_stop"] == "0000-00-00 00:00:00"):?>
-                            <?php if($info["sv_status"] == "3"): ?>
-                            <div style="display:inline-block;width:40%">
+                            <?php if($info["sv_status"] == "3" ): ?>
+                            <div style="display:inline-block;width:40%" id="sv_stop_date_str">
 
                             </div>
-                            <div style="text-align:right;display:inline-block;width:55%">
-                                <button class="btn btn-black btn-service-stop" type="button" onclick='$( "#dialogStop" ).dialog("open");$("#dialogStop").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>서비스 중지</button>
-                                <button class="btn btn-black btn-service-forcestop" type="button">직권 중지</button>
+                            <div style="text-align:right;display:inline-block;width:55%" id="sv_stop_date_button">
+                                <button class="btn btn-black btn-service-stop" type="button" onclick='$( "#dialogStop" ).dialog("open");$("#dialogStop").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();' style="background:#D44822;border:1px solid #D44822">서비스 중지</button>
+                                <button class="btn btn-black btn-service-forcestop" type="button" style="background:#FF8453;border:1px solid #FF8453">직권 중지</button>
+                            </div>
+                            <?php else: ?>
+                            <div style="display:none;width:40%" id="sv_stop_date_str">
+
+                            </div>
+                            <div style="text-align:right;display:none;width:55%" id="sv_stop_date_button">
+                                <button class="btn btn-black btn-service-stop" type="button" onclick='$( "#dialogStop" ).dialog("open");$("#dialogStop").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();' style="background:#D44822;border:1px solid #D44822">서비스 중지</button>
+                                <button class="btn btn-black btn-service-forcestop" type="button" style="background:#FF8453;border:1px solid #FF8453">직권 중지</button>
                             </div>
                             <?endif; ?>
                         <?php else: ?>
-                            <?=$info["sv_service_stop"]?>
+                            <div style="display:inline-block;width:40%" id="sv_stop_date_str">
+                                <?=substr($info["sv_service_stop"],0,10)?>
+                            </div>
+                            <?php if($info["sv_status"] == "3" ): ?>
+                            <div style="text-align:right;display:inline-block;width:55%" id="sv_stop_date_button">
+                                <button class="btn btn-black btn-service-stop" type="button" onclick='$( "#dialogStop" ).dialog("open");$("#dialogStop").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();' style="background:#D44822;border:1px solid #D44822">서비스 중지</button>
+                                <button class="btn btn-black btn-service-forcestop" type="button" style="background:#FF8453;border:1px solid #FF8453">직권 중지</button>
+                            </div>
+                            <?php elseif($info["sv_status"] == "4" ):?>
+                            <div style="text-align:right;display:inline-block;width:55%" id="sv_stop_date_button">
+                                <button class="btn btn-black btn-service-stop" type="button" onclick='$( "#dialogStop" ).dialog("open");$("#dialogStop").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();' style="background:#D44822;border:1px solid #D44822;display:none">서비스 중지</button>
+                                <button class="btn btn-black btn-service-forcestop" type="button" style="background:#FF8453;border:1px solid #FF8453">직권 중지</button>
+                            </div>    
+                            <?php endif; ?>
+                            
                         <?php endif;?>
                     </div>
                 </div>
@@ -422,16 +508,43 @@
                     <div class="input input2">
                         <?php if($info["sv_service_end"] == "" || $info["sv_service_end"] == "0000-00-00 00:00:00"):?>
                             <?php if($info["sv_status"] == "3" || $info["sv_status"] == "4" || $info["sv_status"] == "7" || $info["sv_status"] == "6"): ?>
-                            <div style="display:inline-block;width:40%">
+                            <div style="display:inline-block;width:40%" id="sv_end_date_str">
 
                             </div>
-                            <div style="text-align:right;display:inline-block;width:55%">
-                                <button class="btn btn-black btn-service-end" type="button" onclick='serviceEnd()'>서비스 해지</button>
-                                <button class="btn btn-black btn-service-forceend" type="button" onclick='serviceForceEnd()'>직권 해지</button>
+                            <div style="text-align:right;display:inline-block;width:55%" id="sv_end_date_button">
+                                <button class="btn btn-black btn-service-end" type="button" onclick='serviceEnd()' style="background:#D44822;border:1px solid #D44822">서비스 해지</button>
+                                <button class="btn btn-black btn-service-forceend" type="button" onclick='serviceForceEnd()' style="background:#FF8453;border:1px solid #FF8453">직권 해지</button>
                             </div>
+                            <?php else: ?>
+                            <div style="display:none;width:40%" id="sv_end_date_str">
+
+                            </div>
+                            <div style="text-align:right;display:none;width:55%" id="sv_end_date_button">
+                                <button class="btn btn-black btn-service-end" type="button" onclick='serviceEnd()' style="background:#D44822;border:1px solid #D44822">서비스 해지</button>
+                                <button class="btn btn-black btn-service-forceend" type="button" onclick='serviceForceEnd()' style="background:#FF8453;border:1px solid #FF8453">직권 해지</button>
+                            </div>    
                             <?endif; ?>
                         <?php else: ?>
-                            <?=$info["sv_service_end"]?>
+                            <div style="display:inline-block;width:40%" id="sv_end_date_str">
+                                <?=substr($info["sv_service_end"],0,10)?>
+                            </div>
+                            <?php if($info["sv_status"] == "3"): ?>
+                            <div style="text-align:right;display:inline-block;width:55%" id="sv_end_date_button">
+                                <button class="btn btn-black btn-service-end" type="button" onclick='serviceEnd()' style="background:#D44822;border:1px solid #D44822">서비스 해지</button>
+                                <button class="btn btn-black btn-service-forceend" type="button" onclick='serviceForceEnd()' style="background:#FF8453;border:1px solid #FF8453">직권 해지</button>
+                            </div>
+                            <?php elseif($info["sv_status"] == "4" || $info["sv_status"] == "6"): ?>
+                            <div style="text-align:right;display:inline-block;width:55%" id="sv_end_date_button">
+                                <button class="btn btn-black btn-service-end" type="button" onclick='serviceEnd()' style="background:#D44822;border:1px solid #D44822">서비스 해지</button>
+                                <button class="btn btn-black btn-service-forceend" type="button" onclick='serviceForceEnd()' style="background:#FF8453;border:1px solid #FF8453">직권 해지</button>
+                            </div>    
+                            <?php elseif($info["sv_status"] == "7"): ?>
+                            <div style="text-align:right;display:inline-block;width:55%" id="sv_end_date_button">
+                                <button class="btn btn-black btn-service-end" type="button" onclick='serviceEnd()' style="background:#D44822;border:1px solid #D44822">서비스 해지</button>
+                                <!--<button class="btn btn-black btn-service-forceend" type="button" onclick='serviceForceEnd()' style="background:#FF8453;border:1px solid #FF8453;display:inline-block">직권 해지</button>-->
+                            </div>
+                            <?php endif;?>
+                            
                         <?php endif;?>
                     </div>
                 </div>
@@ -443,15 +556,33 @@
                     <div class="input input2">
                         <?php if($info["sv_service_restart"] == "" || $info["sv_service_restart"] == "0000-00-00 00:00:00"):?>
                             <?php if($info["sv_status"] == "4" || $info["sv_status"] == "5" || $info["sv_status"] == "7" || $info["sv_status"] == "6"): ?>
-                            <div style="display:inline-block;width:40%">
+                            <div style="display:inline-block;width:40%" id="sv_service_restart_str">
 
                             </div>
-                            <div style="text-align:right;display:inline-block;width:55%">
-                                <button class="btn btn-black btn-service-restart" type="button" >서비스 재시작</button>
+                            <div style="text-align:right;display:inline-block;width:55%" id="sv_service_restart_button">
+                                <button class="btn btn-black btn-service-restart" type="button" style="background:#2F5597;border:1px solid #2F5597">서비스 재시작</button>
                             </div>
+                            <?php else: ?>
+                            <div style="display:none;width:40%" id="sv_service_restart_str">
+
+                            </div>
+                            <div style="text-align:right;display:none;width:55%" id="sv_service_restart_button">
+                                <button class="btn btn-black btn-service-restart" type="button" style="background:#2F5597;border:1px solid #2F5597">서비스 재시작</button>
+                            </div>    
                             <?endif; ?>
                         <?php else: ?>
-                            <?=$info["sv_service_restart"]?>
+                            <div style="display:inline-block;width:40%" id="sv_service_restart_str">
+                                 <?=$info["sv_service_restart"]?>
+                            </div>
+							<?php if($info["sv_status"] == "3"): ?>
+							<div style="text-align:right;display:none;width:55%" id="sv_service_restart_button">
+                                <button class="btn btn-black btn-service-restart" type="button" style="background:#2F5597;border:1px solid #2F5597">서비스 재시작</button>
+                            </div>
+							<?php else: ?>
+                            <div style="text-align:right;display:inline-block;width:55%" id="sv_service_restart_button">
+                                <button class="btn btn-black btn-service-restart" type="button" style="background:#2F5597;border:1px solid #2F5597">서비스 재시작</button>
+                            </div>
+                            <?php endif;?>
                         <?php endif;?>
                     </div>
                 </div>
@@ -459,24 +590,21 @@
             </div>
             <div class="modal-field">
                 <div class="modal-field-input full">
-                    <div class="label label2 padd"></div>
-                    <div class="input input2">
-
-                    </div>
+                    <div class="label label2 padd"><div>&nbsp;</div></div>
+                    <div class="input input2"></div>
                 </div>
-
             </div>
         </div>
-        <div style="width:49.8%;float:right">
-            <div class="modal-title">
-                <div class="modal-title-text"><div>관련서류</div></div>
+        <div class="header-box" style="width:50.5%;float:right">
+            <div class="header-title">
+                <div><div>관련 서류</div></div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input full">
                     <div class="label label2 padd"><div>서비스 신청서</div></div>
                     <div class="input input2" >
                         <div style="display:inline-block;width:30%;">
-                            <button class="btn btn-black " type="button" onclick="$('#file1').trigger('click')">찾아보기</button>
+                            <button class="btn btn-brown btn-small" type="button" onclick="$('#file1').trigger('click')">찾아보기</button>
                             <form name="form_file1" id="form_file1" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="sv_seq" value="<?=$info["sv_seq"]?>">
                                 <input type="hidden" name="sf_type" value="1">
@@ -492,7 +620,7 @@
                                             <div><a href="/api/fileDownload/service_file/?filename=<?=$row["sf_file"]?>&originname=<?=$row["sf_origin_file"]?>"><?=$row["sf_origin_file"]?></a></div>
                                         </div>
                                         <div style="float:right">
-                                            <div><button class="btn btn-black btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
+                                            <div><button class="btn btn-brown btn-small btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
                                         </div>
                                     </div>
                                 <?php endif;?>
@@ -507,7 +635,7 @@
                     <div class="label label2 padd"><div>서비스 계약서</div></div>
                     <div class="input input2">
                         <div style="display:inline-block;width:30%;">
-                            <button class="btn btn-black " type="button" onclick="$('#file2').trigger('click')">찾아보기</button>
+                            <button class="btn btn-brown btn-small" type="button" onclick="$('#file2').trigger('click')">찾아보기</button>
                             <form name="form_file2" id="form_file2" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="sv_seq" value="<?=$info["sv_seq"]?>">
                                 <input type="hidden" name="sf_type" value="2">
@@ -523,7 +651,7 @@
                                             <div><a href="/api/fileDownload/service_file/?filename=<?=$row["sf_file"]?>&originname=<?=$row["sf_origin_file"]?>"><?=$row["sf_origin_file"]?></a></div>
                                         </div>
                                         <div style="float:right">
-                                            <div><button class="btn btn-black btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
+                                            <div><button class="btn btn-brown btn-small btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
                                         </div>
                                     </div>
                                 <?php endif;?>
@@ -538,7 +666,7 @@
                     <div class="label label2 padd"><div>CMS 신청서</div></div>
                     <div class="input input2">
                         <div style="display:inline-block;width:30%;">
-                            <button class="btn btn-black " type="button" onclick="$('#file3').trigger('click')">찾아보기</button>
+                            <button class="btn btn-brown btn-small" type="button" onclick="$('#file3').trigger('click')">찾아보기</button>
                             <form name="form_file3" id="form_file3" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="sv_seq" value="<?=$info["sv_seq"]?>">
                                 <input type="hidden" name="sf_type" value="3">
@@ -554,7 +682,7 @@
                                             <div><a href="/api/fileDownload/service_file/?filename=<?=$row["sf_file"]?>&originname=<?=$row["sf_origin_file"]?>"><?=$row["sf_origin_file"]?></a></div>
                                         </div>
                                         <div style="float:right">
-                                            <div><button class="btn btn-black btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
+                                            <div><button class="btn btn-brown btn-small btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
                                         </div>
                                     </div>
                                 <?php endif;?>
@@ -569,7 +697,7 @@
                     <div class="label label2 padd"><div>신분증 사본</div></div>
                     <div class="input input2">
                         <div style="display:inline-block;width:30%;">
-                            <button class="btn btn-black " type="button" onclick="$('#file4').trigger('click')">찾아보기</button>
+                            <button class="btn btn-brown btn-small" type="button" onclick="$('#file4').trigger('click')">찾아보기</button>
                             <form name="form_file4" id="form_file4" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="sv_seq" value="<?=$info["sv_seq"]?>">
                                 <input type="hidden" name="sf_type" value="4">
@@ -585,7 +713,7 @@
                                             <div><a href="/api/fileDownload/service_file/?filename=<?=$row["sf_file"]?>&originname=<?=$row["sf_origin_file"]?>"><?=$row["sf_origin_file"]?></a></div>
                                         </div>
                                         <div style="float:right">
-                                            <div><button class="btn btn-black btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
+                                            <div><button class="btn btn-brown btn-small btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
                                         </div>
                                     </div>
                                 <?php endif;?>
@@ -600,7 +728,7 @@
                     <div class="label label2 padd"><div>통장 사본</div></div>
                     <div class="input input2">
                         <div style="display:inline-block;width:30%;">
-                            <button class="btn btn-black " type="button" onclick="$('#file5').trigger('click')">찾아보기</button>
+                            <button class="btn btn-brown btn-small" type="button" onclick="$('#file5').trigger('click')">찾아보기</button>
                             <form name="form_file5" id="form_file5" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="sv_seq" value="<?=$info["sv_seq"]?>">
                                 <input type="hidden" name="sf_type" value="5">
@@ -616,7 +744,7 @@
                                             <div><a href="/api/fileDownload/service_file/?filename=<?=$row["sf_file"]?>&originname=<?=$row["sf_origin_file"]?>"><?=$row["sf_origin_file"]?></a></div>
                                         </div>
                                         <div style="float:right">
-                                            <div><button class="btn btn-black btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
+                                            <div><button class="btn btn-brown btn-small btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
                                         </div>
                                     </div>
                                 <?php endif;?>
@@ -631,7 +759,7 @@
                     <div class="label label2 padd"><div>해지신청서</div></div>
                     <div class="input input2">
                         <div style="display:inline-block;width:30%;">
-                            <button class="btn btn-black " type="button" onclick="$('#file6').trigger('click')">찾아보기</button>
+                            <button class="btn btn-brown btn-small" type="button" onclick="$('#file6').trigger('click')">찾아보기</button>
                             <form name="form_file6" id="form_file6" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="sv_seq" value="<?=$info["sv_seq"]?>">
                                 <input type="hidden" name="sf_type" value="6">
@@ -646,7 +774,7 @@
                                             <div><a href="/api/fileDownload/service_file/?filename=<?=$row["sf_file"]?>&originname=<?=$row["sf_origin_file"]?>"><?=$row["sf_origin_file"]?></a></div>
                                         </div>
                                         <div style="float:right">
-                                            <div><button class="btn btn-black btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
+                                            <div><button class="btn btn-brown btn-small btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
                                         </div>
                                     </div>
                                 <?php endif;?>
@@ -660,7 +788,7 @@
                     <div class="label label2 padd"><div>명의 변경 신청서</div></div>
                     <div class="input input2">
                         <div style="display:inline-block;width:30%;">
-                            <button class="btn btn-black " type="button" onclick="$('#file7').trigger('click')">찾아보기</button>
+                            <button class="btn btn-brown btn-small" type="button" onclick="$('#file7').trigger('click')">찾아보기</button>
                             <form name="form_file7" id="form_file7" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="sv_seq" value="<?=$info["sv_seq"]?>">
                                 <input type="hidden" name="sf_type" value="7">
@@ -676,7 +804,7 @@
                                             <div><a href="/api/fileDownload/service_file/?filename=<?=$row["sf_file"]?>&originname=<?=$row["sf_origin_file"]?>"><?=$row["sf_origin_file"]?></a></div>
                                         </div>
                                         <div style="float:right">
-                                            <div><button class="btn btn-black btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
+                                            <div><button class="btn btn-brown btn-small btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
                                         </div>
                                     </div>
                                 <?php endif;?>
@@ -691,7 +819,7 @@
                     <div class="label label2 padd"><div>기타</div></div>
                     <div class="input input2">
                        <div style="display:inline-block;width:30%;">
-                            <button class="btn btn-black " type="button" onclick="$('#file8').trigger('click')">찾아보기</button>
+                            <button class="btn btn-brown btn-small" type="button" onclick="$('#file8').trigger('click')">찾아보기</button>
                             <form name="form_file8" id="form_file8" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="sv_seq" value="<?=$info["sv_seq"]?>">
                                 <input type="hidden" name="sf_type" value="8">
@@ -707,7 +835,7 @@
                                             <div><a href="/api/fileDownload/service_file/?filename=<?=$row["sf_file"]?>&originname=<?=$row["sf_origin_file"]?>"><?=$row["sf_origin_file"]?></a></div>
                                         </div>
                                         <div style="float:right">
-                                            <div><button class="btn btn-black btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
+                                            <div><button class="btn btn-brown btn-small btn-upload-del" type="button" data-seq="<?=$row["sf_seq"]?>">삭제</button></div>
                                         </div>
                                     </div>
                                 <?php endif;?>
@@ -718,8 +846,10 @@
 
             </div>
         </div>
-        <div class="modal-title" style="clear:both">
-            <div class="modal-title-text"><div>메모</div></div>
+	</div>
+	<div class="header-box">
+        <div class="header-title" style="clear:both">
+            <div><div>메모</div></div>
         </div>
         <div>
             <table class="table">
@@ -745,45 +875,49 @@
                 <input type="hidden" name="sv_seq" value="<?=$info["sv_seq"]?>">
                 <div style="display:inline-block;width:17%;text-align:right;vertical-align:top;padding:20px 5px 0px 0px">메모</div>
                 <div style="display:inline-block;width:70%;vertical-align:top">
-                    <textarea style="width:100%;height:50px" name="sm_msg" id="sm_msg"></textarea>
+                    <textarea style="width:99.5%;height:50px;background-color:#fff;" name="sm_msg" id="sm_msg"></textarea>
                 </div>
-                <div style="display:inline-block;width:10%;vertical-align:top"><button class="btn btn-service-msg" type="button" style="padding:20px 20px;">등록</button></div>
+                <div style="display:inline-block;width:10%;vertical-align:top"><button class="btn btn-brown btn-service-msg" type="button" style="padding:20px 20px;">등록</button></div>
             </form>
         </div>
-        <div class="modal-title">
-            <div class="modal-title-text"><div>변경 로그</div></div>
+	</div>
+	<div class="header-box">
+        <div class="header-title">
+            <div><div>변경 로그</div></div>
         </div>
         <div style="float:right;font-size:12px;padding:5px 0px">
             <ul style="list-style:none;padding:0;margin:0">
-                <li style="float:left">구분 </li>
-                <li style="float:left">
-                    <select name="log_type" class="select2">
-
+                <li style="float:left;padding-top:5px">구분 </li>
+                <li style="float:left;padding-left:3px">
+                    <select name="log_type" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
                     </select>
                 </li>
-                <li style="float:left">항목</li>
-                <li style="float:left">
-                    <select name="log_type" class="select2">
-
+                <li style="float:left;padding-top:5px;padding-left:10px">항목</li>
+                <li style="float:left;padding-left:3px">
+                    <select name="log_type" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
                     </select>
                 </li>
-                <li style="float:left">날짜</li>
-                <li style="float:left">
-                    <input type="text" name=""> ~ <input type="text" name="">
+                <li style="float:left;padding-top:5px;padding-left:10px">날짜</li>
+                <li style="float:left;padding-left:3px">
+                    <input type="text" name="start_date" class="datepicker3"> ~ <input type="text" name="end_date" class="datepicker3">
                 </li>
             </ul>
-            <ul style="clear:both;list-style:none;padding:0;margin:0">
-                <li style="float:left">작업자 구분 </li>
-                <li style="float:left">
+            <ul style="clear:both;list-style:none;padding:10px 0px 0px 0px;margin:0">
+                <li style="float:left;padding-top:5px">작업자 구분 : </li>
+                <li style="float:left;padding-top:3px;padding-left:10px">
                     ADMIN <input type="checkbox"> SYSTEM <input type="checkbox"> USER <input type="checkbox">
                 </li>
                 <li style="float:left">
-                    <select name="" class="select2">
-
+                    <select name="" class="select2" style="width:120px">
+                        <option value="">작업자 이름</option>
+                        <option value="">작업자 ID</option>
+                        <option value="">접속 IP</option>
                     </select>
                 </li>
                 <li style="float:left">
-                    <input type="text" name=""><button class="btn btn-black" type="button">검색</button>
+                    <input type="text" name=""><button class="btn btn-brown btn-small" type="button">검색</button>
                 </li>
 
             </ul>
@@ -793,15 +927,23 @@
                 <thead>
                 <tr>
                     <th>No</th>
-                    <th>입력시간</th>
-                    <th>내용</th>
-                    <th>작성자</th>
-                    <th>수정/삭제</th>
+                    <th>날짜</th>
+                    <th>구분</th>
+                    <th>항목</th>
+                    <th>변경 전</th>
+                    <th>변경 후</th>
+                    <th>작업자 구분</th>
+                    <th>작업자</th>
+                    <th>접속 IP</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="log-list">
+                
                 </tbody>
             </table>
+        </div>
+        <div>
+            <div id="logPaging"></div>
         </div>
     </div>
 
@@ -963,7 +1105,7 @@
             <div class="modal-field-input">
                 <div class="label"><div>재시작일</div></div>
 
-                <div class="input"><input type="text" name="sv_service_restart" id="sv_service_restart" value="<?=$info["sv_service_restart"]?>" ></div>
+                <div class="input"><input type="text" name="sv_service_restart" id="sv_service_restart" value="<?=($info["sv_service_restart"] == "0000-00-00 00:00:00" ? "":substr($info["sv_service_restart"],0,10))?>" class="datepicker3"></div>
             </div>
         </div>
         <div class="modal-field">
@@ -977,7 +1119,7 @@
         <p> 서비스 중지는 <span style="color:red">서비스 일시중지 신청 서류</span>가 접수된 후 처리해야 하며, 서비스 중지 기간은 <span style="color:red">최대 1개월</span>입니다.</p>
         <p> 만약 약정된 계약기간이 있을 경우, <span style="color:red">중지 기간 만큼 계약 기간이 연장</span>되어야 합니다.</p>
     </form>
-    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-stop-reg">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogOut').dialog('close')">닫기</button></div>
+    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-stop-reg">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogStop').dialog('close')">닫기</button></div>
 </div>
 <div id="dialogEnd" class="dialog" style="padding:5px">
     <div class="modal_search">
@@ -988,7 +1130,7 @@
 
         </ul>
     </div>
-    <form id="stopForm">
+    <form id="endForm">
 
         <div class="modal-field" style="margin-top:20px">
             <div class="modal-field-input">
@@ -1002,7 +1144,7 @@
             <div class="modal-field-input full">
                 <div class="label"><div>서비스 해지 사유</div></div>
                 <div class="input">
-                    <select name="sv_service_end_msg" id="sv_service_end_msg">
+                    <select name="sv_service_end_msg" id="sv_service_end_msg" class="select2" style="width:35%;display:inline-block">
                         <option value="서비스 축소">서비스 축소</option>
                         <option value="서비스 종료">서비스 종료</option>
                         <option value="사업자 폐업">사업자 폐업</option>
@@ -1011,13 +1153,13 @@
                         <option value="서비스 불만">서비스 불만</option>
                         <option value="기타">기타</option>
                     </select>
-                    <input type="text" name="sv_service_end_msg_etc" id="sv_service_end_msg_etc" style="display:none" value="<?=$info["sv_service_stop_msg"]?>">
+                    <input type="text" name="sv_service_end_msg_etc" id="sv_service_end_msg_etc" style="display:none;width:60%;" value="<?=$info["sv_service_end_msg"]?>">
                 </div>
             </div>
         </div>
         <p> 서비스 해지는 <span style="color:red">서비스 해지 신청 서류</span> 접수 확인 및 <span style="color:red">미납 요금</span>이 없을 경우 처리해야 합니다.</p>
     </form>
-    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-end-reg">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogOut').dialog('close')">닫기</button></div>
+    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-end-reg">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogEnd').dialog('close')">닫기</button></div>
 </div>
 <div id="dialogForceEnd" class="dialog" style="padding:5px">
     <div class="modal_search">
@@ -1028,7 +1170,7 @@
 
         </ul>
     </div>
-    <form id="stopForm">
+    <form id="forceEndForm">
 
         <div class="modal-field" style="margin-top:20px">
             <div class="modal-field-input">
@@ -1040,19 +1182,19 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label"><div>서비스 해지 사유</div></div>
+                <div class="label"><div>직권 해지 사유</div></div>
                 <div class="input">
-                    <select name="sv_service_force_end_msg" id="sv_service_force_end_msg">
+                    <select name="sv_service_force_end_msg" id="sv_service_force_end_msg" class="select2" style="width:35%;display:inline-block">
                         <option value="요금 체납">요금 체납</option>
                         <option value="기타">기타</option>
                     </select>
-                    <input type="text" name="sv_service_force_end_msg_etc" id="sv_service_force_end_msg_etc" style="display:none" value="<?=$info["sv_service_stop_msg"]?>">
+                    <input type="text" name="sv_service_force_end_msg_etc" id="sv_service_force_end_msg_etc" style="display:none;width:60%" value="<?=$info["sv_service_force_end_msg"]?>">
                 </div>
             </div>
         </div>
 
     </form>
-    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-forceend-reg">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogOut').dialog('close')">닫기</button></div>
+    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-forceend-reg">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogForceEnd').dialog('close')">닫기</button></div>
 </div>
 <div id="dialogEmail" class="dialog">
     <form name="emailForm" id="emailForm">
@@ -1154,3 +1296,4 @@
     <div class="modal-close-btn"><button class="btn btn-black btn-small" onclick="$('#dialogMailPreview').dialog('close')">닫기</button></div>
 </div>
 <input type="hidden" id="memo_start" value=1>
+<input type="hidden" id="log_start" value=1>

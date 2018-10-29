@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
 <div class="content">
     <h2 class="title">
-        <i class="fa fa-file"></i> 매입처 등록
+        <i class="fa fa-folder-open"></i> 매입처 등록
     </h2>
     <div class="search">
         <form name="searchForm" id="searchForm" onsubmit="return getList();">
@@ -130,8 +130,8 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label padd"><div>주소</div></div>
-                <div class="input padd" style="width:78%"><input type="text" style="width:17%" name="c_zipcode" id="c_zipcode" readonly onclick="daumApi()"> <input type="text" style="width:48%" name="c_address" id="c_address" readonly onclick="daumApi()"> <input type="text" style="width:27%" name="c_detail_address" id="c_detail_address"></div>
+                <div class="label padd" style="width:19%"><div>주소</div></div>
+                <div class="input padd" style="width:78%"><input type="text" style="width:15%" name="c_zipcode" id="c_zipcode" readonly onclick="daumApi()"> <input type="text" style="width:50%" name="c_address" id="c_address" readonly onclick="daumApi()"> <input type="text" style="width:27.5%" name="c_detail_address" id="c_detail_address"></div>
             </div>
 
         </div>

@@ -2,7 +2,7 @@
 <script src="/assets/js/setting.js?date=<?=time()?>"></script>
 <div class="content">
     <h2 class="title">
-        <i class="fa fa-file"></i> 분류 및 END User 관리
+        <i class="fa fa-folder-open"></i> 분류 및 END User 관리
     </h2>
     <div style="float:left;background-color:#fff;border:1px solid #ddd;padding:5px">
         <form name="typeSearchForm" id="typeSearchForm" method="get" onsubmit="return typeGetList()">
@@ -47,6 +47,7 @@
         </form>
     </div>
     <div style="float:left;background-color:#fff;border:1px solid #ddd;margin-left:10px;padding:5px">
+        <form name="endSearchForm" id="endSearchForm" method="get">
         <div class="modal_search">
             <ul>
                 <li>

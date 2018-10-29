@@ -2,6 +2,8 @@ var basic_date_info = [];
 $(function(){
     priceInfoDate();
     calculatePrice();
+
+    
     $( "#dialogFirstSetting" ).dialog({
         autoOpen: false,
         modal: true,
@@ -45,6 +47,11 @@ $(function(){
         }
         if($("#svp_payment_period").val() != "" && $("#sv_account_start").val() != ""){
             priceInfoDate();
+
+            $(".addList").each(function(){
+                priceInfoDateAdd($(this).data("svaseq"));
+            })  
+
         }
 
         // $(".addoptionprice").each(function(){
@@ -60,119 +67,7 @@ $(function(){
 
     });
 
-    // $(".detailView").click(function(){
-
-    //     var seq = $(this).data("seq")
-    //     var url = "/api/memberPaymentView/"+seq
-    //     $.ajax({
-    //         url : url,
-    //         type : 'GET',
-    //         dataType : 'JSON',
-    //         success:function(response){
-    //             // console.log(response);
-    //             console.log(response.sva_seq);
-    //             if(response.sva_seq == "" || response.sva_seq === null){
-    //                 $("#sv_code").text(response.sv_code);
-    //                 $("#pc_name").text(response.pc_name);
-    //                 $("#pr_name").text(response.pr_name);
-    //                 $("#ps_name").text(response.ps_name);
-    //                 $("#sv_number").text(response.sv_number)
-    //             }else{
-    //                 $("#sv_code").text(response.sv_code);
-    //                 $("#pc_name").text(response.pi_name+" - 부가항목");
-    //                 $("#pr_name").text(response.sva_name);
-    //                 $("#ps_name").text(response.sv_number);
-    //             }
-    //             $(".sv_seq").val(response.sv_seq);
-    //             $("#sv_claim_name").val(response.sv_claim_name);
-    //             $("#sv_bill_name").val(response.sv_bill_name);
-    //             $("#sv_payment_type").val(response.sv_payment_type).trigger("change");
-    //             $("#sv_payment_period").val(response.sv_payment_period);
-    //             $("#sv_pay_type").val(response.sv_pay_type).trigger("change");
-    //             $("#sv_pay_day").val(response.sv_pay_day).trigger("change");
-    //             $("#sv_pay_publish").val(response.sv_pay_publish).trigger("change");
-    //             $("#sv_pay_publish_type").val(response.sv_pay_publish_type).trigger("change");
-    //             $("#sv_payment_day").val(response.sv_payment_day);
-    //             $("#sv_account_start").val(response.sv_account_start);
-    //             $("#sv_account_end").val(response.sv_account_end);
-    //             $("#sv_c_name").val(response.c_name);
-    //             $("#sv_register_discount").val(response.sv_register_discount)
-    //             $("#sv_input_price").val(response.sv_input_price);
-    //             $("#first_price").val(response.ap_once_price);
-    //             $("#first_dis_price").val(response.ap_once_dis_price);
-    //             var first_sum = response.ap_once_price-response.ap_once_dis_price;
-    //             var first_surtax = first_sum*0.1;
-    //             $("#first_sum").html($.number(first_sum));
-    //             $("#first_surtax").html( $.number(Math.round(first_surtax)) )
-    //             $("#first_total").html($.number(first_sum+Math.round(first_surtax)));
-    //             $("#service_month_price").val(response.ap_price);
-    //             $("#service_month_dis_price").val(response.ap_dis_price);
-    //             var month_price = response.ap_price-response.ap_dis_price;
-    //             var period_price = month_price*response.sv_payment_period;
-    //             var discount_price = 0;
-    //             $("#month_price1").html($.number(month_price));
-    //             $("#month_price2").html($.number(period_price));
-    //             $("#month_price3").html($.number(discount_price));
-
-    //             $("#month_price4").html(period_price-discount_price);
-    //             var total_surtax = (period_price-discount_price)*0.1;
-    //             $("#month_price5").html($.number(total_surtax));
-    //             $("#month_price_total").html(period_price-discount_price+total_surtax);
-    //             $(".total_contract").html(response.sv_payment_period);
-
-
-    //             if(response.sv_pay_format == "1"){
-    //                 var text_format = "1의 자리";
-    //             }else if(response.sv_pay_format == "2"){
-    //                 var text_format = "10의 자리";
-    //             }else if(response.sv_pay_format == "3"){
-    //                 var text_format = "100의 자리";
-    //             }else if(response.sv_pay_format == "4"){
-    //                 var text_format = "1000의 자리";
-    //             }
-
-    //             if(response.sv_pay_format_policy == "1"){
-    //                 var text_format2 = "내림";
-    //             }else if(response.sv_pay_format_policy == "2"){
-    //                 var text_format2 = "올림";
-    //             }else if(response.sv_pay_format_policy == "3"){
-    //                 var text_format2 = "반올림";
-    //             }
-
-    //             if(response.sv_basic_type == "1"){
-    //                 if(response.sv_policy == "1"){
-    //                     var text = "당월분 일할 계산";
-    //                 }else{
-    //                     var text = response.sv_pay_start_day+"일(과금시작) 이후 건 익월분 통합";
-    //                 }
-    //                 var html = '<div class="input"><span id="policy_text"><span id="policy_text1">'+text+'</span> (<span id="policy_text2">'+text_format+' '+text_format2+'</span>)</span> <span id="policy_text_2" style="display:none"></span> <button class="btn btn-brown" type="button" onclick=\'$( "#dialogFirstSetting" ).dialog("open");$("#dialogFirstSetting").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();\'>변경</button></div>';
-    //             }else{
-
-    //                 var html = '<div class="input"><span id="policy_text" style="display:none"><span id="policy_text1">당월분 일할 계산</span> (<span id="policy_text2">'+text_format+' '+text_format2+'</span>)</span> <span id="policy_text_2">과금 시작일 기준 결제 주기로 처리</span> <button class="btn btn-brown" type="button" onclick=\'$( "#dialogFirstSetting" ).dialog("open");$("#dialogFirstSetting").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();\'>변경</button></div>';
-    //             }
-    //             $("#policy").html(html);
-
-    //             $("#sv_account_type").val(response.sv_account_type);
-    //             $("#sv_account_policy").val(response.sv_account_policy);
-    //             $("#sv_account_start_day").val(response.sv_account_start_day);
-    //             $("#sv_account_format").val(response.sv_account_format);
-    //             $("#sv_account_format_policy").val(response.sv_account_format_policy);
-
-    //             $("input:radio[name='sp_basic_type'][value='"+response.sv_account_type+"']").prop("checked",true);
-    //             $("input:radio[name='sp_policy'][value='"+response.sv_account_policy+"']").prop("checked",true);
-    //             $("#sp_pay_start_day").val(response.sv_account_start_day).trigger("change");
-    //             $("#sp_pay_format").val(response.sv_account_format).trigger("change");
-    //             $("#sp_pay_format_policy").val(response.sv_account_format_policy).trigger("change");
-    //             $('#dialog').dialog({
-    //                 title: '서비스 요금 상세',
-    //                 modal: true,
-    //                 width: '800px',
-    //                 draggable: true
-    //             });
-    //         }
-    //     });
-    // });
-
+    
     $("#svp_once_price").change(function(){
         // $("#svp_once_price").val($(this).val());
         // $("#svp_once_total_price").val($(this).val());
@@ -252,6 +147,8 @@ $(function(){
         if(confirm("요금정보를 수정하시겠습니까?")){
             var url = "/api/serviceUpdate";
             var datas = $("#serviceUpdate").serialize();
+            // $("#serviceUpdate").submit();
+            // return false;
             $.ajax({
                 url : url,
                 type : 'POST',
@@ -261,7 +158,9 @@ $(function(){
                     console.log(response);
                     if(response.result){
                         alert("수정완료");
+                        opener.getPriceList();
                         document.location.reload();
+
                     }
                 },
                 error:function(error){
@@ -284,6 +183,7 @@ $(function(){
                     console.log(response);
                     if(response.result){
                         alert("수정완료");
+                        opener.getPriceList();
                         document.location.reload();
                     }
                 },
@@ -347,7 +247,8 @@ $(function(){
         });
         
     })
-    $("#svp_payment_period").trigger("change");
+    if($("#svp_payment_period").val() == 0)
+        $("#svp_payment_period").trigger("change");
 
     $("#sv_rental_type").change(function(){
         if($(this).val() == "1"){
@@ -364,6 +265,27 @@ $(function(){
             $(".notshow").show();
         }
     })
+
+    $("#sv_pay_publish").change(function(){
+        if($(this).val() == "1"){
+            $("#sv_pay_publish_type").hide();
+            $("#sv_pay_publish_type").next().hide();
+        }else{
+
+            $("#sv_pay_publish_type").show();
+            $("#sv_pay_publish_type").next().show();
+            $("#sv_pay_publish_type").addClass("select2");
+            $(".select2").select2();
+        }
+    })
+
+    $(":input:radio[name=p_sv_account_type]").change(function(){
+        if($(this).val() == "1"){
+            $(".type-hidden").show();
+        }else{
+            $(".type-hidden").hide();
+        }
+    });
 })
 
 var basic_date_info = [];
@@ -507,7 +429,7 @@ function priceInfoDate(){
                 basic_date_info.push(date_info1);
                 end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
                 if(period > 1){
-                    date_info2.start_date = moment(end_date).format("YYYY-MM-01");
+                    date_info2.start_date = moment(end_date).add(1,'months').format("YYYY-MM-01");
 
                     end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
 
@@ -611,7 +533,7 @@ function priceInfoDate(){
                     }
 
                     if(period > 1){
-                        date_info2.start_date = moment(end_date).format("YYYY-MM-01");
+                        date_info2.start_date = moment(end_date).add(1,'months').format("YYYY-MM-01");
 
                         end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
 
@@ -684,7 +606,7 @@ function priceInfoDate(){
     if(basic_date_info.length > 1){
         $("#svp_first_day_start").val(start_str[0]);
         $("#svp_first_day_end").val(basic_date_info[0].end_date);
-        $("#svp_first_month_start").val(start_str[1]);
+        $("#svp_first_month_start").val(basic_date_info[1].start_date);
         $("#svp_first_month_end").val(basic_date_info[1].end_date);
         // console.log(start_str[0]+"::"+basic_date_info[0].end_date+"::"+basic_date_info[1].end_date);
     }else{
@@ -767,11 +689,12 @@ function contractPriceDateInfo(){
             $("#svp_first_day_price").val(price);
             $("#svp_first_month_price").val(0);
         }else{
+            
             // console.log($("#svp_month_total_price").val());
             $("#use_price_str_0_1").html($.number($("#sv_month_total_price").val()));
             basic_date_info[0].price = $("#sv_month_total_price").val();
             $("#svp_first_day_price").val(0);
-            $("#svp_first_month_price").val(price);
+            $("#svp_first_month_price").val(basic_date_info[0].price);
         }
 
     }else if(basic_date_info.length == 2){
@@ -850,4 +773,445 @@ function contractPriceDateInfo(){
 
     $("#total_str0").data("price",totalprice);
     $("#total_str0").html($.number(totalprice));
+}
+
+function priceInfoDateAdd(sva_seq){
+    // console.log(sva_seq);
+    basic_date_info = [];
+    var selectedDate = $("#sv_account_start").val();
+
+    var sr_account_type = $("#sv_account_type").val();
+    var sr_account_policy = $("#sv_account_policy").val();
+    var sr_account_start_day = $("#sv_account_start_day").val();
+    var date_array = selectedDate.split("-");
+    var period = parseInt($("#svp_payment_period_"+sva_seq).val());
+    console.log(period);
+
+    var start_str = []; 
+    var end_str = [];
+    var end_period = [];
+    var date_info1 = {};
+    var date_info2 = {};
+    if(sr_account_type == "1"){
+        if(sr_account_policy == "1"){
+            var lastDay = ( new Date( date_array[0], date_array[1], 0) ).getDate();
+            var end_date = date_array[0]+"-"+date_array[1]+"-"+lastDay;
+
+            // end_period[0] = moment.duration(moment(end_date).diff(moment(selectedDate))).asDays()+"일";
+            date_info1.start_date = selectedDate;
+            date_info1.end_date = end_date;
+            start_str[0] = selectedDate;
+            if(date_array[2] != "01"){
+                date_info1.period = moment.duration(moment(end_date).diff(moment(selectedDate))).asDays()+1;
+                date_info1.interval = 'day';
+                end_period[0] = date_info1.period+"일";
+
+                if(period > 1){
+                    end_period[1] = (period - 1)+"개월";
+                    date_info2.period = (period - 1);
+                }else{
+                    end_period[1] = "0개월";
+                    date_info2.period = 0;
+                }
+                basic_date_info.push(date_info1);
+                end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
+                if(period > 1){
+                    date_info2.start_date = moment(end_date).add(1,'months').format("YYYY-MM-01");
+
+                    end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
+
+                    end_str[1] = moment(end_date).format("YYYY년 MM월 DD일");
+                    start_str[1] = moment(date_info1.end_date).add(1,'months').format("YYYY년 MM월 01일");
+                    date_info2.end_date = end_date;
+
+                    date_info2.interval = 'month';
+                    basic_date_info.push(date_info2);
+
+                    
+                }else{
+                    end_str[1] = "0000년 00월 00일";
+                    start_str[0] = selectedDate;
+                    start_str[1] = "0000년 00월 00일";
+                   
+                }
+                console.log(1);
+            }else{
+
+                var end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+                    end_str[0] = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY년 MM월 DD일");
+                    end_str[1] = "0000년 00월 00일";
+
+                    start_str[0] = selectedDate;
+                    start_str[1] = "0000년 00월 00일";
+
+                    end_period[0] = period+"개월";
+                    end_period[1] = "0개월";
+
+                    date_info1.start_date = selectedDate;
+                    date_info1.end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+                    date_info1.period = period;
+                    date_info1.interval = 'month';
+                    basic_date_info.push(date_info1);
+
+           
+
+
+
+
+                // end_period[0] = date_info1.period+"일";
+
+            }
+        }else{
+            // console.log(sr_account_start_day+"::"+parseInt(date_array[2]));
+            if(parseInt(sr_account_start_day) <= parseInt(date_array[2])){
+                var lastDay = ( new Date( date_array[0], date_array[1], 0) ).getDate();
+                var end_date = date_array[0]+"-"+date_array[1]+"-"+lastDay;
+
+                end_str[0] = moment(end_date).format("YYYY년 MM월 DD일");
+                end_str[1] = moment(end_date).add(period,'months').format("YYYY년 MM월 DD일");
+                end_period[0] = (moment.duration(moment(end_date).diff(moment(selectedDate))).asDays()+1)+"일";
+
+                date_info1.start_date = selectedDate;
+                date_info1.end_date = end_date;
+                date_info1.period = moment.duration(moment(end_date).diff(moment(selectedDate))).asDays()+1;
+                date_info1.interval = 'day';
+                basic_date_info.push(date_info1);
+
+                date_info2.start_date = moment(end_date).add(1,'months').format("YYYY-MM-01");
+                start_str[1] = moment(end_date).add(1,'months').format("YYYY년 MM월 01일");
+
+                end_date = moment(end_date).add(period,'months').format("YYYY-MM-DD");
+
+                start_str[0] = selectedDate;
+
+
+                end_period[1] = period+"개월";
+
+
+                date_info2.end_date = end_date;
+                date_info2.period = period;
+                date_info2.interval = 'month';
+                basic_date_info.push(date_info2);
+                console.log(2);
+
+          
+            }else{
+                var lastDay = ( new Date( date_array[0], date_array[1], 0) ).getDate();
+                var end_date = date_array[0]+"-"+date_array[1]+"-"+lastDay;
+
+                date_info1.start_date = selectedDate;
+                date_info1.end_date = end_date;
+                // date_info1.period = period;
+                // date_info1.interval = 'month';
+                if(date_array[2] != "01"){
+                    date_info1.period = moment.duration(moment(end_date).diff(moment(selectedDate))).asDays()+1;
+                    date_info1.interval = 'day';
+                    end_period[0] = date_info1.period+"일";
+
+                    basic_date_info.push(date_info1);
+                    end_str[0] = date_array[0]+"년 "+date_array[1]+"월 "+lastDay+"일";
+                    start_str[0] = selectedDate;
+                    if(period > 1){
+                        end_period[1] = (period - 1)+"개월";
+                        date_info2.period = period-1;
+                    }else{
+                        end_period[1] = "1개월";
+                        date_info2.period = 1;
+                    }
+
+                    if(period > 1){
+                        date_info2.start_date = moment(end_date).add(1,'months').format("YYYY-MM-01");
+
+                        end_date = moment(end_date).add((period-1),'months').format("YYYY-MM-DD");
+
+                        end_str[1] = moment(end_date).format("YYYY년 MM월 DD일");
+                        start_str[1] = moment(date_info1.end_date).add(1,'months').format("YYYY년 MM월 01일");
+                        date_info2.end_date = end_date;
+
+                        date_info2.interval = 'month';
+                        basic_date_info.push(date_info2);
+
+                        // $("#view_add").show();
+                    }else{
+                        end_str[1] = "0000년 00월 00일";
+                        start_str[0] = selectedDate;
+                        start_str[1] = "0000년 00월 00일";
+                        // $("#view_add").hide();
+                    }
+                   
+                }else{
+                    var end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+                    end_str[0] = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY년 MM월 DD일");
+                    end_str[1] = "0000년 00월 00일";
+
+                    start_str[0] = selectedDate;
+                    start_str[1] = "0000년 00월 00일";
+
+                    end_period[0] = period+"개월";
+                    end_period[1] = "0개월";
+
+                    date_info1.start_date = selectedDate;
+                    date_info1.end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+                    date_info1.period = period;
+                    date_info1.interval = 'month';
+                    basic_date_info.push(date_info1);
+
+
+                }
+
+            }
+        }
+    }else{
+        var end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+        end_str[0] = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY년 MM월 DD일");
+        end_str[1] = "0000년 00월 00일";
+
+        start_str[0] = selectedDate;
+        start_str[1] = "0000년 00월 00일";
+
+        end_period[0] = period+"개월";
+        end_period[1] = "0개월";
+
+        date_info1.start_date = selectedDate;
+        date_info1.end_date = moment(selectedDate).add(period,'months').subtract(1, "days").format("YYYY-MM-DD");
+        date_info1.period = period;
+        date_info1.interval = 'month';
+        basic_date_info.push(date_info1);
+
+
+    }
+    console.log(basic_date_info);
+    // console.log(start_str[0]);
+    // var month = moment(selectedDate).add(period,'months').format("YYYY-MM-DD");
+
+    // 부가서비스 hidden값으로 처리
+    if(basic_date_info.length > 1){
+        $("#svp_first_day_start_"+sva_seq).val(start_str[0]);
+        $("#svp_first_day_end_"+sva_seq).val(basic_date_info[0].end_date);
+        $("#svp_first_month_start_"+sva_seq).val(basic_date_info[1].start_date);
+        $("#svp_first_month_end_"+sva_seq).val(basic_date_info[1].end_date);
+        // console.log(start_str[0]+"::"+basic_date_info[0].end_date+"::"+basic_date_info[1].end_date);
+    }else{
+        if(basic_date_info[0].interval == "day"){
+            $("#svp_first_day_start_"+sva_seq).val(start_str[0]);
+            $("#svp_first_day_end_"+sva_seq).val(basic_date_info[0].end_date);
+            $("#svp_first_month_start_"+sva_seq).val("");
+            $("#svp_first_month_end_"+sva_seq).val("");
+        }else{
+            $("#svp_first_day_start_"+sva_seq).val("");
+            $("#svp_first_day_end_"+sva_seq).val("");
+            $("#svp_first_month_start_"+sva_seq).val(start_str[0]);
+            $("#svp_first_month_end_"+sva_seq).val(basic_date_info[0].end_date);
+        }
+
+        // console.log(start_str[0]+"::"+basic_date_info[0].end_date);
+    }
+    
+
+    contractPriceDateInfoAdd(sva_seq);
+}
+
+function contractPriceDateInfoAdd(sva_seq){
+    // console.log(basic_date_info.length);
+    if(basic_date_info.length == 1){
+        // console.log(basic_date_info[0].interval);
+        if(basic_date_info[0].interval == "day"){
+            var date_array = basic_date_info[0].end_date.split("-");
+
+            var month_total_date = ( new Date( date_array[0], date_array[1], 0) ).getDate();
+            // var one_day_price = parseInt($("#sp_month_total_price").val())/month_total_date;
+            // var total_price = one_day_price*basic_date_info[0].period;
+
+            var month_price = parseInt($("#svp_month_price_"+sva_seq).val());
+            var dis_price = parseInt($("#svp_month_dis_price_"+sva_seq).val());
+            var dis_per = parseInt($("#svp_register_discount_"+sva_seq).val());
+            var period = parseInt($("#svp_payment_period_"+sva_seq).val());
+            var period_day = parseInt(basic_date_info[0].period);
+
+            if($("#svp_discount_price_"+sva_seq).val() >0){
+                var total_price = (month_price - dis_price) * (1-dis_per/100) / month_total_date * period_day;
+            }else{
+                var total_price = (month_price - dis_price) / month_total_date * period_day;
+            }
+            if($("#sv_account_format").val() == "1"){
+                if($("#sv_account_format_policy").val() == "1"){ // 버림
+                    var price = Math.floor(total_price/10)*10;
+                }else if($("#sv_account_format_policy").val() == "2"){ //올림
+                    var price = Math.ceil(total_price/10)*10;
+                }else if($("#sv_account_format_policy").val() == "3"){ //반올림
+                    var price = Math.round(total_price/10)*10;
+                }
+            }else if($("#sv_account_format").val() == "2"){
+                if($("#sv_account_format_policy").val() == "1"){ // 버림
+                    var price = Math.floor(total_price/100)*100;
+                }else if($("#sv_account_format_policy").val() == "2"){ //올림
+                    var price = Math.ceil(total_price/100)*100;
+                }else if($("#sv_account_format_policy").val() == "3"){ //반올림
+                    var price = Math.round(total_price/100)*100;
+                }
+            }else if($("#sv_account_format").val() == "3"){
+                if($("#sv_account_format_policy").val() == "1"){ // 버림
+                    var price = Math.floor(total_price/1000)*1000;
+                }else if($("#sv_account_format_policy").val() == "2"){ //올림
+                    var price = Math.ceil(total_price/1000)*1000;
+                }else if($("#sv_account_format_policy").val() == "3"){ //반올림
+                    var price = Math.round(total_price/1000)*1000;
+                }
+            }else if($("#sv_account_format").val() == "4"){
+                if($("#sv_account_format_policy").val() == "1"){ // 버림
+                    var price = Math.floor(total_price/10000)*10000;
+                }else if($("#sv_account_format_policy").val() == "2"){ //올림
+                    var price = Math.ceil(total_price/10000)*10000;
+                }else if($("#sv_account_format_policy").val() == "3"){ //반올림
+                    var price = Math.round(total_price/10000)*10000;
+                }
+            }
+            
+
+            basic_date_info[0].price = price;
+            $("#svp_first_day_price_"+sva_seq).val(price);
+            $("#svp_first_month_price_"+sva_seq).val(0);
+        }else{
+            // 월금액 가져와야함
+            var total_price_1 = parseInt(month_price*period-(dis_price*period)-parseInt($("#svp_discount_price_"+sva_seq).val()));
+            basic_date_info[0].price = total_price_1;
+            $("#svp_first_day_price_"+sva_seq).val(0);
+            $("#svp_first_month_price_"+sva_seq).val(basic_date_info[0].price);
+        }
+
+    }else if(basic_date_info.length == 2){
+        var date_array = basic_date_info[0].end_date.split("-");
+
+        var month_total_date = ( new Date( date_array[0], date_array[1], 0) ).getDate();
+            // var one_day_price = parseInt($("#sp_month_total_price").val())/month_total_date;
+            // var total_price = one_day_price*basic_date_info[0].period;
+
+        var month_price = parseInt($("#svp_month_price_"+sva_seq).val());
+        var dis_price = parseInt($("#svp_month_dis_price_"+sva_seq).val());
+        var dis_per = parseInt($("#svp_register_discount_"+sva_seq).val());
+        var period = parseInt($("#svp_payment_period_"+sva_seq).val());
+        var period_day = parseInt(basic_date_info[0].period);
+        // console.log(month_total_date+"::"+period_day);
+        // console.log(period_day);
+        // console.log(month_price);
+        if($("#svp_discount_price_"+sva_seq).val() >0){
+            var total_price = (month_price - dis_price) * (1-dis_per/100) / month_total_date * (period_day);
+        }else{
+            var total_price = (month_price - dis_price) / month_total_date * (period_day);
+        }
+        // console.log(total_price);
+        if($("#sv_account_format").val() == "1"){
+            if($("#sv_account_format_policy").val() == "1"){ // 버림
+                var price = Math.floor(total_price/10)*10;
+            }else if($("#sv_account_format_policy").val() == "2"){ //올림
+                var price = Math.ceil(total_price/10)*10;
+            }else if($("#sv_account_format_policy").val() == "3"){ //반올림
+                var price = Math.round(total_price/10)*10;
+            }
+        }else if($("#sv_account_format").val() == "2"){
+            if($("#sv_account_format_policy").val() == "1"){ // 버림
+                var price = Math.floor(total_price/100)*100;
+            }else if($("#sv_account_format_policy").val() == "2"){ //올림
+                var price = Math.ceil(total_price/100)*100;
+            }else if($("#sv_account_format_policy").val() == "3"){ //반올림
+                var price = Math.round(total_price/100)*100;
+            }
+        }else if($("#sv_account_format").val() == "3"){
+            if($("#sv_account_format_policy").val() == "1"){ // 버림
+                var price = Math.floor(total_price/1000)*1000;
+            }else if($("#sv_account_format_policy").val() == "2"){ //올림
+                var price = Math.ceil(total_price/1000)*1000;
+            }else if($("#sv_account_format_policy").val() == "3"){ //반올림
+                var price = Math.round(total_price/1000)*1000;
+            }
+        }else if($("#sv_account_format").val() == "4"){
+            if($("#sv_account_format_policy").val() == "1"){ // 버림
+                var price = Math.floor(total_price/10000)*10000;
+            }else if($("#sv_account_format_policy").val() == "2"){ //올림
+                var price = Math.ceil(total_price/10000)*10000;
+            }else if($("#sv_account_format_policy").val() == "3"){ //반올림
+                var price = Math.round(total_price/10000)*10000;
+            }
+        }
+        // console.log(price);
+        basic_date_info[0].price = price;
+        console.log($("#svp_discount_price_"+sva_seq).val());
+        var month2 = parseInt(month_price*period-(dis_price*period)-parseInt($("#svp_discount_price_"+sva_seq).val()));
+        var period_month = parseInt($("#svp_payment_period_"+sva_seq).val());
+        var once_period = basic_date_info[1].period;
+        // console.log(period_month+":"+once_period)
+        var price2 = month2 / period_month * once_period;
+
+        basic_date_info[1].price = price2;
+
+        $("#svp_first_day_price_"+sva_seq).val(price);
+        $("#svp_first_month_price_"+sva_seq).val(price2);
+    }
+    
+}
+
+function getLog(){
+
+    var url = "/api/fetchLogs/1/"+$("#sv_seq").val();
+    var end = 5;
+    var start = $("#log_start").val();
+// alert(start);
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        data : "sv_seq="+$("#sv_seq").val()+"&start="+start+"&end="+end,
+        success:function(response){
+            console.log(response);
+            var html = "";
+            for(var i = 0;i<response.list.length;i++){
+                var num = parseInt(response.total) - (($("#log_start").val()-1)*end) - i;
+                html += '<tr>\
+                            <td>'+num+'</td>\
+                            <td>'+response.list[i].lo_regdate+'</td>\
+                            <td>'+response.list[i].lo_type+'</td>\
+                            <td>'+response.list[i].lo_item+'</td>\
+                            <td>'+response.list[i].lo_origin+'</td>\
+                            <td>'+response.list[i].lo_after+'</td>\
+                            <td>';
+                                if(response.list[i].lo_user == "1"){
+                                    html += "ADMIN";
+                                }else if(response.list[i].lo_user == "2"){
+                                    html += "SYSTEM";
+                                }else{
+                                    html += "USER";
+                                }
+                            html += '</td>\
+                            <td></td>\
+                            <td>'+response.list[i].lo_ip+'</td>\
+                        </tr>';
+                
+            }
+            if(html == ""){
+                html = "<tr><td colspan=9 align=center>내용이 없습니다.</td></tr>";
+            }
+            console.log(html);
+            $("#log-list").html(html);
+
+            $("#logPaging").bootpag({
+                total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
+                page : $("#log_start").val(), // 현재 페이지 default = 1
+                maxVisible:5, // 페이지 숫자 노출 개수
+                wrapClass : "pagination",
+                next : ">",
+                prev : "<",
+                nextClass : "last",
+                prevClass : "first",
+                activeClass : "active"
+
+            }).on('page', function(event,num){ // 이벤트 액션
+                // document.location.href='/pageName/'+num; // 페이지 이동
+                $("#log_start").val(num);
+                getLog();
+            })
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
 }

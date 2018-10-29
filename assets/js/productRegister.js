@@ -593,7 +593,7 @@ function getTabInfo(){
 function getList(){
 
     var start = $("#start").val();
-    var end = 5;
+    var end = 10;
     var url = "/api/productList/"+$("#pc_seq").val()+"/"+start+"/"+end;
     var searchForm = $("#searchForm").serialize();
     // console.log(searchForm);
@@ -629,7 +629,7 @@ function getList(){
                 // }
                 html = response.list;
                 $(".pagination-html").bootpag({
-                    total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
+                    total : Math.ceil(parseInt(response.total)/10), // 총페이지수 (총 Row / list노출개수)
                     page : $("#start").val(), // 현재 페이지 default = 1
                     maxVisible:5, // 페이지 숫자 노출 개수
                     wrapClass : "pagination",

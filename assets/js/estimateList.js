@@ -11,9 +11,7 @@ $(function(){
 
     // datepicker
     $( ".datepicker" ).datepicker({
-        dateFormat: 'yy-mm-dd',
-        showOn: "both",
-        buttonText: "<i class='fa fa-calendar-alt'></i>"
+        dateFormat: 'yy-mm-dd'
     });
 
     $(".btn-add").click(function(){
@@ -157,7 +155,7 @@ $(function(){
                     if(i > 3){
                         var add_html = '<div class="modal-field ">\
                                             <div class="modal-field-input">\
-                                                <div class="label">첨부파일'+(i+1)+'</div>\
+                                                <div class="label"><div>첨부파일'+(i+1)+'</div></div>\
                                                 <div class="input"><input type="file" name="basic_file[]" ></div>\
                                                 <input type="hidden" name="bf_sort[]" id="bf_sort'+(i+1)+'" value="'+(i+1)+'">\
                                             </div>\
@@ -451,13 +449,13 @@ $(function(){
                 $("#es_number2").val(estimateNumber[1]);
                 var html = "";
                 for(var i = 0; i < response.files.length;i++){
-                    html += '<div class="modal-field">\
+                    html += '<div class="modal-field border-bottom-0">\
                                 <div class="modal-field-input">\
                                     <div class="label"></div>\
                                     <div class="input"><a href="/api/fileDownload/estimate_file/?filename='+response.files[i].ef_file+'&originname='+response.files[i].ef_origin_file+'">'+response.files[i].ef_origin_file+'</a></div>\
                                 </div>\
                                 <div class="modal-field-input">\
-                                    <div class="label"><button class="btn btn-black btn-upload-del" type="button" data-seq="'+response.files[i].ef_seq+'">삭제</button></div>\
+                                    <button class="btn btn-brown btn-small btn btn-upload-del" type="button" data-seq="'+response.files[i].ef_seq+'">삭제</button>\
                                     <div class="input"></div>\
                                 </div>\
                             </div>';
@@ -469,9 +467,9 @@ $(function(){
 
                     for(var i = 0; i < response.depths.length;i++){
                         var depthLength = $(".depth-item").length;
-                        var add_html = '<div class="depth-item" style="padding-top:5px">\
+                        var add_html = '<div class="depth-item">\
                                 <div class="modal-field-input">\
-                                    <div class="label">서비스 종류</div>\
+                                    <div class="label"><div>서비스 종류</div></div>\
                                     <div class="input">\
                                         <input type="hidden" name="ed_seq[]" value="'+response.depths[i].ed_seq+'">\
                                         <select id="es_depth1_'+(depthLength+1)+'" name="es_depth1[]" class="es_depth1 select2" data-index="'+(depthLength+1)+'" data-childvalue="'+response.depths[i].ed_depth2+'" style="width:140px">\
@@ -483,7 +481,7 @@ $(function(){
                                     </div>\
                                 </div>\
                                 <div class="modal-field-input">\
-                                    <div class="label">상품명</div>\
+                                    <div class="label"><div>상품명</div></div>\
                                     <div class="input">\
                                         <select id="es_depth2_'+(depthLength+1)+'" name="es_depth2[]" class="select2" style="width:140px">\
                                             <option value="" selected>상품명 선택</option>\
@@ -518,7 +516,7 @@ $(function(){
 
         var add_html = '<div class="modal-field ">\
                             <div class="modal-field-input" style="width:60%">\
-                                <div class="label">첨부파일'+(fileLength+1)+'</div>\
+                                <div class="label"><div>첨부파일'+(fileLength+1)+'</div></div>\
                                 <div class="input"><input type="file" name="basic_file[]" class="basic_file fileform" ></div>\
                                 <input type="hidden" name="bf_sort[]" id="bf_sort'+(fileLength+1)+'" value="'+(fileLength+1)+'" class="bf_sort">\
                             </div>\
@@ -789,10 +787,10 @@ $(function(){
         var categoryInfo = JSON.parse(category);
         var depthLength = $(".depth-item").length;
 
-        var add_html = '<div class="depth-item" style="padding-top:5px">\
+        var add_html = '<div class="depth-item">\
                 <div class="modal-field-input">\
-                    <div class="label">서비스 종류</div>\
-                    <div class="input">\
+                    <div class="label padd"><div>서비스 종류</div></div>\
+                    <div class="input padd">\
                     <input type="hidden" name="ed_seq[]" value="">\
                         <select id="es_depth1_'+(depthLength+1)+'" name="es_depth1[]" class="es_depth1 select2" data-index="'+(depthLength+1)+'" data-childvalue="" style="width:140px">\
                             <option value="" selected>서비스 종류 선택</option>';
@@ -803,8 +801,8 @@ $(function(){
                     </div>\
                 </div>\
                 <div class="modal-field-input">\
-                    <div class="label">상품명</div>\
-                    <div class="input">\
+                    <div class="label padd"><div>상품명</div></div>\
+                    <div class="input padd">\
                         <select id="es_depth2_'+(depthLength+1)+'" name="es_depth2[]" class="select2" style="width:140px">\
                             <option value="" selected>상품명 선택</option>\
                         </select>\
@@ -870,18 +868,18 @@ $(function(){
             success : function(data){ // 성공 처리
                 var html = '';
                 for(var i = 0; i < data.list.length;i++){
-                    html += '<div class="modal-field">\
+                    html += '<div class="modal-field border-bottom-0">\
                                 <div class="modal-field-input">\
                                     <div class="label"></div>\
                                     <div class="input">'+data.list[i].ef_origin_file+'</div>\
                                 </div>\
                                 <div class="modal-field-input">\
-                                    <div class="label"><button class="btn btn-black btn-tmp-upload-del" type="button" data-seq="'+data.list[i].ef_seq+'">삭제</button></div>\
+                                    <button class="btn btn-brown btn-small btn-tmp-upload-del" type="button" data-seq="'+data.list[i].ef_seq+'">삭제</button>\
                                     <div class="input"></div>\
                                 </div>\
                             </div>';
                 }
-                $(".upload-item").append(html);
+                $(".upload-item").html(html);
 
             }
         });
@@ -935,7 +933,7 @@ $(function(){
                 dataType : 'JSON',
                 success:function(response){
                     alert("삭제되었습니다.");
-                    that.parent().parent().parent().remove();
+                    that.parent().parent().remove();
                 }
 
             });
@@ -951,7 +949,7 @@ $(function(){
                 type : 'GET',
                 dataType : 'JSON',
                 success:function(response){
-                    that.parent().parent().parent().remove();
+                    that.parent().parent().remove();
                 }
 
             });
@@ -1347,7 +1345,7 @@ $(function(){
 
 var getList = function(){
     var start = $("#start").val();
-    var end = 5;
+    var end = 15;
     var url = "/api/estimateList/"+start+"/"+end;
     var searchForm = $("#searchForm").serialize();
     // console.log(searchForm);
@@ -1397,7 +1395,7 @@ var getList = function(){
                 }
 
                 $(".pagination-html").bootpag({
-                    total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
+                    total : Math.ceil(parseInt(response.total)/15), // 총페이지수 (총 Row / list노출개수)
                     page : $("#start").val(), // 현재 페이지 default = 1
                     maxVisible:5, // 페이지 숫자 노출 개수
                     wrapClass : "pagination",

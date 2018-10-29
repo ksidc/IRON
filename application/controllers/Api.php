@@ -1458,13 +1458,14 @@ class Api extends CI_Controller {
 
     public function serviceMake(){
         $sr_seq = explode(",",$this->input->post("sr_seq"));
-        for($i = 0;$i < count($sr_seq);$i++){
-            $this->api_model->updateServiceStatus($sr_seq[$i]);
-            $sv_seq = $this->api_model->selectInsertService($sr_seq[$i]);
+        $sr_seq2 = array_reverse($sr_seq);
+        for($i = 0;$i < count($sr_seq2);$i++){
+            $this->api_model->updateServiceStatus($sr_seq2[$i]);
+            $sv_seq = $this->api_model->selectInsertService($sr_seq2[$i]);
 
 
             // $this->api_model->selectInsertServicePrice($sv_seq,$sr_seq);
-            $result = $this->api_model->selectInsertServiceOption($sv_seq,$sr_seq[$i]);
+            $result = $this->api_model->selectInsertServiceOption($sv_seq,$sr_seq2[$i]);
         }
 
         $arr = array('result'=>$result);
@@ -1549,6 +1550,11 @@ class Api extends CI_Controller {
 
     public function paymentUpdate(){
         $result = $this->api_model->paymentUpdate();
+        echo json_encode(array("result"=>$result));
+    }
+
+    public function paymentComUpdate(){
+        $result = $this->api_model->paymentComUpdate();
         echo json_encode(array("result"=>$result));
     }
 
@@ -1645,14 +1651,16 @@ class Api extends CI_Controller {
     }
 
     public function updateServiceOpen(){
-        $result = $this->api_model->updateServiceOpen();
-        $arr = array('result'=>$result);
+        $date = date("Y-m-d H:i:s");
+        $result = $this->api_model->updateServiceOpen($date);
+        $arr = array('result'=>$result,"date"=>$date);
         echo json_encode($arr);
     }
 
     public function updateServiceOpenTime(){
         $result = $this->api_model->updateServiceOpenTime();
-        $arr = array('result'=>$result);
+        $date = $this->api_model->selectServiceOpenTime();
+        $arr = array('result'=>$result,"date"=>$date["sv_service_start"]);
         echo json_encode($arr);
     }
 
@@ -1669,8 +1677,9 @@ class Api extends CI_Controller {
     }
 
     public function updateServiceForceStop(){
-        $result = $this->api_model->updateServiceForceStop();
-        $arr = array('result'=>$result);
+        $date = date("Y-m-d H:i:s");
+        $result = $this->api_model->updateServiceForceStop($date);
+        $arr = array('result'=>$result,"date"=>$date);
         echo json_encode($arr);
     }
 
@@ -1681,8 +1690,9 @@ class Api extends CI_Controller {
     }
 
     public function updateServiceRestart(){
-        $result = $this->api_model->updateServiceRestart();
-        $arr = array('result'=>$result);
+        $date = date("Y-m-d H:i:s");
+        $result = $this->api_model->updateServiceRestart($date);
+        $arr = array('result'=>$result,"date"=>$date);
         echo json_encode($arr);
     }
 
@@ -1862,12 +1872,34 @@ class Api extends CI_Controller {
         echo json_encode($result);
     }
 
-    public function memberService($mb_seq){
-        $result = $this->api_model->fetchMemberService($mb_seq);
+    public function memberService($mb_seq,$start,$end){
+        $start = ($start-1)*$end;
+        $total = $this->api_model->countMemberService($mb_seq);
+        $list = $this->api_model->fetchMemberService($mb_seq,$start,$end);
+        $result = [
+            "total" => $total,
+            "list" => $list
+        ];
 
         echo json_encode($result);
     }
 
+    public function memberPayment($mb_seq){
+        $result = $this->api_model->fetchMemberPayment($mb_seq);
+
+        echo json_encode($result);
+    }
+
+    public function memberClaim($mb_seq){
+        $result = $this->api_model->fetchPayment($mb_seq);
+
+        echo json_encode($result);
+    }
+    public function memberCom($mb_seq){
+        $result = $this->api_model->fetchPaymentPaycom($mb_seq);
+
+        echo json_encode($result);
+    }
     public function emailFile(){
         $result = $this->api_model->emailFile();
         $list = $this->api_model->emailFileList();
@@ -1959,5 +1991,17 @@ class Api extends CI_Controller {
         $result = $this->api_model->paymentListUpdate();
         $arr = array('result'=>$result);
         echo json_encode($arr);
+    }
+
+    public function fetchLogs($lo_div,$lo_relation_seq){
+        $total = $this->api_model->countLogs($lo_div,$lo_relation_seq);
+        $list = $this->api_model->fetchLogs($lo_div,$lo_relation_seq,$this->input->get("start"),$this->input->get("end"));
+
+        $result = [
+            "total" => $total,
+            "list" => $list
+        ];
+
+        echo json_encode($result);
     }
 }

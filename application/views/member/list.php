@@ -4,17 +4,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
 <div class="content">
     <h2 class="title">
-        <i class="fa fa-file"></i> 회원 관리
+        <i class="fa fa-folder-open"></i> 회원 관리
     </h2>
     <div class="search">
         <form name="searchForm" id="searchForm" onsubmit="return getList();">
             <div class="search1">
                 <div class="form-group">
-                    <input type="checkbox" name="serviceYn" id="serviceYn" value="Y"> 서비스 이용 중인 회원만 표시
+                    <input type="checkbox" name="serviceYn" id="serviceYn" value="Y" > 서비스 이용 중인 회원만 표시
                 </div>
                 <div class="form-group">
-                    <select id="searchSelect" name="searchSelect" class="select2" style="width:150px">
-                        <option value="0" selected>서비스 전체</option>
+                    <select id="serviceSelect" name="serviceSelect" class="select2" style="width:150px" onchange="getList()">
+                        <option value="" selected>서비스 전체</option>
+                        <?php foreach($category_list as $row): ?>
+                            <option value="<?=$row["pc_seq"]?>"><?=$row["pc_name"]?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </div>
@@ -121,7 +124,7 @@
         <input type="hidden" name="b_mb_payment_tel" id="b_mb_payment_tel">
         <input type="hidden" name="b_mb_payment_phone" id="b_mb_payment_phone">
         <div class="modal-title">
-            <div class="modal-title-text">로그인 정보</div>
+            <div class="modal-title-text"><div>로그인 정보</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -131,7 +134,7 @@
             </div>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text">회원 정보</div>
+            <div class="modal-title-text"><div>회원 정보</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -165,8 +168,8 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label padd"><div>주소</div></div>
-                <div class="input padd" style="width:78%"><input type="text" style="width:17%" name="mb_zipcode" id="mb_zipcode" readonly onclick="daumApi()"> <input type="text" style="width:45%" name="mb_address" id="mb_address" readonly onclick="daumApi()"> <input type="text" style="width:27%" name="mb_detail_address" id="mb_detail_address"></div>
+                <div class="label padd" style="width:19%"><div>주소</div></div>
+                <div class="input padd" style="width:78%"><input type="text" style="width:15%" name="mb_zipcode" id="mb_zipcode" readonly onclick="daumApi()"> <input type="text" style="width:50%" name="mb_address" id="mb_address" readonly onclick="daumApi()"> <input type="text" style="width:27.5%" name="mb_detail_address" id="mb_detail_address"></div>
             </div>
 
         </div>
@@ -201,7 +204,7 @@
             </div>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text">계약 담당자 정보</div>
+            <div class="modal-title-text"><div>계약 담당자 정보</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -224,7 +227,7 @@
             </div>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text">요금 담당자 정보</div>
+            <div class="modal-title-text"><div>요금 담당자 정보</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -247,7 +250,7 @@
             </div>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text">회원 계좌 정보</div>
+            <div class="modal-title-text"><div>회원 계좌 정보</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -270,7 +273,7 @@
             </div>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text">기본 결제 조건</div>
+            <div class="modal-title-text"><div>기본 결제 조건</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">

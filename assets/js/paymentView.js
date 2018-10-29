@@ -1,4 +1,4 @@
-var addList = [];
+
 var item1 = 0;
 var item2 = 0;
 var item3 = 0;
@@ -7,18 +7,29 @@ $(function(){
     $(".btn-add-bill").click(function(){
         var insertYn = true;
         var info = $(this).data("view");
+
         info.active_payment = $("#active_payment").val();
-        addList.some(function(one){
+        var addYn = 0;
+        addList[$("#active_payment").val()].some(function(one){
             if(one.active_payment == $("#active_payment").val()){
-                if(one.sv_payment_type == info.sv_payment_type && one.sv_pay_type == info.sv_pay_type && one.sv_pay_day == info.sv_pay_day && one.sv_pay_publish_type == info.sv_pay_publish_type){
+                addYn++;
+                if(one.sv_payment_type == info.sv_payment_type && one.sv_pay_type == info.sv_pay_type && one.sv_payment_day == info.sv_payment_day && one.sv_pay_publish_type == info.sv_pay_publish_type && one.svp_payment_period == info.svp_payment_period){
                     info.view_type = "M";
+                    // console.log(one.item_num+"::"+one.view_type);
                     if(one.item_num == "1" && one.view_type == "M"){
                         if(one.sv_number > info.sv_number){
+
                             one.view_type = "S";
+                            $("#addClaim"+$("#active_payment").val()).find("#main_"+addYn).prop("checked",false);
+                            $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+addYn).val("S");
                             info.view_type = "M";
+                            
+                            // console.log(one)
                             return true;
                         }else{
+                            // $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+addYn).val("S");
                             info.view_type = "S";
+                            
                             return true;
                         }
                     }
@@ -31,12 +42,14 @@ $(function(){
         });
 
         if(insertYn){
+            // console.log(addYn);
             info.item_num = 1;
-            var view_length = addList.length;
-            if(view_length == 0){
+            // var view_length = addList.length;
+            if(addList[$("#active_payment").val()].length == 0){
                 info.view_type = "M";
             }
-            addList.push(info);
+            // console.log(addList);
+            addList[$("#active_payment").val()].push(info);
             $(this).parent().hide();
             var svpseq = $(this).parent().data("svpseq");
             if(info.sv_payment_type == "1"){
@@ -55,15 +68,15 @@ $(function(){
                 var pay_type = "익월 "+info.sv_pay_day+"일";
             }
 
-            var html = '<tr class="dynamicclaim" data-svpseq="'+svpseq+'"><input type="hidden" name="cd_main[]" id="cd_main_'+view_length+'" value="'+info.view_type+'"><input type="hidden" name="cd_seq[]" id="cd_seq_'+view_length+'" value="">\
-                            <td>'+info.sv_number+'</td>\
+            var html = '<tr class="dynamicclaim" data-svpseq="'+svpseq+'"><input type="hidden" name="cd_main[]" id="cd_main_'+$("#active_payment").val()+'_'+addList[$("#active_payment").val()].length+'" value="'+info.view_type+'"><input type="hidden" name="cd_seq[]" id="cd_seq_'+$("#active_payment").val()+'_'+addList[$("#active_payment").val()].length+'" value="">\
+                            <td>'+(info.sva_seq === null ? info.sv_number:info.sva_number)+'</td>\
                             <td>'+payment_type+'</td>\
                             <td>'+pay_type+'</td>\
-                            <td class="code_'+info.active_payment+'" data-index="'+view_length+'">T0'+info.active_payment+'-1'+info.view_type+'</td>\
+                            <td class="code_'+info.active_payment+'" data-index="'+addList[$("#active_payment").val()].length+'">T0'+info.active_payment+'-1'+info.view_type+'</td>\
                             <input type="hidden" name="cd_svp_seq[]" value="'+info.svp_seq+'">\
-                            <td><select name="cd_num[]" class="select2 item_num" data-index="'+view_length+'" id="view_select_'+view_length+'"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></td>\
-                            <td><input type="checkbox" name="cd_main_check[]" class="view_type_change" id="main_'+view_length+'" data-index="'+view_length+'" '+(info.view_type == "M" ? "checked":"")+'></td>\
-                            <td><input type="text" name="cd_name[]" id="bill_name_'+view_length+'" value="'+(info.sva_seq === null ? info.sv_bill_name:info.sva_bill_name) +'"></td>\
+                            <td><select name="cd_num[]" class="select2 item_num" data-index="'+addList[$("#active_payment").val()].length+'" id="view_select_'+addList[$("#active_payment").val()].length+'"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></td>\
+                            <td><input type="checkbox" name="cd_main_check[]" class="view_type_change" id="main_'+(addList[$("#active_payment").val()].length)+'" data-index="'+addList[$("#active_payment").val()].length+'" '+(info.view_type == "M" ? "checked":"")+'></td>\
+                            <td><input type="text" name="cd_name[]" id="bill_name_'+addList[$("#active_payment").val()].length+'" value="'+(info.sva_seq === null ? info.sv_bill_name:info.sva_bill_name) +'"></td>\
                             <td class="btn-del-bill" ><i class="fa fa-caret-up fa-2x" aria-hidden="true"></i></td>\
                         </tr>';
             $("#after-list"+$("#active_payment").val()).append(html);
@@ -83,14 +96,14 @@ $(function(){
         if(trdata.hasClass("dynamicclaim")){
             var svpseq = trdata.data("svpseq");
             $(".noclaim").each(function(){
-                if(svpseq == $(this).svpseq){
+                if(svpseq == $(this).data("svpseq")){
                     $(this).show();
                 }
             })
             trdata.remove();
-            addList.forEach(function(one,i){
+            addList[$("#active_payment").val()].forEach(function(one,i){
                 if(one.svp_seq == svpseq){
-                    addList.splice(i,1);
+                    addList[$("#active_payment").val()].splice(i,1);
                 }
             })
         }else{
@@ -102,9 +115,9 @@ $(function(){
                 }
             })
             trdata.remove();
-            addList.forEach(function(one,i){
+            addList[$("#active_payment").val()].forEach(function(one,i){
                 if(one.svp_seq == svpseq){
-                    addList.splice(i,1);
+                    addList[$("#active_payment").val()].splice(i,1);
                 }
             })
         }
@@ -115,47 +128,93 @@ $(function(){
 
     $("body").on("change",".item_num",function(){
         // console.log($(this).data("index"));
-        var old_num = addList[$(this).data("index")].item_num;
-        var old_view_type = addList[$(this).data("index")].view_type;
-        addList[$(this).data("index")].item_num = $(this).val();
+        var old_num = addList[$("#active_payment").val()][$(this).data("index")-1].item_num;
+        var old_view_type = addList[$("#active_payment").val()][$(this).data("index")-1].view_type;
+        
         item1 = 0;
         item2 = 0;
         item3 = 0;
         item4 = 0;
         var target_index = $(this).data("index");
-        var target = addList[$(this).data("index")];
+        var target = addList[$("#active_payment").val()][$(this).data("index")-1];
+        target.item_num = $(this).val();
+        var item_num = $(this).val();
         // console.log(addList[$(this).data("index")]);
-        addList.some(function(one,i){
-            if(i != target_index){
+        addList[$("#active_payment").val()].some(function(one,i){
+            // console.log(i+"::"+target_index);
+            if((i+1) != target_index){
                 if(one.active_payment == $("#active_payment").val()){
                     target.view_type = "M";
                     // console.log(one.item_num+"::"+target.item_num);
                     if(one.item_num == target.item_num){
-                        if(one.sv_number > target.sv_number){
-                            // console.log(1);
-                            $("#main_"+i).prop("checked",false);
+                        if(one.sva_seq === null && target.sva_seq === null){
+                            if(one.sv_number > target.sv_number){
+                                console.log(1);
+                                $("#addClaim"+$("#active_payment").val()).find("#main_"+(i+1)).prop("checked",false);
+                                $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+(i+1)).val("S");
+                                $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+target_index).val("M");
+                                one.view_type = "S";
+                                target.view_type = "M";
+                                return true;
+                            }else{
+                                console.log(2);
+                                $("#addClaim"+$("#active_payment").val()).find("#main_"+target_index).prop("checked",false);
+                                $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+target_index).val("S");
+                                target.view_type = "S";
+                                return true;
+                            }
+                        }else if(one.sva_seq !== null && target.sva_seq === null){
+                            console.log(3);
+                            $("#addClaim"+$("#active_payment").val()).find("#main_"+(i+1)).prop("checked",false);
+                            $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+(i+1)).val("S");
+                            $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+target_index).val("M");
                             one.view_type = "S";
                             target.view_type = "M";
                             return true;
-                        }else{
-                            // console.log(2);
-                            $("#main_"+target_index).prop("checked",false);
+                        }else if(one.sva_seq === null && target.sva_seq !== null){
+                            console.log(4);
+                            $("#addClaim"+$("#active_payment").val()).find("#main_"+target_index).prop("checked",false);
+                            $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+target_index).val("S");
                             target.view_type = "S";
                             return true;
+                        }else{
+                            if(one.sva_number > target.sva_number){
+                                // console.log(1);
+                                console.log(5);
+                                $("#addClaim"+$("#active_payment").val()).find("#main_"+(i+1)).prop("checked",false);
+                                $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+target_index).val("M");
+                                $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+(i+1)).val("S");
+                                one.view_type = "S";
+                                target.view_type = "M";
+                                return true;
+                            }else{
+                                // console.log(2);
+                                console.log(6);
+                                $("#addClaim"+$("#active_payment").val()).find("#main_"+target_index).prop("checked",false);
+                                $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+target_index).val("S");
+                                target.view_type = "S";
+                                return true;
+                            }
                         }
                     }
                 }
+            }else{
+                one.item_num = item_num;
             }
         });
         // console.log(target.view_type);
         if(target.view_type == "M"){
-            $("#main_"+$(this).data("index")).prop("checked",true);
+            console.log(7);
+            $("#addClaim"+$("#active_payment").val()).find("#main_"+$(this).data("index")).prop("checked",true);
+            $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+$(this).data("index")).val("M");
         }
         if(old_view_type == "M"){
-            addList.some(function(one,i){
+            addList[$("#active_payment").val()].some(function(one,i){
                 if(one.item_num == old_num){
+                    console.log(8);
                     one.view_type = "M";
-                    $("#main_"+i).prop("checked",true);
+                    $("#addClaim"+$("#active_payment").val()).find("#main_"+(i+1)).prop("checked",true);
+                    $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$("#active_payment").val()+"_"+(i+1)).val("M");
                     return true;
                 }
             })
@@ -168,365 +227,79 @@ $(function(){
 
     $("body").on("click",".view_type_change",function(e){
         // e.preventDefault();
-        var view = $("#view_select_"+$(this).data("index")).val();
+        var view = $("#addClaim"+$("#active_payment").val()).find("#view_select_"+$(this).data("index")).val();
         var view_cnt = 0;
-        $(".item_num").each(function(){
+        $("#addClaim"+$("#active_payment").val()).find(".item_num").each(function(){
             if($(this).val() == view){
                 view_cnt++;
-                $("#main_"+$(this).data("index")).prop("checked",false);
-                $("#cd_main_"+$(this).data("index")).val("S");
+                $("#addClaim"+$("#active_payment").val()).find("#main_"+$(this).data("index")).prop("checked",false);
+                $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$(this).data("index")).val("S");
             }
         })
         // console.log($(this).data("index"));
-        $("#main_"+$(this).data("index")).prop("checked",true);
-        $("#cd_main_"+$(this).data("index")).val("M");
+        $("#addClaim"+$("#active_payment").val()).find("#main_"+$(this).data("index")).prop("checked",true);
+        $("#addClaim"+$("#active_payment").val()).find("#cd_main_"+$(this).data("index")).val("M");
         if(view_cnt > 1){
             var addText = " 외";
         }else{
             var addText = "";
         }
-        $("#item_name"+view+"_"+$("#active_payment").val()).html($("#bill_name_"+$(this).data("index")).val()+addText);
+        $("#item_name"+view+"_"+$("#active_payment").val()).html($("#addClaim"+$("#active_payment").val()).find("#bill_name_"+$(this).data("index")).val()+addText);
         setNum();
     });
 
-    $("body").on("click",".content-tab-item",function(){
-        if($(this).hasClass("add")){
-            $(".payment_claim").hide();
-            var length = $(".payment_claim").length;
-
-            var html = "<table width='700' cellpadding='0' cellspacing='0' align='center' class='border_all payment_claim' id='payment"+length+"' data-seq=''>\
-                            <tr>\
-                                <td width='100%'>\
-                                    <table cellpadding='0' cellspacing='0' height='65' width='100%'>\
-                                        <tr>\
-                                            <td rowspan='2' align='center' width='360' class='border_tit'><font size='6'><b>세 금 계 산 서</b></font></td>\
-                                            <td rowspan='2' width='5' align='center' class='border_tit'><font size='4'><b>[</b></font></td>\
-                                            <td rowspan='2' width='70' align='center' class='border_tit'>공급받는자&nbsp;<br>보 &nbsp;관 &nbsp;용&nbsp;</td>\
-                                            <td rowspan='2' width='5' align='center' class='border_tit'><font size='4'><b>]</b></font></td>\
-                                            <td align='right' width='85' class='border_tit'>책 번 호&nbsp;&nbsp;</td>\
-                                            <td colspan='3' align='right' class='border_both'>권 &nbsp;</td>\
-                                            <td colspan='4' align='right' class='border_tit'>호 &nbsp;</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td width='85' align='right' class='border_tit'>일련번호&nbsp;</td>\
-                                            <td colspan='1' class='border_back ' width='25'>&nbsp;</td>\
-                                            <td colspan='1' class='border_up' width='25'>&nbsp;</td>\
-                                            <td colspan='1' class='border_up' width='25'>&nbsp;</td>\
-                                            <td colspan='1' class='border_up' width='25'>&nbsp;</td>\
-                                            <td colspan='1' class='border_up' width='25'>&nbsp;</td>\
-                                            <td colspan='1' class='border_up' width='25'>&nbsp;</td>\
-                                            <td colspan='1' class='border_top' width='25'>&nbsp;</td> \
-                                        </tr>\
-                                    </table>\
-                                </td>\
-                            </tr>\
-                            <tr>\
-                                <td>\
-                                    <table cellpadding='0' cellspacing='0' width='700'>\
-                                        <tr>\
-                                            <td class='border_up' align='center' width='17' rowspan='7'>공<br><br><br>급<br><br><br>자</td>\
-                                            <td class='border_up' align='center' width='55' height='33'>등록번호</td>\
-                                            <td class='border_up' align='center' width='278' colspan='5'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='17' rowspan='7'>공<br>급<br>받<br>는<br>자</td>\
-                                            <td class='border_up' align='center' width='55'>등록번호</td>\
-                                            <td class='border_top' align='center' width='278' colspan='5'>&nbsp;</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up' align='center' width='55' height='33'>상 호<br>(법인명)</td>\
-                                            <td class='border_up' align='center' width='160' colspan='3'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='12' colspan='1'>성<br>명</td>\
-                                            <td class='border_up' align='right' width='94' colspan='1'>인</td>\
-                                            <td class='border_up' align='center' width='55'>상 호<br>(법인명)</td>\
-                                            <td class='border_up' align='center' width='160' colspan='3'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='12' colspan='1'>성<br>명</td>\
-                                            <td class='border_top' align='right' width='94' colspan='1'>인</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up' align='center' width='55' height='33'>사업장<br>주  소</td>\
-                                            <td class='border_up' align='center' width='278' colspan='5'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='55'>사업장<br>주  소</td>\
-                                            <td class='border_top' align='center' width='278' colspan='5'>&nbsp;</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up' align='center' width='55' height='33'>업  태</td>\
-                                            <td class='border_up' align='center' width='148' colspan='1'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='12' colspan='1'>종<br>목</td>\
-                                            <td class='border_up' align='center' width='106' colspan='3'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='55'>업 &nbsp; 태</td>\
-                                            <td class='border_up' align='center' width='148' colspan='1'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='12' colspan='1'>종<br>목</td>\
-                                            <td class='border_top' align='center' width='106' colspan='3'>&nbsp;</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up' align='center' width='55' height='33'>담당부서</td>\
-                                            <td class='border_up' align='center' width='148' colspan='1'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='12' colspan='1'>성명</td>\
-                                            <td class='border_up' align='center' width='106' colspan='3'>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='55'>담당부서</td>\
-                                            <td class='border_up' align='center' width='148' colspan='1'></td>\
-                                            <td class='border_up' align='center' width='12' colspan='1'>성명</td>\
-                                            <td class='border_top' align='center' width='106' colspan='3'></td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up' align='center' width='55' height='53' rowspan=2>이메일</td>\
-                                            <td class='border_up' align='center' width='266' colspan='5' rowspan=2>&nbsp;</td>\
-                                            <td class='border_up' align='center' width='55'>이메일</td>\
-                                            <td class='border_up' align='center' width='266' colspan='5'></td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up' align='center' width='55'>이메일</td>\
-                                            <td class='border_up' align='center' width='266' colspan='5'></td>\
-                                        </tr>\
-                                    </table>\
-                                </td>\
-                            </tr>\
-                            <tr>\
-                                <td width='100%'>\
-                                    <table cellpadding='0' cellspacing='0' width='700'>\
-                                        <tr>\
-                                            <td class='border_up' align='center' width='85' height='21'>작 &nbsp; 성</td>\
-                                            <td class='border_up' colspan='12' width='250' align='center'>공 &nbsp; 급 &nbsp; 가 &nbsp; 액</td>\
-                                            <td class='border_up' rowspan='3' align='center' width='4' height='15'>&nbsp;</td>\
-                                            <td class='border_up' colspan='10' align='center' width='190' height='15'>세 &nbsp; 액</td>\
-                                            <td class='border_top reset' align='center' width='156'>비 &nbsp; 고</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up' align='center' width='85' height='21'>년 &nbsp; 월 &nbsp; 일</td>\
-                                            <td class='border_up' align='center' width='35'><font size='1'>공란수</font></td>\
-                                            <td class='border_up' align='center' width='20'>백</td>\
-                                            <td class='border_up' align='center' width='20'>십</td>\
-                                            <td class='border_up' align='center' width='20'>억</td>\
-                                            <td class='border_up' align='center' width='20'>천</td>\
-                                            <td class='border_up' align='center' width='20'>백</td>\
-                                            <td class='border_up' align='center' width='20'>십</td>\
-                                            <td class='border_up' align='center' width='20'>만</td>\
-                                            <td class='border_up' align='center' width='20'>천</td>\
-                                            <td class='border_up' align='center' width='20'>백</td>\
-                                            <td class='border_up' align='center' width='20'>십</td>\
-                                            <td class='border_up' align='center' width='20'>일</td>\
-                                            <td class='border_up' align='center' width='20'>십</td>\
-                                            <td class='border_up' align='center' width='20'>억</td>\
-                                            <td class='border_up' align='center' width='20'>천</td>\
-                                            <td class='border_up' align='center' width='20'>백</td>\
-                                            <td class='border_up' align='center' width='20'>십</td>\
-                                            <td class='border_up' align='center' width='20'>만</td>\
-                                            <td class='border_up' align='center' width='20'>천</td>\
-                                            <td class='border_up' align='center' width='20'>백</td>\
-                                            <td class='border_up' align='center' width='20'>십</td>\
-                                            <td class='border_up' align='center' width='20'>일</td>\
-                                            <td class='border_top reset' align='center' width='156' rowspan='2'>&nbsp;</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up reset' align='center' width='85' height='25' id='date"+length+"'> &nbsp; </td>\
-                                            <td class='border_up reset' align='center' width='35' id='number"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_11'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_10'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_9'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_8'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_7'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_6'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_5'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_4'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_3'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_2'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='price"+length+"_1'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_10'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_9'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_8'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_7'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_6'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_5'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_4'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_3'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_2'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='20' id='sprice"+length+"_1'>&nbsp;</td>\
-                                        </tr>\
-                                    </table>\
-                                </td>\
-                            </tr>\
-                            <tr>\
-                                <td width='100%'>\
-                                    <table cellpadding='0' cellspacing='0' width='700'>\
-                                        <tr>\
-                                            <td class='border_up' align='center' width='50' height='21'>월 일</td>\
-                                            <td class='border_up' align='center' width='195'>품 &nbsp; &nbsp; &nbsp; 목</td>\
-                                            <td class='border_up' align='center' width='42'>규 격</td>\
-                                            <td class='border_up' align='center' width='65'>수 량</td>\
-                                            <td class='border_up' align='center' width='55'>단 가</td>\
-                                            <td class='border_up' align='center' width='150'>공급가액</td>\
-                                            <td class='border_up' align='center' width='83'>세 액</td>\
-                                            <td class='border_top' align='center' width='60'>비고</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up reset' align='center' width='50' height='25' id='item_date1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='195' id='item_name1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='42' id='item_etc1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='65' id='item_cnt1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='55' id='item_price1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='150' id='item_oprice1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='83' id='item_sprice1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_top reset' align='center' width='60' id='item_msg1_"+length+"'>&nbsp;</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up reset' align='center' width='50' height='25' id='item_date2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='195' id='item_name2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='42' id='item_etc2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='65' id='item_cnt2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='55' id='item_price2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='150' id='item_oprice2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='83' id='item_sprice2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_top reset' align='center' width='60' id='item_msg2_"+length+"'>&nbsp;</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up reset' align='center' width='50' height='25' id='item_date3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='195' id='item_name3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='42' id='item_etc3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='65' id='item_cnt3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='55' id='item_price3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='150' id='item_oprice3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='83' id='item_sprice3_"+length+"'>&nbsp;</td>\
-                                            <td class='border_top reset' align='center' width='60' id='item_msg3_"+length+"'>&nbsp;</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up reset' align='center' width='50' height='25' id='item_date4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='195' id='item_name4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='42' id='item_etc4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='65' id='item_cnt4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='55' id='item_price4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='150' id='item_oprice4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='83' id='item_sprice4_"+length+"'>&nbsp;</td>\
-                                            <td class='border_top reset' align='center' width='60' id='item_msg4_"+length+"'>&nbsp;</td>\
-                                        </tr>\
-                                    </table>\
-                                </td>\
-                            </tr>\
-                            <tr>\
-                                <td width='100%'>\
-                                    <table cellpadding='0' cellspacing='0' width='700'>\
-                                        <tr align='justify'>\
-                                            <td class='border_up' align='center' width='122' height='2' >합계금액</td>\
-                                            <td class='border_up' align='center' width='108'>현 &nbsp; &nbsp; 금</td>\
-                                            <td class='border_up' align='center' width='108'>수 &nbsp; &nbsp; 표</td>\
-                                            <td class='border_up' align='center' width='108'>어 &nbsp; &nbsp; 음</td>\
-                                            <td class='border_up' align='center' width='108'>외상미수금</td>\
-                                            <td class='border_top' rowspan='2' align='center' width='143'>이 금액을 <span id='paytype"+length+"'>&nbsp;  &nbsp; &nbsp; &nbsp;</span>함</td>\
-                                        </tr>\
-                                        <tr>\
-                                            <td class='border_up reset' align='center' width='122' height='25' id='totalprice1_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='108' id='totalprice2_"+length+"'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='108'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='108'>&nbsp;</td>\
-                                            <td class='border_up reset' align='center' width='108'>&nbsp;</td>\
-                                        </tr>\
-                                    </table>\
-                                </td>\
-                            </tr>\
-                        </table>";
-
-
-            $("#payment").append(html);
-            var addhtml = '<form id="addClaim'+length+'">\
-                <table class="table table_claim" id="table'+length+'" style="display:none">\
-                    <thead>\
-                        <tr>\
-                            <th>서비스번호</th>\
-                            <th>납부방법</th>\
-                            <th>청구일</th>\
-                            <th>TaxCode</th>\
-                            <th>품목번호</th>\
-                            <th>품목대표</th>\
-                            <th>계약서 품목명</th>\
-                            <th></th>\
-                        </tr>\
-                    </thead>\
-                    <tbody id="after-list'+length+'">\
-                    </tbody>\
-                </table>\
-                </form>\
-            ';
-
-            $(".table-list").after(addhtml);
-            // $(".border_all").last().attr("id","payment"+length);
-            // $(".border_all").last().addClass("payment_claim");
-            $(this).before("<li class='content-tab-item' data-index='"+length+"'>계산서"+(length+1)+"</li>")
-        }else{
-
-            $(".content-tab-item").removeClass("active");
-            $(this).addClass("active");
-            var index = $(this).data("index");
-            var clseq = $(this).data("clseq");
-            // console.log(index);
-            $("#active_payment").val(index);
-            $(".payment_claim").hide();
-            $(".table_claim").hide();
-            $("#payment"+index).show();
-            $("#table"+index).show();
-            $("#cl_seq").val(clseq);
-            // $("#after-list").html("");
-            // addList = [];
-            // $(".btn-add-bill").each(function(){
-            //     if($(this).data("clcode") != ""){
-            //         // console.log($(this).data("clcode"));
-            //         if($("#active_payment").val() == $(this).data("clcode")){
-            //             // console.log("111>>>>>>>"+$("#active_payment").val());
-            //             $("#payment"+$("#active_payment").val()).find(".reset").html("");
-            //             // if($("#price"+$(this).data("clcode")+"_1").html() == "&nbsp;"){
-            //             $(this).trigger("click");
-            //             // }
-            //         }else{
-            //             $(this).hide();
-            //         }
-            //     }
-            // })
-            // $("#pc_seq").val($(this).data("pcseq"));
-            // getList();
-            // getItemList();
-            setPayment();
-        }
-    })
+    
     $(".btn-save").click(function(){
         var seq = $("#payment"+$("#active_payment").val()).data("seq");
         // console.log(seq);
-        if(seq == ""){
-            var url = "/api/claimAdd/"+$(this).data("mbseq");
-            var datas = $("#addClaim"+$("#active_payment").val()).serialize();
-            $.ajax({
-                url : url,
-                type : 'POST',
-                dataType : 'JSON',
-                data : datas+"&cl_code="+(parseInt($("#active_payment").val())+1),
-                success:function(response){
-                    console.log(response);
-                    if(response.result){
-                        alert("저장 되었습니다.");
+        var inputLenth = $("#after-list"+$("#active_payment").val()).find("tr");
+        if(inputLenth.length == 0){
+            alert("설정된 값이 없습니다.");
+            return false;
+        }
+        if(confirm("저장 하시겠습니까?")){
+            if(seq == ""){
+                var url = "/api/claimAdd/"+$(this).data("mbseq");
+                var datas = $("#addClaim"+$("#active_payment").val()).serialize();
+                
+                $.ajax({
+                    url : url,
+                    type : 'POST',
+                    dataType : 'JSON',
+                    data : datas+"&cl_code="+(parseInt($("#active_payment").val())+1),
+                    success:function(response){
+                        console.log(response);
+                        if(response.result){
+                            alert("저장 되었습니다.");
+                        }
+                        // document.location.reload();
+                    },
+                    error : function(error){
+                        console.log(error);
                     }
-                    // document.location.reload();
-                },
-                error : function(error){
-                    console.log(error);
-                }
-            });
-        }else{
-            console.log($("#cl_seq").val());
-            var url = "/api/claimUpdate/"+$("#cl_seq").val();
-            var datas = $("#addClaim"+$("#active_payment").val()).serialize();
-            
-            $.ajax({
-                url : url,
-                type : 'POST',
-                dataType : 'JSON',
-                data : datas+"&seq="+seq,
-                success:function(response){
-                    console.log(response);
-                    if(response.result){
-                        alert("저장 되었습니다.");
+                });
+            }else{
+                // console.log($("#cl_seq").val());
+                var url = "/api/claimUpdate/"+$("#cl_seq").val();
+                var datas = $("#addClaim"+$("#active_payment").val()).serialize();
+                
+                $.ajax({
+                    url : url,
+                    type : 'POST',
+                    dataType : 'JSON',
+                    data : datas+"&seq="+seq,
+                    success:function(response){
+                        console.log(response);
+                        if(response.result){
+                            alert("저장 되었습니다.");
+                        }
+                        // document.location.reload();
+                    },
+                    error : function(error){
+                        console.log(error);
                     }
-                    // document.location.reload();
-                },
-                error : function(error){
-                    console.log(error);
-                }
-            });
+                });
+            }
         }
     });
 
@@ -561,17 +334,22 @@ $(function(){
 function setNum(){
     $(".code_"+$("#active_payment").val()).each(function(){
         // console.log($("#main_"+$(this).data("index")).prop("checked"));
-        if($("#main_"+$(this).data("index")).prop("checked") == true){
+
+        if($("#addClaim"+$("#active_payment").val()).find("#main_"+$(this).data("index")).prop("checked") == true){
             var code_add = "M";
         }else{
             var code_add = "S";
         }
-        var code = "T0"+(parseInt($("#active_payment").val())+1)+"-"+$("#view_select_"+$(this).data("index")).val()+code_add;
+        var code = "T0"+(parseInt($("#active_payment").val())+1)+"-"+$("#addClaim"+$("#active_payment").val()).find("#view_select_"+$(this).data("index")).val()+code_add;
+        // console.log(code);
         $(this).html(code)
     })
 }
 function setPayment(){
-
+    item1 = 0;
+    item2 = 0;
+    item3 = 0;
+    item4 = 0;
     var active_payment = $("#active_payment").val();
     var item1_price = 0;
     var item2_price = 0;
@@ -579,33 +357,38 @@ function setPayment(){
     var item4_price = 0;
     var totalprice = 0;
     var totalsurtax = 0;
-    $("#item_date1_"+active_payment).html("");
+    $("#item_date1_1_"+active_payment).html("");
+    $("#item_date1_2_"+active_payment).html("");
     $("#item_name1_"+active_payment).html("");
     $("#item_oprice1_"+active_payment).html("");
     $("#item_sprice1_"+active_payment).html("");
     $("#item_msg1_"+active_payment).html("");
 
-    $("#item_date2_"+active_payment).html("");
+    $("#item_date2_1_"+active_payment).html("");
+    $("#item_date2_2_"+active_payment).html("");
     $("#item_name2_"+active_payment).html("");
     $("#item_oprice2_"+active_payment).html("");
     $("#item_sprice2_"+active_payment).html("");
     $("#item_msg2_"+active_payment).html("");
 
-    $("#item_date3_"+active_payment).html("");
+    $("#item_date3_1_"+active_payment).html("");
+    $("#item_date3_2_"+active_payment).html("");
     $("#item_name3_"+active_payment).html("");
     $("#item_oprice3_"+active_payment).html("");
     $("#item_sprice3_"+active_payment).html("");
     $("#item_msg3_"+active_payment).html("");
 
-    $("#item_date4_"+active_payment).html("");
+    $("#item_date4_1_"+active_payment).html("");
+    $("#item_date4_2_"+active_payment).html("");
     $("#item_name4_"+active_payment).html("");
     $("#item_oprice4_"+active_payment).html("");
     $("#item_sprice4_"+active_payment).html("");
     $("#item_msg4_"+active_payment).html("");
     
-    addList.forEach(function(one){
+    addList[$("#active_payment").val()].forEach(function(one){
+        // console.log(one);
         if(one.active_payment == active_payment){
-            // console.log(one);
+            console.log(one);
             var insertYn = false;
             var addName = "";
             // console.log(one.item_num);
@@ -650,69 +433,78 @@ function setPayment(){
             totalprice = item1_price + item2_price + item3_price + item4_price;
             surtaxprice = (item1_price*0.1) + (item2_price*0.1) + (item3_price*0.1) + (item4_price*0.1);
             // console.log(insertYn);
-            var today = moment(new Date()).format("M/D");
+            var month = moment(new Date()).format("M");
+            var day = moment(new Date()).format("DD");
             if(insertYn){
                 // console.log(one.sv_bill_name);
                 // console.log(one.sva_seq);
                 // console.log(one.item_num);
-                $("#item_date"+one.item_num+"_"+active_payment).html(today);
+                $("#item_date"+one.item_num+"_1_"+active_payment).html(month);
+                $("#item_date"+one.item_num+"_2_"+active_payment).html(day);
                 if(one.view_type == "M")
                     $("#item_name"+one.item_num+"_"+active_payment).html((one.sva_seq === null ? one.sv_bill_name:one.sva_bill_name));
                 // $("#item_etc"+i+"_1").html();
                 // $("#item_cnt"+i+"_1").html();
                 // $("#item_price"+i+"_1").html();
                 if(one.item_num == "1"){
-                    $("#item_oprice1_"+active_payment).html(item1_price);
-                    $("#item_sprice1_"+active_payment).html(item1_price*0.1);
+                    $("#item_oprice1_"+active_payment).html($.number(item1_price));
+                    $("#item_sprice1_"+active_payment).html($.number(item1_price*0.1));
                 }else if(one.item_num == "2"){
-                    $("#item_oprice2_"+active_payment).html(item2_price);
-                    $("#item_sprice2_"+active_payment).html(item2_price*0.1);
+                    $("#item_oprice2_"+active_payment).html($.number(item2_price));
+                    $("#item_sprice2_"+active_payment).html($.number(item2_price*0.1));
                 }else if(one.item_num == "3"){
-                    $("#item_oprice3_"+active_payment).html(item3_price);
-                    $("#item_sprice3_"+active_payment).html(item3_price*0.1);
+                    $("#item_oprice3_"+active_payment).html($.number(item3_price));
+                    $("#item_sprice3_"+active_payment).html($.number(item3_price*0.1));
                 }else if(one.item_num == "4"){
-                    $("#item_oprice4_"+active_payment).html(item4_price);
-                    $("#item_sprice4_"+active_payment).html(item4_price*0.1);
+                    $("#item_oprice4_"+active_payment).html($.number(item4_price));
+                    $("#item_sprice4_"+active_payment).html($.number(item4_price*0.1));
                 }
 
                 $("#item_sprice"+one.item_num+"_"+active_payment).html();
                 $("#item_msg"+one.item_num+"_"+active_payment).html();
             }else{
-                // console.log(one.sva_seq);
-                $("#item_date"+one.item_num+"_"+active_payment).html(today);
+                console.log(one.sv_bill_name);
+                $("#item_date"+one.item_num+"_1_"+active_payment).html(month);
+                $("#item_date"+one.item_num+"_2_"+active_payment).html(day);
                 if(one.view_type == "M")
                     $("#item_name"+one.item_num+"_"+active_payment).html((one.sva_seq === null ? one.sv_bill_name:one.sva_bill_name));
 
                 if(one.item_num == "1"){
-                    $("#item_oprice1_"+active_payment).html(item1_price);
-                    $("#item_sprice1_"+active_payment).html(item1_price*0.1);
+                    $("#item_oprice1_"+active_payment).html($.number(item1_price));
+                    $("#item_sprice1_"+active_payment).html($.number(item1_price*0.1));
                 }else if(one.item_num == "2"){
-                    $("#item_oprice2_"+active_payment).html(item2_price);
-                    $("#item_sprice2_"+active_payment).html(item2_price*0.1);
+                    $("#item_oprice2_"+active_payment).html($.number(item2_price));
+                    $("#item_sprice2_"+active_payment).html($.number(item2_price*0.1));
                 }else if(one.item_num == "3"){
-                    $("#item_oprice3_"+active_payment).html(item3_price);
-                    $("#item_sprice3_"+active_payment).html(item3_price*0.1);
+                    $("#item_oprice3_"+active_payment).html($.number(item3_price));
+                    $("#item_sprice3_"+active_payment).html($.number(item3_price*0.1));
                 }else if(one.item_num == "4"){
-                    $("#item_oprice4_"+active_payment).html(item4_price);
-                    $("#item_sprice4_"+active_payment).html(item4_price*0.1);
+                    $("#item_oprice4_"+active_payment).html($.number(item4_price));
+                    $("#item_sprice4_"+active_payment).html($.number(item4_price*0.1));
                 }
             }
-            $("#totalprice1_"+active_payment).html(totalprice+surtaxprice);
-            $("#totalprice2_"+active_payment).html(totalprice+surtaxprice);
+            $("#totalprice1_"+active_payment).html($.number(totalprice+surtaxprice));
+            $("#totalprice2_"+active_payment).html($.number(totalprice+surtaxprice));
+            $("#totalprice3_"+active_payment).html(0);
+            $("#totalprice4_"+active_payment).html(0);
+            $("#totalprice5_"+active_payment).html(0);
             // console.log(totalprice.toString().length);
-            $("#number1").html(11 - totalprice.toString().length);
-            for(var i = 0; i < totalprice.toString().length;i++){
-                var index =totalprice.toString().length - (i+1)
-                $("#price"+active_payment+"_"+(i+1)).html(totalprice.toString().substr(index,1));
-            }
+            $("#number"+active_payment).html(11 - totalprice.toString().length);
+            $("#top_totalprice"+active_payment).html($.number(totalprice));
+            $("#top_surtax"+active_payment).html($.number(surtaxprice));
+            // for(var i = 0; i < totalprice.toString().length;i++){
+            //     var index =totalprice.toString().length - (i+1)
+            //     $("#price"+active_payment+"_"+(i+1)).html(totalprice.toString().substr(index,1));
+            // }
 
-            for(var i = 0; i < surtaxprice.toString().length;i++){
-                var index =surtaxprice.toString().length - (i+1)
-                $("#sprice"+active_payment+"_"+(i+1)).html(surtaxprice.toString().substr(index,1));
-            }
+            // for(var i = 0; i < surtaxprice.toString().length;i++){
+            //     var index =surtaxprice.toString().length - (i+1)
+            //     $("#sprice"+active_payment+"_"+(i+1)).html(surtaxprice.toString().substr(index,1));
+            // }
 
         }
     });
+    console.log(item1);
     if(item1 > 1){
         $("#item_name1_"+active_payment).html($("#item_name1_"+active_payment).html()+" 외");
     }
@@ -728,7 +520,7 @@ function setPayment(){
 }
 
 function getClaimDetail(cl_seq,idx){
-    console.log(idx);
+    // console.log(idx);
     var url = "/api/claimDetail/";
     // var datas = $("#addClaim").serialize();
     $.ajax({
@@ -737,14 +529,14 @@ function getClaimDetail(cl_seq,idx){
         dataType : 'JSON',
         data : "cl_seq="+cl_seq,
         success:function(response){
-            // console.log(response);
+            console.log(response);
             for(var i = 0; i < response.length;i++){
                 var info = response[i];
                 info.active_payment = idx;
                 info.item_num = info.cd_num;
                 // var view_length = addList.length;
                 info.view_type = info.cd_main;
-                addList.push(info);
+                addList[idx].push(info);
                 if(info.sv_payment_type == "1"){
                     var payment_type = "무통장";
                 }else if(info.sv_payment_type == "2"){
@@ -760,12 +552,12 @@ function getClaimDetail(cl_seq,idx){
                 }else{
                     var pay_type = "익월 "+info.sv_pay_day+"일";
                 }
-                var view_length = i;
-                var html = '<tr class="showclaim" data-svpseq="'+info.svp_seq+'"><input type="hidden" name="cd_main[]" id="cd_main_'+view_length+'" value="'+info.cd_main+'"><input type="hidden" name="cd_seq[]" id="cd_seq_'+view_length+'" value="'+info.cd_seq+'">\
-                                <td>'+info.sv_number+'</td>\
+                var view_length = (i+1);
+                var html = '<tr class="showclaim" data-svpseq="'+info.svp_seq+'"><input type="hidden" name="cd_main[]" id="cd_main_'+idx+'_'+view_length+'" value="'+info.cd_main+'"><input type="hidden" name="cd_seq[]" id="cd_seq_'+view_length+'" value="'+info.cd_seq+'">\
+                                <td>'+(info.sva_seq === null ? info.sv_number:info.sva_number)+'</td>\
                                 <td>'+payment_type+'</td>\
                                 <td>'+pay_type+'</td>\
-                                <td class="code_'+idx+'" data-index="'+view_length+'">T0'+info.cl_code+'-1'+info.cd_main+'</td>\
+                                <td class="code_'+idx+'" data-index="'+view_length+'">T0'+info.cl_code+'-'+info.item_num+info.cd_main+'</td>\
                                 <input type="hidden" name="cd_svp_seq[]" value="'+info.svp_seq+'">\
                                 <td><select name="cd_num[]" class="select2 item_num" data-index="'+view_length+'" id="view_select_'+view_length+'"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></td>\
                                 <td><input type="checkbox" name="cd_main_check[]" class="view_type_change" id="main_'+view_length+'" data-index="'+view_length+'" '+(info.cd_main == "M" ? "checked":"")+'></td>\
@@ -783,11 +575,13 @@ function getClaimDetail(cl_seq,idx){
                 }else{
                     $("#paytype"+$("#active_payment").val()).html("청구");
                 }
+                console.log(info.item_num);
+                $("#addClaim"+idx).find('#view_select_'+view_length).val(info.item_num);
               
                 
             }
              setPayment();
-             setNum();
+             // setNum();
              $(".select2").select();
             // document.location.reload();
         },

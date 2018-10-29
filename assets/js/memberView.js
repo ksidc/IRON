@@ -1,7 +1,11 @@
-
+var claim_extend_view = false;
+var payment_extend_view = false;
+var paycom_extend_view =false;
 $(function(){
     getPaymentList();
-
+    getPriceList();
+    getClaimList();
+    getComList(false);
     $( "#dialogFirstSetting" ).dialog({
         autoOpen: false,
         modal: true,
@@ -93,17 +97,17 @@ $(function(){
         paycomCal();
     })
 
-    $(".payment_check").click(function(){
+    $("body").on("click",".payment_check",function(){
         // alert(1);
         paymentCal();
     })
 
-    $(".claim_check").click(function(){
+    $("body").on("click",".claim_check",function(){
         // alert(1);
         claimCal();
     })
 
-    $(".paycom_check").click(function(){
+    $("body").on("click",".paycom_check",function(){
         // alert(1);
         paycomCal();
     })
@@ -119,8 +123,8 @@ $(function(){
             $(".payment_tr").show();
         }
     })
-    $("#all_payment").trigger("click");
-    $("#claim_all").trigger("click");
+    
+    
 
 
     $("body").on("click",".option_extend",function(){
@@ -184,6 +188,8 @@ $(function(){
                             var pm_date = paymentinfo[2];
                             var pm_end_date = paymentinfo[3];
                             var pm_input_date = paymentinfo[4];
+                            var pm_service_start = paymentinfo[5];
+                            var pm_service_end = paymentinfo[6];
 
                             if(pm_status == "0"){
                                 if(pm_pay_period > 1){
@@ -207,7 +213,7 @@ $(function(){
 
                                 }
                             }else if(pm_status == "9"){
-                                var payment_status = "<span style='color:#548235'>가결제("+pm_pay_period+"개월) " +pm_input_date+"</span>";
+                                var payment_status = "<span style='color:#548235'>가결제("+pm_pay_period+"개월) <br>" +pm_input_date+"</span>";
                             }else if(pm_status == "1"){
                                 var payment_status = "완납";
                             }else{
@@ -231,7 +237,7 @@ $(function(){
                                         <td style="border-bottom: 1px solid #d9d9d9">'+moment(response[i].sv_regdate).format("YYYY-MM-DD")+'<br>'+(response[i].sv_service_start !== null ? response[i].sv_service_start.substring(0,10):'')+'</td>\
                                         <td style="border-bottom: 1px solid #d9d9d9" class="basic">'+response[i].sva_input_date+'</td>\
                                         <td style="border-bottom: 1px solid #d9d9d9">'+sv_status+'</td>\
-                                        <td style="border-bottom: 1px solid #d9d9d9">'+moment(response[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
+                                        <td style="border-bottom: 1px solid #d9d9d9">'+(pm_service_start == "" ? moment(response[i].sv_account_start).format("YYYY-MM-DD"):moment(pm_service_start).format("YYYY-MM-DD"))+'<br>'+(pm_service_end == "" ? moment(response[i].sv_account_end).format("YYYY-MM-DD"):moment(pm_service_end).format("YYYY-MM-DD"))+'</td>\
                                         <td style="border-bottom: 1px solid #d9d9d9">'+payment_status+'</td>\
                                         <td style="border-bottom: 1px solid #d9d9d9"></td>\
                                     </tr>';
@@ -351,7 +357,8 @@ $(function(){
                     console.log(response);
                     if(response.result){
                         alert("청구 완료");
-                        document.location.reload();
+                        // document.location.reload();
+                        getClaimList();
                     }
                     // document.location.reload();
                 }
@@ -449,7 +456,7 @@ $(function(){
         }
     });
     
-    $(".claimView").click(function(){
+    $("body").on("click",".claimView",function(){
 
         var url = "/api/claimView/"+$(this).data("seq");
         $.ajax({
@@ -482,22 +489,24 @@ $(function(){
                 $("#ca_to_email").val(response.info.ca_to_email);
                 $("#ca_date").val(response.info.ca_date);
                 $("#ca_empty_size").val(response.info.ca_empty_size);
-                $("#ca_price").val(response.info.ca_price);
-                $("#ca_surtax").val(response.info.ca_surtax);
-                $("#ca_total_price").val(response.info.ca_total_price);
-                $("#ca_price_info1").val(response.info.ca_price_info1);
-                $("#ca_price_info2").val(response.info.ca_price_info2);
-                $("#ca_price_info3").val(response.info.ca_price_info3);
-                $("#ca_price_info4").val(response.info.ca_price_info4);
-                $("#ca_price_info5").val(response.info.ca_price_info5);
+                $("#ca_price").val($.number(response.info.ca_price));
+                $("#ca_surtax").val($.number(response.info.ca_surtax));
+                $("#ca_total_price").val($.number(response.info.ca_total_price));
+                $("#ca_price_info1").val($.number(response.info.ca_price_info1));
+                $("#ca_price_info2").val($.number(response.info.ca_price_info2));
+                $("#ca_price_info3").val($.number(response.info.ca_price_info3));
+                $("#ca_price_info4").val($.number(response.info.ca_price_info4));
+                $("#ca_price_info5").val($.number(response.info.ca_price_info5));
 
                 for(var i = 0; i < response.list.length;i++){
                     // console.log()
+                    var datemo = response.info.ca_monthday.split("-");
                     $("#cl_seq"+response.list[i].ca_sort).val(response.list[i].cl_seq);
-                    $("#ca_item_date"+response.list[i].ca_sort).val(response.info.ca_monthday);
+                    $("#ca_item_date"+response.list[i].ca_sort+"_1").val(datemo[0]);
+                    $("#ca_item_date"+response.list[i].ca_sort+"_2").val(datemo[1]);
                     $("#ca_item_name"+response.list[i].ca_sort).val(response.list[i].ca_item_name);
-                    $("#ca_item_price"+response.list[i].ca_sort).val(response.list[i].ca_item_price);
-                    $("#ca_item_surtax"+response.list[i].ca_sort).val(response.list[i].ca_item_surtax);
+                    $("#ca_item_price"+response.list[i].ca_sort).val($.number(response.list[i].ca_item_price));
+                    $("#ca_item_surtax"+response.list[i].ca_sort).val($.number(response.list[i].ca_item_surtax));
                 }
                 $( "#dialogClaim" ).dialog("open");$("#dialogClaim").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
             },
@@ -508,7 +517,7 @@ $(function(){
 
     });
 
-    $(".billView").click(function(){
+    $("body").on("click",".billView",function(){
         var publish_type = $(this).data("p_type");
         var url = "/api/claimView/"+$(this).data("seq");
         $.ajax({
@@ -516,17 +525,20 @@ $(function(){
             type : 'GET',
             dataType : 'JSON',
             success:function(response){
-                console.log(response);
+                // console.log(response);
+                console.log(publish_type);
                 if(publish_type == "0"){
                     $("#tax_title").html("작성");
                     var date1 = moment().format("YYYY-MM-DD");
                     var date2 = moment().format("MM-DD");
                     $(".btn-bill-reg").html("작성")
+                    $("#paytype1").html("영수");
                 }else{
                     $("#tax_title").html("수정");
                     var date1 = response.info.ca_date;
                     var date2 = response.info.ca_monthday;
-                    $(".btn-bill-reg").html("수정")
+                    $(".btn-bill-reg").html("수정");
+                    $("#paytype1").html("청구");
                 }
 
                 $("#ba_seq").val(response.info.ca_seq);
@@ -552,21 +564,50 @@ $(function(){
                 $("#ba_to_email").val(response.info.ca_to_email);
                 $("#ba_date").val(date1);
                 $("#ba_empty_size").val(response.info.ca_empty_size);
-                $("#ba_price").val(response.info.ca_price);
-                $("#ba_surtax").val(response.info.ca_surtax);
-                $("#ba_total_price").val(response.info.ca_total_price);
-                $("#ba_price_info1").val(response.info.ca_price_info1);
-                $("#ba_price_info2").val(response.info.ca_price_info2);
-                $("#ba_price_info3").val(response.info.ca_price_info3);
-                $("#ba_price_info4").val(response.info.ca_price_info4);
-                $("#ba_price_info5").val(response.info.ca_price_info5);
+                $("#ba_price").val($.number(response.info.ca_price));
+                $("#ba_surtax").val($.number(response.info.ca_surtax));
+                $("#ba_total_price").val($.number(response.info.ca_total_price));
+                $("#ba_price_info1").val($.number(response.info.ca_price_info1));
+                $("#ba_price_info2").val($.number(response.info.ca_price_info2));
+                $("#ba_price_info3").val($.number(response.info.ca_price_info3));
+                $("#ba_price_info4").val($.number(response.info.ca_price_info4));
+                $("#ba_price_info5").val($.number(response.info.ca_price_info5));
+                // console.log(response.list.length);
+                $("#bl_seq1").val("");
+                $("#ba_item_date1_1").val("");
+                $("#ba_item_date1_2").val("");
+                $("#ba_item_name1").val("");
+                $("#ba_item_price1").val("");
+                $("#ba_item_surtax1").val("");
+                $("#bl_seq2").val("");
+                $("#ba_item_date2_1").val("");
+                $("#ba_item_date2_2").val("");
+                $("#ba_item_name2").val("");
+                $("#ba_item_price2").val("");
+                $("#ba_item_surtax2").val("");
+                $("#bl_seq3").val("");
+                $("#ba_item_date3_1").val("");
+                $("#ba_item_date3_2").val("");
+                $("#ba_item_name3").val("");
+                $("#ba_item_price3").val("");
+                $("#ba_item_surtax3").val("");
+                $("#bl_seq4").val("");
+                $("#ba_item_date4_1").val("");
+                $("#ba_item_date4_2").val("");
+                $("#ba_item_name4").val("");
+                $("#ba_item_price4").val("");
+                $("#ba_item_surtax4").val("");
 
                 for(var i = 0; i < response.list.length;i++){
+                    
+
+                    var datemo = date2.split("-");
                     $("#bl_seq"+response.list[i].ca_sort).val(response.list[i].cl_seq);
-                    $("#ba_item_date"+response.list[i].ca_sort).val(date2);
+                    $("#ba_item_date"+response.list[i].ca_sort+"_1").val(datemo[0]);
+                    $("#ba_item_date"+response.list[i].ca_sort+"_2").val(datemo[1]);
                     $("#ba_item_name"+response.list[i].ca_sort).val(response.list[i].ca_item_name);
-                    $("#ba_item_price"+response.list[i].ca_sort).val(response.list[i].ca_item_price);
-                    $("#ba_item_surtax"+response.list[i].ca_sort).val(response.list[i].ca_item_surtax);
+                    $("#ba_item_price"+response.list[i].ca_sort).val($.number(response.list[i].ca_item_price));
+                    $("#ba_item_surtax"+response.list[i].ca_sort).val($.number(response.list[i].ca_item_surtax));
                 }
 
                 $( "#dialogBill" ).dialog("open");$("#dialogBill").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
@@ -582,14 +623,14 @@ $(function(){
         if(confirm("수정하시겠습니까?")){
             var url = "/api/paymentClaimUpdate";
             var datas = $("#claimEdit").serialize();
-
+            
             $.ajax({
                 url : url,
                 type : 'POST',
                 dataType : 'JSON',
                 data : datas,
                 success:function(response){
-                    alert("수정완료");
+                    alert("처리완료");
                     $('#dialogClaim').dialog('close');
                     // document.location.reload();
                 },
@@ -601,16 +642,17 @@ $(function(){
     })
 
     $(".btn-bill-reg").click(function(){
-        if(confirm("수정하시겠습니까?")){
+        if(confirm($(this).html()+"하시겠습니까?")){
             var url = "/api/paymentClaimUpdate";
             var datas = $("#billEdit").serialize();
+
             $.ajax({
                 url : url,
                 type : 'POST',
                 dataType : 'JSON',
                 data : datas,
                 success:function(response){
-                    alert("수정완료");
+                    alert("처리완료");
                     $('#dialogBill').dialog('close');
                     // document.location.reload();
                 },
@@ -706,7 +748,7 @@ $(function(){
         }else{
            $(".basic").show();
             $(".addcol").attr("colspan",13);
-            $(".addcol2").attr("colspan",14);
+            $(".addcol2").attr("colspan",13);
             $(this).html("축소하기(기본)");
         }
 
@@ -721,17 +763,17 @@ $(function(){
             $(this).html("축소하기(요금)");
         }
     });
-    $(".detailView").click(function(){
+    $("body").on("click",".detailView",function(){
         var specs = "left=10,top=10,width=1000,height=700";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
         window.open("/member/payment_view/"+$(this).data("seq"), 'serviceMake1', specs);
     });
 
-    $(".detailPView").click(function(){
+    $("body").on("click",".detailPView",function(){
         if($(this).data("pmtype") == "1"){
             var specs = "left=10,top=10,width=1000,height=700";
             specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
-            window.open("/member/claim_view/"+$(this).data("seq"), 'serviceMake2', specs);
+            window.open("/member/claim_view/"+$(this).data("seq")+"/"+$(this).data("type"), 'serviceMake2', specs);
         }else{
             var specs = "left=10,top=10,width=1000,height=700";
             specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
@@ -739,10 +781,17 @@ $(function(){
         }
     });
 
-    $(".detailCView").click(function(){
-        var specs = "left=10,top=10,width=1000,height=700";
-        specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
-        window.open("/member/paycom_view/"+$(this).data("seq"), 'serviceMake3', specs);
+    $("body").on("click",".detailCView",function(){
+        if($(this).data("pmtype") == "1"){
+            var specs = "left=10,top=10,width=1000,height=700";
+            specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
+            window.open("/member/paycom_view/"+$(this).data("seq"), 'serviceMake3', specs);
+        }else{
+            var specs = "left=10,top=10,width=1000,height=700";
+            specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
+            window.open("/member/paycom_view_once/"+$(this).data("seq"), 'serviceMake3', specs);
+        }
+        
     });
 
     $(".memo").click(function(){
@@ -859,110 +908,130 @@ $(function(){
             alert("계산서가 청구발행인 서비스는 부분 완납 처리가 불가합니다. 체크 상태를 확인해 주세요");
             return false;
         }
-        console.log(publish);
+        // console.log(publish);
+        
         if(publish == "1"){
-            var url = "/api/paymentComPay";
-            $.ajax({
-                url : url,
-                type : 'POST',
-                dataType : 'JSON',
-                data : "data="+data.join(","),
-                success:function(response){
-                    console.log(response);
-                    if(response.result){
-                        alert("완납 처리 되었습니다.");
-                        document.location.reload();
+            if(confirm("완납 처리를 하시겠습니까?")){
+                var url = "/api/paymentComPay";
+                $.ajax({
+                    url : url,
+                    type : 'POST',
+                    dataType : 'JSON',
+                    data : "data="+data.join(","),
+                    success:function(response){
+                        console.log(response);
+                        if(response.result){
+                            alert("완납 처리 되었습니다.");
+                            getPaymentList();
+                            getClaimList();
+                            getComList(false);
+                            // document.location.reload();
+                        }
+                        // alert("삭제되었습니다.");
+                        // getPaymentMemo();
+                        // $('#dialogInput').dialog('close');
+                        // document.location.reload();
+                    },
+                    error : function(error){
+                        console.log(error);
                     }
-                    // alert("삭제되었습니다.");
-                    // getPaymentMemo();
-                    // $('#dialogInput').dialog('close');
-                    // document.location.reload();
-                },
-                error : function(error){
-                    console.log(error);
-                }
-            });
+                });
+            }
         }else{ // 영수처리
-            var url = "/api/paymentComPayPost";
-            $.ajax({
-                url : url,
-                type : 'POST',
-                dataType : 'JSON',
-                data : "data="+data.join(",")+"&pm_total="+total,
-                success:function(response){
-                    if(confirm("완납 처리되었습니다. 계산서를 작성하겠습니까?")){
-                        var publish_type = 0;
-                        var url = "/api/claimView/"+ca_seq;
-                        $.ajax({
-                            url : url,
-                            type : 'GET',
-                            dataType : 'JSON',
-                            success:function(response){
-                                // console.log(response);
-                                if(publish_type == "0"){
-                                    $("#tax_title").html("작성");
-                                    var date1 = moment().format("YYYY-MM-DD");
-                                    var date2 = moment().format("MM-DD");
-                                    $(".btn-bill-reg").html("작성")
-                                }else{
-                                    $("#tax_title").html("수정");
-                                    var date1 = response.info.ca_date;
-                                    var date2 = response.info.ca_monthday;
-                                    $(".btn-bill-reg").html("수정")
+            if(total != data.length ){
+                var msg = "부분 완납 처리를 하시겠습니까?";
+            }else{
+                var msg = "완납 처리를 하시겠습니까?";
+            }
+            if(confirm(msg)){
+                var url = "/api/paymentComPayPost";
+                $.ajax({
+                    url : url,
+                    type : 'POST',
+                    dataType : 'JSON',
+                    data : "data="+data.join(",")+"&pm_total="+total,
+                    success:function(response){
+                        getPaymentList();
+                        getClaimList();
+                        getComList(false);
+                        if(confirm("완납 처리되었습니다. 계산서를 작성하겠습니까?")){
+                            var publish_type = 0;
+                            var url = "/api/claimView/"+ca_seq;
+                            $.ajax({
+                                url : url,
+                                type : 'GET',
+                                dataType : 'JSON',
+                                success:function(response){
+                                    // console.log(response);
+                                    if(publish_type == "0"){
+                                        $("#tax_title").html("작성");
+                                        var date1 = moment().format("YYYY-MM-DD");
+                                        var date2 = moment().format("MM-DD");
+                                        $(".btn-bill-reg").html("작성");
+                                        $("#paytype1").html("영수");
+                                    }else{
+                                        $("#tax_title").html("수정");
+                                        var date1 = response.info.ca_date;
+                                        var date2 = response.info.ca_monthday;
+                                        $(".btn-bill-reg").html("수정");
+                                        $("#paytype1").html("청구");
+                                    }
+
+                                    $("#ba_seq").val(response.info.ca_seq);
+                                    $("#ba_from_number").val(response.info.ca_from_number);
+                                    $("#ba_to_number").val(response.info.ca_to_number);
+                                    $("#ba_from_name").val(response.info.ca_from_name);
+                                    $("#ba_from_ceo").val(response.info.ca_from_ceo);
+                                    $("#ba_to_name").val(response.info.ca_to_name);
+                                    $("#ba_to_ceo").val(response.info.ca_to_ceo);
+                                    $("#ba_from_address").val(response.info.ca_from_address);
+                                    $("#ba_to_address").val(response.info.ca_to_address);
+                                    $("#ba_from_condition").val(response.info.ca_from_condition);
+                                    $("#ba_from_type").val(response.info.ca_from_type);
+                                    $("#ba_to_condition").val(response.info.ca_to_condition);
+                                    $("#ba_to_type").val(response.info.ca_to_type);
+                                    $("#ba_from_team").val(response.info.ca_from_team);
+                                    $("#ba_from_charger").val(response.info.ca_from_charger);
+                                    $("#ba_to_team").val(response.info.ca_to_team);
+                                    $("#ba_to_charger").val(response.info.ca_to_charger);
+                                    $("#ba_from_tel").val(response.info.ca_from_tel);
+                                    $("#ba_to_tel").val(response.info.ca_to_tel);
+                                    $("#ba_from_email").val(response.info.ca_from_email);
+                                    $("#ba_to_email").val(response.info.ca_to_email);
+                                    $("#ba_date").val(date1);
+                                    $("#ba_empty_size").val(response.info.ca_empty_size);
+                                    $("#ba_price").val($.number(response.info.ca_price));
+                                    $("#ba_surtax").val($.number(response.info.ca_surtax));
+                                    $("#ba_total_price").val($.number(response.info.ca_total_price));
+                                    $("#ba_price_info1").val($.number(response.info.ca_price_info1));
+                                    $("#ba_price_info2").val($.number(response.info.ca_price_info2));
+                                    $("#ba_price_info3").val($.number(response.info.ca_price_info3));
+                                    $("#ba_price_info4").val($.number(response.info.ca_price_info4));
+                                    $("#ba_price_info5").val($.number(response.info.ca_price_info5));
+
+                                    for(var i = 0; i < response.list.length;i++){
+                                        var datemo = date2.split("-");
+                                        $("#bl_seq"+response.list[i].ca_sort).val(response.list[i].cl_seq);
+                                        $("#ba_item_date"+response.list[i].ca_sort+"_1").val(datemo[0]);
+                                        $("#ba_item_date"+response.list[i].ca_sort+"_2").val(datemo[1]);
+                                        $("#ba_item_name"+response.list[i].ca_sort).val(response.list[i].ca_item_name);
+                                        $("#ba_item_price"+response.list[i].ca_sort).val($.number(response.list[i].ca_item_price));
+                                        $("#ba_item_surtax"+response.list[i].ca_sort).val($.number(response.list[i].ca_item_surtax));
+                                    }
+
+                                    $( "#dialogBill" ).dialog("open");$("#dialogBill").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
+                                },
+                                error : function(error){
+                                    console.log(error);
                                 }
-
-                                $("#ba_seq").val(response.info.ca_seq);
-                                $("#ba_from_number").val(response.info.ca_from_number);
-                                $("#ba_to_number").val(response.info.ca_to_number);
-                                $("#ba_from_name").val(response.info.ca_from_name);
-                                $("#ba_from_ceo").val(response.info.ca_from_ceo);
-                                $("#ba_to_name").val(response.info.ca_to_name);
-                                $("#ba_to_ceo").val(response.info.ca_to_ceo);
-                                $("#ba_from_address").val(response.info.ca_from_address);
-                                $("#ba_to_address").val(response.info.ca_to_address);
-                                $("#ba_from_condition").val(response.info.ca_from_condition);
-                                $("#ba_from_type").val(response.info.ca_from_type);
-                                $("#ba_to_condition").val(response.info.ca_to_condition);
-                                $("#ba_to_type").val(response.info.ca_to_type);
-                                $("#ba_from_team").val(response.info.ca_from_team);
-                                $("#ba_from_charger").val(response.info.ca_from_charger);
-                                $("#ba_to_team").val(response.info.ca_to_team);
-                                $("#ba_to_charger").val(response.info.ca_to_charger);
-                                $("#ba_from_tel").val(response.info.ca_from_tel);
-                                $("#ba_to_tel").val(response.info.ca_to_tel);
-                                $("#ba_from_email").val(response.info.ca_from_email);
-                                $("#ba_to_email").val(response.info.ca_to_email);
-                                $("#ba_date").val(date1);
-                                $("#ba_empty_size").val(response.info.ca_empty_size);
-                                $("#ba_price").val(response.info.ca_price);
-                                $("#ba_surtax").val(response.info.ca_surtax);
-                                $("#ba_total_price").val(response.info.ca_total_price);
-                                $("#ba_price_info1").val(response.info.ca_price_info1);
-                                $("#ba_price_info2").val(response.info.ca_price_info2);
-                                $("#ba_price_info3").val(response.info.ca_price_info3);
-                                $("#ba_price_info4").val(response.info.ca_price_info4);
-                                $("#ba_price_info5").val(response.info.ca_price_info5);
-
-                                for(var i = 0; i < response.list.length;i++){
-                                    $("#ba_seq"+response.list[i].ca_sort).val(response.list[i].cl_seq);
-                                    $("#ba_item_date"+response.list[i].ca_sort).val(date2);
-                                    $("#ba_item_name"+response.list[i].ca_sort).val(response.list[i].ca_item_name);
-                                    $("#ba_item_price"+response.list[i].ca_sort).val(response.list[i].ca_item_price);
-                                    $("#ba_item_surtax"+response.list[i].ca_sort).val(response.list[i].ca_item_surtax);
-                                }
-
-                                $( "#dialogBill" ).dialog("open");$("#dialogBill").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
-                            },
-                            error : function(error){
-                                console.log(error);
-                            }
-                        });
+                            });
+                        }
+                    },
+                    error : function(error){
+                        console.log(error);
                     }
-                },
-                error : function(error){
-                    console.log(error);
-                }
-            });
+                });
+            }
         }
 
     })
@@ -1247,7 +1316,22 @@ $(function(){
             $("#pm_bill_name").val($("#pm_claim_name").val());
         }
     });
+
+    $(".pm_date").keyup(function(){
+        var pay_day = $(this).parent().parent().find(".pay_day").val();
+        var end = moment($(this).val()).add(pay_day,'days').format("YYYY-MM-DD");
+        $(this).parent().parent().find(".pm_end_date").val(end);
+        // $("#p_pm_end_date").html(end);
+    })
     
+    $("body").on("keyup",".pm_date",function(){
+        var target = $(this).parent().parent().find(".pm_end_date");
+        var plusDate = $(this).data("adddate");
+
+        var end = moment($(this).val()).add(plusDate,'days').format("YYYY-MM-DD");
+        console.log(end);
+        target.val(end);
+    })
 })
 
 var fileCheck = function(){
@@ -1306,10 +1390,12 @@ function cut_80(obj){
 function viewAll(){
     if($(".payment-basic").css("display") != "none"){
         $(".payment-basic").hide();
-        $("#payment_extend").html(">");
+        $("#payment_extend").html("<");
+        payment_extend_view = false;
     }else{
         $(".payment-basic").show();
         $("#payment_extend").html(">");
+        payment_extend_view = true;
     }
 
 }
@@ -1317,10 +1403,12 @@ function viewAll(){
 function viewAll2(){
     if($(".claim_payment").css("display") != "none"){
         $(".claim_payment").hide();
-        $("#claim_extend").html(">");
+        $("#claim_extend").html("<");
+        claim_extend_view = false;
     }else{
         $(".claim_payment").show();
         $("#claim_extend").html(">");
+        claim_extend_view = true;
     }
     // $(".claim_payment").show();
 }
@@ -1328,11 +1416,13 @@ function viewAll2(){
 function viewAll3(){
     if($(".paycom_payment").css("display") != "none"){
         $(".paycom_payment").hide();
-        $("#paycom_extend").html(">");
+        $("#paycom_extend").html("<");
+        paycom_extend_view = false;
     }else{
         $(".paycom_payment").show();
         $("#paycom_extend").html(">");
-    }
+        paycom_extend_view = true;
+     }
     // $(".claim_payment").show();
 }
 
@@ -1367,6 +1457,7 @@ function oncePayment(){
     })
     if(checkCnt == 0){
         $(".service0").hide();
+        $("#pm_end_date").val(moment(new Date()).format("YYYY-MM-DD"));
     }else{
         $(".service0").show();
     }
@@ -1376,17 +1467,28 @@ function oncePayment(){
 function servicePayment(mb_seq){
     var checkCnt = 0;
     var checkSeq = [];
+    var checkSvaSeq = [];
     $(".payment_check").each(function(){
         if($(this).is(":checked")){
             checkCnt++;
-            checkSeq.push($(this).val()+"|"+$(this).data("svaseq"));
+            // console.log($(this).data("svaseq") );
+            if($(this).data("svaseq") != "" && $(this).data("svaseq") !== null){
+                checkSvaSeq.push($(this).val()+"|"+$(this).data("svaseq"));
+            }else{
+                checkSeq.push($(this).val()+"|");
+            }
+            
         }
     })
+
     if(checkCnt == 0){
         alert("서비스를 선택해 주세요");
         return false;
     }
-
+    
+    // console.log(checkSeq);
+    // console.log(checkSvaSeq);
+    // return false;
     // if(checkCnt > 1){
     //     alert("서비스를 하나만 선택해 주세요");
     //     return false;
@@ -1397,12 +1499,13 @@ function servicePayment(mb_seq){
             url : url,
             type : 'POST',
             dataType : 'JSON',
-            data : "pm_sv_seq="+checkSeq.join(","),
+            data : "pm_sv_seq="+checkSeq.join(",")+"&pm_sva_seq="+checkSvaSeq.join(","),
             success:function(response){
                 console.log(response);
                 if(response.result){
                     alert("청구 되었습니다.");
-                    document.location.reload();
+                    // document.location.reload();
+                    getClaimList();
                 }
                 //
             },
@@ -1511,9 +1614,9 @@ function memberUpdate6(mb_seq){
 }
 
 function openPopup(mb_seq){
-    var specs = "left=10,top=10,width=1000,height=700";
+    var specs = "left=10,top=10,width=1400,height=700";
         specs += ",toolbar=no,menubar=no,status=no,scrollbars=no,resizable=0";
-        window.open("/member/payment_setting/"+mb_seq, specs);
+        window.open("/member/payment_setting/"+mb_seq,'paymentSetting', specs);
 }
 function paymentCal(){
     var price1 = 0;
@@ -1658,12 +1761,12 @@ function paycomCal(){
         }
     })
     $(".paycom_price1").html($.number(price1)+" 원");
-    $(".paycom_price2").html($.number(price2)+" 원");
+    $(".paycom_price2").html("- "+$.number(price2)+" 원");
     $(".paycom_price3").html($.number(price3)+" 원");
     $(".paycom_price4").html($.number(price4)+" 원");
     $(".paycom_price5").html($.number(price5)+" 원");
-    $(".paycom_price6").html($.number(price6)+" 원");
-    $(".paycom_price7").html($.number(price7)+" 원");
+    $(".paycom_price6").html("- "+$.number(price6)+" 원");
+    $(".paycom_price7").html("- "+$.number(price7)+" 원");
     $(".paycom_price8").html($.number(price8)+" 원");
     $(".paycom_price9").html($.number(price9)+" 원");
     $(".paycom_price10").html($.number(price10)+" 원");
@@ -1737,231 +1840,11 @@ function daumApi() {
     }).open();
 }
 
-// function getPaymentList(){
-//     // var start = $("#start").val();
-//     // // console.log(start);
-//     // var end = 5;
-//     var url = "/api/memberService/"+$("#mb_seq").val();
-//     // var searchForm = $("#searchForm").serialize();
-//     // // console.log(searchForm);
-//     // console.log(url);
-//     $.ajax({
-//         url : url,
-//         type : 'GET',
-//         dataType : 'JSON',
-//         success:function(response){
-//             console.log(response);
-//             var html = "";
-//             if($(".basic").css("display") != "none"){
-//                 var basicView = true;
-//             }else{
-//                 var basicView = false;
-//             }
-//             if($(".payment").css("display") != "none"){
-//                 var paymentView = true;
-//             }else{
-//                 var paymentView = false;
-//             }
-
-//             if(response.length > 0){
-//                 for(var i = 0; i < response.length;i++){
-//                     // console.log(start);
-//                     var num = parseInt(response.length) - i;
-//                     var startdate = new Date(response[i].sv_contract_start);
-//                     var enddate = new Date(response[i].sv_contract_end);
-//                     var diffenddate = moment(enddate).add(2,'days').format('YYYY-MM-DD');
-//                     // console.log(diffenddate);
-//                     var diff = Date.getFormattedDateDiff(startdate, diffenddate);
-
-//                     if(response[i].sv_rental == "N"){
-//                         var sv_rental = "-";
-//                     }else{
-//                         if(response[i].sv_rental_type == "1"){
-//                             var sv_rental = "영구임대";
-//                         }else{
-//                             var sv_rental = "소유권이전<br>("+response[i].sv_rental_date+"개월)";
-//                         }
-//                     }
-//                     if(response[i].sv_auto_extension == "1"){
-//                         var sv_auto = response[i].sv_auto_extension_month+"개월";
-//                         var sv_auto_end = moment(response[i].sv_contract_end).add(sv_auto,'months').subtract(1, "days").format("YYYY-MM-DD")
-//                     }else{
-//                         var sv_auto = "-";
-//                         var sv_auto_end = response[i].sv_contract_end;
-//                     }
-//                     if(response[i].priceinfo !== null){
-//                         var priceinfo = response[i].priceinfo.split("|");
-//                     }else{
-//                         var priceinfo = [0,0,0,0,0];
-//                     }
-//                     var firstPrice = parseInt(priceinfo[0])-parseInt(priceinfo[1]);
-//                     var monthPrice = parseInt(priceinfo[2])-parseInt(priceinfo[3])-parseInt(priceinfo[4]);
-
-//                     if(response[i].sv_status == "0"){
-//                         var sv_status = '입금대기중';
-//                     }else if(response[i].sv_status == "1"){
-//                         var sv_status = '서비스준비중';
-//                     }else if(response[i].sv_status == "2"){
-//                         var sv_status = '서비스작업중';
-//                     }else if(response[i].sv_status == "3"){
-//                         var sv_status = '서비스중';
-//                     }else if(response[i].sv_status == "4"){
-//                         var sv_status = '서비스중지';
-//                     }else if(response[i].sv_status == "5"){
-//                         var sv_status = '서비스해지';
-//                     }else if(response[i].sv_status == "6"){
-//                         var sv_status = '직권중지';
-//                     }else if(response[i].sv_status == "7"){
-//                         var sv_status = '직권해지';
-//                     }
-//                     if(response[i].paymentinfo !== null){
-//                         var paymentinfo = response[i].paymentinfo.split("|");
-//                     }else{
-//                         var paymentinfo = [];
-//                     }
-//                     var pm_status = paymentinfo[0];
-//                     var pm_pay_period = paymentinfo[1];
-//                     var pm_date = paymentinfo[2];
-//                     var pm_end_date = paymentinfo[3];
-//                     var pm_input_date = paymentinfo[4];
-
-//                     if(pm_status == "0"){
-//                         if(pm_pay_period > 1){
-//                             var custom_end_date = moment(pm_date).add(1,'months').format("YYYY-MM-DD");
-//                             if(moment().format("YYYY-MM-DD") >= custom_end_date){
-//                                 var payment_status = "연체";
-//                             }else{
-//                                 if(pm_end_date >= moment().format("YYYY-MM-DD")){
-//                                     var payment_status = "청구("+pm_pay_period+"개월)";
-//                                 }else{
-//                                     var payment_status = "미납("+pm_pay_period+"개월)";
-//                                 }
-//                             }
-//                         }else{
-//                             // 연체 로직 추가
-//                             if(pm_end_date >= moment().format("YYYY-MM-DD")){
-//                                 var payment_status = "청구("+pm_pay_period+"개월)";
-//                             }else{
-//                                 var payment_status = "미납("+pm_pay_period+"개월)";
-//                             }
-
-//                         }
-//                     }else if(pm_status == "9"){
-//                         var payment_status = "가결제("+pm_pay_period+"개월) " +pm_input_date
-//                     }else{
-//                         var payment_status = "완납";
-//                     }
-
-//                     if(response[i].sv_input_unit == 0){
-//                         var sv_input_unit = "구매";
-//                     }else if(response[i].sv_input_unit == 1){
-//                         var sv_input_unit = "월";
-//                     }else{
-//                         var sv_input_unit = "";
-//                     }
-//                     var file_array = [];
-//                     if(response[i].file1 != ""){
-//                         file_array.push("A");
-//                     }
-//                     if(response[i].file2 != ""){
-//                         file_array.push("R");
-//                     }
-//                     if(response[i].file3 != ""){
-//                         file_array.push("T");
-//                     }
-//                     if(response[i].file4 != ""){
-//                         file_array.push("I");
-//                     }
-//                     if(response[i].file6 != ""){
-//                         file_array.push("C");
-//                     }
-//                     if(response[i].file8 != ""){
-//                         file_array.push("O");
-//                     }
-//                     console.log(response[i].sv_service_start );
-//                     html += '<tr>\
-//                                 <td><input type="checkbox" class="listCheck" name="sv_seq[]" value="'+response[i].sv_seq+'"></td>\
-//                                 <td>'+num+'</td>\
-//                                 <td><a href="/member/view/'+response[i].mb_seq+'">'+response[i].mb_name+'</a></td>\
-//                                 <td class="basic">'+response[i].eu_name+'</td>\
-//                                 <td>'+response[i].sv_charger+'</td>\
-//                                 <td><a href="javascript:void(0)" onclick="openGroupView(\''+response[i].sv_code+'\')">'+response[i].sv_code+'</a></td>\
-//                                 <td>'+response[i].sv_contract_start+'</td>\
-//                                 <td class="basic">'+response[i].sv_contract_end+'</td>\
-//                                 <td>'+diff[0]+"개월 "+diff[1]+"일"+'</td>\
-//                                 <td class="basic">'+sv_auto+'</td>\
-//                                 <td class="basic">'+sv_auto_end+'</td>\
-//                                 <td>'+response[i].pc_name+'</td>\
-//                                 <td>'+response[i].pi_name+'</td>\
-//                                 <td '+(response[i].addoptionTotal > 0 ? "class=\"option_extend\"":"")+'  data-seq="'+response[i].sv_seq+'" style="cursor:pointer;width:30px;height:30px;background:#414860;font-size:16px;color:#fff;margin:2px'+(response[i].addoptionTotal > 0 ? "":";opacity:0")+'"> + </td>\
-//                                 <td><a href="javascript:void(0)" onclick="openProductView('+response[i].sv_seq+')">'+response[i].pr_name+'</a></td>\
-//                                 <td class="basic">'+response[i].pd_name+'</td>\
-//                                 <td>'+response[i].ps_name+'</td>\
-//                                 <td>'+sv_rental+'</td>\
-//                                 <td><a href="/service/view/'+response[i].sv_seq+'">'+response[i].sv_number+'</a></td>\
-//                                 <td class="payment">'+response[i].sv_claim_name+'</td>\
-//                                 <td class="payment oneprice right" data-oneprice="'+(response[i].svp_once_price-response[i].svp_once_dis_price)+'" data-allprice="'+firstPrice+'">'+$.number(firstPrice)+' 원</td>\
-//                                 <td class="payment monthprice right" data-oneprice="'+(response[i].svp_month_price-response[i].svp_month_dis_price-(response[i].svp_discount_price/response[i].svp_payment_period))+'" data-allprice="'+monthPrice+'">'+$.number(monthPrice)+' 원</td>\
-//                                 <td class="payment">'+response[i].svp_payment_period+'개월</td>\
-//                                 <td class="payment right">'+$.number(response[i].sv_input_price)+' 원</td>\
-//                                 <td class="payment">'+sv_input_unit+'</td>\
-//                                 <td class="payment">'+response[i].c_name+'</td>\
-//                                 <td>'+moment(response[i].sv_regdate).format("YYYY-MM-DD")+'<br>'+(response[i].sv_service_start !== null ? response[i].sv_service_start.substring(0,10):'')+'</td>\
-//                                 <td class="basic"></td>\
-//                                 <td>'+sv_status+'</td>\
-//                                 <td>'+moment(response[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
-//                                 <td>'+payment_status+'</td>\
-//                                 <td>'+file_array.join(" ")+'</td>\
-//                             </tr>\
-//                             <tr style="border-bottom:0px;display:none" id="child_add_'+response[i].sv_seq+'">\
-//                                 <td colspan=10 class="addcol"></td>\
-//                                 <th style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9;text-align:left;padding-left:30px" colspan=2>부가항목명</th>\
-//                                 <th class="basic" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></th>\
-//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
-//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
-//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스번호</td>\
-//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">청구명</td>\
-//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">초기일회성</td>\
-//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">월(기준)요금</td>\
-//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제주기</td>\
-//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입가</td>\
-//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입 단위</td>\
-//                                 <td class="payment payment1" style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">매입처</td>\
-//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스신청일<br>서비스개시일</td>\
-//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9" class="basic">제품출고일</td>\
-//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">서비스상태</td>\
-//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">과금시작일<br>과금만료일</td>\
-//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9">결제상태</td>\
-//                                 <td style="background:#111E6C;color:#fff;border-bottom: 1px solid #d9d9d9s">문서</td>\
-//                             </tr>\
-//                             ';
-//                 }
-
-                
-//             }else{
-//                 html += '<tr><td colspan="17" style="text-align:center">서비스가 없습니다.</td></tr>';
-//             }
-//             $("#payment-list").html(html);
-
-//             if($(".allView").data("allview") == "Y"){
-                
-//                 $(".option_extend").each(function(){
-//                     $(this).trigger("click");
-//                 })
-//             }
-
-//             if(basicView)
-//                 $(".basic").show();
-
-//             if(paymentView)
-//                 $(".payment").show();
-//         }
-//     });
-//     return false;
-// }
-
 function getPaymentList(){
-        var url = "/api/memberService/"+$("#mb_seq").val();
+        var start = $("#start").val();
+        // console.log(start);
+        var end = $("#end").val();
+        var url = "/api/memberService/"+$("#mb_seq").val()+"/"+start+"/"+end;
         // console.log(searchForm);
         // console.log(url);
         $.ajax({
@@ -1982,27 +1865,27 @@ function getPaymentList(){
                     var paymentView = false;
                 }
 
-                if(response.length > 0){
-                    for(var i = 0; i < response.length;i++){
+                if(response.list.length > 0){
+                    for(var i = 0; i < response.list.length;i++){
                         // console.log(start);
-                        var num = parseInt(response.length) - i;
-                        var startdate = new Date(response[i].sv_contract_start);
-                        var enddate = new Date(response[i].sv_contract_end);
+                        var num = parseInt(response.total) - ((start-1)*end) - i;
+                        var startdate = new Date(response.list[i].sv_contract_start);
+                        var enddate = new Date(response.list[i].sv_contract_end);
                         var diffenddate = moment(enddate).add(2,'days').format('YYYY-MM-DD');
                         // console.log(diffenddate);
                         var diff = Date.getFormattedDateDiff(startdate, diffenddate);
 
-                        if(response[i].sv_rental == "N"){
+                        if(response.list[i].sv_rental == "N"){
                             var sv_rental = "-";
                         }else{
-                            if(response[i].sv_rental_type == "1"){
+                            if(response.list[i].sv_rental_type == "1"){
                                 var sv_rental = "영구임대";
                             }else{
-                                var sv_rental = "소유권이전<br>("+response[i].sv_rental_date+"개월)";
+                                var sv_rental = "소유권이전<br>("+response.list[i].sv_rental_date+"개월)";
                             }
                         }
-                        if(response[i].sv_auto_extension == "1"){
-                            var sv_auto = response[i].sv_auto_extension_month+"개월";
+                        if(response.list[i].sv_auto_extension == "1"){
+                            var sv_auto = response.list[i].sv_auto_extension_month+"개월";
                            
                             // var sv_auto_end = moment(response[i].sv_contract_end).add(sv_auto,'months').subtract(1, "days").format("YYYY-MM-DD")
                             // var sv_auto_end = moment(response[i].sv_contract_end).add(response[i].sv_auto_extension_month,'months').format("YYYY-MM-DD")
@@ -2010,38 +1893,38 @@ function getPaymentList(){
                             var sv_auto = "-";
                             // var sv_auto_end = response[i].sv_contract_end;
                         }
-                        if(response[i].sv_contract_extension_end != "0000-00-00"){
-                            var sv_auto_end = response[i].sv_contract_extension_end;
+                        if(response.list[i].sv_contract_extension_end != "0000-00-00"){
+                            var sv_auto_end = response.list[i].sv_contract_extension_end;
                         }else{
                             var sv_auto_end = "";
                         }
-                        if(response[i].priceinfo !== null){
-                            var priceinfo = response[i].priceinfo.split("|");
+                        if(response.list[i].priceinfo !== null){
+                            var priceinfo = response.list[i].priceinfo.split("|");
                         }else{
                             var priceinfo = [0,0,0,0,0];
                         }
                         var firstPrice = parseInt(priceinfo[0])-parseInt(priceinfo[1]);
                         var monthPrice = parseInt(priceinfo[2])-parseInt(priceinfo[3])-parseInt(priceinfo[4]);
 
-                        if(response[i].sv_status == "0"){
+                        if(response.list[i].sv_status == "0"){
                             var sv_status = '<span style="color:#9E0000">입금대기중</span>';
-                        }else if(response[i].sv_status == "1"){
+                        }else if(response.list[i].sv_status == "1"){
                             var sv_status = '<span style="color:#0070C0">서비스준비중</span>';
-                        }else if(response[i].sv_status == "2"){
+                        }else if(response.list[i].sv_status == "2"){
                             var sv_status = '<span style="color:#548235">서비스작업중</span>';
-                        }else if(response[i].sv_status == "3"){
+                        }else if(response.list[i].sv_status == "3"){
                             var sv_status = '<span style="color:#000000">서비스중</span>';
-                        }else if(response[i].sv_status == "4"){
+                        }else if(response.list[i].sv_status == "4"){
                             var sv_status = '<span style="color:#FF0000">서비스중지</span>';
-                        }else if(response[i].sv_status == "5"){
+                        }else if(response.list[i].sv_status == "5"){
                             var sv_status = '<span style="color:#808080">서비스해지</span>';
-                        }else if(response[i].sv_status == "6"){
+                        }else if(response.list[i].sv_status == "6"){
                             var sv_status = '<span style="color:#FF0000">직권중지</span>';
-                        }else if(response[i].sv_status == "7"){
+                        }else if(response.list[i].sv_status == "7"){
                             var sv_status = '<span style="color:#808080">직권해지</span>';
                         }
-                        if(response[i].paymentinfo !== null){
-                            var paymentinfo = response[i].paymentinfo.split("|");
+                        if(response.list[i].paymentinfo !== null){
+                            var paymentinfo = response.list[i].paymentinfo.split("|");
                         }else{
                             var paymentinfo = [];
                         }
@@ -2050,6 +1933,8 @@ function getPaymentList(){
                         var pm_date = paymentinfo[2];
                         var pm_end_date = paymentinfo[3];
                         var pm_input_date = paymentinfo[4];
+                        var pm_service_start = paymentinfo[5];
+                        var pm_service_end = paymentinfo[6];
 
                         if(pm_status == "0"){
                             if(pm_pay_period > 1){
@@ -2073,77 +1958,77 @@ function getPaymentList(){
 
                             }
                         }else if(pm_status == "9"){
-                            var payment_status = "<span style='color:#548235'>가결제("+pm_pay_period+"개월) " +pm_input_date+"</span>";
+                            var payment_status = "<span style='color:#548235'>가결제("+pm_pay_period+"개월) <br>" +pm_input_date+"</span>";
                         }else if(pm_status == "1"){
                             var payment_status = "완납";
                         }else{
                             var payment_status = "청구내역없음";
                         }
 
-                        if(response[i].sv_input_unit == 0){
+                        if(response.list[i].sv_input_unit == 0){
                             var sv_input_unit = "구매";
-                        }else if(response[i].sv_input_unit == 1){
+                        }else if(response.list[i].sv_input_unit == 1){
                             var sv_input_unit = "월";
                         }else{
                             var sv_input_unit = "";
                         }
 
                         var file_array = [];
-                        if(response[i].file1 != ""){
+                        if(response.list[i].file1 != ""){
                             file_array.push("A");
                         }
-                        if(response[i].file2 != ""){
+                        if(response.list[i].file2 != ""){
                             file_array.push("R");
                         }
-                        if(response[i].file3 != ""){
+                        if(response.list[i].file3 != ""){
                             file_array.push("T");
                         }
-                        if(response[i].file4 != ""){
+                        if(response.list[i].file4 != ""){
                             file_array.push("I");
                         }
-                        if(response[i].file6 != ""){
+                        if(response.list[i].file6 != ""){
                             file_array.push("C");
                         }
-                        if(response[i].file8 != ""){
+                        if(response.list[i].file8 != ""){
                             file_array.push("O");
                         }
 
-                        console.log(response[i].sv_service_start );
+                        console.log(response.list[i].sv_service_start );
                         html += '<tr>\
-                                    <td><input type="checkbox" class="listCheck" name="sv_seq[]" value="'+response[i].sv_seq+'"></td>\
+                                    <td><input type="checkbox" class="listCheck" name="sv_seq[]" value="'+response.list[i].sv_seq+'"></td>\
                                     <td>'+num+'</td>\
-                                    <td><a href="/member/view/'+response[i].mb_seq+'">'+response[i].mb_name+'</a></td>\
-                                    <td class="basic">'+response[i].eu_name+'</td>\
-                                    <td>'+response[i].sv_charger+'</td>\
-                                    <td><a href="javascript:void(0)" onclick="openGroupView(\''+response[i].sv_code+'\')">'+response[i].sv_code+'</a></td>\
-                                    <td>'+response[i].sv_contract_start+'</td>\
-                                    <td class="basic">'+response[i].sv_contract_end+'</td>\
+                                    <td><a href="/member/view/'+response.list[i].mb_seq+'">'+response.list[i].mb_name+'</a></td>\
+                                    <td class="basic">'+response.list[i].eu_name+'</td>\
+                                    <td>'+response.list[i].sv_charger+'</td>\
+                                    <td><a href="javascript:void(0)" onclick="openGroupView(\''+response.list[i].sv_code+'\')">'+response.list[i].sv_code+'</a></td>\
+                                    <td>'+response.list[i].sv_contract_start+'</td>\
+                                    <td class="basic">'+response.list[i].sv_contract_end+'</td>\
                                     <td>'+diff[0]+"개월 "+diff[1]+"일"+'</td>\
                                     <td class="basic">'+sv_auto+'</td>\
                                     <td class="basic">'+sv_auto_end+'</td>\
-                                    <td>'+response[i].pc_name+'</td>\
-                                    <td>'+response[i].pi_name+'</td>\
-                                    <td '+(response[i].addoptionTotal > 0 ? "class=\"option_extend\"":"")+'  data-seq="'+response[i].sv_seq+'" style="cursor:pointer;width:30px;height:30px;background:#516381;font-size:16px;color:#fff;margin:2px'+(response[i].addoptionTotal > 0 ? "":";opacity:0")+'" title="부가 항목 보이기" rel="tooltip"> + </td>\
-                                    <td><a href="javascript:void(0)" onclick="openProductView('+response[i].sv_seq+')">'+response[i].pr_name+'</a></td>\
-                                    <td class="basic">'+response[i].pd_name+'</td>\
-                                    <td>'+response[i].ps_name+'</td>\
+                                    <td>'+response.list[i].pc_name+'</td>\
+                                    <td>'+response.list[i].pi_name+'</td>\
+                                    <td '+(response.list[i].addoptionTotal > 0 ? "class=\"option_extend\"":"")+'  data-seq="'+response.list[i].sv_seq+'" style="cursor:pointer;width:30px;height:30px;background:#516381;font-size:16px;color:#fff;margin:2px'+(response.list[i].addoptionTotal > 0 ? "":";opacity:0")+'" title="부가 항목 보이기" rel="tooltip"> + </td>\
+                                    <td><a href="javascript:void(0)" onclick="openProductView('+response.list[i].sv_seq+')">'+response.list[i].pr_name+'</a></td>\
+                                    <td class="basic">'+response.list[i].pd_name+'</td>\
+                                    <td>'+response.list[i].ps_name+'</td>\
                                     <td>'+sv_rental+'</td>\
-                                    <td><a href="/service/view/'+response[i].sv_seq+'">'+response[i].sv_number+'</a></td>\
-                                    <td class="payment">'+response[i].sv_claim_name+'</td>\
-                                    <td class="payment oneprice right" data-oneprice="'+(response[i].svp_once_price-response[i].svp_once_dis_price)+'" data-allprice="'+firstPrice+'">'+$.number(firstPrice)+' 원</td>\
-                                    <td class="payment monthprice right" data-oneprice="'+(response[i].svp_month_price-response[i].svp_month_dis_price-response[i].svp_discount_price)+'" data-allprice="'+monthPrice+'">'+$.number(monthPrice)+' 원</td>\
-                                    <td class="payment">'+response[i].svp_payment_period+'개월</td>\
-                                    <td class="payment right">'+$.number(response[i].sv_input_price)+' 원</td>\
+                                    <td><a href="/service/view/'+response.list[i].sv_seq+'">'+response.list[i].sv_number+'</a></td>\
+                                    <td class="payment">'+response.list[i].sv_claim_name+'</td>\
+                                    <td class="payment oneprice right" data-oneprice="'+(response.list[i].svp_once_price-response.list[i].svp_once_dis_price)+'" data-allprice="'+firstPrice+'">'+$.number(firstPrice)+' 원</td>\
+                                    <td class="payment monthprice right" data-oneprice="'+(response.list[i].svp_month_price-response.list[i].svp_month_dis_price-response.list[i].svp_discount_price)+'" data-allprice="'+monthPrice+'">'+$.number(monthPrice)+' 원</td>\
+                                    <td class="payment">'+response.list[i].svp_payment_period+'개월</td>\
+                                    <td class="payment right">'+$.number(response.list[i].sv_input_price)+' 원</td>\
                                     <td class="payment">'+sv_input_unit+'</td>\
-                                    <td class="payment">'+response[i].c_name+'</td>\
-                                    <td>'+moment(response[i].sv_regdate).format("YYYY-MM-DD")+'<br>'+(response[i].sv_service_start !== null ? response[i].sv_service_start.substring(0,10):'')+'</td>\
-                                    <td class="basic">'+response[i].sv_out_date.substring(0,10)+'</td>\
+                                    <td class="payment">'+response.list[i].c_name+'</td>\
+                                    <td>'+moment(response.list[i].sv_regdate).format("YYYY-MM-DD")+'<br>'+(response.list[i].sv_service_start !== null ? response.list[i].sv_service_start.substring(0,10):'')+'</td>\
+                                    <td class="basic">'+response.list[i].sv_out_date.substring(0,10)+'</td>\
                                     <td>'+sv_status+'</td>\
-                                    <td>'+moment(response[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
+                                    <td>'+(pm_service_start == "" ? moment(response.list[i].sv_account_start).format("YYYY-MM-DD"):moment(pm_service_start).format("YYYY-MM-DD"))+'<br>'+(pm_service_end == "" ? moment(response.list[i].sv_account_end).format("YYYY-MM-DD"):moment(pm_service_end).format("YYYY-MM-DD"))+'</td>\
                                     <td>'+payment_status+'</td>\
                                     <td>'+file_array.join(" ")+'</td>\
                                 </tr>\
-                                <tr style="border-bottom:0px;display:none" id="child_add_'+response[i].sv_seq+'">\
+                                <tr style="border-bottom:0px;display:none" id="child_add_'+response.list[i].sv_seq+'">\
                                     <td colspan=9 class="addcol"></td>\
                                     <th style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9;text-align:left;padding-left:30px" colspan=2>부가항목명</th>\
                                     <th class="basic" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9"></th>\
@@ -2185,6 +2070,23 @@ function getPaymentList(){
 
                 if(paymentView)
                     $(".payment").show();
+
+                $(".pagination-html").bootpag({
+                        total : Math.ceil(parseInt(response.total)/parseInt($("#end").val())), // 총페이지수 (총 Row / list노출개수)
+                        page : $("#start").val(), // 현재 페이지 default = 1
+                        maxVisible:5, // 페이지 숫자 노출 개수
+                        wrapClass : "pagination",
+                        next : ">",
+                        prev : "<",
+                        nextClass : "last",
+                        prevClass : "first",
+                        activeClass : "active"
+
+                    }).on('page', function(event,num){ // 이벤트 액션
+                        // document.location.href='/pageName/'+num; // 페이지 이동
+                        $("#start").val(num);
+                        getPaymentList();
+                    })
 
                 $.widget("ui.tooltip", $.ui.tooltip, {
                      options: {
@@ -2254,6 +2156,11 @@ function listModify(){
             console.log(response);
             if(response.result){
                 alert("수정완료");
+                $(".after-border").each(function(){
+                    if(!$(this).hasClass("border-trans")){
+                        $(this).addClass("border-trans");
+                    }
+                })
                 // document.location.reload();
             }
         },
@@ -2262,4 +2169,449 @@ function listModify(){
         }
     });
     return false;
+}
+
+function getPriceList(){
+    var url = "/api/memberPayment/"+$("#mb_seq").val();
+        // console.log(searchForm);
+        // console.log(url);
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        success:function(response){
+            // console.log(response);
+            var html = "";
+            if(response.length > 0){
+                for(var i = 0; i < response.length;i++){
+                    var num = response.length -  i;
+                    var svp_once_price = parseInt(response[i].svp_once_price);
+                    var svp_once_dis_price = parseInt(response[i].svp_once_dis_price);
+                    var svp_month_price = parseInt(response[i].svp_month_price);
+                    var svp_month_dis_price = parseInt(response[i].svp_month_dis_price);
+                    var svp_payment_period = parseInt(response[i].svp_payment_period);
+                    var svp_discount_price = parseInt(response[i].svp_discount_price);
+
+                    var once_price = svp_once_price-svp_once_dis_price;
+                    var price = ( (svp_month_price-svp_month_dis_price)*svp_payment_period-svp_discount_price);
+                    var price2 = (((svp_month_price-svp_month_dis_price)*svp_payment_period-svp_discount_price)*1.1)-((svp_month_price-svp_month_dis_price)*svp_payment_period-svp_discount_price);
+                    if(svp_discount_price > 0){
+                        var price_1 = (svp_month_price-svp_month_dis_price-(svp_discount_price/svp_payment_period));
+                        var price2_1 = ((svp_month_price-svp_month_dis_price-(svp_discount_price/svp_payment_period))*1.1)-(svp_month_price-svp_month_dis_price-(svp_discount_price/svp_payment_period));
+                    }else{
+                        var price_1 = (svp_month_price-svp_month_dis_price);
+                        var price2_1 = ((svp_month_price-svp_month_dis_price)*1.1)-(svp_month_price-svp_month_dis_price);
+                    }
+
+                    // tax code
+                    console.log(response[i].cd_cl_seq);
+                    if(response[i].cd_cl_seq === null || response[i].cd_cl_seq == "0" || response[i].cd_cl_seq == ""){
+                        var taxcode = "default";
+                    }else{
+                        var taxcode = "T0"+response[i].cl_code+"-"+response[i].cd_num+response[i].cd_main;
+                    }
+                    html += '<tr class="payment_tr" data-price="'+price+'">';
+                    if(response[i].svp_display_yn == "Y"){
+                        html += '<td><input type="checkbox" class="payment_check" value="'+response[i].sv_seq+'" data-price1="'+svp_once_price+'" data-price2="'+svp_once_dis_price+'" data-price3="'+once_price+'" data-price4="'+svp_month_price+'" data-price5="'+svp_month_dis_price+'" data-price6="'+(svp_discount_price/svp_payment_period)+'" data-price7="'+price_1+'" data-price8="'+price2_1+'" data-price9="'+(price_1+price2_1)+'" data-svaseq="'+response[i].sva_seq+'" data-paypublish="'+response[i].sv_pay_publish+'" data-paypublishtype="'+response[i].sv_pay_publish_type+'" data-paymenttype="'+response[i].sv_payment_type+'" data-pmdate="'+moment(new Date()).format("YYYY-MM-DD")+'"></td>'    
+                    }else{
+                        html += '<td><input type="checkbox" disabled></td>';
+                    }
+                    html += '<td>'+num+'</td>';
+                    html += '<td class="once_number"><a href="javascript:void(0)" onclick="openGroupView(\''+response[i].sv_code+'\')">'+response[i].sv_code+'</td>';
+                    html += '<td class="once_service">'+(response[i].sva_seq == "" || response[i].sva_seq === null ? response[i].pc_name:"부가항목")+'</td>';
+                    html += '<td class="once_product" ><a href="javascript:void(0)" onclick="openProductView(\''+response[i].sv_seq+'\')">'+(response[i].sva_seq == "" || response[i].sva_seq === null ? response[i].pr_name:response[i].sva_name)+'</a></td>';
+                    html += '<td>'+(response[i].sva_seq == "" || response[i].sva_seq === null ? response[i].ps_name:"")+'</td>';
+                    html += '<td class="once_service_number"><a href="/service/view/'+response[i].sv_seq+'">'+(response[i].sva_seq == "" || response[i].sva_seq === null ? response[i].sv_number:response[i].sva_number)+'</a></td>';
+                    if(response[i].sv_payment_type == "1"){
+                        html += '<td>무통장</td>';
+                    }else if(response[i].sv_payment_type == "2"){
+                        html += '<td>카드</td>';
+                    }else{
+                        html += '<td>CMS</td>';
+                    }
+                    html += '<td>'+response[i].svp_payment_period+'개월</td>';
+                    html += '<td class="payment-basic right">'+$.number(svp_once_price)+' 원</td>';
+                    html += '<td class="payment-basic right" style="color:#FF5353"> - '+$.number(svp_once_dis_price)+' 원</td>';
+                    html += '<td style="color:#404040" class="right">'+$.number(once_price)+' 원</td>';
+                    html += '<td class="payment-basic right">'+$.number(svp_month_price*svp_payment_period)+' 원</td>';
+                    html += '<td class="payment-basic right" style="color:#FF5353"> - '+$.number(svp_month_dis_price*svp_payment_period)+' 원</td>';
+                    html += '<td class="payment-basic right" style="color:#FF7053"> - '+$.number(svp_discount_price)+' 원</td>';
+                    html += '<td style="color:#404040" class="right">'+$.number(price)+' 원</td>';
+                    html += '<td class="right">'+$.number(price2)+' 원</td>';
+                    html += '<td class="right">'+$.number(price+price2)+' 원</td>';
+                    if(response[i].sv_pay_type == "0"){
+                        html += '<td>전월 '+response[i].sv_pay_day+'일</td>';
+                        var cal1 = -1;
+                    }else if(response[i].sv_pay_type == "1"){
+                        html += '<td>당월 '+response[i].sv_pay_day+'일</td>';
+                        var cal1 = 0;
+                    }else if(response[i].sv_pay_type == "2"){
+                        html += '<td>익월 '+response[i].sv_pay_day+'일</td>';
+                        var cal1 = 1;
+                    }
+                    html += '<td>'+response[i].sv_payment_day+'일 이내</td>';
+                    var cal = cal1+(parseInt(response[i].sv_pay_day)/30) + (parseInt(response[i].sv_payment_day)/30);
+                    if(cal <= 0.3){
+                        html += '<td>선불</td>';
+                    }else if(cal > 0.3 && cal <= 1.3){
+                        html += '<td>후불</td>';
+                    }else if(cal > 1.3 && cal <= 2.3){
+                        html += '<td>후후불</td>';
+                    }else if(cal > 2.3 && cal <= 3.3){
+                        html += '<td>후후후불</td>';
+                    }else if(cal > 3.3){
+                        html += '<td>조정필요</td>';
+                    }
+                    if(response[i].sv_pay_publish == "0"){
+                        if(response[i].sv_pay_publish_type == "0"){
+                            html += '<td>영수발행</td>';
+                        }else{
+                            html += '<td>청구발행</td>';
+                        }
+                    }else{
+                        html += '<td>미발행</td>';
+                    }
+                    html += '<td>'+taxcode+'</td>';
+                    if(response[i].sva_seq == ""){
+                        html += '<td><i class="fas fa-edit detailView" data-seq="'+response[i].svp_seq+'" data-paytype="S"></i></td>';
+                    }else{
+                        html += '<td><i class="fas fa-edit detailView" data-seq="'+response[i].svp_seq+'" data-paytype="A"></i></td>';
+                    }
+                    html += '<td></td>';
+                    html += '</tr>';
+                }
+            }else{
+                html += '<tr>\
+                            <td colspan="19" style="text-align:center">요금 정보가 없습니다.</td>\
+                        </tr>';
+            }
+
+            $("#payment-tbody-list").html(html);
+            if($("#all_payment").is(":checked")){
+                $("#all_payment").trigger("click");
+                $("#all_payment").trigger("click");
+            }else{
+                $("#all_payment").trigger("click");
+            }
+            if(payment_extend_view){
+                 $(".payment-basic").show();
+                $("#payment_extend").html(">");
+            }
+        }
+    });
+    
+}
+
+function getClaimList(){
+    var url = "/api/memberClaim/"+$("#mb_seq").val();
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        success:function(row){
+            console.log(row);
+            var html = "";
+            if(row.length > 0){
+                var b_pm_ca_seq = ""
+                for(var i = 0; i < row.length;i++){
+                    if(row[i].sva_seq == "" || row[i].sva_seq === null){
+                        var sv_claim_name = row[i].sv_claim_name;
+                    }else{
+                        var sv_claim_name = row[i].sva_claim_name;
+                    }
+                    var num = row.length - i;
+                    if(row[i].pm_claim_type == "0"){
+                        if(row[i].pm_first_month_start == "" || row[i].pm_first_month_start == "0000-00-00" || row[i].pm_first_month_start === null){
+                            var month = 0;
+                        }else{
+                            // var date1 = date('Y-m-d', strtotime($row["pm_first_month_end"] . ' +1 day'));
+                            var date1 = moment(row[i].pm_first_month_end).add(2,'days').format("YYYY-MM-DD");
+                            var diff = Date.getFormattedDateDiff(row[i].pm_first_month_start, date1);
+                            // console.log(diff);
+                            var month = parseInt(diff[0]);
+                        }
+                    }else{
+                        if(row[i].pm_service_start == "" || row[i].pm_service_start == "0000-00-00" || row[i].pm_service_start === null){
+                            var month = 0;
+                        }else{
+                            // var date1 = date('Y-m-d', strtotime($row["pm_first_month_end"] . ' +1 day'));
+                            var date1 = moment(row[i].pm_service_end).add(2,'days').format("YYYY-MM-DD");
+                            var diff = Date.getFormattedDateDiff(row[i].pm_service_start, date1);
+                            // console.log(diff);
+                            var month = parseInt(diff[0]);
+                        }
+                    }
+                  
+                    var pm_once_price = parseInt(row[i].pm_once_price);
+                    var pm_once_dis_price = parseInt(row[i].pm_once_dis_price);
+                    var pm_payment_dis_price = parseInt(row[i].pm_payment_dis_price);
+                    var pm_first_day_price = parseInt(row[i].pm_first_day_price || 0);
+                    var pm_service_price = parseInt(row[i].pm_service_price);
+                    var pm_service_dis_price = parseInt(row[i].pm_service_dis_price);
+                    var pm_pay_period = parseInt(row[i].pm_pay_period);
+
+                    var once_price = pm_once_price-pm_once_dis_price;
+                    
+                    if(pm_payment_dis_price > 0){
+                        var price = pm_first_day_price+once_price+( (pm_service_price-pm_service_dis_price)*month-(pm_payment_dis_price/pm_pay_period)*month);
+                        var price2 = (((pm_service_price-pm_service_dis_price)*month-(pm_payment_dis_price/pm_pay_period)*month)*1.1)-((pm_service_price-pm_service_dis_price)*month-(pm_payment_dis_price/pm_pay_period)*month); 
+                        var price_1 = (pm_service_price-pm_service_dis_price-(pm_payment_dis_price/pm_pay_period));
+                        var price2_1 = ((pm_service_price-pm_service_dis_price-(pm_payment_dis_price/pm_pay_period))*1.1)-(pm_service_price-pm_service_dis_price-(pm_payment_dis_price/pm_pay_period));
+                    }else{
+                        var price = pm_first_day_price+once_price+( (pm_service_price-pm_service_dis_price)*month);
+                        var price2 = (((pm_service_price-pm_service_dis_price)*month)*1.1)-((pm_service_price-pm_service_dis_price)*month);
+
+                        var price_1 = (pm_service_price-pm_service_dis_price);
+                        var price2_1 = ((pm_service_price-pm_service_dis_price)*1.1)-(pm_service_price-pm_service_dis_price);
+                    }
+                    // console.log(price+"::"+price2+"::"+price_1+"::"+price2_1);
+                    html += '<tr><input type="hidden" name="pm_seq[]" value="'+row[i].pm_seq+'"><input type="hidden" class="pay_day" value="'+row[i].sv_payment_day+'">';
+                    if(pm_payment_dis_price > 0){
+
+                        html += '<td><input type="checkbox" class="claim_check" value="'+row[i].pm_seq+'" data-price1="'+pm_once_price+'" data-price2="'+pm_once_dis_price+'" data-price3="'+once_price+'" data-price4="'+pm_first_day_price+'" data-price5="'+(pm_service_price*month)+'" data-price6="'+(pm_service_dis_price*month)+'" data-price7="'+(pm_payment_dis_price == 0 ? 0:(pm_payment_dis_price/pm_pay_period)*month)+'" data-price8="'+((pm_service_price-pm_service_dis_price)*month-(pm_payment_dis_price/pm_pay_period)*month)+'" data-price9="'+row[i].pm_delay_price+'" data-price10="'+price+'" data-price11="'+(price*0.1)+'" data-price12="'+(price*1.1)+'" data-caseq="'+row[i].pm_ca_seq+'" data-caseqcount="'+row[i].pm_ca_total+'" data-publish="'+row[i].pm_payment_publish_type+'"></td>';
+                        // console.log(html);
+                    }else{
+                        
+                        html += '<td><input type="checkbox" class="claim_check" value="'+row[i].pm_seq+'" data-price1="'+pm_once_price+'" data-price2="'+pm_once_dis_price+'" data-price3="'+once_price+'" data-price4="'+pm_first_day_price+'" data-price5="'+(pm_service_price*month)+'" data-price6="'+(pm_service_dis_price*month)+'" data-price7="'+(pm_payment_dis_price == 0 ? 0:(pm_payment_dis_price/pm_pay_period)*month)+'" data-price8="'+(pm_service_price-pm_service_dis_price)*month+'" data-price9="'+row[i].pm_delay_price+'" data-price10="'+price+'" data-price11="'+(price*0.1)+'" data-price12="'+(price*1.1)+'" data-caseq="'+row[i].pm_ca_seq+'" data-caseqcount="'+row[i].pm_ca_total+'" data-publish="'+row[i].pm_payment_publish_type+'"></td>';
+                    }
+                    html += '<td>'+num+'</td>';
+                    html += '<td>'+(row[i].pm_type == "1" ? "서비스비용":"일회성비용")+'</td>';
+                    html += '<td>'+row[i].pm_code+'</td>';
+                    html += '<td><input type="text" name="pm_date[]" class="border-trans after-border pm_date" data-adddate="'+row[i].sv_payment_day+'" value="'+row[i].pm_date+'" style="width:70px;font-size:9pt;color:#7f7f7f" onfocus="$(this).removeClass(\'border-trans\')" onfocusout="$(this).addClass(\'border-trans\')" ></td>';
+                    html += '<td><input type="text" name="pm_service_start[]" class="border-trans after-border" value="'+(row[i].pm_service_start == "0000-00-00" || row[i].pm_service_start === null ? "":row[i].pm_service_start)+'" style="width:70px;font-size:9pt;color:#7f7f7f" onfocus="$(this).removeClass(\'border-trans\')" onfocusout="$(this).addClass(\'border-trans\')">'+(row[i].pm_service_start == "0000-00-00" || row[i].pm_service_start === null ? "":"~")+'<input type="text" name="pm_service_end[]" class="border-trans after-border" value="'+(row[i].pm_service_end == "0000-00-00" || row[i].pm_service_end === null ? "":row[i].pm_service_end)+'" style="width:70px;font-size:9pt;color:#7f7f7f" onfocus="$(this).removeClass(\'border-trans\')" onfocusout="$(this).addClass(\'border-trans\')"></td>';
+                    html += '<td >'+(row[i].sva_seq == "" || row[i].sva_seq === null  ? (row[i].pc_name !== null ? row[i].pc_name:""):"부가항목")+'</td>';
+                    html += '<td ><a href="javascript:void(0)" onclick="openProductView(\''+row[i].sv_seq+'\')">'+(row[i].sva_seq == "" || row[i].sva_seq === null ? (row[i].pr_name !== null ? row[i].pr_name:""):row[i].sva_name)+'</a></td>';
+                    html += '<td>'+(row[i].sva_seq == "" || row[i].sva_seq === null ? (row[i].ps_name !== null ? row[i].ps_name:""):"")+'</td>';
+                    html += '<td ><a href="/service/view/'+row[i].sv_seq+'">'+(row[i].sva_seq == "" || row[i].sva_seq === null ? (row[i].sv_number !== null ? row[i].sv_number:""):(row[i].sva_number !== null ? row[i].sva_number:""))+'</a></td>';
+                    console.log(row[i].pm_pay_type);
+                    if(row[i].pm_pay_type == "1"){
+                        html += '<td>무통장</td>';
+                    }else if(row[i].pm_pay_type == "2"){
+                        html += '<td>카드</td>';
+                    }else{
+                        html += '<td>CMS</td>';
+                    }
+                    html += '<td>'+(row[i].pm_type == "1" ? row[i].pm_pay_period+"개월":"0개월")+'</td>';
+                    html += '<td class="claim_payment">'+(row[i].pm_claim_name == "" || row[i].pm_claim_name === null ? sv_claim_name:row[i].pm_claim_name)+'</td>';
+                    html += '<td class="claim_payment right">'+$.number(pm_once_price)+' 원</td>';
+                    html += '<td class="claim_payment right" style="color:#FF5353"> - '+$.number(pm_once_dis_price)+' 원</td>';
+                    html += '<td class="claim_payment right" style="color:#404040">'+$.number(once_price)+' 원</td>';
+                    html += '<td class="claim_payment right">'+$.number(pm_first_day_price)+' 원</td>';
+                    html += '<td class="claim_payment right">'+$.number(pm_service_price*month)+' 원</td>';
+                    html += '<td class="claim_payment right" style="color:#FF5353"> - '+$.number(pm_service_dis_price*month)+' 원</td>';
+                    if(pm_payment_dis_price > 0){
+                        html += '<td class="claim_payment right" style="color:#FF7053"> - '+$.number(pm_payment_dis_price/pm_pay_period*month)+' 원</td>';
+                        html += '<td class="claim_payment right" style="color:#404040">'+$.number((pm_service_price-pm_service_dis_price)*month-(pm_payment_dis_price/pm_pay_period)*month)+' 원</td>';
+                    }else{
+                        html += '<td class="claim_payment right" style="color:#FF7053"> - 0 원</td>';
+                        html += '<td class="claim_payment right" style="color:#404040">'+$.number((pm_service_price-pm_service_dis_price)*month)+' 원</td>';
+                    }
+                    html += '<td class="claim_payment right">'+(row[i].pm_delay_price !== null ? $.number(row[i].pm_delay_price):0)+' 원</td>';
+                    html += '<td class="right">'+$.number(price)+' 원</td>';
+                    html += '<td class="right">'+$.number(price*0.1)+' 원</td>';
+                    html += '<td class="right">'+$.number(price*1.1)+' 원</td>';
+                    html += '<td><input type="text" name="pm_end_date[]" class="pm_end_date border-trans" value="'+(row[i].pm_end_date == "0000-00-00" ? "":row[i].pm_end_date)+'" style="width:70px;font-size:9pt;color:#7f7f7f"></td>';
+
+                    if(row[i].pm_status == "1"){
+                        html += '<td>완납</td>';
+                    }else if(row[i].pm_status == "0"){
+                        html += '<td>'+(row[i].pm_end_date >= moment(new Date()).format("YYYY-MM-DD") ? "청구":"미납")+'</td>';
+                    }else if(row[i].pm_status == "9"){
+                        html += '<td>가결제</td>';
+                    }
+
+                    if(b_pm_ca_seq != row[i].pm_ca_seq){
+                        html += '<td rowspan="'+row[i].pm_ca_total+'"><i class="fas fa-edit claimView" data-seq="'+row[i].pm_ca_seq+'" style="cursor:pointer"></i></td>';
+                        if(row[i].pm_payment_publish == "0"){
+                            if(row[i].pm_payment_publish_type == "0"){
+                                html += '<td class="billView" data-seq="'+row[i].pm_ca_seq+'" rowspan="'+row[i].pm_ca_total+'" style="cursor:pointer" data-p_type="0">영수발행</td>';
+                            }else{
+                                html += '<td class="billView" data-seq="'+row[i].pm_ca_seq+'" rowspan="'+row[i].pm_ca_total+'" style="cursor:pointer" data-p_type="1">청구발행</td>';
+                            }
+                        }else{
+                            html += '<td rowspan="'+row[i].pm_ca_total+'">미발행</td>';
+                        }
+                    }
+                    html += '<td><i class="fas fa-edit detailPView" data-seq="'+row[i].pm_seq+'" data-pmtype="'+row[i].pm_type+'" '+(row[i].pm_sva_seq !== null ? "data-type=\"2\"":"data-type=\"1\"")+' style="cursor:pointer"></i></td>';
+                    html += '<td></td>';
+                    html += '</tr>';
+                    b_pm_ca_seq = row[i].pm_ca_seq;
+                }
+            }else{
+                html += '<tr>\
+                                <td colspan="21" style="text-align:center">청구 내역이 없습니다.</td>\
+                            </tr>';
+            }    
+            $("#tbody2-list").html(html);
+            if($("#claim_all").is(":checked")){
+                $("#claim_all").trigger("click");
+                $("#claim_all").trigger("click");
+            }else{
+                $("#claim_all").trigger("click");
+            }
+            if(claim_extend_view){
+                 $(".claim_payment").show();
+                $("#claim_extend").html(">");
+            }
+        }
+    });
+}
+
+function getComList(searchYn){
+    var url = "/api/memberCom/"+$("#mb_seq").val();
+    if(searchYn){
+        var datas = $("#searchForm").serialize();
+    }else{
+        var datas = "search_year="+$("#search_year").val()+"&search_month="+$("#search_month").val();
+    }
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        data : datas,
+        success:function(row){
+            console.log(row);
+            var html = "";
+            if(row.length > 0){
+                var b_pm_ca_seq = ""
+                for(var i = 0; i < row.length;i++){
+                    if(row[i].sva_seq == "" || row[i].sva_seq === null){
+                        var sv_claim_name = row[i].sv_claim_name;
+                    }else{
+                        var sv_claim_name = row[i].sva_claim_name;
+                    }
+                    var num = row.length - i;
+                    if(row[i].pm_claim_type == "0"){
+                        if(row[i].pm_first_month_start == "" || row[i].pm_first_month_start == "0000-00-00" || row[i].pm_first_month_start === null){
+                            var month = 0;
+                        }else{
+                            // var date1 = date('Y-m-d', strtotime($row["pm_first_month_end"] . ' +1 day'));
+                            var date1 = moment(row[i].pm_first_month_end).add(2,'days').format("YYYY-MM-DD");
+                            var diff = Date.getFormattedDateDiff(row[i].pm_first_month_start, date1);
+                            // console.log(diff);
+                            var month = parseInt(diff[0]);
+                        }
+                    }else{
+                        if(row[i].pm_service_start == "" || row[i].pm_service_start == "0000-00-00" || row[i].pm_service_start === null){
+                            var month = 0;
+                        }else{
+                            // var date1 = date('Y-m-d', strtotime($row["pm_first_month_end"] . ' +1 day'));
+                            var date1 = moment(row[i].pm_service_end).add(2,'days').format("YYYY-MM-DD");
+                            var diff = Date.getFormattedDateDiff(row[i].pm_service_start, date1);
+                            // console.log(diff);
+                            var month = parseInt(diff[0]);
+                        }
+                    }
+                    // console.log(month);
+                    var pm_once_price = parseInt(row[i].pm_once_price);
+                    var pm_once_dis_price = parseInt(row[i].pm_once_dis_price);
+                    var pm_payment_dis_price = parseInt(row[i].pm_payment_dis_price);
+                    var pm_first_day_price = parseInt(row[i].pm_first_day_price || 0);
+                    var pm_service_price = parseInt(row[i].pm_service_price);
+                    var pm_service_dis_price = parseInt(row[i].pm_service_dis_price);
+                    var pm_pay_period = parseInt(row[i].pm_pay_period);
+
+                    var once_price = pm_once_price-pm_once_dis_price;
+                    
+                    if(pm_payment_dis_price > 0){
+                        var price = pm_first_day_price+once_price+( (pm_service_price-pm_service_dis_price)*month-(pm_payment_dis_price/pm_pay_period)*month);
+                        var price2 = (((pm_service_price-pm_service_dis_price)*month-(pm_payment_dis_price/pm_pay_period)*month)*1.1)-((pm_service_price-pm_service_dis_price)*month-(pm_payment_dis_price/pm_pay_period)*month); 
+                        var price_1 = (pm_service_price-pm_service_dis_price-(pm_payment_dis_price/pm_pay_period));
+                        var price2_1 = ((pm_service_price-pm_service_dis_price-(pm_payment_dis_price/pm_pay_period))*1.1)-(pm_service_price-pm_service_dis_price-(pm_payment_dis_price/pm_pay_period));
+                    }else{
+                        var price = pm_first_day_price+once_price+( (pm_service_price-pm_service_dis_price)*month);
+                        var price2 = (((pm_service_price-pm_service_dis_price)*month)*1.1)-((pm_service_price-pm_service_dis_price)*month);
+
+                        var price_1 = (pm_service_price-pm_service_dis_price);
+                        var price2_1 = ((pm_service_price-pm_service_dis_price)*1.1)-(pm_service_price-pm_service_dis_price);
+                    }
+                    // console.log(price+"::"+price2+"::"+price_1+"::"+price2_1);
+                    html += '<tr><input type="hidden" name="pm_seq[]" value="'+row[i].pm_seq+'"><input type="hidden" class="pay_day" value="'+row[i].sv_payment_day+'">';
+                    if(pm_payment_dis_price > 0){
+
+                        html += '<td><input type="checkbox" class="paycom_check" value="'+row[i].pm_seq+'" data-price1="'+pm_once_price+'" data-price2="'+pm_once_dis_price+'" data-price3="'+once_price+'" data-price4="'+pm_first_day_price+'" data-price5="'+(pm_service_price*month)+'" data-price6="'+(pm_service_dis_price*month)+'" data-price7="'+(pm_payment_dis_price == 0 ? 0:(pm_payment_dis_price/pm_pay_period)*month)+'" data-price8="'+((pm_service_price-pm_service_dis_price)*month-(pm_payment_dis_price/pm_pay_period)*month)+'" data-price9="'+row[i].pm_delay_price+'" data-price10="'+price+'" data-price11="'+(price*0.1)+'" data-price12="'+(price*1.1)+'" data-caseq="'+row[i].pm_ca_seq+'" data-caseqcount="'+row[i].pm_ca_total+'" data-publish="'+row[i].pm_payment_publish_type+'"></td>';
+                        // console.log(html);
+                    }else{
+                        
+                        html += '<td><input type="checkbox" class="paycom_check" value="'+row[i].pm_seq+'" data-price1="'+pm_once_price+'" data-price2="'+pm_once_dis_price+'" data-price3="'+once_price+'" data-price4="'+pm_first_day_price+'" data-price5="'+(pm_service_price*month)+'" data-price6="'+(pm_service_dis_price*month)+'" data-price7="'+(pm_payment_dis_price == 0 ? 0:(pm_payment_dis_price/pm_pay_period)*month)+'" data-price8="'+(pm_service_price-pm_service_dis_price)*month+'" data-price9="'+row[i].pm_delay_price+'" data-price10="'+price+'" data-price11="'+(price*0.1)+'" data-price12="'+(price*1.1)+'" data-caseq="'+row[i].pm_ca_seq+'" data-caseqcount="'+row[i].pm_ca_total+'" data-publish="'+row[i].pm_payment_publish_type+'"></td>';
+                    }
+                    html += '<td>'+num+'</td>';
+                    html += '<td>'+(row[i].pm_type == "1" ? "서비스비용":"일회성비용")+'</td>';
+                    html += '<td>'+row[i].pm_code+'</td>';
+                    html += '<td>'+row[i].pm_date+'</td>';
+                    html += '<td>'+moment(row[i].pm_com_date).format("YYYY-MM-DD")+'</td>';
+                    html += '<td>'+(row[i].pm_service_start == "0000-00-00" || row[i].pm_service_start === null ? "":row[i].pm_service_start)+''+(row[i].pm_service_start == "0000-00-00" || row[i].pm_service_start === null ? "":"~")+''+(row[i].pm_service_end == "0000-00-00" || row[i].pm_service_end === null ? "":row[i].pm_service_end)+'</td>';
+                    html += '<td >'+(row[i].sva_seq == "" || row[i].sva_seq === null  ? (row[i].pc_name !== null ? row[i].pc_name:""):"부가항목")+'</td>';
+                    html += '<td ><a href="javascript:void(0)" onclick="openProductView(\''+row[i].sv_seq+'\')">'+(row[i].sva_seq == "" || row[i].sva_seq === null ? (row[i].pr_name !== null ? row[i].pr_name:""):row[i].sva_name)+'</a></td>';
+                    html += '<td>'+(row[i].sva_seq == "" || row[i].sva_seq === null ? (row[i].ps_name !== null ? row[i].ps_name:""):"")+'</td>';
+                    html += '<td ><a href="/service/view/'+row[i].sv_seq+'">'+(row[i].sva_seq == "" || row[i].sva_seq === null ? (row[i].sv_number !== null ? row[i].sv_number:""):(row[i].sva_number !== null ? row[i].sva_number:""))+'</a></td>';
+                    if(row[i].pm_pay_type == "1"){
+                        html += '<td>무통장</td>';
+                    }else if(row[i].pm_pay_type == "2"){
+                        html += '<td>카드</td>';
+                    }else{
+                        html += '<td>CMS</td>';
+                    }
+                    html += '<td>'+(row[i].pm_type == "1" ? row[i].pm_pay_period+"개월":"0개월")+'</td>';
+                    html += '<td class="paycom_payment">'+(row[i].pm_claim_name == "" || row[i].pm_claim_name === null ? sv_claim_name:row[i].pm_claim_name)+'</td>';
+                    html += '<td class="paycom_payment right">'+$.number(pm_once_price)+' 원</td>';
+                    html += '<td class="paycom_payment right" style="color:#FF5353"> - '+$.number(pm_once_dis_price)+' 원</td>';
+                    html += '<td class="paycom_payment right" style="color:#404040">'+$.number(once_price)+' 원</td>';
+                    html += '<td class="paycom_payment right">'+$.number(pm_first_day_price)+' 원</td>';
+                    html += '<td class="paycom_payment right">'+$.number(pm_service_price*month)+' 원</td>';
+                    html += '<td class="paycom_payment right" style="color:#FF5353"> - '+$.number(pm_service_dis_price*month)+' 원</td>';
+                    if(pm_payment_dis_price > 0){
+                        html += '<td class="paycom_payment right" style="color:#FF7053"> - '+$.number(pm_payment_dis_price/pm_pay_period*month)+' 원</td>';
+                        html += '<td class="paycom_payment right" style="color:#404040">'+$.number((pm_service_price-pm_service_dis_price)*month-(pm_payment_dis_price/pm_pay_period)*month)+' 원</td>';
+                    }else{
+                        html += '<td class="paycom_payment right" style="color:#FF7053"> - 0 원</td>';
+                        html += '<td class="paycom_payment right" style="color:#404040">'+$.number((pm_service_price-pm_service_dis_price)*month)+' 원</td>';
+                    }
+                    html += '<td class="paycom_payment right">'+(row[i].pm_delay_price !== null ? $.number(row[i].pm_delay_price):0)+' 원</td>';
+                    html += '<td class="right">'+$.number(price)+' 원</td>';
+                    html += '<td class="right">'+$.number(price*0.1)+' 원</td>';
+                    html += '<td class="right">'+$.number(price*1.1)+' 원</td>';
+                    // html += '<td><input type="text" name="pm_end_date[]" class="pm_end_date border-trans" value="'+(row[i].pm_end_date == "0000-00-00" ? "":row[i].pm_end_date)+'" style="width:70px;font-size:9pt;color:#7f7f7f"></td>';
+
+                    // if(row[i].pm_status == "1"){
+                    //     html += '<td>완납</td>';
+                    // }else if(row[i].pm_status == "0"){
+                    //     html += '<td>'+(row[i].pm_end_date >= moment(new Date()).format("YYYY-MM-DD") ? "청구":"미납")+'</td>';
+                    // }else if(row[i].pm_status == "9"){
+                    //     html += '<td>가결제</td>';
+                    // }
+
+                    if(b_pm_ca_seq != row[i].pm_ca_seq){
+                        html += '<td rowspan="'+row[i].pm_ca_total+'"><i class="fas fa-edit claimView" data-seq="'+row[i].pm_ca_seq+'" style="cursor:pointer"></i></td>';
+                        if(row[i].pm_payment_publish_type == "0"){
+                            html += '<td class="billView" data-seq="'+row[i].pm_ca_seq+'" rowspan="'+row[i].pm_ca_total+'" style="cursor:pointer" data-p_type="0">영수발행</td>';
+                        }else{
+                            html += '<td class="billView" data-seq="'+row[i].pm_ca_seq+'" rowspan="'+row[i].pm_ca_total+'" style="cursor:pointer" data-p_type="1">청구발행</td>';
+                        }
+                    }
+                    html += '<td><i class="fas fa-edit detailCView" data-seq="'+row[i].pm_seq+'" data-pmtype="'+row[i].pm_type+'" style="cursor:pointer"></i></td>';
+                    html += '<td></td>';
+                    html += '</tr>';
+                    b_pm_ca_seq = row[i].pm_ca_seq;
+                }
+            }else{
+                html += '<tr>\
+                                <td colspan=20" style="text-align:center">결제내역이 없습니다.</td>\
+                            </tr>';
+            }    
+            $("#tbody3-list").html(html);
+            if($("#paycom_all").is(":checked")){
+                $("#paycom_all").trigger("click");
+                $("#paycom_all").trigger("click");
+            }else{
+                $("#paycom_all").trigger("click");
+            }
+
+            if(paycom_extend_view){
+                 $(".paycom_payment").show();
+                $("#paycom_extend").html(">");
+            }
+            
+        }
+    });
 }

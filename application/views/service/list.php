@@ -61,22 +61,22 @@
 </style>
 <div class="content">
     <h2 class="title">
-        <i class="fa fa-file"></i> 서비스 관리
+        <i class="fa fa-folder-open"></i> 서비스 관리
     </h2>
     <div class="search">
         <form name="searchForm" id="searchForm" onsubmit="return getList();">
 
             <div style="position:relative">
                 <ul>
-                    <li style="float:left;border:1px solid #ddd;padding:7px 20px;cursor:pointer" onclick="$('#detailSearchView').toggle();">
-                        서비스 검색 <i class="fa fa-caret-down" aria-hidden="true"></i>
+                    <li style="float:left;border:1px solid #ddd;padding:7px 10px;width:205px;cursor:pointer" onclick="$('#detailSearchView').toggle();">
+                        서비스 검색 <span style="float:right"><i class="fa fa-caret-down" aria-hidden="true"></i></span>
                     </li>
                     <li style="float:left;padding:7px 0px 0px 10px"><input type="checkbox" name="detailcheck" value="Y" id="detailcheck"> 상세검색</li>
                 </ul>
 
 
-                <div id="detailSearchView" style="position:absolute;top:30px;background:#fff;width:800px;display:none">
-                    <div style="border:1px solid #ddd;padding:10px" >
+                <div id="detailSearchView" style="position:absolute;top:29px;background:#fff;width:800px;display:none">
+                    <div style="border:1px solid #ddd;padding:10px;box-shadow: 2px 2px 3px 0px #ccc;">
                         <div><input type="text" name="searchword" style="width:90%" onkeyup="search(this.value)"></div>
                         <div style="height:600px;overflow:auto;">
                             <div style="padding-top:10px;font-weight:900" id="yesresult">
@@ -92,18 +92,24 @@
                     </div>
                 </div>
             </div>
-            <div style="clear:both;padding:5px 0px">
-                서비스 상태
-                <input type="checkbox" name="sv_status_all" id="sv_status_all" value="Y"> 전체 <input type="checkbox" name="sv_status[]" value='0' class="sv_status"> <span style="color:#9E0000">입금대기중</span> <input type="checkbox" name="sv_status[]" value='1' class="sv_status"> <span style="color:#0070C0">서비스준비중</span> <input type="checkbox" name="sv_status[]" value='2' class="sv_status"> <span style="color:#548235">서비스작업중</span> <input type="checkbox" name="sv_status[]" value='3' class="sv_status"> <span style="color:#000000">서비스중</span> <input type="checkbox" name="sv_status[]" value='4' class="sv_status"> <span style="color:#FF0000">서비스중지</span> <input type="checkbox" name="sv_status[]" value='5' class="sv_status"> <span style="color:#808080">서비스해지</span> <input type="checkbox" name="sv_status[]" value='6' class="sv_status"> <span style="color:#FF0000">직권중지</span> <input type="checkbox" name="sv_status[]" value='7' class="sv_status"> <span style="color:#808080">직권해지</span>
+            <div style="clear:both;padding:15px 5px">
+                <b>서비스 상태</b>
+                <input type="checkbox" name="sv_status_all" id="sv_status_all" value="Y" style="margin-left:20px"> <b>전체</b> <input type="checkbox" name="sv_status[]" value='0' class="sv_status" style="margin-left:20px"> <span style="color:#9E0000">입금대기중</span> <input type="checkbox" name="sv_status[]" value='1' class="sv_status" style="margin-left:20px"> <span style="color:#0070C0">서비스준비중</span> <input type="checkbox" name="sv_status[]" value='2' class="sv_status" style="margin-left:20px"> <span style="color:#548235">서비스작업중</span> <input type="checkbox" name="sv_status[]" value='3' class="sv_status" style="margin-left:20px"> <span style="color:#000000">서비스중</span> <input type="checkbox" name="sv_status[]" value='4' class="sv_status" style="margin-left:20px"> <span style="color:#FF0000">서비스중지</span> <input type="checkbox" name="sv_status[]" value='5' class="sv_status" style="margin-left:20px"> <span style="color:#808080">서비스해지</span> <input type="checkbox" name="sv_status[]" value='6' class="sv_status" style="margin-left:20px"> <span style="color:#FF0000">직권중지</span> <input type="checkbox" name="sv_status[]" value='7' class="sv_status" style="margin-left:20px"> <span style="color:#808080">직권해지</span>
             </div>
-            <div style="padding-bottom:5px">
-                날짜 검색
-                <input type="checkbox" name="sv_date_all" id="sv_date_all" value="Y"> 전체 <input type="checkbox" name="sv_date[]" value="sv_regdate" class="sv_date"> 서비스신청일 <input type="checkbox" name="sv_date[]" value="sv_service_start" class="sv_date"> 서비스개시일 <input type="checkbox" name="sv_date[]" value="sv_account_start" class="sv_date"> 과금시작일 <input type="checkbox" name="sv_date[]" value="sv_account_end" class="sv_date"> 과금만료일 <input type="checkbox" name="" class="sv_date"> 최종 결제일 <input type="checkbox" name="sv_date[]" value="sv_contract_start" class="sv_date"> 계약 시작일 <input type="checkbox" name="sv_date[]" value="sv_contract_end" class="sv_date"> 계약 만료일 <input type="checkbox" name="sv_date[]" value="sv_service_end" class="sv_date"> 계약 해지일 <input type="checkbox" name="sv_date[]" value="sv_service_stop" class="sv_date"> 직권 중지일 <input type="checkbox" name="sv_date[]" value="sv_service_end" class="sv_date"> 직권 해지일
+            <div style="padding-bottom:15px;padding-top:5px;padding-left:5px">
+                <b>날짜 검색</b>
+				<div class="form-group" style="margin-left:30px">
+                    <input type="text" style="width:70px" name="startDate" id="startDate" class="datepicker3" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:70px" class="datepicker3" value="<?=date('Y-m-d')?>">
+                </div>
+				<div>
+                <input type="checkbox" name="sv_date_all" id="sv_date_all" value="Y" style="margin-left:78px">
+				<b>전체</b> <input type="checkbox" name="sv_date[]" value="sv_regdate" class="sv_date" style="margin-left:20px"> <span style="color:#9E0000">서비스신청일</span> <input type="checkbox" name="sv_date[]" value="sv_service_start" class="sv_date" style="margin-left:20px"> <span style="color:#000000">서비스개시일</span> <input type="checkbox" name="sv_date[]" value="sv_account_start" class="sv_date" style="margin-left:20px"> <span style="color:#0070C0">과금시작일</span> <input type="checkbox" name="sv_date[]" value="sv_account_end" class="sv_date" style="margin-left:20px"> <span style="color:#0070C0">과금만료일</span> <input type="checkbox" name="" class="sv_date" style="margin-left:20px"> <span style="color:#0070C0">최종 결제일</span> <input type="checkbox" name="sv_date[]" value="sv_contract_start" class="sv_date" style="margin-left:20px"> <span style="color:#000000">계약 시작일</span> <input type="checkbox" name="sv_date[]" value="sv_contract_end" class="sv_date" style="margin-left:20px"> <span style="color:#000000">계약 만료일</span> <input type="checkbox" name="sv_date[]" value="sv_service_end" class="sv_date" style="margin-left:20px"> <span style="color:#808080">계약 해지일</span> <input type="checkbox" name="sv_date[]" value="sv_service_stop" class="sv_date" style="margin-left:20px"> <span style="color:#FF0000">직권 중지일</span> <input type="checkbox" name="sv_date[]" value="sv_service_end" class="sv_date" style="margin-left:20px"> <span style="color:#808080">직권 해지일</span>
+				</div>
             </div>
             <div style="text-align:right;padding:5px 10px 5px 0px;border-top:1px solid #ddd">
-                <div class="form-group">
+                <!--<div class="form-group">
                     <input type="text" style="width:80px" name="startDate" id="startDate" class="datepicker3" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker3" value="<?=date('Y-m-d')?>">
-                </div>
+                </div>-->
                 <div class="form-group ml15" style="text-align:left">
                     <select id="searchType" name="searchType" class="select2" style="width:140px">
                         <option value="mb_name" selected>상호/이름</option>
@@ -112,17 +118,17 @@
                         <option value="sv_code">계약번호</option>
                         <option value="sv_number">서비스번호</option>
                         <option value="pr_name">상품명</option>
-                        <option value="es_phone">전화번호</option>
-                        <option value="es_phone">휴대폰번호</option>
-                        <option value="es_phone">이메일</option>
-                        <option value="es_phone">계약담당자</option>
-                        <option value="es_phone">요금담당자</option>
-                        <option value="es_phone">사업자번호</option>
+                        <option value="mb_tel">전화번호</option>
+                        <option value="mb_phone">휴대폰번호</option>
+                        <option value="mb_email">이메일</option>
+                        <option value="mb_contract_name">계약담당자</option>
+                        <option value="mb_payment_name">요금담당자</option>
+                        <option value="mb_number">사업자번호</option>
                     </select>
 
                     <input type="text" name="searchWord" id="searchWord">
                     <button class="btn btn-search btn-form-search" type="submit">검색</button>
-                    <select class="select2" name="end" style="width:90px">
+                    <select class="select2" name="end" id="end" style="width:90px">
                         <option value="10">10라인</option>
                         <option value="20">20라인</option>
                         <option value="50">50라인</option>
@@ -373,6 +379,8 @@
                                 var pm_date = paymentinfo[2];
                                 var pm_end_date = paymentinfo[3];
                                 var pm_input_date = paymentinfo[4];
+                                var pm_service_start = paymentinfo[5];
+                                var pm_service_end = paymentinfo[6];
 
                                 if(pm_status == "0"){
                                     if(pm_pay_period > 1){
@@ -396,7 +404,7 @@
 
                                     }
                                 }else if(pm_status == "9"){
-                                    var payment_status = "<span style='color:#548235'>가결제("+pm_pay_period+"개월) " +pm_input_date+"</span>";
+                                    var payment_status = "<span style='color:#548235'>가결제("+pm_pay_period+"개월) <br>" +pm_input_date+"</span>";
                                 }else if(pm_status == "1"){
                                     var payment_status = "완납";
                                 }else{
@@ -420,7 +428,7 @@
                                             <td style="border-bottom: 1px solid #d9d9d9">'+moment(response[i].sv_regdate).format("YYYY-MM-DD")+'<br>'+(response[i].sv_service_start !== null ? response[i].sv_service_start.substring(0,10):'')+'</td>\
                                             <td style="border-bottom: 1px solid #d9d9d9" class="basic">'+response[i].sva_input_date+'</td>\
                                             <td style="border-bottom: 1px solid #d9d9d9">'+sv_status+'</td>\
-                                            <td style="border-bottom: 1px solid #d9d9d9">'+moment(response[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
+                                            <td style="border-bottom: 1px solid #d9d9d9">'+(pm_service_start == "" ? moment(response[i].sv_account_start).format("YYYY-MM-DD"):moment(pm_service_start).format("YYYY-MM-DD"))+'<br>'+(pm_service_end == "" ? moment(response[i].sv_account_end).format("YYYY-MM-DD"):moment(pm_service_end).format("YYYY-MM-DD"))+'</td>\
                                             <td style="border-bottom: 1px solid #d9d9d9">'+payment_status+'</td>\
                                             <td style="border-bottom: 1px solid #d9d9d9"></td>\
                                         </tr>';
@@ -508,6 +516,10 @@
                 }
             }
         });
+
+        $("#end").change(function(){
+            getList();
+        })
     })
 
     function search(q){
@@ -569,7 +581,7 @@
     function getList(){
         var start = $("#start").val();
         // console.log(start);
-        var end = 5;
+        var end = $("#end").val();
         var url = "/api/serviceList/"+start+"/"+end;
         var searchForm = $("#searchForm").serialize();
         // console.log(searchForm);
@@ -591,6 +603,14 @@
                     var paymentView = true;
                 }else{
                     var paymentView = false;
+                }
+
+                if($(".basic").css("display") != "none"){
+                    var col = "13";
+
+                }else{
+                    var col = "9";
+
                 }
 
                 if(response.list.length > 0){
@@ -659,6 +679,8 @@
                         var pm_date = paymentinfo[2];
                         var pm_end_date = paymentinfo[3];
                         var pm_input_date = paymentinfo[4];
+                        var pm_service_start = paymentinfo[5];
+                        var pm_service_end = paymentinfo[6];
 
                         if(pm_status == "0"){
                             if(pm_pay_period > 1){
@@ -682,7 +704,7 @@
 
                             }
                         }else if(pm_status == "9"){
-                            var payment_status = "<span style='color:#548235'>가결제("+pm_pay_period+"개월) " +pm_input_date+"</span>";
+                            var payment_status = "<span style='color:#548235'>가결제("+pm_pay_period+"개월) <br>" +pm_input_date+"</span>";
                         }else if(pm_status == "1"){
                             var payment_status = "완납";
                         }else{
@@ -748,12 +770,12 @@
                                     <td>'+moment(response.list[i].sv_regdate).format("YYYY-MM-DD")+'<br>'+(response.list[i].sv_service_start !== null ? response.list[i].sv_service_start.substring(0,10):'')+'</td>\
                                     <td class="basic">'+response.list[i].sv_out_date.substring(0,10)+'</td>\
                                     <td>'+sv_status+'</td>\
-                                    <td>'+moment(response.list[i].sv_account_start).format("YYYY-MM-DD")+'<br>'+moment(response.list[i].sv_account_end).format("YYYY-MM-DD")+'</td>\
+                                    <td>'+(pm_service_start != "" ? moment(response.list[i].sv_account_start).format("YYYY-MM-DD"):moment(pm_service_start).format("YYYY-MM-DD"))+'<br>'+(pm_service_end != "" ? moment(response.list[i].sv_account_end).format("YYYY-MM-DD"):moment(pm_service_end).format("YYYY-MM-DD"))+'</td>\
                                     <td>'+payment_status+'</td>\
                                     <td>'+file_array.join(" ")+'</td>\
                                 </tr>\
                                 <tr style="border-bottom:0px;display:none" id="child_add_'+response.list[i].sv_seq+'">\
-                                    <td colspan=9 class="addcol"></td>\
+                                    <td colspan='+col+' class="addcol"></td>\
                                     <th style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9;text-align:left;padding-left:30px" colspan=2>부가항목명</th>\
                                     <th class="basic" style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9"></th>\
                                     <td style="background:#516381;color:#fff;border-bottom: 1px solid #d9d9d9"></td>\
@@ -777,7 +799,7 @@
                     }
 
                     $(".pagination-html").bootpag({
-                        total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
+                        total : Math.ceil(parseInt(response.total)/parseInt($("#end").val())), // 총페이지수 (총 Row / list노출개수)
                         page : $("#start").val(), // 현재 페이지 default = 1
                         maxVisible:5, // 페이지 숫자 노출 개수
                         wrapClass : "pagination",

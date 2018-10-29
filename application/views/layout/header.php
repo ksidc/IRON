@@ -14,8 +14,8 @@
                 서비스
                 <div id="tab2" class="tab-content">
                     <a href="/service/estimate"><div class="tab-item">견적 관리</div></a>
-                    <div class="tab-item">서비스 등록</div>
-                    <div class="tab-item">서비스 관리</div>
+                    <a href="/service/register"><div class="tab-item">서비스 등록</div></a>
+                    <a href="/service/list"><div class="tab-item">서비스 관리</div></a>
                 </div>
             </li>
             <li data-tab="#tab3">

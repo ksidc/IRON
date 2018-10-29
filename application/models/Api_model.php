@@ -92,8 +92,12 @@ class Api_model extends CI_Model {
         $this->db->select("count(*) as total");
         $this->db->from("members");
 
-        if($this->input->get("searchYn") == "Y"){
-            $this->db->where("1=1");
+        if($this->input->get("serviceYn") == "Y"){
+            $this->db->where(" ( select count(*) from service where sv_mb_seq = mb_seq and sv_status in (0,1,2,3,4,6) ) > 0", NULL, FALSE);
+        }
+
+        if($this->input->get("serviceSelect") != ""){
+            $this->db->where("(select count(*) from service where sv_mb_seq = mb_seq and sv_pc_seq = '".$this->input->get("serviceSelect")."') > 0" , NULL, FALSE);
         }
 
         if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
@@ -114,11 +118,15 @@ class Api_model extends CI_Model {
     // 회원 list select
     public function fetchMember($start,$limit){
         $start = ($start - 1)*$limit;
-        $this->db->select("*");
+        $this->db->select("*,(select count(*) from service where sv_mb_seq = mb_seq and sv_status in (0,1,2,3,4,6)) as service_total, ifnull((select group_concat(distinct sv_charger SEPARATOR ',') from service where sv_mb_seq = mb_seq ),'-') charger");
         $this->db->from("members");
 
-        if($this->input->get("searchYn") == "Y"){
-            $this->db->where("1=1");
+        if($this->input->get("serviceYn") == "Y"){
+            $this->db->where("(select count(*) from service where sv_mb_seq = mb_seq and sv_status in (0,1,2,3,4,6)) > 0", NULL, FALSE);
+        }
+
+        if($this->input->get("serviceSelect") != ""){
+            $this->db->where("(select count(*) from service where sv_mb_seq = mb_seq and sv_pc_seq = '".$this->input->get("serviceSelect")."') > 0", NULL, FALSE);
         }
 
         if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
@@ -405,7 +413,8 @@ class Api_model extends CI_Model {
     // 견적 list count
     public function countEstimate(){
         $this->db->select("count(*) as total");
-        $this->db->from("estimates ");
+        $this->db->from("estimates a");
+        $this->db->join("members b","a.es_mb_seq = b.mb_seq","left");
 
         if($this->input->get("startDate") != "" && $this->input->get("endDate") != ""){
             $this->db->where("date_format(es_regdate,'%Y-%m-%d') >= '".$this->input->get("startDate")."' and date_format(es_regdate,'%Y-%m-%d') <= '".$this->input->get("endDate")."' ");
@@ -3091,12 +3100,12 @@ class Api_model extends CI_Model {
         if($this->input->post("b_mb_address") != $this->input->post("mb_address") || $this->input->post("b_mb_zipcode") != $this->input->post("mb_zipcode") || $this->input->post("b_mb_detail_address") != $this->input->post("mb_detail_address")){
             $this->logInsert(1,$mb_seq,'회원 정보','주소(한글)',$this->input->post("b_mb_zipcode")." ".$this->input->post("b_mb_address")." ".$this->input->post("b_mb_detail_address"),$this->input->post("mb_zipcode")." ".$this->input->post("mb_address")." ".$this->input->post("mb_detail_address"),1,'',$_SERVER["REMOTE_ADDR"]);
         }
-        // if($this->input->post("b_mb_business_conditions") != $this->input->post("mb_business_conditions")){
-        //     $this->logInsert(1,$mb_seq,'회원 정보','업태',$this->input->post("b_mb_business_conditions"),$this->input->post("mb_business_conditions"),1,'',$_SERVER["REMOTE_ADDR"]);
-        // }
-        // if($this->input->post("b_mb_business_type") != $this->input->post("mb_business_type")){
-        //     $this->logInsert(1,$mb_seq,'회원 정보','종목',$this->input->post("b_mb_business_type"),$this->input->post("mb_business_type"),1,'',$_SERVER["REMOTE_ADDR"]);
-        // }
+        if($this->input->post("b_mb_business_conditions") != $this->input->post("mb_business_conditions")){
+            $this->logInsert(1,$mb_seq,'회원 정보','업태',$this->input->post("b_mb_business_conditions"),$this->input->post("mb_business_conditions"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_business_type") != $this->input->post("mb_business_type")){
+            $this->logInsert(1,$mb_seq,'회원 정보','종목',$this->input->post("b_mb_business_type"),$this->input->post("mb_business_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
         if($this->input->post("b_mb_tel") != $this->input->post("mb_tel")){
             $this->logInsert(1,$mb_seq,'회원 정보','전화번호',$this->input->post("b_mb_tel"),$this->input->post("mb_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
         }
@@ -3121,7 +3130,10 @@ class Api_model extends CI_Model {
             "mb_number" => $this->input->post("mb_number"),
             "mb_ceo" => $this->input->post("mb_ceo"),
             "mb_phone" => $this->input->post("mb_phone"),
-            "mb_fax" => $this->input->post("mb_fax")
+            "mb_fax" => $this->input->post("mb_fax"),
+            "mb_memo" => $this->input->post("mb_memo"),
+            "mb_business_type"=>$this->input->post("mb_business_type"),
+            "mb_business_conditions" => $this->input->post("mb_business_conditions")
         );
 
         $this->db->where("mb_seq",$mb_seq);
@@ -3144,20 +3156,33 @@ class Api_model extends CI_Model {
         return $this->db->update("members",$data);
     }
 
+    public function memberUpdate3($mb_seq)
+    {
+        $data = array(
+            "mb_input_payment_bank"=>$this->input->post("mb_input_payment_bank"),
+            "mb_input_payment_name" => $this->input->post("mb_input_payment_name"),
+            "mb_input_payment_number" => $this->input->post("mb_input_payment_number")
+        );
+
+        $this->db->where("mb_seq",$mb_seq);
+
+        return $this->db->update("members",$data);
+    }
+
     public function memberUpdate4($mb_seq)
     {
-        // if($this->input->post("b_mb_contract_name") != $this->input->post("mb_contract_name")){
-        //     $this->logInsert(1,$mb_seq,'계약 담당자','이름',$this->input->post("b_mb_contract_name"),$this->input->post("mb_contract_name"),1,'',$_SERVER["REMOTE_ADDR"]);
-        // }
-        // if($this->input->post("b_mb_contract_email") != $this->input->post("mb_contract_email")){
-        //     $this->logInsert(1,$mb_seq,'계약 담당자','이메일',$this->input->post("b_mb_contract_email"),$this->input->post("mb_contract_email"),1,'',$_SERVER["REMOTE_ADDR"]);
-        // }
-        // if($this->input->post("b_mb_contract_phone") != $this->input->post("mb_contract_phone")){
-        //     $this->logInsert(1,$mb_seq,'계약 담당자','휴대폰번호',$this->input->post("b_mb_contract_phone"),$this->input->post("mb_contract_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
-        // }
-        // if($this->input->post("b_mb_contract_tel") != $this->input->post("mb_contract_tel")){
-        //     $this->logInsert(1,$mb_seq,'계약 담당자','전화번호',$this->input->post("b_mb_contract_tel"),$this->input->post("mb_contract_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
-        // }
+        if($this->input->post("b_mb_contract_name") != $this->input->post("mb_contract_name")){
+            $this->logInsert(1,$mb_seq,'계약 담당자','이름',$this->input->post("b_mb_contract_name"),$this->input->post("mb_contract_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_contract_email") != $this->input->post("mb_contract_email")){
+            $this->logInsert(1,$mb_seq,'계약 담당자','이메일',$this->input->post("b_mb_contract_email"),$this->input->post("mb_contract_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_contract_phone") != $this->input->post("mb_contract_phone")){
+            $this->logInsert(1,$mb_seq,'계약 담당자','휴대폰번호',$this->input->post("b_mb_contract_phone"),$this->input->post("mb_contract_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($this->input->post("b_mb_contract_tel") != $this->input->post("mb_contract_tel")){
+            $this->logInsert(1,$mb_seq,'계약 담당자','전화번호',$this->input->post("b_mb_contract_tel"),$this->input->post("mb_contract_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
         $data = array(
             "mb_contract_name"=>$this->input->post("mb_contract_name"),
             "mb_contract_email" => $this->input->post("mb_contract_email"),
@@ -3378,6 +3403,23 @@ class Api_model extends CI_Model {
 
         $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sr_payment_day"],substr($claim_date,0,4)));
 
+        $next_service_start = date("Y-m-d",mktime(0,0,0,substr($row["sr_account_end"],5,2),substr($row["sr_account_end"],8,2)+1,substr($row["sr_account_end"],0,4)));
+        $next_service_end = date("Y-m-d",mktime(0,0,0,substr($row["sr_account_end"],5,2)+1,substr($row["sr_account_end"],8,2),substr($row["sr_account_end"],0,4)));
+
+        $next_pay_day = $row["sr_pay_day"];
+        if($row["sr_pay_type"] == "0"){ // 전월
+            $next_standard_day = substr($next_service_start,8,2);
+            if($next_pay_day > $next_standard_day){
+                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+            }else{
+                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+            }
+        }else if($row["sr_pay_type"] == "1"){ // 당월
+            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+        }else if($row["sr_pay_type"] == "2"){ // 익월
+            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+        }
+
         $this->db->select("pm_ca_seq");
         $this->db->from("payment");
         $this->db->where("pm_mb_seq",$row["sr_mb_seq"]);
@@ -3409,7 +3451,8 @@ class Api_model extends CI_Model {
 
             $pm_code = $max_row1.sprintf("%07d",$max_row2);
         }
-        $total_price = $row2["sp_once_price"]-$row2["sp_once_dis_price"]+$row2["sp_month_price"]-$row2["sp_month_dis_price"]-$row2["sp_discount_price"]+$row2["sp_first_day_price"];
+        // $total_price = $row2["sp_once_price"]-$row2["sp_once_dis_price"]+$row2["sp_month_price"]-$row2["sp_month_dis_price"]-$row2["sp_discount_price"]+$row2["sp_first_day_price"];
+        $total_price = $row2["sp_once_price"]-$row2["sp_once_dis_price"]+$row2["sp_first_day_price"]+$row2["sp_first_month_price"];
         $payment_data = array(
             "pm_type" => "1",
             "pm_mb_seq" => $row["sr_mb_seq"],
@@ -3418,7 +3461,7 @@ class Api_model extends CI_Model {
             "pm_date" => $claim_date,
             "pm_service_start" => $row["sr_account_start"],
             "pm_service_end" =>  $row["sr_account_end"],
-            "pm_pay_type" => $row["sr_pay_type"],
+            "pm_pay_type" => $row["sr_payment_type"],
             "pm_pay_period" => $row["sr_payment_period"],
             "pm_once_price" => $row2["sp_once_price"],
             "pm_once_dis_price" => $row2["sp_once_dis_price"],
@@ -3438,9 +3481,11 @@ class Api_model extends CI_Model {
             "pm_first_month_price" => $row2["sp_first_month_price"],
             "pm_first_month_start" => $row2["sp_first_month_start"],
             "pm_first_month_end" => $row2["sp_first_month_end"],
+            "pm_payment_publish" => $row["sr_pay_publish"],
             "pm_payment_publish_type" => $row["sr_pay_publish_type"],
             "pm_ca_seq" => $pm_ca_seq,
-            "pm_claim_type" => "0"
+            "pm_claim_type" => "0",
+            "pm_next_claim_date" => $next_claim_date
         );
         $this->db->insert("payment",$payment_data);
 
@@ -3460,10 +3505,10 @@ class Api_model extends CI_Model {
                 $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
                 if($row_cl["ca_m_sv_num"] < $sv_number){
                     $ca_m_sv_num = $sv_number;
-                    $ca_item_name = $row["sr_bill_name"];
+                    $ca_item_name = $row["sr_bill_name"]." 외";
                 }else{
                     $ca_m_sv_num = $row_cl["ca_m_sv_num"];
-                    $ca_item_name = $row_cl["ca_item_name"];
+                    $ca_item_name = $row_cl["ca_item_name"]." 외";
                 }
                 $data_claim_detail = array(
                     "ca_item_name" => $ca_item_name,
@@ -3480,7 +3525,8 @@ class Api_model extends CI_Model {
                     "ca_item_price" => $total_price,
                     "ca_item_surtax" => floor($total_price*0.1),
                     "ca_sort" => 1,
-                    "ca_m_sv_num" => $sv_number
+                    "ca_m_sv_num" => $sv_number,
+                    "ca_main" => "M"
                 );
                 $this->db->insert("payment_claim_list",$data_claim_detail);
             }
@@ -3515,27 +3561,34 @@ class Api_model extends CI_Model {
             $query_member = $this->db->get();
 
             $row_member = $query_member->row_array();
+            $this->db->select("*"); // 아이온 정보 가져옴
+            $this->db->from("members");
+            $this->db->where("mb_seq",21);
+            $query_eyeon = $this->db->get();
+
+            $row_eyeon = $query_eyeon->row_array();
+
 
             $data_claim = array(
-                "ca_from_number" => "215-87-70318",
+                "ca_from_number" => $row_eyeon["mb_number"],
                 "ca_to_number" => $row_member["mb_number"],
-                "ca_from_name" => "아이온 시큐리티",
+                "ca_from_name" => $row_eyeon["mb_name"],
                 "ca_to_name" => $row_member["mb_name"],
-                "ca_from_ceo" => "김성혁",
+                "ca_from_ceo" => $row_eyeon["mb_ceo"],
                 "ca_to_ceo" => $row_member["mb_ceo"],
-                "ca_from_address" => "서울특별시 서초구 서초대로 255",
+                "ca_from_address" => $row_eyeon["mb_address"],
                 "ca_to_address"=> $row_member["mb_address"],
-                "ca_from_condition" => "서비스 외",
+                "ca_from_condition" => $row_eyeon["mb_business_conditions"],
                 "ca_to_condition" => $row_member["mb_business_conditions"],
-                "ca_from_type" => "보안서비스 및 용역제공",
+                "ca_from_type" => $row_eyeon["mb_business_type"],
                 "ca_to_type" => $row_member["mb_business_type"],
-                "ca_from_team" => "영업2팀",
+                "ca_from_team" => $row_eyeon["mb_payment_team"],
                 "ca_to_team" => $row_member["mb_payment_team"],
-                "ca_from_charger" => "전이준",
+                "ca_from_charger" => $row_eyeon["mb_payment_name"],
                 "ca_to_charger" => $row_member["mb_payment_name"],
-                "ca_from_tel" => "",
+                "ca_from_tel" => $row_eyeon["mb_payment_tel"],
                 "ca_to_tel" => $row_member["mb_payment_tel"],
-                "ca_from_email" => "ijjun@eyeonsec.co.kr",
+                "ca_from_email" => $row_eyeon["mb_payment_email"],
                 "ca_to_email" => $row_member["mb_payment_email"],
                 "ca_date" => $claim_date,
                 "ca_price" => $total_price,
@@ -3548,7 +3601,8 @@ class Api_model extends CI_Model {
                 "ca_price_info4" => 0,
                 "ca_price_info5" => 0,
                 "ca_payment_type" => $row["sr_pay_publish_type"],
-                "ca_mb_seq" => $row["sr_mb_seq"]
+                "ca_mb_seq" => $row["sr_mb_seq"],
+                "ca_pm_seq"=>$pm_seq
             );
             $this->db->insert("payment_claim",$data_claim);
 
@@ -3559,7 +3613,8 @@ class Api_model extends CI_Model {
                 "ca_item_price" => $total_price,
                 "ca_item_surtax" => floor($total_price*0.1),
                 "ca_sort" => 1,
-                "ca_m_sv_num" => $sv_number
+                "ca_m_sv_num" => $sv_number,
+                "ca_main" => "M"
             );
             $this->db->insert("payment_claim_list",$data_claim_d);
 
@@ -3692,6 +3747,23 @@ class Api_model extends CI_Model {
                     }
                     $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row_sr["sr_payment_day"],substr($claim_date,0,4)));
 
+                    $next_service_start = date("Y-m-d",mktime(0,0,0,substr($row_sr["sr_account_end"],5,2),substr($row_sr["sr_account_end"],8,2)+1,substr($row_sr["sr_account_end"],0,4)));
+                    $next_service_end = date("Y-m-d",mktime(0,0,0,substr($row_sr["sr_account_end"],5,2)+1,substr($row_sr["sr_account_end"],8,2),substr($row_sr["sr_account_end"],0,4)));
+
+                    $next_pay_day = $row_sr["sr_pay_day"];
+                    if($row_sr["sr_pay_type"] == "0"){ // 전월
+                        $next_standard_day = substr($next_service_start,8,2);
+                        if($next_pay_day > $next_standard_day){
+                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }else{
+                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }
+                    }else if($row_sr["sr_pay_type"] == "1"){ // 당월
+                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                    }else if($row_sr["sr_pay_type"] == "2"){ // 익월
+                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                    }
+
                     $this->db->select("pm_ca_seq");
                     $this->db->from("payment");
                     $this->db->where("pm_mb_seq",$row_sr["sr_mb_seq"]);
@@ -3723,7 +3795,7 @@ class Api_model extends CI_Model {
 
                         $pm_code = $max_row1.sprintf("%07d",$max_row2);
                     }
-                    $total_price = $row2["sap_once_price"]-$row2["sap_once_dis_price"]+$row2["sap_month_price"]-$row2["sap_month_dis_price"]-$row2["sap_discount_price"]+$row2["sap_first_day_price"];
+                    $total_price = $row2["sap_once_price"]-$row2["sap_once_dis_price"]+$row2["sap_first_day_price"]+$row2["sap_first_month_price"];
                     $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row_sr["sr_account_start"],5,2)+$row["sa_pay_day"],substr($row_sr["sr_account_start"],8,2)-1,substr($row_sr["sr_account_start"],0,4)));
                     $payment_data = array(
                         "pm_type" => "1",
@@ -3734,7 +3806,7 @@ class Api_model extends CI_Model {
                         "pm_date" => $claim_date,
                         "pm_service_start" => $row_sr["sr_account_start"],
                         "pm_service_end" =>  $pm_service_end,
-                        "pm_pay_type" => $row_sr["sr_pay_type"],
+                        "pm_pay_type" => $row_sr["sr_payment_type"],
                         "pm_pay_period" => $row["sa_pay_day"],
                         "pm_once_price" => $row2["sap_once_price"],
                         "pm_once_dis_price" => $row2["sap_once_dis_price"],
@@ -3752,9 +3824,11 @@ class Api_model extends CI_Model {
                         "pm_first_month_price" => $row2["sap_first_month_price"],
                         "pm_first_month_start" => $row2["sap_first_month_start"],
                         "pm_first_month_end" => $row2["sap_first_month_end"],
+                        "pm_payment_publish" => $row_sr["sr_pay_publish"],
                         "pm_payment_publish_type" => $row_sr["sr_pay_publish_type"],
                         "pm_ca_seq" => $pm_ca_seq,
-                        "pm_claim_type" => "0"
+                        "pm_claim_type" => "0",
+                        "pm_next_claim_date" => $next_claim_date
                     );
                     $this->db->insert("payment",$payment_data);
 
@@ -3775,7 +3849,8 @@ class Api_model extends CI_Model {
 
                             $data_claim_detail = array(
                                 "ca_item_price" => $ca_item_price,
-                                "ca_item_surtax" => $ca_item_surtax
+                                "ca_item_surtax" => $ca_item_surtax,
+                                "ca_item_name" => str_replace(" 외","",$row_cl["ca_item_name"])." 외"
                             );
                             $this->db->where("cl_seq",$row_cl["cl_seq"]);
                             $this->db->update("payment_claim_list",$data_claim_detail);
@@ -3786,7 +3861,8 @@ class Api_model extends CI_Model {
                                 "ca_item_price" => $total_price,
                                 "ca_item_surtax" => floor($total_price*0.1),
                                 "ca_sort" => 1,
-                                "ca_m_sv_num" => $row_sr["sv_number"]
+                                "ca_m_sv_num" => $row_sr["sv_number"],
+                                "ca_main" => "M"
                             );
                             $this->db->insert("payment_claim_list",$data_claim_detail);
                         }
@@ -3821,27 +3897,34 @@ class Api_model extends CI_Model {
                         $query_member = $this->db->get();
 
                         $row_member = $query_member->row_array();
+                        $this->db->select("*"); // 아이온 정보 가져옴
+                        $this->db->from("members");
+                        $this->db->where("mb_seq",21);
+                        $query_eyeon = $this->db->get();
+
+                        $row_eyeon = $query_eyeon->row_array();
+
 
                         $data_claim = array(
-                            "ca_from_number" => "215-87-70318",
+                            "ca_from_number" => $row_eyeon["mb_number"],
                             "ca_to_number" => $row_member["mb_number"],
-                            "ca_from_name" => "아이온 시큐리티",
+                            "ca_from_name" => $row_eyeon["mb_name"],
                             "ca_to_name" => $row_member["mb_name"],
-                            "ca_from_ceo" => "김성혁",
+                            "ca_from_ceo" => $row_eyeon["mb_ceo"],
                             "ca_to_ceo" => $row_member["mb_ceo"],
-                            "ca_from_address" => "서울특별시 서초구 서초대로 255",
+                            "ca_from_address" => $row_eyeon["mb_address"],
                             "ca_to_address"=> $row_member["mb_address"],
-                            "ca_from_condition" => "서비스 외",
+                            "ca_from_condition" => $row_eyeon["mb_business_conditions"],
                             "ca_to_condition" => $row_member["mb_business_conditions"],
-                            "ca_from_type" => "보안서비스 및 용역제공",
+                            "ca_from_type" => $row_eyeon["mb_business_type"],
                             "ca_to_type" => $row_member["mb_business_type"],
-                            "ca_from_team" => "영업2팀",
+                            "ca_from_team" => $row_eyeon["mb_payment_team"],
                             "ca_to_team" => $row_member["mb_payment_team"],
-                            "ca_from_charger" => "전이준",
+                            "ca_from_charger" => $row_eyeon["mb_payment_name"],
                             "ca_to_charger" => $row_member["mb_payment_name"],
-                            "ca_from_tel" => "",
+                            "ca_from_tel" => $row_eyeon["mb_payment_tel"],
                             "ca_to_tel" => $row_member["mb_payment_tel"],
-                            "ca_from_email" => "ijjun@eyeonsec.co.kr",
+                            "ca_from_email" => $row_eyeon["mb_payment_email"],
                             "ca_to_email" => $row_member["mb_payment_email"],
                             "ca_date" => $claim_date,
                             "ca_price" => $total_price,
@@ -3854,7 +3937,8 @@ class Api_model extends CI_Model {
                             "ca_price_info4" => 0,
                             "ca_price_info5" => 0,
                             "ca_payment_type" => $row_sr["sr_pay_publish_type"],
-                            "ca_mb_seq" => $row_sr["sr_mb_seq"]
+                            "ca_mb_seq" => $row_sr["sr_mb_seq"],
+                            "ca_pm_seq" => $pm_seq
                         );
                         $this->db->insert("payment_claim",$data_claim);
 
@@ -3865,7 +3949,8 @@ class Api_model extends CI_Model {
                             "ca_item_price" => $total_price,
                             "ca_item_surtax" => floor($total_price*0.1),
                             "ca_sort" => 1,
-                            "ca_m_sv_num" => $row_sr["sv_number"]
+                            "ca_m_sv_num" => $row_sr["sv_number"],
+                            "ca_main" => "M"
                         );
                         $this->db->insert("payment_claim_list",$data_claim_d);
 
@@ -3929,9 +4014,9 @@ class Api_model extends CI_Model {
             }
         }
 
-        // if($this->input->get("searchWord") != ""){
-        //     $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
-        // }
+        if($this->input->get("searchWord") != ""){
+            $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+        }
 
         if($this->input->get("sv_status") != ""){
 
@@ -3962,7 +4047,7 @@ class Api_model extends CI_Model {
     }
 
     public function fetchService($start,$end){
-        $this->db->select("*,(select concat(ifnull(sum(svp_once_price),0),'|',ifnull(sum(svp_once_dis_price),0),'|',ifnull(sum(svp_month_price),0),'|',ifnull(sum(svp_month_dis_price),0),'|',ifnull(sum(svp_discount_price/svp_payment_period),0)) from service_price where a.sv_seq = svp_sv_seq ) as priceinfo,(select concat(pm_status,'|',pm_pay_period,'|',pm_date,'|',pm_end_date,'|',ifnull(pm_input_date,'')) from payment where pm_sv_seq = a.sv_seq order by pm_seq desc limit 1) as paymentinfo,(select count(*) from service_addoption where sva_sv_seq = a.sv_seq) as addoptionTotal,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 1 limit 1),'') as file1,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 2 limit 1),'') as file2,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 3 limit 1),'') as file3,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 4 limit 1),'') as file4,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 5 limit 1),'') as file5,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 6 limit 1),'') as file6,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 7 limit 1),'') as file7,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 8 limit 1),'') as file8",true);
+        $this->db->select("*,(select concat(ifnull(sum(svp_once_price),0),'|',ifnull(sum(svp_once_dis_price),0),'|',ifnull(sum(svp_month_price),0),'|',ifnull(sum(svp_month_dis_price),0),'|',ifnull(sum(svp_discount_price/svp_payment_period),0)) from service_price where a.sv_seq = svp_sv_seq ) as priceinfo,(select concat(pm_status,'|',pm_pay_period,'|',pm_date,'|',pm_end_date,'|',ifnull(pm_input_date,''),'|',ifnull(pm_service_start,''),'|',ifnull(pm_service_end,'')) from payment where pm_sv_seq = a.sv_seq and (pm_sva_seq is null or pm_sva_seq = 0) and pm_type = '1' order by pm_seq desc limit 1) as paymentinfo,(select count(*) from service_addoption where sva_sv_seq = a.sv_seq) as addoptionTotal,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 1 limit 1),'') as file1,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 2 limit 1),'') as file2,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 3 limit 1),'') as file3,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 4 limit 1),'') as file4,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 5 limit 1),'') as file5,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 6 limit 1),'') as file6,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 7 limit 1),'') as file7,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 8 limit 1),'') as file8",true);
         $this->db->from("service a");
         $this->db->join("service_price ap","a.sv_seq=ap.svp_sv_seq","left" );
         $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
@@ -3984,9 +4069,9 @@ class Api_model extends CI_Model {
         }
 
 
-        // if($this->input->get("searchWord") != ""){
-        //     $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
-        // }
+        if($this->input->get("searchWord") != ""){
+            $this->db->like($this->input->get("searchType"),$this->input->get("searchWord"),'both');
+        }
 
         if($this->input->get("sv_status") != ""){
 
@@ -4018,21 +4103,32 @@ class Api_model extends CI_Model {
     }
 
     public function fetchServiceAdd($sv_seq){
-        $this->db->select("*,(select concat(pm_status,'|',pm_pay_period,'|',pm_date,'|',pm_end_date,'|',ifnull(pm_input_date,'')) from payment where pm_sv_seq = sv.sv_seq order by pm_seq desc limit 1) as paymentinfo",true);
+        $this->db->select("*,(select concat(pm_status,'|',pm_pay_period,'|',pm_date,'|',pm_end_date,'|',ifnull(pm_input_date,''),'|',ifnull(pm_service_start,''),'|',ifnull(pm_service_end,'')) from payment where pm_sv_seq = sv.sv_seq and pm_sva_seq = a.sva_seq and pm_type = '1' order by pm_seq desc limit 1) as paymentinfo",true);
         $this->db->from("service_addoption a");
         $this->db->join("service sv","a.sva_sv_seq = sv.sv_seq","inner");
         $this->db->join("service_price b","a.sva_seq = b.svp_sva_seq","left");
         $this->db->join("clients cl","a.sva_c_seq = cl.c_seq","left");
         $this->db->where("sva_sv_seq",$sv_seq);
-        $this->db->where("svp_display_yn","Y");
+        // $this->db->where("svp_display_yn","Y");
 
         $query = $this->db->get();
 
         return $query->result_array();
     }
 
-    public function fetchMemberService($mb_seq){
-        $this->db->select("*,(select concat(ifnull(sum(svp_once_price),0),'|',ifnull(sum(svp_once_dis_price),0),'|',ifnull(sum(svp_month_price),0),'|',ifnull(sum(svp_month_dis_price),0),'|',ifnull(sum(svp_discount_price/svp_payment_period),0)) from service_price where a.sv_seq = svp_sv_seq ) as priceinfo,(select concat(pm_status,'|',pm_pay_period,'|',pm_date,'|',pm_end_date,'|',ifnull(pm_input_date,'')) from payment where pm_sv_seq = a.sv_seq order by pm_seq desc limit 1) as paymentinfo ,(select count(*) from service_addoption where sva_sv_seq = a.sv_seq) as addoptionTotal,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 1 limit 1),'') as file1,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 2 limit 1),'') as file2,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 3 limit 1),'') as file3,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 4 limit 1),'') as file4,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 5 limit 1),'') as file5,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 6 limit 1),'') as file6,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 7 limit 1),'') as file7,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 8 limit 1),'') as file8",true);
+    public function countMemberService($mb_seq){
+        $this->db->select("count(*) as total",true);
+        $this->db->from("service a");
+        
+        $this->db->where("sv_mb_seq",$mb_seq);
+        $query = $this->db->get();
+        $row = $query->row_array();
+
+        return $row["total"];
+    }
+
+    public function fetchMemberService($mb_seq,$start,$end){
+        $this->db->select("*,(select concat(ifnull(sum(svp_once_price),0),'|',ifnull(sum(svp_once_dis_price),0),'|',ifnull(sum(svp_month_price),0),'|',ifnull(sum(svp_month_dis_price),0),'|',ifnull(sum(svp_discount_price/svp_payment_period),0)) from service_price where a.sv_seq = svp_sv_seq ) as priceinfo,(select concat(pm_status,'|',pm_pay_period,'|',pm_date,'|',pm_end_date,'|',ifnull(pm_input_date,''),'|',ifnull(pm_service_start,''),'|',ifnull(pm_service_end,'')) from payment where pm_sv_seq = a.sv_seq and (pm_sva_seq is null or pm_sva_seq = 0) and pm_type = '1' order by pm_seq desc limit 1) as paymentinfo ,(select count(*) from service_addoption where sva_sv_seq = a.sv_seq) as addoptionTotal,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 1 limit 1),'') as file1,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 2 limit 1),'') as file2,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 3 limit 1),'') as file3,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 4 limit 1),'') as file4,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 5 limit 1),'') as file5,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 6 limit 1),'') as file6,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 7 limit 1),'') as file7,ifnull((select sf_origin_file from service_files where a.sv_seq = sf_sv_seq and sf_type = 8 limit 1),'') as file8",true);
         $this->db->from("service a");
         $this->db->join("service_price ap","a.sv_seq=ap.svp_sv_seq","left" );
         $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
@@ -4048,6 +4144,7 @@ class Api_model extends CI_Model {
         $this->db->where("mb_seq",$mb_seq);
         $this->db->group_by("sv_seq");
         $this->db->order_by("sv_seq desc");
+        $this->db->limit($end,$start);
         $query = $this->db->get();
 
         return $query->result_array();
@@ -4066,7 +4163,8 @@ class Api_model extends CI_Model {
         $this->db->join("product_sub_div f","sv.sv_ps_seq = f.ps_seq","left");
         $this->db->join("clients cl","sv.sv_c_seq = cl.c_seq","left");
         $this->db->join("service_addoption sa","a.svp_sva_seq = sa.sva_seq","left");
-
+        $this->db->join("claims ca","a.svp_cl_seq = ca.cl_seq","left");
+        $this->db->join("claim_detail cd","a.svp_seq = cd.cd_svp_seq","left");
 
         $this->db->where("mb_seq",$mb_seq);
         $this->db->order_by("sv_seq desc");
@@ -4088,11 +4186,15 @@ class Api_model extends CI_Model {
         $this->db->join("product_div pd","sv.sv_pd_seq = pd.pd_seq","left");
         $this->db->join("product_sub_div f","sv.sv_ps_seq = f.ps_seq","left");
         $this->db->join("clients cl","sv.sv_c_seq = cl.c_seq","left");
-        $this->db->join("service_addoption sa","a.svp_sva_seq = sa.sva_seq","left");
+        $this->db->join("service_addoption sa","a.svp_sva_seq = sa.sva_seq ","left");
 
 
         $this->db->where("mb_seq",$mb_seq);
+        $this->db->where("sv_pay_publish",0);
+        $this->db->where("sv_status in (0,1,2,3)");
+        $this->db->where(" (sva_claim_type is null or sva_claim_type = '0') ");
 
+        $this->db->order_by("sv_seq desc");
         $query = $this->db->get();
 
         return $query->result_array();
@@ -4102,7 +4204,7 @@ class Api_model extends CI_Model {
         $this->db->select("*");
         $this->db->from("claim_detail a");
         $this->db->join("claims aa","aa.cl_seq = a.cd_cl_seq","left");
-        $this->db->join("service_price svp","a.cd_svp_seq = svp.svp_seq","left");
+        $this->db->join("service_price svp","a.cd_svp_seq = svp.svp_seq","inner");
         $this->db->join("service sv","svp.svp_sv_seq=sv.sv_seq","left" );
         $this->db->join("members b","sv.sv_mb_seq = b.mb_seq","left");
         $this->db->join("end_users c","sv.sv_eu_seq = c.eu_seq","left");
@@ -4145,12 +4247,46 @@ class Api_model extends CI_Model {
         return $query->row_array();
     }
 
+    public function memberPaymentViewAdd($sv_seq){
+        $this->db->select("*");
+        $this->db->from("service_price a");
+        $this->db->join("service_addoption sv","a.svp_sva_seq=sv.sva_seq","inner" );
+        
+        $this->db->where("svp_sv_seq",$sv_seq);
+
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
     public function paymentView($pm_seq){
         $this->db->select("*");
         $this->db->from("payment a");
         $this->db->join("service sv","a.pm_sv_seq=sv.sv_seq","left" );
         $this->db->join("service_price svp","sv.sv_seq=svp.svp_sv_seq","left" );
         $this->db->join("service_addoption sva","a.pm_sva_seq=sva.sva_seq","left" );
+        $this->db->join("members b","sv.sv_mb_seq = b.mb_seq","left");
+        $this->db->join("end_users c","sv.sv_eu_seq = c.eu_seq","left");
+        $this->db->join("product d","sv.sv_pr_seq = d.pr_seq","left");
+        $this->db->join("product_category e","sv.sv_pc_seq = e.pc_seq","left");
+        $this->db->join("product_items ei","sv.sv_pi_seq = ei.pi_seq","left");
+        $this->db->join("product_div pd","sv.sv_pd_seq = pd.pd_seq","left");
+        $this->db->join("product_sub_div f","sv.sv_ps_seq = f.ps_seq","left");
+        $this->db->join("clients cl","sv.sv_c_seq = cl.c_seq","left");
+
+
+        $this->db->where("pm_seq",$pm_seq);
+
+        $query = $this->db->get();
+
+        return $query->row_array();
+    }
+    public function paymentViewAdd($pm_seq){
+        $this->db->select("*");
+        $this->db->from("payment a");
+        $this->db->join("service sv","a.pm_sv_seq=sv.sv_seq","left" );
+        $this->db->join("service_addoption sva","a.pm_sva_seq=sva.sva_seq","left" );
+        $this->db->join("service_price svp","sva.sva_seq=svp.svp_sva_seq","left" );
         $this->db->join("members b","sv.sv_mb_seq = b.mb_seq","left");
         $this->db->join("end_users c","sv.sv_eu_seq = c.eu_seq","left");
         $this->db->join("product d","sv.sv_pr_seq = d.pr_seq","left");
@@ -4252,6 +4388,27 @@ class Api_model extends CI_Model {
         return $this->db->update("payment",$data);
     }
 
+    public function paymentComUpdate(){
+        $data = array(
+            "pm_service_start" => $this->input->post("pm_service_start"),
+            "pm_service_end" => $this->input->post("pm_service_end"),
+            "pm_pay_type" => $this->input->post("pm_pay_type"),
+            "pm_once_price" => str_replace(",","",$this->input->post("pm_once_price")),
+            "pm_once_dis_price" => str_replace(",","",$this->input->post("pm_once_dis_price")),
+            "pm_once_dis_msg" => $this->input->post("pm_once_dis_msg"),
+            "pm_service_price" => str_replace(",","",$this->input->post("pm_service_price")),
+            "pm_service_dis_price" => str_replace(",","",$this->input->post("pm_service_dis_price")),
+            "pm_service_dis_msg" => $this->input->post("pm_service_dis_msg"),
+            "pm_payment_dis_price" => str_replace(",","",$this->input->post("pm_payment_dis_price")),
+            "pm_total_price" => str_replace(",","",$this->input->post("pm_total_price")),
+            "pm_surtax_price" => str_replace(",","",$this->input->post("pm_surtax_price")),
+            "pm_memo" => $this->input->post("pm_memo"),
+            "pm_com_date" => $this->input->post("pm_com_date")
+        );
+        $this->db->where("pm_seq",$this->input->post("pm_seq"));
+        return $this->db->update("payment",$data);
+    }
+
     public function fetchPayment($pm_mb_seq){
         $this->db->select("*,(select count(*) from payment aa where aa.pm_ca_seq = a.pm_ca_seq ) as pm_ca_total",true);
         $this->db->from("payment a");
@@ -4261,10 +4418,11 @@ class Api_model extends CI_Model {
         $this->db->join("product_sub_div d","b.sv_ps_seq = d.ps_seq","left");
         $this->db->join("product e","b.sv_pr_seq = e.pr_seq","left");
 
+
         $this->db->where("pm_mb_seq",$pm_mb_seq);
         $this->db->where("pm_status != '1'");
 
-        $this->db->order_by("pm_type desc, pm_ca_seq desc, sv_seq desc, pm_seq desc ");
+        $this->db->order_by("pm_type desc, pm_ca_seq desc,pm_sva_seq  ,pm_sv_seq desc  ");
         $query = $this->db->get();
 
         return $query->result_array();
@@ -4274,6 +4432,7 @@ class Api_model extends CI_Model {
         $this->db->select("*,(select count(*) from payment aa where aa.pm_ca_seq = a.pm_ca_seq ) as pm_ca_total",true);
         $this->db->from("payment a");
         $this->db->join("service b","a.pm_sv_seq = b.sv_seq","left");
+        $this->db->join("service_addoption bb","a.pm_sva_seq = bb.sva_seq","left");
         $this->db->join("product_category c","b.sv_pc_seq=c.pc_seq","left");
         $this->db->join("product_sub_div d","b.sv_ps_seq = d.ps_seq","left");
         $this->db->join("product e","b.sv_pr_seq = e.pr_seq","left");
@@ -4281,7 +4440,24 @@ class Api_model extends CI_Model {
         $this->db->where("pm_mb_seq",$pm_mb_seq);
         $this->db->where("pm_status = '1'");
 
-        $this->db->order_by("pm_ca_seq desc, pm_seq desc");
+        if($this->input->get("search_word") != ""){
+            if($this->input->get("search_type") == "sv_number"){
+                $this->db->where(" (sv_number LIKE '%".$this->input->get("search_word")."%' or sva_number LIKE '%".$this->input->get("search_word")."%') ");
+            }else{
+                $this->db->where(" (pr_name LIKE '%".$this->input->get("search_word")."%' or sva_name LIKE '%".$this->input->get("search_word")."%') ");
+            }
+            
+        }
+        if($this->input->get("search_year") != ""){
+            if($this->input->get("search_month") != ""){
+                $search_date = date("Y-m",mktime(0,0,0,$this->input->get("search_month"),1,$this->input->get("search_year")));
+                $this->db->where("pm_com_date LIKE '".$search_date."-%' ");
+            }else{
+                $this->db->where("pm_com_date LIKE '".$this->input->get("search_year")."-%' ");
+            }
+        }
+
+        $this->db->order_by("pm_com_date desc , pm_date desc ,sv_number  desc");
         $query = $this->db->get();
 
         return $query->result_array();
@@ -4320,26 +4496,34 @@ class Api_model extends CI_Model {
             $total_surtax = 0;
             $total_price2 = $total_price;
         }
+        $this->db->select("*"); // 아이온 정보 가져옴
+        $this->db->from("members");
+        $this->db->where("mb_seq",21);
+        $query_eyeon = $this->db->get();
+
+        $row_eyeon = $query_eyeon->row_array();
+
+
         $data_claim = array(
-            "ca_from_number" => "215-87-70318",
+            "ca_from_number" => $row_eyeon["mb_number"],
             "ca_to_number" => $row_member["mb_number"],
-            "ca_from_name" => "아이온 시큐리티",
+            "ca_from_name" => $row_eyeon["mb_name"],
             "ca_to_name" => $row_member["mb_name"],
-            "ca_from_ceo" => "김성혁",
+            "ca_from_ceo" => $row_eyeon["mb_ceo"],
             "ca_to_ceo" => $row_member["mb_ceo"],
-            "ca_from_address" => "서울특별시 서초구 서초대로 255",
+            "ca_from_address" => $row_eyeon["mb_address"],
             "ca_to_address"=> $row_member["mb_address"],
-            "ca_from_condition" => "서비스 외",
+            "ca_from_condition" => $row_eyeon["mb_business_conditions"],
             "ca_to_condition" => $row_member["mb_business_conditions"],
-            "ca_from_type" => "보안서비스 및 용역제공",
+            "ca_from_type" => $row_eyeon["mb_business_type"],
             "ca_to_type" => $row_member["mb_business_type"],
-            "ca_from_team" => "영업2팀",
+            "ca_from_team" => $row_eyeon["mb_payment_team"],
             "ca_to_team" => $row_member["mb_payment_team"],
-            "ca_from_charger" => "전이준",
+            "ca_from_charger" => $row_eyeon["mb_payment_name"],
             "ca_to_charger" => $row_member["mb_payment_name"],
-            "ca_from_tel" => "",
+            "ca_from_tel" => $row_eyeon["mb_payment_tel"],
             "ca_to_tel" => $row_member["mb_payment_tel"],
-            "ca_from_email" => "ijjun@eyeonsec.co.kr",
+            "ca_from_email" => $row_eyeon["mb_payment_email"],
             "ca_to_email" => $row_member["mb_payment_email"],
             "ca_date" => date("Y-m-d"),
             "ca_price" => $total_price,
@@ -4366,7 +4550,7 @@ class Api_model extends CI_Model {
             "ca_m_sv_num" => ""
         );
         $this->db->insert("payment_claim_list",$data_claim_d);
-
+        $total_price = str_replace(",","",$this->input->post("pm_service_price"))-str_replace(",","",$this->input->post("pm_service_dis_price"));
         $data = array(
             "pm_type" => $this->input->post("pm_type"),
             "pm_code" => $pm_code,
@@ -4381,13 +4565,16 @@ class Api_model extends CI_Model {
             "pm_service_price" => 0,
             "pm_service_dis_price" => 0,
             "pm_payment_dis_price" => 0,
+            "pm_total_price" => $total_price,
+            "pm_surtax_price" => $total_price*0.1,
             "pm_surtax_type" => $this->input->post("pm_surtax_type"),
             "pm_once_dis_msg" => $this->input->post("pm_dis_msg"),
             "pm_date" => date("Y-m-d"),
             "pm_end_date" => $this->input->post("pm_end_date"),
-            "pm_com_type" => $this->input->post("pm_com_type"),
+            "pm_pay_type" => $this->input->post("pm_pay_type"),
             "pm_status" => 0,
-            "pm_ca_seq"=>$pm_ca_seq
+            "pm_ca_seq"=>$pm_ca_seq,
+            "pm_pay_period" => 0
         );
 
         return $this->db->insert("payment",$data);
@@ -4405,7 +4592,7 @@ class Api_model extends CI_Model {
             "pm_once_dis_msg" => $this->input->post("pm_dis_msg"),
             "pm_date" => $this->input->post("pm_date"),
             "pm_end_date" => $this->input->post("pm_end_date"),
-            "pm_com_type" => $this->input->post("pm_com_type")
+            "pm_pay_type" => $this->input->post("pm_pay_type")
         );
 
         $this->db->where("pm_seq",$pm_seq);
@@ -4546,6 +4733,24 @@ class Api_model extends CI_Model {
         return $this->db->delete("claims");
     }
     public function serviceUpdate(){
+        $this->db->select("*",true);
+        $this->db->from("service a");
+        $this->db->join("service_price ap","a.sv_seq=ap.svp_sv_seq","left" );
+        $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
+        $this->db->join("end_users c","a.sv_eu_seq = c.eu_seq","left");
+        $this->db->join("company_type cc","a.sv_ct_seq = cc.ct_seq","left");
+        $this->db->join("product d","a.sv_pr_seq = d.pr_seq","left");
+        $this->db->join("product_category e","a.sv_pc_seq = e.pc_seq","left");
+        $this->db->join("product_items ei","a.sv_pi_seq = ei.pi_seq","left");
+        $this->db->join("product_div pd","a.sv_pd_seq = pd.pd_seq","left");
+        $this->db->join("product_sub_div f","a.sv_ps_seq = f.ps_seq","left");
+        $this->db->join("clients cl","a.sv_c_seq = cl.c_seq","left");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        $query = $this->db->get();
+        $b_row = $query->row_array();
+
         if($this->input->post("sv_rental_type") == "1"){
             $sv_rental_date = "";
         }else{
@@ -4553,7 +4758,7 @@ class Api_model extends CI_Model {
         }
         $new_data = array(
             "sv_payment_type" => $this->input->post("sv_payment_type"),
-            "sv_payment_period" => $this->input->post("sv_payment_period"),
+            "sv_payment_period" => $this->input->post("svp_payment_period"),
             "sv_pay_type" => $this->input->post("sv_pay_type"),
             "sv_pay_day" => $this->input->post("sv_pay_day"),
             "sv_pay_publish" => $this->input->post("sv_pay_publish"),
@@ -4602,51 +4807,167 @@ class Api_model extends CI_Model {
             "svp_discount_price" => str_replace(",","",$this->input->post("svp_discount_price")),
             "svp_register_discount" => str_replace(",","",$this->input->post("svp_register_discount")),
             "svp_first_claim_name" => $this->input->post("svp_first_claim_name"),
-            "svp_first_day_price" => str_replace(",","",$this->input->post("sp_first_price")),
-            "svp_first_day_start" => $this->input->post("sp_first_start"),
-            "svp_first_day_end" => $this->input->post("sp_first_end"),
-            "svp_first_month_price" => str_replace(",","",$this->input->post("sp_first_month_price")),
-            "svp_first_month_start" => $this->input->post("sp_first_month_start"),
-            "svp_first_month_end" => $this->input->post("sp_first_month_end"),
-            "svp_memo" => $this->input->post("svp_memo")
+            "svp_first_day_price" => str_replace(",","",$this->input->post("svp_first_day_price")),
+            "svp_first_day_start" => $this->input->post("svp_first_day_start"),
+            "svp_first_day_end" => $this->input->post("svp_first_day_end"),
+            "svp_first_month_price" => str_replace(",","",$this->input->post("svp_first_month_price")),
+            "svp_first_month_start" => $this->input->post("svp_first_month_start"),
+            "svp_first_month_end" => $this->input->post("svp_first_month_end"),
+            "svp_memo" => $this->input->post("svp_memo"),
+            "svp_payment_period" =>$this->input->post("svp_payment_period")
         );
         $this->db->where("svp_seq",$this->input->post("svp_seq"));
+        $this->db->update("service_price",$data_price);
 
-        if($this->input->post("b_sv_claim_name") != $this->input->post("sv_claim_name")){
-            // $this->logInsert(1,$mb_seq,'서비스 기본 정보','청구명',$this->input->post("b_sv_claim_name"),$this->input->post("sv_claim_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        $svp_sva_seq = $this->input->post("sva_seq_add");
+
+        $svp_sva_first_day_price = $this->input->post("svp_first_day_price_add");
+        $svp_sva_first_day_start = $this->input->post("svp_first_day_start_add");
+        $svp_sva_first_day_end = $this->input->post("svp_first_day_end_add");
+        $svp_sva_first_month_price = $this->input->post("svp_first_month_price_add");
+        $svp_sva_first_month_start = $this->input->post("svp_first_month_start_add");
+        $svp_sva_first_month_end = $this->input->post("svp_first_month_end_add");
+        $svp_seq_add = $this->input->post("svp_seq_add");
+        for($i = 0; $i < count($svp_sva_seq);$i++){
+            $data_price_sva = array(
+                "svp_first_day_price" => str_replace(",","",$svp_sva_first_day_price[$i]),
+                "svp_first_day_start" => $svp_sva_first_day_start[$i],
+                "svp_first_day_end" => $svp_sva_first_day_end[$i],
+                "svp_first_month_price" => str_replace(",","",$svp_sva_first_month_price[$i]),
+                "svp_first_month_start" => $svp_sva_first_month_start[$i],
+                "svp_first_month_end" => $svp_sva_first_month_end[$i]
+            );
+            $this->db->where("svp_seq",$svp_seq_add[$i]);
+            $this->db->update("service_price",$data_price_sva);
         }
 
-        if($this->input->post("b_sv_bill_name") != $this->input->post("sv_bill_name")){
-            // $this->logInsert(1,$mb_seq,'서비스 기본 정보','계산서 품목명',$this->input->post("b_sv_bill_name"),$this->input->post("sv_bill_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["sv_claim_name"] != $this->input->post("sv_claim_name")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 기본 정보','청구명',$b_row["b_sv_claim_name"],$this->input->post("sv_claim_name"),1,'',$_SERVER["REMOTE_ADDR"]);
         }
 
-        if($this->input->post("b_sv_payment_type") != $this->input->post("sv_payment_type")){
-            // $this->logInsert(1,$mb_seq,'서비스 결제 조건','요금 납부 방법',$this->input->post("b_sv_payment_type"),$this->input->post("sv_payment_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["b_sv_bill_name"] != $this->input->post("sv_bill_name")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 기본 정보','계산서 품목명',$b_row["b_sv_bill_name"],$this->input->post("sv_bill_name"),1,'',$_SERVER["REMOTE_ADDR"]);
         }
 
-        if($this->input->post("b_sv_payment_period") != $this->input->post("sv_payment_period")){
-            // $this->logInsert(1,$mb_seq,'서비스 결제 조건','결제 주기',$this->input->post("b_sv_payment_period"),$this->input->post("sv_payment_period"),1,'',$_SERVER["REMOTE_ADDR"]);
-        }
-        if($this->input->post("b_sv_pay_type") != $this->input->post("sv_pay_type")){
-            // $this->logInsert(1,$mb_seq,'서비스 결제 조건','청구 기준',$this->input->post("b_sv_pay_type"),$this->input->post("sv_pay_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["b_sv_payment_type"] != $this->input->post("sv_payment_type")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','요금 납부 방법',$b_row["b_sv_payment_type"],$this->input->post("sv_payment_type"),1,'',$_SERVER["REMOTE_ADDR"]);
         }
 
-        if($this->input->post("b_sv_pay_day") != $this->input->post("sv_pay_day")){
-            // $this->logInsert(1,$mb_seq,'서비스 결제 조건','자동 청구일',$this->input->post("b_sv_pay_day"),$this->input->post("sv_pay_day"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["b_sv_payment_period"] != $this->input->post("svp_payment_period")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','결제 주기',$b_row["b_sv_payment_period"],$this->input->post("svp_payment_period"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["b_sv_pay_type"] != $this->input->post("sv_pay_type")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','청구 기준',$b_row["b_sv_pay_type"],$this->input->post("sv_pay_type"),1,'',$_SERVER["REMOTE_ADDR"]);
         }
 
-        if($this->input->post("b_sv_pay_publish") != $this->input->post("sv_pay_publish") || $this->input->post("b_sv_pay_publish_type") != $this->input->post("sv_pay_publish_type")){
-            // $this->logInsert(1,$mb_seq,'서비스 결제 조건','계산서 발행',$this->input->post("b_sv_pay_publish"),$this->input->post("sv_pay_publish"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["b_sv_pay_day"] != $this->input->post("sv_pay_day")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','자동 청구일',$b_row["b_sv_pay_day"],$this->input->post("sv_pay_day"),1,'',$_SERVER["REMOTE_ADDR"]);
         }
 
+        if($b_row["b_sv_pay_publish"] != $this->input->post("sv_pay_publish") || $b_row["b_sv_pay_publish_type"] != $this->input->post("sv_pay_publish_type")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','계산서 발행',$b_row["b_sv_pay_publish"],$this->input->post("sv_pay_publish"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
 
+        if($b_row["sv_payment_day"] != $this->input->post("sv_payment_day")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','결제일',$b_row["sv_payment_day"],$this->input->post("sv_payment_day"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
 
+        if($b_row["svp_register_discount"] != $this->input->post("svp_register_discount")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','등록할인율',$b_row["svp_register_discount"],$this->input->post("svp_register_discount"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
 
+        if($b_row["svp_month_price"] != $this->input->post("svp_month_price")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','서비스 월 요금',$b_row["svp_month_price"],$this->input->post("svp_month_price"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
 
-        return $this->db->update("service_price",$data_price);
+        if($b_row["svp_month_dis_price"] != $this->input->post("svp_month_dis_price")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','서비스 할인 요금',$b_row["svp_month_dis_price"],$this->input->post("svp_month_dis_price"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        $b_total_price = ($b_row["svp_month_price"]-$b_row["svp_month_dis_price"])*$b_row["svp_payment_period"]-$b_row["svp_discount_price"];
+        $total_price = ($this->input->post("svp_month_price")-$this->input->post("svp_month_dis_price"))*$this->input->post("svp_payment_period")-$this->input->post("svp_discount_price");
+        if($b_total_price != $total_price){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','서비스 요금 합계',number_format($b_total_price)." / ".$b_row["svp_payment_period"]."개월",number_format($total_price)." / ".$this->input->post("svp_payment_period")."개월",1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["svp_memo"] != $this->input->post("svp_memo")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'관리자 메모','메모',$b_row["svp_memo"],$this->input->post("svp_memo"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        return true;
     }
 
     public function serviceViewUpdate(){
+        $this->db->select("*",true);
+        $this->db->from("service a");
+        $this->db->join("service_price ap","a.sv_seq=ap.svp_sv_seq","left" );
+        $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
+        $this->db->join("end_users c","a.sv_eu_seq = c.eu_seq","left");
+        $this->db->join("company_type cc","a.sv_ct_seq = cc.ct_seq","left");
+        $this->db->join("product d","a.sv_pr_seq = d.pr_seq","left");
+        $this->db->join("product_category e","a.sv_pc_seq = e.pc_seq","left");
+        $this->db->join("product_items ei","a.sv_pi_seq = ei.pi_seq","left");
+        $this->db->join("product_div pd","a.sv_pd_seq = pd.pd_seq","left");
+        $this->db->join("product_sub_div f","a.sv_ps_seq = f.ps_seq","left");
+        $this->db->join("clients cl","a.sv_c_seq = cl.c_seq","left");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        $query = $this->db->get();
+        $b_row = $query->row_array();
+
+        if($b_row["sv_eu_seq"] != $this->input->post("sv_eu_seq") ){
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','End User',$b_row["eu_name"],$this->input->post("sv_eu_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_ct_seq"] != $this->input->post("sv_ct_seq") ){
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','업체분류',$b_row["ct_name"],$this->input->post("sv_ct_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_code"] != $this->input->post("sv_code1")."-".$this->input->post("sv_code2") ){
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 번호',$b_row["sv_code"],$this->input->post("sv_code1")."-".$this->input->post("sv_code2"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($b_row["sv_part"] != $this->input->post("sv_part") ||  $b_row["sv_charger"] != $this->input->post("sv_charger")){
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','사내담당자',$b_row["sv_part"]." ".$b_row["sv_charger"],$this->input->post("sv_part")." ".$this->input->post("sv_charger"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_contract_start"] != $this->input->post("sv_contract_start") ){
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 시작일',$b_row["sv_contract_start"],$this->input->post("sv_contract_start"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_contract_end"] != $this->input->post("sv_contract_end") ){
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 만료일',$b_row["sv_contract_end"],$this->input->post("sv_contract_end"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_auto_extension"] != $this->input->post("sv_auto_extension") || $b_row["sv_auto_extension_month"] != $this->input->post("sv_auto_extension_month") ){
+            if($b_row["sv_auto_extension"] == "0"){
+                $before = "재 계약 필요";
+            }else{
+                $before = "자동 계약 연장 ".$b_row["sv_auto_extension_month"]."개월";
+            }
+            if($this->input->post("sv_auto_extension") == "0"){
+                $after = "재 계약 필요";
+            }else{
+                $after = "자동 계약 연장 ".$this->input->post("sv_auto_extension_month")."개월";
+            }
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','자동 계약 연장 여부',$before,$after,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($b_row["sv_contract_extension_end"] != $this->input->post("sv_contract_end") ){
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 만료일(연장)',$b_row["sv_contract_extension_end"],$this->input->post("sv_contract_end"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($b_row["sv_rental_end_date"] != $this->input->post("sv_rental_end_date") ){
+            $this->logInsert(2,$this->input->post("sv_seq"),'상품 정보','소유권 이전일',$b_row["sv_rental_end_date"],$this->input->post("sv_rental_end_date"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($b_row["sv_rental_date"] != $this->input->post("sv_rental_type") ){
+            if($b_row["sv_rental_date"] == "1"){
+                $before = "영구임대";
+            }else{
+                $before = "소유권 이전 ".$b_row["sv_rental_date"]."개월";
+            }
+            if($this->input->post("sv_rental_date") == "1"){
+                $after = "영구임대";
+            }else{
+                $after = "소유권 이전 ".$this->input->post("sv_rental_date")."개월";
+            }
+            $this->logInsert(2,$this->input->post("sv_seq"),'상품 정보','임대 형태',$before,$after,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
         $new_data = array(
             "sv_eu_seq" => $this->input->post("sv_eu_seq"),
             "sv_ct_seq" => $this->input->post("sv_ct_seq"),
@@ -4660,39 +4981,14 @@ class Api_model extends CI_Model {
             "sv_auto_extension_month" => $this->input->post("sv_auto_extension_month"),
             "sv_claim_name" => $this->input->post("sv_claim_name"),
             "sv_rental_type" => $this->input->post("sv_rental_type"),
-            "sv_rental_date" => $this->input->post("sv_rental_date")
+            "sv_rental_date" => $this->input->post("sv_rental_date"),
+            "sv_rental_end_date" => $this->input->post("sv_rental_end_date")
         );
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
         return $this->db->update("service",$new_data);
     }
 
     public function serviceAddUpdate(){
-        // $new_data = array(
-        //     "sv_payment_type" => $this->input->post("sv_payment_type"),
-        //     "sv_payment_period" => $this->input->post("sv_payment_period"),
-        //     "sv_pay_type" => $this->input->post("sv_pay_type"),
-        //     "sv_pay_day" => $this->input->post("sv_pay_day"),
-        //     "sv_pay_publish" => $this->input->post("sv_pay_publish"),
-        //     "sv_pay_publish_type" => $this->input->post("sv_pay_publish_type"),
-        //     "sv_payment_day" => $this->input->post("sv_payment_day"),
-        //     "sv_account_start" => $this->input->post("sv_account_start"),
-        //     "sv_account_end" => $this->input->post("sv_account_end"),
-        //     "sv_account_type" => $this->input->post("sv_account_type"),
-        //     "sv_account_policy" => $this->input->post("sv_account_policy"),
-        //     "sv_account_start_day" => $this->input->post("sv_account_start_day"),
-        //     "sv_account_format" => $this->input->post("sv_account_format"),
-        //     "sv_account_format_policy" => $this->input->post("sv_account_format_policy"),
-        //     "sv_claim_name" => $this->input->post("sv_claim_name"),
-        //     "sv_bill_name" => $this->input->post("sv_bill_name"),
-        //     "sv_once_price" => $this->input->post("svp_once_price"),
-        //     "sv_month_price" => $this->input->post("svp_month_price"),
-        //     "sv_c_seq" => $this->input->post("sv_c_seq"),
-        //     "sv_input_price" => $this->input->post("sv_input_price"),
-        //     "sv_input_start" => $this->input->post("sv_input_start"),
-        //     "sv_input_unit" => $this->input->post("sv_input_unit")
-        // );
-        // $this->db->where("sv_seq",$this->input->post("sv_seq"));
-        // $this->db->update("service",$new_data);
         $new_data = array(
             "sva_claim_name" => $this->input->post("sva_claim_name"),
             "sva_bill_name" => $this->input->post("sva_bill_name"),
@@ -4718,10 +5014,10 @@ class Api_model extends CI_Model {
                 "svp_discount_price" => str_replace(",","",$this->input->post("svp_discount_price")),
                 "svp_register_discount" => $this->input->post("svp_register_discount"),
                 "svp_first_claim_name" => $this->input->post("svp_first_claim_name"),
-                "svp_first_day_price" => $this->input->post("svp_first_day_name"),
+                "svp_first_day_price" => $this->input->post("svp_first_day_price"),
                 "svp_first_day_start" => $this->input->post("svp_first_day_start"),
                 "svp_first_day_end" => $this->input->post("svp_first_day_end"),
-                "svp_first_month_price" => $this->input->post("svp_first_month_name"),
+                "svp_first_month_price" => $this->input->post("svp_first_month_price"),
                 "svp_first_month_start" => $this->input->post("svp_first_month_start"),
                 "svp_first_month_end" => $this->input->post("svp_first_month_end"),
                 "svp_payment_period" => $this->input->post("svp_payment_period")
@@ -4764,6 +5060,9 @@ class Api_model extends CI_Model {
     }
 
     public function paymentDelete($pm_seq_array){
+        $this->db->where_in("ca_pm_seq",$pm_seq_array);
+        $this->db->delete("payment_claim");
+
         $this->db->where_in("pm_seq",$pm_seq_array);
         return $this->db->delete("payment");
     }
@@ -4874,15 +5173,15 @@ class Api_model extends CI_Model {
             "ca_from_email" => $this->input->post("ca_from_email"),
             "ca_to_email" => $this->input->post("ca_to_email"),
             "ca_date" => $this->input->post("ca_date"),
-            "ca_price" => $this->input->post("ca_price"),
-            "ca_surtax" => $this->input->post("ca_surtax"),
-            "ca_total_price" => $this->input->post("ca_total_price"),
+            "ca_price" => str_replace(",","",$this->input->post("ca_price")),
+            "ca_surtax" => str_replace(",","",$this->input->post("ca_surtax")),
+            "ca_total_price" => str_replace(",","",$this->input->post("ca_total_price")),
             "ca_empty_size" => $this->input->post("ca_empty_size"),
-            "ca_price_info1" => $this->input->post("ca_price_info1"),
-            "ca_price_info2" => $this->input->post("ca_price_info2"),
-            "ca_price_info3" => $this->input->post("ca_price_info3"),
-            "ca_price_info4" => $this->input->post("ca_price_info4"),
-            "ca_price_info5" => $this->input->post("ca_price_info5")
+            "ca_price_info1" => str_replace(",","",$this->input->post("ca_price_info1")),
+            "ca_price_info2" => str_replace(",","",$this->input->post("ca_price_info2")),
+            "ca_price_info3" => str_replace(",","",$this->input->post("ca_price_info3")),
+            "ca_price_info4" => str_replace(",","",$this->input->post("ca_price_info4")),
+            "ca_price_info5" => str_replace(",","",$this->input->post("ca_price_info5"))
         );
         $this->db->where("ca_seq",$this->input->post("ca_seq"));
         $this->db->update("payment_claim",$data);
@@ -4890,8 +5189,8 @@ class Api_model extends CI_Model {
         if($this->input->post("cl_seq1") != ""){
             $data_list = array(
                 "ca_item_name" => $this->input->post("ca_item_name1"),
-                "ca_item_price" => $this->input->post("ca_item_price1"),
-                "ca_item_surtax" => $this->input->post("ca_item_surtax1"),
+                "ca_item_price" => str_replace(",","",$this->input->post("ca_item_price1")),
+                "ca_item_surtax" => str_replace(",","",$this->input->post("ca_item_surtax1")),
                 "ca_item_msg" => $this->input->post("ca_item_msg1")
             );
             $this->db->where("cl_seq",$this->input->post("cl_seq1"));
@@ -4901,8 +5200,8 @@ class Api_model extends CI_Model {
         if($this->input->post("cl_seq2") != ""){
             $data_list = array(
                 "ca_item_name" => $this->input->post("ca_item_name2"),
-                "ca_item_price" => $this->input->post("ca_item_price2"),
-                "ca_item_surtax" => $this->input->post("ca_item_surtax2"),
+                "ca_item_price" => str_replace(",","",$this->input->post("ca_item_price2")),
+                "ca_item_surtax" => str_replace(",","",$this->input->post("ca_item_surtax2")),
                 "ca_item_msg" => $this->input->post("ca_item_msg2")
             );
             $this->db->where("cl_seq",$this->input->post("cl_seq2"));
@@ -4912,8 +5211,8 @@ class Api_model extends CI_Model {
         if($this->input->post("cl_seq3") != ""){
             $data_list = array(
                 "ca_item_name" => $this->input->post("ca_item_name3"),
-                "ca_item_price" => $this->input->post("ca_item_price3"),
-                "ca_item_surtax" => $this->input->post("ca_item_surtax3"),
+                "ca_item_price" => str_replace(",","",$this->input->post("ca_item_price3")),
+                "ca_item_surtax" => str_replace(",","",$this->input->post("ca_item_surtax3")),
                 "ca_item_msg" => $this->input->post("ca_item_msg3")
             );
             $this->db->where("cl_seq",$this->input->post("cl_seq3"));
@@ -4923,8 +5222,8 @@ class Api_model extends CI_Model {
         if($this->input->post("cl_seq4") != ""){
             $data_list = array(
                 "ca_item_name" => $this->input->post("ca_item_name4"),
-                "ca_item_price" => $this->input->post("ca_item_price4"),
-                "ca_item_surtax" => $this->input->post("ca_item_surtax4"),
+                "ca_item_price" => str_replace(",","",$this->input->post("ca_item_price4")),
+                "ca_item_surtax" => str_replace(",","",$this->input->post("ca_item_surtax4")),
                 "ca_item_msg" => $this->input->post("ca_item_msg4")
             );
             $this->db->where("cl_seq",$this->input->post("cl_seq4"));
@@ -4979,10 +5278,25 @@ class Api_model extends CI_Model {
             $this->db->where("sv_seq",$row["sv_seq"]);
             $this->db->update("service",$data_status);
         }
+        for($i = 0; $i < count($seq);$i++){
+            $this->logInsert(4,$seq[$i],'결제 처리','가결제 처리',"","",1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        
         return true;
     }
 
     public function updateServiceOutInfo(){
+        $this->db->select("*");
+        $this->db->from("service ");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        $query = $this->db->get();
+
+        $b_row = $query->row_array();
+        if($b_row["sv_out_date"] != $this->input->post("sv_out_date")){
+            $this->logInsert(2,$seq[$i],'서비스 상태','재품 출고일',$b_row["sv_out_date"],$this->input->post("sv_out_date"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
         $data = array(
             "sv_out_date" => $this->input->post("sv_out_date"),
             "sv_out_type" => $this->input->post("sv_out_type"),
@@ -5000,6 +5314,54 @@ class Api_model extends CI_Model {
             "sv_engineer_part" => $this->input->post("sv_engineer_part"),
             "sv_engineer_charger" => $this->input->post("sv_engineer_charger")
         );
+        $this->db->select("*");
+        $this->db->from("service");
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+        $query = $this->db->get();
+        $row = $query->row_array();
+        if($row["sv_install_charger"] == ""){
+            $data["sv_install_charger"] = $this->input->post("sv_engineer_charger_str");
+            $data["sv_install_date"] = date("Y-m-d");
+        }
+
+        if($b_row["sv_status"] != $this->input->post("sv_status")){
+            if($b_row["sv_status"] == "0"){
+                $b_sv_status = '입금대기중';
+            }else if($b_row["sv_status"] == "1"){
+                $b_sv_status = '서비스준비중';
+            }else if($b_row["sv_status"] == "2"){
+                $b_sv_status = '서비스작업중';
+            }else if($b_row["sv_status"] == "3"){
+                $b_sv_status = '서비스중';
+            }else if($b_row["sv_status"] == "4"){
+                $b_sv_status = '서비스중지';
+            }else if($b_row["sv_status"] == "5"){
+                $b_sv_status = '서비스해지';
+            }else if($b_row["sv_status"] == "6"){
+                $b_sv_status = '직권중지';
+            }else if($b_row["sv_status"] == "7"){
+                $b_sv_status = '직권해지';
+            }
+
+            if($this->input->post("sv_status") == "0"){
+                $sv_status = '입금대기중';
+            }else if($this->input->post("sv_status") == "1"){
+                $sv_status = '서비스준비중';
+            }else if($this->input->post("sv_status") == "2"){
+                $sv_status = '서비스작업중';
+            }else if($this->input->post("sv_status") == "3"){
+                $sv_status = '서비스중';
+            }else if($this->input->post("sv_status") == "4"){
+                $sv_status = '서비스중지';
+            }else if($this->input->post("sv_status") == "5"){
+                $sv_status = '서비스해지';
+            }else if($this->input->post("sv_status") == "6"){
+                $sv_status = '직권중지';
+            }else if($this->input->post("sv_status") == "7"){
+                $sv_status = '직권해지';
+            }
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
 
         if($this->input->post("sv_status") != ""){
             $data["sv_status"] = $this->input->post("sv_status");
@@ -5010,9 +5372,46 @@ class Api_model extends CI_Model {
         return $this->db->update("service",$data);
     }
 
-    public function updateServiceOpen(){
+    public function updateServiceOpen($date){
+        $this->db->select("*");
+        $this->db->from("service ");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        $query = $this->db->get();
+
+        $b_row = $query->row_array();
+        if($b_row["sv_service_start"] != $date){
+            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 개시일',$b_row["sv_service_start"],$date,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($b_row["sv_status"] != 3){
+            if($b_row["sv_status"] == "0"){
+                $b_sv_status = '입금대기중';
+            }else if($b_row["sv_status"] == "1"){
+                $b_sv_status = '서비스준비중';
+            }else if($b_row["sv_status"] == "2"){
+                $b_sv_status = '서비스작업중';
+            }else if($b_row["sv_status"] == "3"){
+                $b_sv_status = '서비스중';
+            }else if($b_row["sv_status"] == "4"){
+                $b_sv_status = '서비스중지';
+            }else if($b_row["sv_status"] == "5"){
+                $b_sv_status = '서비스해지';
+            }else if($b_row["sv_status"] == "6"){
+                $b_sv_status = '직권중지';
+            }else if($b_row["sv_status"] == "7"){
+                $b_sv_status = '직권해지';
+            }
+
+            
+            $sv_status = '서비스중';
+            
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
         $data["sv_status"] = 3;
-        $data["sv_service_start"] = date("Y-m-d H:i:s");
+        $data["sv_service_start"] = $date;
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
 
         return $this->db->update("service",$data);
@@ -5026,8 +5425,45 @@ class Api_model extends CI_Model {
     }
 
     public function updateServiceStop(){
+        $this->db->select("*");
+        $this->db->from("service ");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        $query = $this->db->get();
+
+        $b_row = $query->row_array();
+        if($b_row["sv_service_stop"] != $this->input->post("sv_service_stop")){
+            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 중지일',$b_row["sv_service_stop"],$this->input->post("sv_service_stop"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($b_row["sv_status"] != 4){
+            if($b_row["sv_status"] == "0"){
+                $b_sv_status = '입금대기중';
+            }else if($b_row["sv_status"] == "1"){
+                $b_sv_status = '서비스준비중';
+            }else if($b_row["sv_status"] == "2"){
+                $b_sv_status = '서비스작업중';
+            }else if($b_row["sv_status"] == "3"){
+                $b_sv_status = '서비스중';
+            }else if($b_row["sv_status"] == "4"){
+                $b_sv_status = '서비스중지';
+            }else if($b_row["sv_status"] == "5"){
+                $b_sv_status = '서비스해지';
+            }else if($b_row["sv_status"] == "6"){
+                $b_sv_status = '직권중지';
+            }else if($b_row["sv_status"] == "7"){
+                $b_sv_status = '직권해지';
+            }
+
+            
+            $sv_status = '서비스중지';
+            
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
         $data["sv_service_stop"] = $this->input->post("sv_service_stop");
-        $data["sv_service_restart"] = $this->input->post("sv_service_restart");
+        $data["sv_service_stop_restart"] = $this->input->post("sv_service_restart");
         $data["sv_service_stop_msg"] = $this->input->post("sv_service_stop_msg");
         $data["sv_status"] = 4;
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
@@ -5036,12 +5472,49 @@ class Api_model extends CI_Model {
     }
 
     public function updateServiceEnd(){
-        $data["sv_service_end"] = $this->input->post("sv_service_stop");
+        $this->db->select("*");
+        $this->db->from("service ");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        $query = $this->db->get();
+
+        $b_row = $query->row_array();
+        if($b_row["sv_service_end"] != $this->input->post("sv_service_end")){
+            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 해지일',$b_row["sv_service_end"],$this->input->post("sv_service_end"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($b_row["sv_status"] != 5){
+            if($b_row["sv_status"] == "0"){
+                $b_sv_status = '입금대기중';
+            }else if($b_row["sv_status"] == "1"){
+                $b_sv_status = '서비스준비중';
+            }else if($b_row["sv_status"] == "2"){
+                $b_sv_status = '서비스작업중';
+            }else if($b_row["sv_status"] == "3"){
+                $b_sv_status = '서비스중';
+            }else if($b_row["sv_status"] == "4"){
+                $b_sv_status = '서비스중지';
+            }else if($b_row["sv_status"] == "5"){
+                $b_sv_status = '서비스해지';
+            }else if($b_row["sv_status"] == "6"){
+                $b_sv_status = '직권중지';
+            }else if($b_row["sv_status"] == "7"){
+                $b_sv_status = '직권해지';
+            }
+
+            
+            $sv_status = '서비스해지';
+            
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        $data["sv_service_end"] = $this->input->post("sv_service_end");
         // $data["sv_service_restart"] = $this->input->post("sv_service_restart")
         if($this->input->post("sv_service_end_msg") == "기타"){
             $data["sv_service_end_msg"] = $this->input->post("sv_service_end_msg_etc");
         }else{
-            $data["sv_service_end_msg"] = $this->input->post("sv_service_stop_msg");
+            $data["sv_service_end_msg"] = $this->input->post("sv_service_end_msg");
         }
 
         $data["sv_status"] = 5;
@@ -5050,9 +5523,46 @@ class Api_model extends CI_Model {
         return $this->db->update("service",$data);
     }
 
-    public function updateServiceForceStop(){
+    public function updateServiceForceStop($date){
+        $this->db->select("*");
+        $this->db->from("service ");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        $query = $this->db->get();
+
+        $b_row = $query->row_array();
+        if($b_row["sv_service_stop"] != $date){
+            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 중지일',$b_row["sv_service_stop"],$date,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($b_row["sv_status"] != 6){
+            if($b_row["sv_status"] == "0"){
+                $b_sv_status = '입금대기중';
+            }else if($b_row["sv_status"] == "1"){
+                $b_sv_status = '서비스준비중';
+            }else if($b_row["sv_status"] == "2"){
+                $b_sv_status = '서비스작업중';
+            }else if($b_row["sv_status"] == "3"){
+                $b_sv_status = '서비스중';
+            }else if($b_row["sv_status"] == "4"){
+                $b_sv_status = '서비스중지';
+            }else if($b_row["sv_status"] == "5"){
+                $b_sv_status = '서비스해지';
+            }else if($b_row["sv_status"] == "6"){
+                $b_sv_status = '직권중지';
+            }else if($b_row["sv_status"] == "7"){
+                $b_sv_status = '직권해지';
+            }
+
+            
+            $sv_status = '직권중지';
+            
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
         $data["sv_status"] = 6;
-        $data["sv_service_stop"] = date("Y-m-d H:i:s");
+        $data["sv_service_stop"] = $date;
 
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
 
@@ -5060,17 +5570,93 @@ class Api_model extends CI_Model {
     }
 
     public function updateServiceForceEnd(){
+        $this->db->select("*");
+        $this->db->from("service ");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        $query = $this->db->get();
+
+        $b_row = $query->row_array();
+        if($b_row["sv_service_end"] != date("Y-m-d H:i:s")){
+            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 해지일',$b_row["sv_service_end"],date("Y-m-d H:i:s"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($b_row["sv_status"] != 7){
+            if($b_row["sv_status"] == "0"){
+                $b_sv_status = '입금대기중';
+            }else if($b_row["sv_status"] == "1"){
+                $b_sv_status = '서비스준비중';
+            }else if($b_row["sv_status"] == "2"){
+                $b_sv_status = '서비스작업중';
+            }else if($b_row["sv_status"] == "3"){
+                $b_sv_status = '서비스중';
+            }else if($b_row["sv_status"] == "4"){
+                $b_sv_status = '서비스중지';
+            }else if($b_row["sv_status"] == "5"){
+                $b_sv_status = '서비스해지';
+            }else if($b_row["sv_status"] == "6"){
+                $b_sv_status = '직권중지';
+            }else if($b_row["sv_status"] == "7"){
+                $b_sv_status = '직권해지';
+            }
+
+            
+            $sv_status = '직권해지';
+            
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
         $data["sv_status"] = 7;
         $data["sv_service_end"] = date("Y-m-d H:i:s");
-
+        if($this->input->post("sv_service_force_end_msg") == "기타"){
+            $data["sv_service_end_msg"] = $this->input->post("sv_service_force_end_msg_etc");
+        }else{
+            $data["sv_service_end_msg"] = $this->input->post("sv_service_force_end_msg");
+        }
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
 
         return $this->db->update("service",$data);
     }
 
-    public function updateServiceRestart(){
+    public function updateServiceRestart($date){
+        $this->db->select("*");
+        $this->db->from("service ");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        $query = $this->db->get();
+
+        $b_row = $query->row_array();
+        if($b_row["sv_service_restart"] != $date){
+            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 재시작일',$b_row["sv_service_restart"],$date,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($b_row["sv_status"] != 3){
+            if($b_row["sv_status"] == "0"){
+                $b_sv_status = '입금대기중';
+            }else if($b_row["sv_status"] == "1"){
+                $b_sv_status = '서비스준비중';
+            }else if($b_row["sv_status"] == "2"){
+                $b_sv_status = '서비스작업중';
+            }else if($b_row["sv_status"] == "3"){
+                $b_sv_status = '서비스중';
+            }else if($b_row["sv_status"] == "4"){
+                $b_sv_status = '서비스중지';
+            }else if($b_row["sv_status"] == "5"){
+                $b_sv_status = '서비스해지';
+            }else if($b_row["sv_status"] == "6"){
+                $b_sv_status = '직권중지';
+            }else if($b_row["sv_status"] == "7"){
+                $b_sv_status = '직권해지';
+            }
+
+            
+            $sv_status = '서비스중';
+            
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+        }
         $data["sv_status"] = 3;
-        $data["sv_service_restart"] = date("Y-m-d H:i:s");
+        $data["sv_service_restart"] = $date;
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
 
         return $this->db->update("service",$data);
@@ -5277,6 +5863,7 @@ class Api_model extends CI_Model {
         $this->db->select("*");
         $this->db->from("payment_claim_list");
         $this->db->where("cl_ca_seq",$ca_seq);
+        $this->db->order_by("ca_main");
         $this->db->group_by("ca_sort");
         $query = $this->db->get();
 
@@ -5313,6 +5900,7 @@ class Api_model extends CI_Model {
                 $this->db->where("sv_seq" , $row2["sv_seq"]);
                 $this->db->update("service",$data_service);
             }
+            $this->logInsert(4,$data[$i],'결제 처리','완납 처리',"","",1,'',$_SERVER["REMOTE_ADDR"]);
         }
         return true;
     }
@@ -5320,15 +5908,7 @@ class Api_model extends CI_Model {
     public function paymentComPayPost(){
         $data = explode(",",$this->input->post("data"));
         if($this->input->post("pm_total") == count($data)){
-            for($i = 0; $i < count($data);$i++){
-                $data_array = array(
-                    "pm_status" => "1",
-                    "pm_com_date" => date("Y-m-d H:i:s")
-                );
-
-                $this->db->where("pm_seq" , $data[$i]);
-                $this->db->update("payment",$data_array);
-            }
+            
             // return true;
         }else{
             // 기존 내용이 뭔지 가져오기
@@ -5362,27 +5942,34 @@ class Api_model extends CI_Model {
             $query_member = $this->db->get();
 
             $row_member = $query_member->row_array();
+            $this->db->select("*"); // 아이온 정보 가져옴
+            $this->db->from("members");
+            $this->db->where("mb_seq",21);
+            $query_eyeon = $this->db->get();
+
+            $row_eyeon = $query_eyeon->row_array();
+
 
             $data_claim = array(
-                "ca_from_number" => "215-87-70318",
+                "ca_from_number" => $row_eyeon["mb_number"],
                 "ca_to_number" => $row_member["mb_number"],
-                "ca_from_name" => "아이온 시큐리티",
+                "ca_from_name" => $row_eyeon["mb_name"],
                 "ca_to_name" => $row_member["mb_name"],
-                "ca_from_ceo" => "김성혁",
+                "ca_from_ceo" => $row_eyeon["mb_ceo"],
                 "ca_to_ceo" => $row_member["mb_ceo"],
-                "ca_from_address" => "서울특별시 서초구 서초대로 255",
+                "ca_from_address" => $row_eyeon["mb_address"],
                 "ca_to_address"=> $row_member["mb_address"],
-                "ca_from_condition" => "서비스 외",
+                "ca_from_condition" => $row_eyeon["mb_business_conditions"],
                 "ca_to_condition" => $row_member["mb_business_conditions"],
-                "ca_from_type" => "보안서비스 및 용역제공",
+                "ca_from_type" => $row_eyeon["mb_business_type"],
                 "ca_to_type" => $row_member["mb_business_type"],
-                "ca_from_team" => "영업2팀",
+                "ca_from_team" => $row_eyeon["mb_payment_team"],
                 "ca_to_team" => $row_member["mb_payment_team"],
-                "ca_from_charger" => "전이준",
+                "ca_from_charger" => $row_eyeon["mb_payment_name"],
                 "ca_to_charger" => $row_member["mb_payment_name"],
-                "ca_from_tel" => "",
+                "ca_from_tel" => $row_eyeon["mb_payment_tel"],
                 "ca_to_tel" => $row_member["mb_payment_tel"],
-                "ca_from_email" => "ijjun@eyeonsec.co.kr",
+                "ca_from_email" => $row_eyeon["mb_payment_email"],
                 "ca_to_email" => $row_member["mb_payment_email"],
                 "ca_date" => $claim_date,
                 "ca_price" => $total_price,
@@ -5442,6 +6029,17 @@ class Api_model extends CI_Model {
             $this->db->update("payment_claim_list",$data_claim_d);
             // return true;
         }
+        for($i = 0; $i < count($data);$i++){
+            $data_array = array(
+                "pm_status" => "1",
+                "pm_com_date" => date("Y-m-d H:i:s")
+            );
+
+            $this->db->where("pm_seq" , $data[$i]);
+            $this->db->update("payment",$data_array);
+
+            $this->logInsert(4,$data[$i],'결제 처리','완납 처리',"","",1,'',$_SERVER["REMOTE_ADDR"]);
+        }
         //서비스 상태 변경
         for($i = 0; $i < count($data);$i++){
             $this->db->select("*");
@@ -5463,1096 +6061,1923 @@ class Api_model extends CI_Model {
 
     public function claimMake($mb_seq){
         // 마지막 청구 가져오기
-        $pm_sv_seq_arr = explode(",",$this->input->post("pm_sv_seq"));
+        if($this->input->post("pm_sv_seq") != ""){
+            $pm_sv_seq_arr = explode(",",$this->input->post("pm_sv_seq"));
+        }else{
+            $pm_sv_seq_arr = [];
+        }
         $pm_sv_seq_arr = array_reverse($pm_sv_seq_arr);
-        for($i = 0; $i < count($pm_sv_seq_arr);$i++){
-            $sv_seq_array = explode("|",$pm_sv_seq_arr[$i]);
-            $pm_sv_seq = $sv_seq_array[0];
-            $pm_sva_seq = $sv_seq_array[1];
-            if($pm_sva_seq == ""){
-                $this->db->select("*");
-                $this->db->from("payment a");
-                $this->db->join("service b","a.pm_sv_seq = b.sv_seq","inner");
-                $this->db->join("service_price c","b.sv_seq = c.svp_sv_seq","inner");
-                $this->db->where("pm_sv_seq",$pm_sv_seq);
-                $this->db->where("pm_sva_seq is null");
-
-                $this->db->order_by("pm_service_end desc");
-                $this->db->limit(1);
-
-                $query = $this->db->get();
-                //최초결제 없음
-
-                if($query->num_rows() == 0){
+        if($this->input->post("pm_sva_seq") != ""){
+            $pm_sva_seq_arr = explode(",",$this->input->post("pm_sva_seq"));
+        }else{
+            $pm_sva_seq_arr = [];
+        }
+        if(count($pm_sv_seq_arr) > 0){
+            for($i = 0; $i < count($pm_sv_seq_arr);$i++){
+                $sv_seq_array = explode("|",$pm_sv_seq_arr[$i]);
+                $pm_sv_seq = $sv_seq_array[0];
+                $pm_sva_seq = $sv_seq_array[1];
+                if($pm_sva_seq == ""){
                     $this->db->select("*");
-                    $this->db->from("service a");
-                    $this->db->join("service_price b","a.sv_seq = b.svp_sv_seq","left");
-                    $this->db->where("sv_seq",$pm_sv_seq);
+                    $this->db->from("payment a");
+                    $this->db->join("service b","a.pm_sv_seq = b.sv_seq","inner");
+                    $this->db->join("service_price c","b.sv_seq = c.svp_sv_seq","inner");
+                    $this->db->where("pm_sv_seq",$pm_sv_seq);
+                    $this->db->where("pm_sva_seq is null");
+                    $this->db->where("pm_type","1");
+                    $this->db->group_by("pm_seq");
+
+                    $this->db->order_by("pm_service_end desc");
+                    $this->db->limit(1);
+
                     $query = $this->db->get();
-                    $row = $query->row_array();
-                    $pay_day = $row["sv_pay_day"];
-                    // if($row["sv_pay_type"] == "0"){ // 전월
-                    //     $standard_day = substr($row["sv_account_start"],8,2);
-                    //     if($pay_day > $standard_day){
-                    //         $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)-1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
-                    //     }else{
-                    //         $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
-                    //     }
-                    // }else if($row["sv_pay_type"] == "1"){ // 당월
-                    //     $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
-                    // }else if($row["sv_pay_type"] == "2"){ // 익월
-                    //     $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
-                    // }else{
-                    //     $claim_date = date("Y-m-".$pay_day);
-                    // }
-                    $claim_date = date("Y-m-d");
-                    $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
-                    if($row["svp_cl_seq"] == ""){
-                        $this->db->select("pm_ca_seq");
-                        $this->db->from("payment");
-                        $this->db->where("pm_mb_seq",$row["sv_mb_seq"]);
-                        $this->db->where("pm_date",$claim_date);
-                        $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
-                        $this->db->where("pm_end_date",$end_date);
-                        $this->db->where("pm_status = '0'");
-                        $this->db->limit(1);
-                        $query_claim = $this->db->get();
-                        if($query_claim->num_rows() > 0){
-                            $row_claim = $query_claim->row_array();
-                            $pm_ca_seq = $row_claim["pm_ca_seq"];
-                        }else{
-                            $pm_ca_seq = "";
-                        }
-                    }else{
-                        // 여기 수정해야함
+                    //최초결제 없음
+
+                    if($query->num_rows() == 0){ 
                         $this->db->select("*");
-                        $this->db->from("payment_claim");
-                        $this->db->where("ca_cl_seq",$row["svp_cl_seq"]);
-                        $this->db->where("ca_date",$claim_date);
-                        $this->db->limit(1);
-                        $query_claim = $this->db->get();
-                        if($query_claim->num_rows() > 0){
-                            $row_claim = $query_claim->row_array();
-                            $pm_ca_seq = $row_claim["pm_ca_seq"];
+                        $this->db->from("service a");
+                        $this->db->join("service_price b","a.sv_seq = b.svp_sv_seq","left");
+                        $this->db->where("sv_seq",$pm_sv_seq);
+                        $query = $this->db->get();
+                        $row = $query->row_array();
+                        $pay_day = $row["sv_pay_day"];
+                        if($row["sv_pay_type"] == "0"){ // 전월
+                            $claim_date = date("Y-m-d");
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                        }else if($row["sv_pay_type"] == "2"){ // 익월
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
                         }else{
-                            $pm_ca_seq = "";
+                            $claim_date = date("Y-m-".$pay_day);
                         }
-                    }
+                        
+                        $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
 
+                        $next_service_start = date("Y-m-d",mktime(0,0,0,substr($row["sv_account_end"],5,2),substr($row["sv_account_end"],8,2)+1,substr($row["sv_account_end"],0,4)));
+                        $next_service_end = date("Y-m-d",mktime(0,0,0,substr($row["sv_account_end"],5,2)+1,substr($row["sv_account_end"],8,2),substr($row["sv_account_end"],0,4)));
 
-                    $this->db->select("pm_code");
-                    $this->db->from("payment");
-                    $this->db->order_by("pm_seq","desc");
-                    $this->db->limit(1);
-                    $query_code = $this->db->get();
-
-                    if($query_code->num_rows() == 0){
-                        $pm_code = "CHA0000001";
-                    }else{
-                        $max_row = $query_code->row_array();
-                        $max_row1 = substr($max_row["pm_code"],0,3);
-                        $max_row2 = (int)substr($max_row["pm_code"],3,7);
-                        $max_row2 = $max_row2+1;
-
-                        $pm_code = $max_row1.sprintf("%07d",$max_row2);
-                    }
-                    $total_price = $row["svp_once_price"]-$row["svp_once_dis_price"]+$row["svp_month_price"]-$row["svp_month_dis_price"]-$row["svp_discount_price"];
-                    $payment_data = array(
-                        "pm_type" => "1",
-                        "pm_mb_seq" => $row["sv_mb_seq"],
-                        "pm_sv_seq" => $pm_sv_seq,
-                        "pm_sva_seq" => $pm_sva_seq,
-                        "pm_code" => $pm_code,
-                        "pm_date" => $claim_date,
-                        "pm_service_start" => $row["sv_account_start"],
-                        "pm_service_end" =>  $row["sv_account_end"],
-                        "pm_pay_type" => $row["sv_pay_type"],
-                        "pm_pay_period" => $row["sv_payment_period"],
-                        "pm_once_price" => $row["svp_once_price"],
-                        "pm_once_dis_price" => $row["svp_once_dis_price"],
-                        "pm_once_dis_msg" => $row["svp_once_dis_msg"],
-                        "pm_service_price" => $row["svp_month_price"],
-                        "pm_service_dis_price" => $row["svp_month_dis_price"],
-                        "pm_service_dis_msg" => $row["svp_month_dis_msg"],
-                        "pm_payment_dis_price" => $row["svp_discount_price"],
-                        "pm_delay_price" => 0,
-                        "pm_total_price" => $total_price,
-                        "pm_surtax_price" => $total_price*0.1,
-                        "pm_end_date" => $end_date,
-                        "pm_status" => 0,
-                        "pm_first_day_price" => $row["svp_first_day_price"],
-                        "pm_first_day_start" => $row["svp_first_day_start"],
-                        "pm_first_day_end" => $row["svp_first_day_end"],
-                        "pm_first_month_price" => $row["svp_first_month_price"],
-                        "pm_first_month_start" => $row["svp_first_month_start"],
-                        "pm_first_month_end" => $row["svp_first_month_end"],
-                        "pm_payment_publish_type" => $row["sv_pay_publish_type"],
-                        "pm_ca_seq" => $pm_ca_seq,
-                        "pm_claim_type" => "0"
-                    );
-                    $this->db->insert("payment",$payment_data);
-
-                    $pm_seq = $this->db->insert_id();
-
-                    if($pm_ca_seq != ""){
-                        if($row["svp_cl_seq"] == ""){
-                            $this->db->select("*");
-                            $this->db->from("payment_claim_list");
-                            $this->db->where("cl_ca_seq",$pm_ca_seq);
-                            $this->db->where("ca_sort",1);
-                            $query_c = $this->db->get();
-                            $main = "";
-                        }else{
-                            $this->db->select("*");
-                            $this->db->from("claim_detail");
-                            $this->db->where("cd_svp_seq",$row["svp_seq"]);
-                            $query = $this->db->get();
-                            $row_cd = $query->row_array();
-                            $main = $row_cd["cd_main"];
-                            $this->db->select("*");
-                            $this->db->from("payment_claim_list");
-                            $this->db->where("cl_ca_seq",$pm_ca_seq);
-                            $this->db->where("ca_sort",$row_cd["cd_num"]);
-                            $query_c = $this->db->get();
-                        }
-
-
-                        if($query_c->num_rows() > 0){
-                            $row_cl = $query_c->row_array();
-                            $ca_item_price = $row_cl["ca_item_price"]+$total_price;
-                            $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
-                            if($row_cl["ca_m_sv_num"] < $row["sv_number"]){
-                                $ca_m_sv_num = $row["sv_number"];
-                                $ca_item_name = $row["sv_bill_name"];
+                        $next_pay_day = $row["sv_pay_day"];
+                        if($row["sv_pay_type"] == "0"){ // 전월
+                            $next_standard_day = substr($next_service_start,8,2);
+                            if($next_pay_day > $next_standard_day){
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }else{
-                                $ca_m_sv_num = $row_cl["ca_m_sv_num"];
-                                $ca_item_name = $row_cl["ca_item_name"];
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }
-                            $data_claim_detail = array(
-                                "ca_item_name" => $ca_item_name,
-                                "ca_item_price" => $ca_item_price,
-                                "ca_item_surtax" => $ca_item_surtax,
-                                "ca_m_sv_num" => $ca_m_sv_num
-                            );
-                            $this->db->where("cl_seq",$row_cl["cl_seq"]);
-                            $this->db->update("payment_claim_list",$data_claim_detail);
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }else if($row["sv_pay_type"] == "2"){ // 익월
+                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }
+
+                        if($row["svp_cl_seq"] == ""){ // 요금에 계산서 설정이 없다면 tax code 가 default
+                            $this->db->select("pm_ca_seq"); // 동일한 조건을 가진 청구내역이 존재 하면
+                            $this->db->from("payment");
+                            $this->db->where("pm_mb_seq",$row["sv_mb_seq"]);
+                            $this->db->where("pm_date",$claim_date);
+                            $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
+                            $this->db->where("pm_end_date",$end_date);
+                            $this->db->where("pm_status = '0'");
+                            $this->db->limit(1);
+                            $query_claim = $this->db->get();
+                            if($query_claim->num_rows() > 0){
+                                $row_claim = $query_claim->row_array();
+                                $pm_ca_seq = $row_claim["pm_ca_seq"]; // 같은 조건의 payment_claim 테이블 키값 
+                            }else{
+                                $pm_ca_seq = "";
+                            }
+                        }else{ // 요금에 계산서 설정이 있다면
+     
+                            $this->db->select("*"); // 계산서 설정이 같고 청구일이 같은 청구건
+                            $this->db->from("payment_claim");
+                            $this->db->where("ca_cl_seq",$row["svp_cl_seq"]);
+                            $this->db->where("ca_date",$claim_date); 
+                            $this->db->limit(1);
+                            $query_claim = $this->db->get();
+                            if($query_claim->num_rows() > 0){
+                                $row_claim = $query_claim->row_array();
+                                $pm_ca_seq = $row_claim["ca_seq"]; // 같은 조건의 payment_claim 테이블 키값 
+                            }else{
+                                $pm_ca_seq = "";
+                            }
+                        }
+
+                        /* 코드 셋팅 */
+                        $this->db->select("pm_code");
+                        $this->db->from("payment");
+                        $this->db->order_by("pm_seq","desc");
+                        $this->db->limit(1);
+                        $query_code = $this->db->get();
+
+                        if($query_code->num_rows() == 0){
+                            $pm_code = "CHA0000001";
                         }else{
-                            $data_claim_detail = array(
-                                "cl_ca_seq" => $pm_ca_seq,
+                            $max_row = $query_code->row_array();
+                            $max_row1 = substr($max_row["pm_code"],0,3);
+                            $max_row2 = (int)substr($max_row["pm_code"],3,7);
+                            $max_row2 = $max_row2+1;
+
+                            $pm_code = $max_row1.sprintf("%07d",$max_row2);
+                        }
+                        $total_price = $row["svp_once_price"]-$row["svp_once_dis_price"]+$row["svp_first_day_price"]+$row["svp_first_month_price"];
+                        $payment_data = array(
+                            "pm_type" => "1",
+                            "pm_mb_seq" => $row["sv_mb_seq"],
+                            "pm_sv_seq" => $pm_sv_seq,
+                            "pm_code" => $pm_code,
+                            "pm_date" => $claim_date,
+                            "pm_service_start" => $row["sv_account_start"],
+                            "pm_service_end" =>  $row["sv_account_end"],
+                            "pm_pay_type" => $row["sv_payment_type"],
+                            "pm_pay_period" => $row["sv_payment_period"],
+                            "pm_once_price" => $row["svp_once_price"],
+                            "pm_once_dis_price" => $row["svp_once_dis_price"],
+                            "pm_once_dis_msg" => $row["svp_once_dis_msg"],
+                            "pm_service_price" => $row["svp_month_price"],
+                            "pm_service_dis_price" => $row["svp_month_dis_price"],
+                            "pm_service_dis_msg" => $row["svp_month_dis_msg"],
+                            "pm_payment_dis_price" => $row["svp_discount_price"],
+                            "pm_delay_price" => 0,
+                            "pm_total_price" => $total_price,
+                            "pm_surtax_price" => $total_price*0.1,
+                            "pm_end_date" => $end_date,
+                            "pm_status" => 0,
+                            "pm_first_day_price" => $row["svp_first_day_price"],
+                            "pm_first_day_start" => $row["svp_first_day_start"],
+                            "pm_first_day_end" => $row["svp_first_day_end"],
+                            "pm_first_month_price" => $row["svp_first_month_price"],
+                            "pm_first_month_start" => $row["svp_first_month_start"],
+                            "pm_first_month_end" => $row["svp_first_month_end"],
+                            "pm_payment_publish" => $row["sv_pay_publish"],
+                            "pm_payment_publish_type" => $row["sv_pay_publish_type"],
+                            "pm_ca_seq" => $pm_ca_seq,
+                            "pm_claim_type" => "0",
+                            "pm_next_claim_date" => $next_claim_date
+                        );
+                        $this->db->insert("payment",$payment_data);
+
+                        $pm_seq = $this->db->insert_id();
+
+                        if($pm_ca_seq != ""){ // 이미 같은 조건의 계산서가 등록되어 있다면
+                            if($row["svp_cl_seq"] == ""){ // 계산서 설정은 안되어 있고 default 일경우
+                                $this->db->select("*"); // 항목중 첫째 항목 가져오기
+                                $this->db->from("payment_claim_list");
+                                $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                $this->db->where("ca_sort",1); 
+                                $query_c = $this->db->get();
+                                $main = "";
+                                $num = "1";
+                            }else{
+                                $this->db->select("*"); // 계산서 설정이 되어 있다면 계산서의 설정값 가져옴
+                                $this->db->from("claim_detail");
+                                $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                $query = $this->db->get();
+                                if($query->num_rows() > 0){
+                                    $row_cd = $query->row_array();
+                                    $main = $row_cd["cd_main"];
+                                    $num = $row_cd["cd_num"];
+                                }else{
+                                    $main = "M";
+                                    $num = 1;
+                                }
+                                $this->db->select("*");
+                                $this->db->from("payment_claim_list");
+                                $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                $this->db->where("ca_sort",$num);
+                                $query_c = $this->db->get();
+
+
+                            }
+
+
+                            if($query_c->num_rows() > 0){ // 첫째 혹은 설정된 값이 있다면
+                                $row_cl = $query_c->row_array();
+                                $ca_item_price = $row_cl["ca_item_price"]+$total_price; // 금액 +
+                                $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1; // 부가세 +
+                                $data_claim_detail = array(
+                                    "ca_item_price" => $ca_item_price,
+                                    "ca_item_surtax" => $ca_item_surtax
+                                );
+                                if($main == "M"){
+                                    $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                    $data_claim_detail["ca_item_name"] = $row["sv_bill_name"]." 외";
+                                }else if($main == "S"){
+                                    $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                }else{
+                                    if($row_cl["ca_m_sv_num"] < $row["sv_number"]){ // 항목명 설정을 위한 비교
+                                        $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                        $data_claim_detail["ca_item_name"] = $row["sv_bill_name"]." 외";
+                                    }else{
+                                        $data_claim_detail["ca_m_sv_num"] = $row_cl["ca_m_sv_num"];
+                                        $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                    }
+                                }
+                                
+                                
+                                $this->db->where("cl_seq",$row_cl["cl_seq"]);
+                                $this->db->update("payment_claim_list",$data_claim_detail);
+                            }else{ // 첫째 혹은 설정된 값이 없다면 
+                                $data_claim_detail = array(
+                                    "cl_ca_seq" => $pm_ca_seq,
+                                    "ca_item_name" => $row["sv_bill_name"],
+                                    "ca_item_price" => $total_price,
+                                    "ca_item_surtax" => floor($total_price*0.1),
+                                    "ca_sort" => $num,
+                                    "ca_m_sv_num" => $row["sv_number"],
+                                    "ca_main" => $main
+                                );
+                                $this->db->insert("payment_claim_list",$data_claim_detail);
+                            }
+
+
+                            $this->db->select("*"); // 금액 + 해줌
+                            $this->db->from("payment_claim");
+                            $this->db->where("ca_seq",$pm_ca_seq);
+                            $claim_query = $this->db->get();
+                            $row_c = $claim_query->row_array();
+                            $total_claim_price = $row_c["ca_price"]+$total_price;
+                            $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
+                            $total_claim_total_price = $total_claim_price+$total_claim_surtax;
+                            $ca_empty_size = 11 - strlen($total_claim_total_price);
+                            $ca_price_info1 = $total_claim_total_price;
+                            $ca_price_info2 = $total_claim_total_price;
+
+                            $data_update = array(
+                                "ca_price" => $total_claim_price,
+                                "ca_surtax" => $total_claim_surtax,
+                                "ca_total_price" => $total_claim_total_price,
+                                "ca_empty_size" => $ca_empty_size,
+                                "ca_price_info1" => $ca_price_info1,
+                                "ca_price_info2" => $ca_price_info2
+                            );
+                            $this->db->where("ca_seq",$pm_ca_seq);
+                            $this->db->update("payment_claim",$data_update);
+                        }else{ // 같은 조건의 계산서가 없다면
+                            $this->db->select("*"); // 계산서를 넣기 위해 회원정보 가져옴
+                            $this->db->from("members");
+                            $this->db->where("mb_seq",$row["sv_mb_seq"]);
+                            $query_member = $this->db->get();
+
+                            $row_member = $query_member->row_array();
+
+                            $this->db->select("*"); // 아이온 정보 가져옴
+                            $this->db->from("members");
+                            $this->db->where("mb_seq",21);
+                            $query_eyeon = $this->db->get();
+
+                            $row_eyeon = $query_eyeon->row_array();
+
+
+                            $data_claim = array(
+                                "ca_from_number" => $row_eyeon["mb_number"],
+                                "ca_to_number" => $row_member["mb_number"],
+                                "ca_from_name" => $row_eyeon["mb_name"],
+                                "ca_to_name" => $row_member["mb_name"],
+                                "ca_from_ceo" => $row_eyeon["mb_ceo"],
+                                "ca_to_ceo" => $row_member["mb_ceo"],
+                                "ca_from_address" => $row_eyeon["mb_address"],
+                                "ca_to_address"=> $row_member["mb_address"],
+                                "ca_from_condition" => $row_eyeon["mb_business_conditions"],
+                                "ca_to_condition" => $row_member["mb_business_conditions"],
+                                "ca_from_type" => $row_eyeon["mb_business_type"],
+                                "ca_to_type" => $row_member["mb_business_type"],
+                                "ca_from_team" => $row_eyeon["mb_payment_team"],
+                                "ca_to_team" => $row_member["mb_payment_team"],
+                                "ca_from_charger" => $row_eyeon["mb_payment_name"],
+                                "ca_to_charger" => $row_member["mb_payment_name"],
+                                "ca_from_tel" => $row_eyeon["mb_payment_tel"],
+                                "ca_to_tel" => $row_member["mb_payment_tel"],
+                                "ca_from_email" => $row_eyeon["mb_payment_email"],
+                                "ca_to_email" => $row_member["mb_payment_email"],
+                                "ca_date" => $claim_date,
+                                "ca_price" => $total_price,
+                                "ca_surtax" => floor($total_price*0.1),
+                                "ca_total_price" => floor($total_price*1.1),
+                                "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
+                                "ca_price_info1" => floor($total_price*1.1),
+                                "ca_price_info2" => floor($total_price*1.1),
+                                "ca_price_info3" => 0,
+                                "ca_price_info4" => 0,
+                                "ca_price_info5" => 0,
+                                "ca_payment_type" => $row["sv_pay_publish_type"],
+                                "ca_mb_seq" => $row["sv_mb_seq"],
+                                "ca_cl_seq" => $row["svp_cl_seq"],
+                                "ca_pm_seq" => $pm_seq
+                            );
+                            $this->db->insert("payment_claim",$data_claim);
+
+                            $cl_ca_seq = $this->db->insert_id();
+                            if($row["svp_cl_seq"] == ""){ // 계산서 설정이 안되어 있다면 기본 1
+                                $main = "M";
+                                $num = 1;
+                            }else{
+                                $this->db->select("*");
+                                $this->db->from("claim_detail");
+                                $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                $query = $this->db->get();
+                                $row_cd = $query->row_array();
+                                if($query->num_rows() > 0){
+                                    $row_cd = $query->row_array();
+                                    $main = $row_cd["cd_main"];
+                                    $num = $row_cd["cd_num"];
+                                }else{
+                                    $main = "M";
+                                    $num = 1;
+                                }
+
+                            }
+
+                            $data_claim_d = array(
+                                "cl_ca_seq" => $cl_ca_seq,
                                 "ca_item_name" => $row["sv_bill_name"],
                                 "ca_item_price" => $total_price,
                                 "ca_item_surtax" => floor($total_price*0.1),
-                                "ca_sort" => 1,
-                                "ca_m_sv_num" => $row["sv_number"]
+                                "ca_sort" => $num,
+                                "ca_m_sv_num" => $row["sv_number"],
+                                "ca_main" => $main
                             );
-                            $this->db->insert("payment_claim_list",$data_claim_detail);
+                            $this->db->insert("payment_claim_list",$data_claim_d);
+
+                            $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq; // 청구 테이블에 계산서 키값 업데이트
+                            $this->db->where("pm_seq",$pm_seq);
+                            $this->db->update("payment",$data_pm_ca_seq);
                         }
+                    }else{ // 최초청구가 아닐때 로직은 동일 금액계산 및 청구일로직만 차이
+                        $row = $query->row_array();
+                        $pm_service_start = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2),substr($row["pm_service_end"],8,2)+1,substr($row["pm_service_end"],0,4)));
+                        $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["sv_payment_period"],substr($row["pm_service_end"],8,2),substr($row["pm_service_end"],0,4)));
 
-
-                        $this->db->select("*");
-                        $this->db->from("payment_claim");
-                        $this->db->where("ca_seq",$pm_ca_seq);
-                        $claim_query = $this->db->get();
-                        $row_c = $claim_query->row_array();
-                        $total_claim_price = $row_c["ca_price"]+$total_price;
-                        $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
-                        $total_claim_total_price = $total_claim_price+$total_claim_surtax;
-                        $ca_empty_size = 11 - strlen($total_claim_total_price);
-                        $ca_price_info1 = $total_claim_total_price;
-                        $ca_price_info2 = $total_claim_total_price;
-
-                        $data_update = array(
-                            "ca_price" => $total_claim_price,
-                            "ca_surtax" => $total_claim_surtax,
-                            "ca_total_price" => $total_claim_total_price,
-                            "ca_empty_size" => $ca_empty_size,
-                            "ca_price_info1" => $ca_price_info1,
-                            "ca_price_info2" => $ca_price_info2
-                        );
-                        $this->db->where("ca_seq",$pm_ca_seq);
-                        $this->db->update("payment_claim",$data_update);
-                    }else{
-                        $this->db->select("*");
-                        $this->db->from("members");
-                        $this->db->where("mb_seq",$row["sv_mb_seq"]);
-                        $query_member = $this->db->get();
-
-                        $row_member = $query_member->row_array();
-
-                        $data_claim = array(
-                            "ca_from_number" => "215-87-70318",
-                            "ca_to_number" => $row_member["mb_number"],
-                            "ca_from_name" => "아이온 시큐리티",
-                            "ca_to_name" => $row_member["mb_name"],
-                            "ca_from_ceo" => "김성혁",
-                            "ca_to_ceo" => $row_member["mb_ceo"],
-                            "ca_from_address" => "서울특별시 서초구 서초대로 255",
-                            "ca_to_address"=> $row_member["mb_address"],
-                            "ca_from_condition" => "서비스 외",
-                            "ca_to_condition" => $row_member["mb_business_conditions"],
-                            "ca_from_type" => "보안서비스 및 용역제공",
-                            "ca_to_type" => $row_member["mb_business_type"],
-                            "ca_from_team" => "영업2팀",
-                            "ca_to_team" => $row_member["mb_payment_team"],
-                            "ca_from_charger" => "전이준",
-                            "ca_to_charger" => $row_member["mb_payment_name"],
-                            "ca_from_tel" => "",
-                            "ca_to_tel" => $row_member["mb_payment_tel"],
-                            "ca_from_email" => "ijjun@eyeonsec.co.kr",
-                            "ca_to_email" => $row_member["mb_payment_email"],
-                            "ca_date" => $claim_date,
-                            "ca_price" => $total_price,
-                            "ca_surtax" => floor($total_price*0.1),
-                            "ca_total_price" => floor($total_price*1.1),
-                            "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
-                            "ca_price_info1" => floor($total_price*1.1),
-                            "ca_price_info2" => floor($total_price*1.1),
-                            "ca_price_info3" => 0,
-                            "ca_price_info4" => 0,
-                            "ca_price_info5" => 0,
-                            "ca_payment_type" => $row["sv_pay_publish_type"],
-                            "ca_mb_seq" => $row["sv_mb_seq"],
-                            "ca_cl_seq" => $row["svp_cl_seq"]
-                        );
-                        $this->db->insert("payment_claim",$data_claim);
-
-                        $cl_ca_seq = $this->db->insert_id();
-                        if($row["svp_cl_seq"] == ""){
-
-                            $num = 1;
-                        }else{
-                            $this->db->select("*");
-                            $this->db->from("claim_detail");
-                            $this->db->where("cd_svp_seq",$row["svp_seq"]);
-                            $query = $this->db->get();
-                            $row_cd = $query->row_array();
-                            $num = $row_cd["cd_num"];
-                        }
-
-                        $data_claim_d = array(
-                            "cl_ca_seq" => $cl_ca_seq,
-                            "ca_item_name" => $row["sv_bill_name"],
-                            "ca_item_price" => $total_price,
-                            "ca_item_surtax" => floor($total_price*0.1),
-                            "ca_sort" => $num,
-                            "ca_m_sv_num" => $row["sv_number"]
-                        );
-                        $this->db->insert("payment_claim_list",$data_claim_d);
-
-                        $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq;
-                        $this->db->where("pm_seq",$pm_seq);
-                        $this->db->update("payment",$data_pm_ca_seq);
-                    }
-                }else{
-                    $row = $query->row_array();
-                    $pm_service_start = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2),substr($row["pm_service_end"],8,2)+1,substr($row["pm_service_end"],0,4)));
-                    $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2)+1,substr($row["pm_service_end"],8,2),substr($row["pm_service_end"],0,4)));
-
-                    $pay_day = $row["sv_pay_day"];
-                    // if($row["sv_pay_type"] == "0"){ // 전월
-                    //     $standard_day = substr($pm_service_start,8,2);
-                    //     if($pay_day > $standard_day){
-                    //         $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
-                    //     }else{
-                    //         $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
-                    //     }
-                    // }else if($row["sv_pay_type"] == "1"){ // 당월
-                    //     $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
-                    // }else if($row["sv_pay_type"] == "2"){ // 익월
-                    //     $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
-                    // }
-                    $claim_date = date("Y-m-d");
-
-                    $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
-
-                    if($row["svp_cl_seq"] == ""){
-                        $this->db->select("pm_ca_seq");
-                        $this->db->from("payment");
-                        $this->db->where("pm_mb_seq",$row["sv_mb_seq"]);
-                        $this->db->where("pm_date",$claim_date);
-                        $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
-                        $this->db->where("pm_end_date",$end_date);
-                        $this->db->where("pm_status = '0'");
-                        $this->db->limit(1);
-                        $query_claim = $this->db->get();
-                        if($query_claim->num_rows() > 0){
-                            $row_claim = $query_claim->row_array();
-                            $pm_ca_seq = $row_claim["pm_ca_seq"];
-                        }else{
-                            $pm_ca_seq = "";
-                        }
-                    }else{
-                        // 여기 수정해야함
-                        $this->db->select("*");
-                        $this->db->from("payment_claim");
-                        $this->db->where("ca_cl_seq",$row["svp_cl_seq"]);
-                        $this->db->where("ca_date",$claim_date);
-                        $this->db->limit(1);
-                        $query_claim = $this->db->get();
-                        if($query_claim->num_rows() > 0){
-                            $row_claim = $query_claim->row_array();
-                            $pm_ca_seq = $row_claim["pm_ca_seq"];
-                        }else{
-                            $pm_ca_seq = "";
-                        }
-                    }
-
-                    $this->db->select("pm_code");
-                    $this->db->from("payment");
-                    $this->db->order_by("pm_seq","desc");
-                    $this->db->limit(1);
-                    $query_code = $this->db->get();
-
-                    if($query_code->num_rows() == 0){
-                        $pm_code = "CHA0000001";
-                    }else{
-                        $max_row = $query_code->row_array();
-                        $max_row1 = substr($max_row["pm_code"],0,3);
-                        $max_row2 = (int)substr($max_row["pm_code"],3,7);
-                        $max_row2 = $max_row2+1;
-
-                        $pm_code = $max_row1.sprintf("%07d",$max_row2);
-                    }
-                    $total_price = $row["svp_once_price"]-$row["svp_once_dis_price"]+$row["svp_month_price"]-$row["svp_month_dis_price"]-$row["svp_discount_price"]+$row["svp_first_day_price"];
-                    $payment_data = array(
-                        "pm_type" => "1",
-                        "pm_mb_seq" => $row["sv_mb_seq"],
-                        "pm_sv_seq" => $pm_sv_seq,
-                        "pm_sva_seq" => $pm_sva_seq,
-                        "pm_code" => $pm_code,
-                        "pm_date" => $claim_date,
-                        "pm_service_start" => $pm_service_start,
-                        "pm_service_end" =>  $pm_service_end,
-                        "pm_pay_type" => $row["sv_pay_type"],
-                        "pm_pay_period" => $row["sv_payment_period"],
-                        "pm_once_price" => $row["svp_once_price"],
-                        "pm_once_dis_price" => $row["svp_once_dis_price"],
-                        "pm_once_dis_msg" => $row["svp_once_dis_msg"],
-                        "pm_service_price" => $row["svp_month_price"],
-                        "pm_service_dis_price" => $row["svp_month_dis_price"],
-                        "pm_service_dis_msg" => $row["svp_month_dis_msg"],
-                        "pm_payment_dis_price" => $row["svp_discount_price"],
-                        "pm_delay_price" => 0,
-                        "pm_total_price" => $total_price,
-                        "pm_surtax_price" => $total_price*0.1,
-                        "pm_end_date" => $end_date,
-                        "pm_status" => 0,
-                        "pm_payment_publish_type" => $row["sv_pay_publish_type"],
-                        "pm_ca_seq" => $pm_ca_seq,
-                        "pm_first_month_start" => $pm_service_start,
-                        "pm_first_month_end" => $pm_service_end
-                    );
-
-                    // $payment_data = array(
-                    //     "pm_type" => "1",
-                    //     "pm_mb_seq" => $row["sv_mb_seq"],
-                    //     "pm_sv_seq" => $pm_sv_seq,
-                    //     "pm_sva_seq" => $pm_sva_seq,
-                    //     "pm_code" => $pm_code,
-                    //     "pm_date" => $claim_date,
-                    //     "pm_service_start" => $row["sv_account_start"],
-                    //     "pm_service_end" =>  $row["sv_account_end"],
-                    //     "pm_pay_type" => $row["sv_pay_type"],
-                    //     "pm_pay_period" => $row["sv_payment_period"],
-                    //     "pm_once_price" => $row["svp_once_price"],
-                    //     "pm_once_dis_price" => $row["svp_once_dis_price"],
-                    //     "pm_once_dis_msg" => $row["svp_once_dis_msg"],
-                    //     "pm_service_price" => $row["svp_month_price"],
-                    //     "pm_service_dis_price" => $row["svp_month_dis_price"],
-                    //     "pm_service_dis_msg" => $row["svp_month_dis_msg"],
-                    //     "pm_payment_dis_price" => $row["svp_discount_price"],
-                    //     "pm_delay_price" => 0,
-                    //     "pm_total_price" => $total_price,
-                    //     "pm_surtax_price" => $total_price*0.1,
-                    //     "pm_end_date" => $end_date,
-                    //     "pm_status" => 0,
-                    //     "pm_first_day_price" => $row["svp_first_day_price"],
-                    //     "pm_first_day_start" => $row["svp_first_day_start"],
-                    //     "pm_first_day_end" => $row["svp_first_day_end"],
-                    //     "pm_first_month_price" => $row["svp_first_month_price"],
-                    //     "pm_first_month_start" => $row["svp_first_month_start"],
-                    //     "pm_first_month_end" => $row["svp_first_month_end"],
-                    //     "pm_payment_publish_type" => $row["sv_pay_publish_type"],
-                    //     "pm_ca_seq" => $pm_ca_seq,
-                    //     "pm_claim_type" => "0"
-                    // );
-                    $this->db->insert("payment",$payment_data);
-
-                    $pm_seq = $this->db->insert_id();
-
-                    if($pm_ca_seq != ""){
-                        if($row["svp_cl_seq"] == ""){
-                            $this->db->select("*");
-                            $this->db->from("payment_claim_list");
-                            $this->db->where("cl_ca_seq",$pm_ca_seq);
-                            $this->db->where("ca_sort",1);
-                            $query_c = $this->db->get();
-                            $main = "";
-                        }else{
-                            $this->db->select("*");
-                            $this->db->from("claim_detail");
-                            $this->db->where("cd_svp_seq",$row["svp_seq"]);
-                            $query = $this->db->get();
-                            $row_cd = $query->row_array();
-                            $main = $row_cd["cd_main"];
-                            $this->db->select("*");
-                            $this->db->from("payment_claim_list");
-                            $this->db->where("cl_ca_seq",$pm_ca_seq);
-                            $this->db->where("ca_sort",$row_cd["cd_num"]);
-                            $query_c = $this->db->get();
-                        }
-
-
-                        if($query_c->num_rows() > 0){
-                            $row_cl = $query_c->row_array();
-                            $ca_item_price = $row_cl["ca_item_price"]+$total_price;
-                            $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
-                            if($row_cl["ca_m_sv_num"] < $row["sv_number"]){
-                                $ca_m_sv_num = $row["sv_number"];
-                                $ca_item_name = $row["sv_bill_name"];
+                        $pay_day = $row["sv_pay_day"];
+                        if($row["sv_pay_type"] == "0"){ // 전월
+                            $standard_day = substr($pm_service_start,8,2);
+                            if($pay_day > $standard_day){
+                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                             }else{
-                                $ca_m_sv_num = $row_cl["ca_m_sv_num"];
-                                $ca_item_name = $row_cl["ca_item_name"];
+                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                             }
-                            $data_claim_detail = array(
-                                "ca_item_name" => $ca_item_name,
-                                "ca_item_price" => $ca_item_price,
-                                "ca_item_surtax" => $ca_item_surtax,
-                                "ca_m_sv_num" => $ca_m_sv_num
-                            );
-                            $this->db->where("cl_seq",$row_cl["cl_seq"]);
-                            $this->db->update("payment_claim_list",$data_claim_detail);
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                        }else if($row["sv_pay_type"] == "2"){ // 익월
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                        }
+                        // $claim_date = date("Y-m-d");
+
+                        $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
+
+                        $next_service_start = date("Y-m-d",mktime(0,0,0,substr($pm_service_end,5,2),substr($pm_service_end,8,2)+1,substr($pm_service_end,0,4)));
+                        $next_service_end = date("Y-m-d",mktime(0,0,0,substr($pm_service_end,5,2)+1,substr($pm_service_end,8,2),substr($pm_service_end,0,4)));
+
+                        $next_pay_day = $row["sv_pay_day"];
+                        if($row["sv_pay_type"] == "0"){ // 전월
+                            $next_standard_day = substr($next_service_start,8,2);
+                            if($next_pay_day > $next_standard_day){
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }else{
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }else if($row["sv_pay_type"] == "2"){ // 익월
+                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }
+
+
+                        if($row["svp_cl_seq"] == ""){
+                            $this->db->select("pm_ca_seq");
+                            $this->db->from("payment");
+                            $this->db->where("pm_mb_seq",$row["sv_mb_seq"]);
+                            $this->db->where("pm_date",$claim_date);
+                            $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
+                            $this->db->where("pm_end_date",$end_date);
+                            $this->db->where("pm_status = '0'");
+                            $this->db->limit(1);
+                            $query_claim = $this->db->get();
+                            if($query_claim->num_rows() > 0){
+                                $row_claim = $query_claim->row_array();
+                                $pm_ca_seq = $row_claim["pm_ca_seq"];
+                            }else{
+                                $pm_ca_seq = "";
+                            }
                         }else{
-                            $data_claim_detail = array(
-                                "cl_ca_seq" => $pm_ca_seq,
+                            // 여기 수정해야함
+                            $this->db->select("*");
+                            $this->db->from("payment_claim");
+                            $this->db->where("ca_cl_seq",$row["svp_cl_seq"]);
+                            $this->db->where("ca_date",$claim_date);
+                            $this->db->limit(1);
+                            $query_claim = $this->db->get();
+                            if($query_claim->num_rows() > 0){
+                                $row_claim = $query_claim->row_array();
+                                $pm_ca_seq = $row_claim["ca_seq"];
+                            }else{
+                                $pm_ca_seq = "";
+                            }
+                        }
+
+                        $this->db->select("pm_code");
+                        $this->db->from("payment");
+                        $this->db->order_by("pm_seq","desc");
+                        $this->db->limit(1);
+                        $query_code = $this->db->get();
+
+                        if($query_code->num_rows() == 0){
+                            $pm_code = "CHA0000001";
+                        }else{
+                            $max_row = $query_code->row_array();
+                            $max_row1 = substr($max_row["pm_code"],0,3);
+                            $max_row2 = (int)substr($max_row["pm_code"],3,7);
+                            $max_row2 = $max_row2+1;
+
+                            $pm_code = $max_row1.sprintf("%07d",$max_row2);
+                        }
+                        // ($info["pm_service_price"]-$info["pm_service_dis_price"])*$month-($info["pm_payment_dis_price"]/$info["pm_pay_period"])*$month)
+                       
+                        $total_price = ($row["svp_month_price"]-$row["svp_month_dis_price"])*$row["svp_payment_period"]-$row["svp_discount_price"];
+                        
+                        
+                        $payment_data = array(
+                            "pm_type" => "1",
+                            "pm_mb_seq" => $row["sv_mb_seq"],
+                            "pm_sv_seq" => $pm_sv_seq,
+                            "pm_code" => $pm_code,
+                            "pm_date" => $claim_date,
+                            "pm_service_start" => $pm_service_start,
+                            "pm_service_end" =>  $pm_service_end,
+                            "pm_pay_type" => $row["sv_payment_type"],
+                            "pm_pay_period" => $row["sv_payment_period"],
+                            "pm_once_price" => 0,
+                            "pm_once_dis_price" => 0,
+                            "pm_once_dis_msg" => "",
+                            "pm_service_price" => $row["svp_month_price"],
+                            "pm_service_dis_price" => $row["svp_month_dis_price"],
+                            "pm_service_dis_msg" => $row["svp_month_dis_msg"],
+                            "pm_payment_dis_price" => $row["svp_discount_price"],
+                            "pm_delay_price" => 0,
+                            "pm_total_price" => $total_price,
+                            "pm_surtax_price" => $total_price*0.1,
+                            "pm_end_date" => $end_date,
+                            "pm_status" => 0,
+                            "pm_payment_publish" => $row["sv_pay_publish"],
+                            "pm_payment_publish_type" => $row["sv_pay_publish_type"],
+                            "pm_ca_seq" => $pm_ca_seq,
+                            "pm_first_month_start" => $pm_service_start,
+                            "pm_first_month_end" => $pm_service_end,
+                            "pm_first_day_price" => 0,
+                            "pm_first_day_start" => $row["svp_first_day_start"],
+                            "pm_first_day_end" => $row["svp_first_day_end"],
+                            "pm_first_month_price" => $row["svp_first_month_price"],
+                            "pm_next_claim_date" => $next_claim_date
+                        );
+
+                        $this->db->insert("payment",$payment_data);
+
+                        $pm_seq = $this->db->insert_id();
+
+                        if($pm_ca_seq != ""){
+                            if($row["svp_cl_seq"] == ""){
+                                $this->db->select("*");
+                                $this->db->from("payment_claim_list");
+                                $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                $this->db->where("ca_sort",1);
+                                $query_c = $this->db->get();
+                                $main = "";
+                                $num = "1";
+                            }else{
+                                $this->db->select("*");
+                                $this->db->from("claim_detail");
+                                $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                $query = $this->db->get();
+                                if($query->num_rows() > 0){
+                                    $row_cd = $query->row_array();
+                                    $main = $row_cd["cd_main"];
+                                    $num = $row_cd["cd_num"];
+                                }else{
+                                    $main = "M";
+                                    $num = 1;
+                                }
+                                $this->db->select("*");
+                                $this->db->from("payment_claim_list");
+                                $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                $this->db->where("ca_sort",$num);
+                                $query_c = $this->db->get();
+                            }
+
+
+                            if($query_c->num_rows() > 0){
+                                $row_cl = $query_c->row_array();
+                                $ca_item_price = $row_cl["ca_item_price"]+$total_price;
+                                $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
+                                $data_claim_detail = array(
+                                    "ca_item_price" => $ca_item_price,
+                                    "ca_item_surtax" => $ca_item_surtax
+                                );
+                                if($main == "M"){
+                                    $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                    $data_claim_detail["ca_item_name"] = $row["sv_bill_name"]." 외";
+                                }else if($main == "S"){
+                                    $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                }else{
+                                    if($row_cl["ca_m_sv_num"] < $row["sv_number"]){ // 항목명 설정을 위한 비교
+                                        $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                        $data_claim_detail["ca_item_name"] = $row["sv_bill_name"]." 외";
+                                    }else{
+                                        $data_claim_detail["ca_m_sv_num"] = $row_cl["ca_m_sv_num"];
+                                        $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                    }
+                                }
+                                $this->db->where("cl_seq",$row_cl["cl_seq"]);
+                                $this->db->update("payment_claim_list",$data_claim_detail);
+                            }else{
+                                $data_claim_detail = array(
+                                    "cl_ca_seq" => $pm_ca_seq,
+                                    "ca_item_name" => $row["sv_bill_name"],
+                                    "ca_item_price" => $total_price,
+                                    "ca_item_surtax" => floor($total_price*0.1),
+                                    "ca_sort" => $num,
+                                    "ca_m_sv_num" => $row["sv_number"]
+                                );
+                                $this->db->insert("payment_claim_list",$data_claim_detail);
+                            }
+
+
+                            $this->db->select("*");
+                            $this->db->from("payment_claim");
+                            $this->db->where("ca_seq",$pm_ca_seq);
+                            $claim_query = $this->db->get();
+                            $row_c = $claim_query->row_array();
+                            $total_claim_price = $row_c["ca_price"]+$total_price;
+                            $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
+                            $total_claim_total_price = $total_claim_price+$total_claim_surtax;
+                            $ca_empty_size = 11 - strlen($total_claim_total_price);
+                            $ca_price_info1 = $total_claim_total_price;
+                            $ca_price_info2 = $total_claim_total_price;
+
+                            $data_update = array(
+                                "ca_price" => $total_claim_price,
+                                "ca_surtax" => $total_claim_surtax,
+                                "ca_total_price" => $total_claim_total_price,
+                                "ca_empty_size" => $ca_empty_size,
+                                "ca_price_info1" => $ca_price_info1,
+                                "ca_price_info2" => $ca_price_info2
+                            );
+                            $this->db->where("ca_seq",$pm_ca_seq);
+                            $this->db->update("payment_claim",$data_update);
+                        }else{
+                            $this->db->select("*");
+                            $this->db->from("members");
+                            $this->db->where("mb_seq",$row["sv_mb_seq"]);
+                            $query_member = $this->db->get();
+
+                            $row_member = $query_member->row_array();
+
+                            $this->db->select("*"); // 아이온 정보 가져옴
+                            $this->db->from("members");
+                            $this->db->where("mb_seq",21);
+                            $query_eyeon = $this->db->get();
+
+                            $row_eyeon = $query_eyeon->row_array();
+
+
+                            $data_claim = array(
+                                "ca_from_number" => $row_eyeon["mb_number"],
+                                "ca_to_number" => $row_member["mb_number"],
+                                "ca_from_name" => $row_eyeon["mb_name"],
+                                "ca_to_name" => $row_member["mb_name"],
+                                "ca_from_ceo" => $row_eyeon["mb_ceo"],
+                                "ca_to_ceo" => $row_member["mb_ceo"],
+                                "ca_from_address" => $row_eyeon["mb_address"],
+                                "ca_to_address"=> $row_member["mb_address"],
+                                "ca_from_condition" => $row_eyeon["mb_business_conditions"],
+                                "ca_to_condition" => $row_member["mb_business_conditions"],
+                                "ca_from_type" => $row_eyeon["mb_business_type"],
+                                "ca_to_type" => $row_member["mb_business_type"],
+                                "ca_from_team" => $row_eyeon["mb_payment_team"],
+                                "ca_to_team" => $row_member["mb_payment_team"],
+                                "ca_from_charger" => $row_eyeon["mb_payment_name"],
+                                "ca_to_charger" => $row_member["mb_payment_name"],
+                                "ca_from_tel" => $row_eyeon["mb_payment_tel"],
+                                "ca_to_tel" => $row_member["mb_payment_tel"],
+                                "ca_from_email" => $row_eyeon["mb_payment_email"],
+                                "ca_to_email" => $row_member["mb_payment_email"],
+                                "ca_date" => $claim_date,
+                                "ca_price" => $total_price,
+                                "ca_surtax" => floor($total_price*0.1),
+                                "ca_total_price" => floor($total_price*1.1),
+                                "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
+                                "ca_price_info1" => floor($total_price*1.1),
+                                "ca_price_info2" => floor($total_price*1.1),
+                                "ca_price_info3" => 0,
+                                "ca_price_info4" => 0,
+                                "ca_price_info5" => 0,
+                                "ca_payment_type" => $row["sv_pay_publish_type"],
+                                "ca_mb_seq" => $row["sv_mb_seq"],
+                                "ca_cl_seq" => $row["svp_cl_seq"],
+                                "ca_pm_seq" => $pm_seq
+                            );
+                            $this->db->insert("payment_claim",$data_claim);
+
+                            $cl_ca_seq = $this->db->insert_id();
+                            if($row["svp_cl_seq"] == ""){
+                                $main = "M";
+                                $num = 1;
+                            }else{
+                                $this->db->select("*");
+                                $this->db->from("claim_detail");
+                                $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                $query = $this->db->get();
+                                if($query->num_rows() > 0){
+                                    $row_cd = $query->row_array();
+                                    $main = $row_cd["cd_main"];
+                                    $num = $row_cd["cd_num"];
+                                }else{
+                                    $main = "M";
+                                    $num = 1;
+                                }
+                            }
+                            $data_claim_d = array(
+                                "cl_ca_seq" => $cl_ca_seq,
                                 "ca_item_name" => $row["sv_bill_name"],
                                 "ca_item_price" => $total_price,
                                 "ca_item_surtax" => floor($total_price*0.1),
-                                "ca_sort" => 1,
-                                "ca_m_sv_num" => $row["sv_number"]
+                                "ca_sort" => $num,
+                                "ca_m_sv_num" => $row["sv_number"],
+                                "ca_main" => $main
                             );
-                            $this->db->insert("payment_claim_list",$data_claim_detail);
+                            $this->db->insert("payment_claim_list",$data_claim_d);
+
+                            $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq;
+                            $this->db->where("pm_seq",$pm_seq);
+                            $this->db->update("payment",$data_pm_ca_seq);
                         }
-
-
-                        $this->db->select("*");
-                        $this->db->from("payment_claim");
-                        $this->db->where("ca_seq",$pm_ca_seq);
-                        $claim_query = $this->db->get();
-                        $row_c = $claim_query->row_array();
-                        $total_claim_price = $row_c["ca_price"]+$total_price;
-                        $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
-                        $total_claim_total_price = $total_claim_price+$total_claim_surtax;
-                        $ca_empty_size = 11 - strlen($total_claim_total_price);
-                        $ca_price_info1 = $total_claim_total_price;
-                        $ca_price_info2 = $total_claim_total_price;
-
-                        $data_update = array(
-                            "ca_price" => $total_claim_price,
-                            "ca_surtax" => $total_claim_surtax,
-                            "ca_total_price" => $total_claim_total_price,
-                            "ca_empty_size" => $ca_empty_size,
-                            "ca_price_info1" => $ca_price_info1,
-                            "ca_price_info2" => $ca_price_info2
-                        );
-                        $this->db->where("ca_seq",$pm_ca_seq);
-                        $this->db->update("payment_claim",$data_update);
-                    }else{
-                        $this->db->select("*");
-                        $this->db->from("members");
-                        $this->db->where("mb_seq",$row["sv_mb_seq"]);
-                        $query_member = $this->db->get();
-
-                        $row_member = $query_member->row_array();
-
-                        $data_claim = array(
-                            "ca_from_number" => "215-87-70318",
-                            "ca_to_number" => $row_member["mb_number"],
-                            "ca_from_name" => "아이온 시큐리티",
-                            "ca_to_name" => $row_member["mb_name"],
-                            "ca_from_ceo" => "김성혁",
-                            "ca_to_ceo" => $row_member["mb_ceo"],
-                            "ca_from_address" => "서울특별시 서초구 서초대로 255",
-                            "ca_to_address"=> $row_member["mb_address"],
-                            "ca_from_condition" => "서비스 외",
-                            "ca_to_condition" => $row_member["mb_business_conditions"],
-                            "ca_from_type" => "보안서비스 및 용역제공",
-                            "ca_to_type" => $row_member["mb_business_type"],
-                            "ca_from_team" => "영업2팀",
-                            "ca_to_team" => $row_member["mb_payment_team"],
-                            "ca_from_charger" => "전이준",
-                            "ca_to_charger" => $row_member["mb_payment_name"],
-                            "ca_from_tel" => "",
-                            "ca_to_tel" => $row_member["mb_payment_tel"],
-                            "ca_from_email" => "ijjun@eyeonsec.co.kr",
-                            "ca_to_email" => $row_member["mb_payment_email"],
-                            "ca_date" => $claim_date,
-                            "ca_price" => $total_price,
-                            "ca_surtax" => floor($total_price*0.1),
-                            "ca_total_price" => floor($total_price*1.1),
-                            "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
-                            "ca_price_info1" => floor($total_price*1.1),
-                            "ca_price_info2" => floor($total_price*1.1),
-                            "ca_price_info3" => 0,
-                            "ca_price_info4" => 0,
-                            "ca_price_info5" => 0,
-                            "ca_payment_type" => $row["sv_pay_publish_type"],
-                            "ca_mb_seq" => $row["sv_mb_seq"],
-                            "ca_cl_seq" => $row["svp_cl_seq"]
-                        );
-                        $this->db->insert("payment_claim",$data_claim);
-
-                        $cl_ca_seq = $this->db->insert_id();
-                        if($row["svp_cl_seq"] == ""){
-
-                            $num = 1;
-                        }else{
+                    }
+                    for($j = 0;$j<count($pm_sva_seq_arr);$j++){ // 연관된 부가서비스 등록 sort으로 인해 메인서비스 등록 후 진행 로직은 동일
+                        $sva_seq_array = explode("|",$pm_sva_seq_arr[$j]);
+                        if($sva_seq_array[0] == $pm_sv_seq){
+                            $pm_sv_seq_add = $sva_seq_array[0];
+                            $pm_sva_seq_add = $sva_seq_array[1];
                             $this->db->select("*");
-                            $this->db->from("claim_detail");
-                            $this->db->where("cd_svp_seq",$row["svp_seq"]);
-                            $query = $this->db->get();
-                            $row_cd = $query->row_array();
-                            $num = $row_cd["cd_num"];
-                        }
-                        $data_claim_d = array(
-                            "cl_ca_seq" => $cl_ca_seq,
-                            "ca_item_name" => $row["sv_bill_name"],
-                            "ca_item_price" => $total_price,
-                            "ca_item_surtax" => floor($total_price*0.1),
-                            "ca_sort" => 1,
-                            "ca_m_sv_num" => $row["sv_number"]
-                        );
-                        $this->db->insert("payment_claim_list",$data_claim_d);
+                            $this->db->from("payment a");
+                            $this->db->join("service_addoption b","a.pm_sva_seq = b.sva_seq","inner");
+                            $this->db->join("service bb","b.sva_sv_seq = bb.sv_seq","left");
+                            $this->db->join("service_price c","b.sva_seq = c.svp_sva_seq","inner");
+                            $this->db->where("pm_sva_seq",$pm_sva_seq_add);
+                            $this->db->group_by("pm_seq");
+                            $this->db->order_by("pm_service_end desc");
+                            $this->db->limit(1);
 
-                        $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq;
-                        $this->db->where("pm_seq",$pm_seq);
-                        $this->db->update("payment",$data_pm_ca_seq);
+                            $query = $this->db->get();
+                            //최초결제 없음
+
+                            if($query->num_rows() == 0){
+                                $this->db->select("*");
+                                $this->db->from("service_addoption a");
+                                $this->db->join("service aa","a.sva_sv_seq = aa.sv_seq","left");
+                                $this->db->join("service_price b","a.sva_seq = b.svp_sva_seq","left");
+                                $this->db->where("sva_seq",$pm_sva_seq_add);
+                                $query = $this->db->get();
+                                $row = $query->row_array();
+                                $pay_day = $row["sv_pay_day"];
+                                if($row["sv_pay_type"] == "0"){ // 전월
+                                    $claim_date = date("Y-m-d");
+                                }else if($row["sv_pay_type"] == "1"){ // 당월
+                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                                }else if($row["sv_pay_type"] == "2"){ // 익월
+                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                                }else{
+                                    $claim_date = date("Y-m-".$pay_day);
+                                }
+                                
+                                $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
+
+                                $sv_account_end = date("Y-m-d",mktime(0,0,0,substr($row["sv_account_start"],5,2)+$row["svp_payment_period"],substr($row["sv_account_start"],8,2)-1,substr($row["sv_account_start"],0,4)));
+                                $next_service_start = date("Y-m-d",mktime(0,0,0,substr($row["sv_account_end"],5,2),substr($row["sv_account_end"],8,2)+1,substr($row["sv_account_end"],0,4)));
+                                $next_service_end = date("Y-m-d",mktime(0,0,0,substr($row["sv_account_end"],5,2)+$row["sva_pay_day"],substr($row["sv_account_end"],8,2),substr($row["sv_account_end"],0,4)));
+
+                                $next_pay_day = $row["sv_pay_day"];
+                                if($row["sv_pay_type"] == "0"){ // 전월
+                                    $next_standard_day = substr($next_service_start,8,2);
+                                    if($next_pay_day > $next_standard_day){
+                                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                    }else{
+                                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                    }
+                                }else if($row["sv_pay_type"] == "1"){ // 당월
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }else if($row["sv_pay_type"] == "2"){ // 익월
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }
+
+                                if($row["svp_cl_seq"] == ""){
+                                    $this->db->select("pm_ca_seq");
+                                    $this->db->from("payment");
+                                    $this->db->where("pm_mb_seq",$row["sv_mb_seq"]);
+                                    $this->db->where("pm_date",$claim_date);
+                                    $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
+                                    $this->db->where("pm_end_date",$end_date);
+                                    $this->db->where("pm_status = '0'");
+                                    $this->db->limit(1);
+                                    $query_claim = $this->db->get();
+                                    if($query_claim->num_rows() > 0){
+                                        $row_claim = $query_claim->row_array();
+                                        $pm_ca_seq = $row_claim["pm_ca_seq"];
+                                    }else{
+                                        $pm_ca_seq = "";
+                                    }
+                                }else{
+                                    // 여기 수정해야함
+                                    $this->db->select("*");
+                                    $this->db->from("payment_claim");
+                                    $this->db->where("ca_cl_seq",$row["svp_cl_seq"]);
+                                    $this->db->where("ca_date",$claim_date);
+                                    $this->db->limit(1);
+                                    $query_claim = $this->db->get();
+                                    if($query_claim->num_rows() > 0){
+                                        $row_claim = $query_claim->row_array();
+                                        $pm_ca_seq = $row_claim["ca_seq"];
+                                    }else{
+                                        $pm_ca_seq = "";
+                                    }
+                                }
+
+
+                                $this->db->select("pm_code");
+                                $this->db->from("payment");
+                                $this->db->order_by("pm_seq","desc");
+                                $this->db->limit(1);
+                                $query_code = $this->db->get();
+
+                                if($query_code->num_rows() == 0){
+                                    $pm_code = "CHA0000001";
+                                }else{
+                                    $max_row = $query_code->row_array();
+                                    $max_row1 = substr($max_row["pm_code"],0,3);
+                                    $max_row2 = (int)substr($max_row["pm_code"],3,7);
+                                    $max_row2 = $max_row2+1;
+
+                                    $pm_code = $max_row1.sprintf("%07d",$max_row2);
+                                }
+
+                                $total_price = $row["svp_once_price"]-$row["svp_once_dis_price"]+$row["svp_first_day_price"]+$row["svp_first_month_price"];
+                                $payment_data = array(
+                                    "pm_type" => "1",
+                                    "pm_mb_seq" => $row["sv_mb_seq"],
+                                    "pm_sv_seq" => $pm_sv_seq_add,
+                                    "pm_sva_seq" => $pm_sva_seq_add,
+                                    "pm_code" => $pm_code,
+                                    "pm_date" => $claim_date,
+                                    "pm_service_start" => $row["sv_account_start"],
+                                    "pm_service_end" =>  $row["svp_first_month_end"],
+                                    "pm_pay_type" => $row["sv_payment_type"],
+                                    "pm_pay_period" => $row["svp_payment_period"],
+                                    "pm_once_price" => $row["svp_once_price"],
+                                    "pm_once_dis_price" => $row["svp_once_dis_price"],
+                                    "pm_once_dis_msg" => $row["svp_once_dis_msg"],
+                                    "pm_service_price" => $row["svp_month_price"],
+                                    "pm_service_dis_price" => $row["svp_month_dis_price"],
+                                    "pm_service_dis_msg" => $row["svp_month_dis_msg"],
+                                    "pm_payment_dis_price" => $row["svp_discount_price"],
+                                    "pm_delay_price" => 0,
+                                    "pm_total_price" => $total_price,
+                                    "pm_surtax_price" => $total_price*0.1,
+                                    "pm_end_date" => $end_date,
+                                    "pm_status" => 0,
+                                    "pm_first_day_price" => $row["svp_first_day_price"],
+                                    "pm_first_day_start" => $row["svp_first_day_start"],
+                                    "pm_first_day_end" => $row["svp_first_day_end"],
+                                    "pm_first_month_price" => $row["svp_first_month_price"],
+                                    "pm_first_month_start" => $row["svp_first_month_start"],
+                                    "pm_first_month_end" => $row["svp_first_month_end"],
+                                    "pm_payment_publish" => $row["sv_pay_publish"],
+                                    "pm_payment_publish_type" => $row["sv_pay_publish_type"],
+                                    "pm_ca_seq" => $pm_ca_seq,
+                                    "pm_claim_type" => "0",
+                                    "pm_next_claim_date" => $next_claim_date
+                                );
+                                $this->db->insert("payment",$payment_data);
+
+                                $pm_seq = $this->db->insert_id();
+
+                                if($pm_ca_seq != ""){
+                                    if($row["svp_cl_seq"] == ""){
+                                        $this->db->select("*");
+                                        $this->db->from("payment_claim_list");
+                                        $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                        $this->db->where("ca_sort",1);
+                                        $query_c = $this->db->get();
+                                        $main = "";
+                                        $num = "1";
+                                    }else{
+                                        $this->db->select("*");
+                                        $this->db->from("claim_detail");
+                                        $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                        $query = $this->db->get();
+                                        if($query->num_rows() > 0){
+                                            $row_cd = $query->row_array();
+                                            $main = $row_cd["cd_main"];
+                                            $num = $row_cd["cd_num"];
+                                        }else{
+                                            $main = "M";
+                                            $num = 1;
+                                        }
+                                        $this->db->select("*");
+                                        $this->db->from("payment_claim_list");
+                                        $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                        $this->db->where("ca_sort",$num);
+                                        $query_c = $this->db->get();
+                                    }
+
+
+                                    if($query_c->num_rows() > 0){
+                                        $row_cl = $query_c->row_array();
+                                        $ca_item_price = $row_cl["ca_item_price"]+$total_price;
+                                        $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
+                                        $data_claim_detail = array(
+                                            "ca_item_price" => $ca_item_price,
+                                            "ca_item_surtax" => $ca_item_surtax
+                                        );
+                                        if($main == "M"){
+                                            $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                            $data_claim_detail["ca_item_name"] = $row["sva_bill_name"]." 외";
+                                        }else if($main == "S"){
+                                            $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                        }else{
+                                            if($row_cl["ca_m_sv_num"] < $row["sv_number"]){ // 항목명 설정을 위한 비교
+                                                $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                                $data_claim_detail["ca_item_name"] = $row["sva_bill_name"]." 외";
+                                            }else{
+                                                $data_claim_detail["ca_m_sv_num"] = $row_cl["ca_m_sv_num"];
+                                                $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                            }
+                                        }
+                                        $this->db->where("cl_seq",$row_cl["cl_seq"]);
+                                        $this->db->update("payment_claim_list",$data_claim_detail);
+                                    }else{
+                                        $data_claim_detail = array(
+                                            "cl_ca_seq" => $pm_ca_seq,
+                                            "ca_item_name" => $row["sva_bill_name"],
+                                            "ca_item_price" => $total_price,
+                                            "ca_item_surtax" => floor($total_price*0.1),
+                                            "ca_sort" => $num,
+                                            "ca_m_sv_num" => $row["sv_number"],
+                                            "ca_main" => $main
+                                        );
+                                        $this->db->insert("payment_claim_list",$data_claim_detail);
+                                    }
+
+
+                                    $this->db->select("*");
+                                    $this->db->from("payment_claim");
+                                    $this->db->where("ca_seq",$pm_ca_seq);
+                                    $claim_query = $this->db->get();
+                                    $row_c = $claim_query->row_array();
+                                    $total_claim_price = $row_c["ca_price"]+$total_price;
+                                    $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
+                                    $total_claim_total_price = $total_claim_price+$total_claim_surtax;
+                                    $ca_empty_size = 11 - strlen($total_claim_total_price);
+                                    $ca_price_info1 = $total_claim_total_price;
+                                    $ca_price_info2 = $total_claim_total_price;
+
+                                    $data_update = array(
+                                        "ca_price" => $total_claim_price,
+                                        "ca_surtax" => $total_claim_surtax,
+                                        "ca_total_price" => $total_claim_total_price,
+                                        "ca_empty_size" => $ca_empty_size,
+                                        "ca_price_info1" => $ca_price_info1,
+                                        "ca_price_info2" => $ca_price_info2
+                                    );
+                                    $this->db->where("ca_seq",$pm_ca_seq);
+                                    $this->db->update("payment_claim",$data_update);
+                                }else{
+                                    $this->db->select("*");
+                                    $this->db->from("members");
+                                    $this->db->where("mb_seq",$row["sv_mb_seq"]);
+                                    $query_member = $this->db->get();
+
+                                    $row_member = $query_member->row_array();
+
+                                    $this->db->select("*"); // 아이온 정보 가져옴
+                                    $this->db->from("members");
+                                    $this->db->where("mb_seq",21);
+                                    $query_eyeon = $this->db->get();
+
+                                    $row_eyeon = $query_eyeon->row_array();
+
+
+                                    $data_claim = array(
+                                        "ca_from_number" => $row_eyeon["mb_number"],
+                                        "ca_to_number" => $row_member["mb_number"],
+                                        "ca_from_name" => $row_eyeon["mb_name"],
+                                        "ca_to_name" => $row_member["mb_name"],
+                                        "ca_from_ceo" => $row_eyeon["mb_ceo"],
+                                        "ca_to_ceo" => $row_member["mb_ceo"],
+                                        "ca_from_address" => $row_eyeon["mb_address"],
+                                        "ca_to_address"=> $row_member["mb_address"],
+                                        "ca_from_condition" => $row_eyeon["mb_business_conditions"],
+                                        "ca_to_condition" => $row_member["mb_business_conditions"],
+                                        "ca_from_type" => $row_eyeon["mb_business_type"],
+                                        "ca_to_type" => $row_member["mb_business_type"],
+                                        "ca_from_team" => $row_eyeon["mb_payment_team"],
+                                        "ca_to_team" => $row_member["mb_payment_team"],
+                                        "ca_from_charger" => $row_eyeon["mb_payment_name"],
+                                        "ca_to_charger" => $row_member["mb_payment_name"],
+                                        "ca_from_tel" => $row_eyeon["mb_payment_tel"],
+                                        "ca_to_tel" => $row_member["mb_payment_tel"],
+                                        "ca_from_email" => $row_eyeon["mb_payment_email"],
+                                        "ca_to_email" => $row_member["mb_payment_email"],
+                                        "ca_date" => $claim_date,
+                                        "ca_price" => $total_price,
+                                        "ca_surtax" => floor($total_price*0.1),
+                                        "ca_total_price" => floor($total_price*1.1),
+                                        "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
+                                        "ca_price_info1" => floor($total_price*1.1),
+                                        "ca_price_info2" => floor($total_price*1.1),
+                                        "ca_price_info3" => 0,
+                                        "ca_price_info4" => 0,
+                                        "ca_price_info5" => 0,
+                                        "ca_payment_type" => $row["sv_pay_publish_type"],
+                                        "ca_mb_seq" => $row["sv_mb_seq"],
+                                        "ca_cl_seq" => $row["svp_cl_seq"],
+                                        "ca_pm_seq" => $pm_seq
+                                    );
+                                    $this->db->insert("payment_claim",$data_claim);
+
+                                    $cl_ca_seq = $this->db->insert_id();
+                                    if($row["svp_cl_seq"] == ""){
+                                        $main = "M";
+                                        $num = 1;
+                                    }else{
+                                        $this->db->select("*");
+                                        $this->db->from("claim_detail");
+                                        $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                        $query = $this->db->get();
+                                        if($query->num_rows() > 0){
+                                            $row_cd = $query->row_array();
+                                            $main = $row_cd["cd_main"];
+                                            $num = $row_cd["cd_num"];
+                                        }else{
+                                            $main = "M";
+                                            $num = 1;
+                                        }
+                                    }
+
+                                    $data_claim_d = array(
+                                        "cl_ca_seq" => $cl_ca_seq,
+                                        "ca_item_name" => $row["sva_bill_name"],
+                                        "ca_item_price" => $total_price,
+                                        "ca_item_surtax" => floor($total_price*0.1),
+                                        "ca_sort" => $num,
+                                        "ca_m_sv_num" => $row["sv_number"],
+                                        "ca_main" => $main
+                                    );
+                                    $this->db->insert("payment_claim_list",$data_claim_d);
+
+                                    $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq;
+                                    $this->db->where("pm_seq",$pm_seq);
+                                    $this->db->update("payment",$data_pm_ca_seq);
+                                }
+                            }else{
+                                $row = $query->row_array();
+                                $pm_service_start = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2),substr($row["pm_service_end"],8,2)+1,substr($row["pm_service_end"],0,4)));
+                                $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["svp_payment_period"],substr($row["pm_service_end"],8,2)-1,substr($row["pm_service_end"],0,4)));
+
+                                $pay_day = $row["sv_pay_day"];
+                                if($row["sv_pay_type"] == "0"){ // 전월
+                                    $standard_day = substr($pm_service_start,8,2);
+                                    if($pay_day > $standard_day){
+                                        $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                    }else{
+                                        $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                    }
+                                }else if($row["sv_pay_type"] == "1"){ // 당월
+                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                }else if($row["sv_pay_type"] == "2"){ // 익월
+                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                }
+                                // $claim_date = date("Y-m-d");
+
+                                $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
+
+                                $next_service_start = date("Y-m-d",mktime(0,0,0,substr($pm_service_end,5,2),substr($pm_service_end,8,2)+1,substr($pm_service_end,0,4)));
+                                $next_service_end = date("Y-m-d",mktime(0,0,0,substr($pm_service_end,5,2)+1,substr($pm_service_end,8,2),substr($pm_service_end,0,4)));
+
+                                $next_pay_day = $row["sv_pay_day"];
+                                if($row["sv_pay_type"] == "0"){ // 전월
+                                    $next_standard_day = substr($next_service_start,8,2);
+                                    if($next_pay_day > $next_standard_day){
+                                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                    }else{
+                                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                    }
+                                }else if($row["sv_pay_type"] == "1"){ // 당월
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }else if($row["sv_pay_type"] == "2"){ // 익월
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }
+
+                                if($row["svp_cl_seq"] == ""){
+                                    $this->db->select("pm_ca_seq");
+                                    $this->db->from("payment");
+                                    $this->db->where("pm_mb_seq",$row["sv_mb_seq"]);
+                                    $this->db->where("pm_date",$claim_date);
+                                    $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
+                                    $this->db->where("pm_end_date",$end_date);
+                                    $this->db->where("pm_status = '0'");
+                                    $this->db->limit(1);
+                                    $query_claim = $this->db->get();
+                                    if($query_claim->num_rows() > 0){
+                                        $row_claim = $query_claim->row_array();
+                                        $pm_ca_seq = $row_claim["pm_ca_seq"];
+                                    }else{
+                                        $pm_ca_seq = "";
+                                    }
+                                }else{
+                                    // 여기 수정해야함
+                                    $this->db->select("*");
+                                    $this->db->from("payment_claim");
+                                    $this->db->where("ca_cl_seq",$row["svp_cl_seq"]);
+                                    $this->db->where("ca_date",$claim_date);
+                                    $this->db->limit(1);
+                                    $query_claim = $this->db->get();
+                                    if($query_claim->num_rows() > 0){
+                                        $row_claim = $query_claim->row_array();
+                                        $pm_ca_seq = $row_claim["ca_seq"];
+                                    }else{
+                                        $pm_ca_seq = "";
+                                    }
+                                }
+
+                                $this->db->select("pm_code");
+                                $this->db->from("payment");
+                                $this->db->order_by("pm_seq","desc");
+                                $this->db->limit(1);
+                                $query_code = $this->db->get();
+
+                                if($query_code->num_rows() == 0){
+                                    $pm_code = "CHA0000001";
+                                }else{
+                                    $max_row = $query_code->row_array();
+                                    $max_row1 = substr($max_row["pm_code"],0,3);
+                                    $max_row2 = (int)substr($max_row["pm_code"],3,7);
+                                    $max_row2 = $max_row2+1;
+
+                                    $pm_code = $max_row1.sprintf("%07d",$max_row2);
+                                }
+                                $total_price = ($row["svp_month_price"]-$row["svp_month_dis_price"])*$row["svp_payment_period"]-$row["svp_discount_price"];
+                                $payment_data = array(
+                                    "pm_type" => "1",
+                                    "pm_mb_seq" => $row["sv_mb_seq"],
+                                    "pm_sv_seq" => $pm_sv_seq_add,
+                                    "pm_sva_seq" => $pm_sva_seq_add,
+                                    "pm_code" => $pm_code,
+                                    "pm_date" => $claim_date,
+                                    "pm_service_start" => $pm_service_start,
+                                    "pm_service_end" =>  $pm_service_end,
+                                    "pm_pay_type" => $row["sv_payment_type"],
+                                    "pm_pay_period" => $row["svp_payment_period"],
+                                    "pm_once_price" => 0,
+                                    "pm_once_dis_price" => 0,
+                                    "pm_once_dis_msg" => "",
+                                    "pm_service_price" => $row["svp_month_price"],
+                                    "pm_service_dis_price" => $row["svp_month_dis_price"],
+                                    "pm_service_dis_msg" => $row["svp_month_dis_msg"],
+                                    "pm_payment_dis_price" => $row["svp_discount_price"],
+                                    "pm_delay_price" => 0,
+                                    "pm_total_price" => $total_price,
+                                    "pm_surtax_price" => $total_price*0.1,
+                                    "pm_end_date" => $end_date,
+                                    "pm_status" => 0,
+                                    "pm_payment_publish" => $row["sv_pay_publish"],
+                                    "pm_payment_publish_type" => $row["sv_pay_publish_type"],
+                                    "pm_ca_seq" => $pm_ca_seq,
+                                    "pm_next_claim_date" => $next_claim_date,
+                                    "pm_first_day_price" => 0,
+                                    "pm_first_day_start" => $row["svp_first_day_start"],
+                                    "pm_first_day_end" => $row["svp_first_day_end"],
+                                    "pm_first_month_price" => $row["svp_first_month_price"],
+                                    "pm_first_month_start" => $row["svp_first_month_start"],
+                                    "pm_first_month_end" => $row["svp_first_month_end"],
+                                );
+                                $this->db->insert("payment",$payment_data);
+
+                                $pm_seq = $this->db->insert_id();
+
+                                if($pm_ca_seq != ""){
+                                    if($row["svp_cl_seq"] == ""){
+                                        $this->db->select("*");
+                                        $this->db->from("payment_claim_list");
+                                        $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                        $this->db->where("ca_sort",1);
+                                        $query_c = $this->db->get();
+                                        $main = "";
+                                        $num = "1";
+                                    }else{
+                                        $this->db->select("*");
+                                        $this->db->from("claim_detail");
+                                        $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                        $query = $this->db->get();
+                                       if($query->num_rows() > 0){
+                                            $row_cd = $query->row_array();
+                                            $main = $row_cd["cd_main"];
+                                            $num = $row_cd["cd_num"];
+                                        }else{
+                                            $main = "M";
+                                            $num = 1;
+                                        }
+                                        $this->db->select("*");
+                                        $this->db->from("payment_claim_list");
+                                        $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                        $this->db->where("ca_sort",$num);
+                                        $query_c = $this->db->get();
+                                    }
+
+
+                                    if($query_c->num_rows() > 0){
+                                        $row_cl = $query_c->row_array();
+                                        $ca_item_price = $row_cl["ca_item_price"]+$total_price;
+                                        $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
+                                        $data_claim_detail = array(
+                                            "ca_item_price" => $ca_item_price,
+                                            "ca_item_surtax" => $ca_item_surtax
+                                        );
+                                        if($main == "M"){
+                                            $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                            $data_claim_detail["ca_item_name"] = $row["sva_bill_name"]." 외";
+                                        }else if($main == "S"){
+                                            $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                        }else{
+                                            if($row_cl["ca_m_sv_num"] < $row["sv_number"]){ // 항목명 설정을 위한 비교
+                                                $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                                $data_claim_detail["ca_item_name"] = $row["sva_bill_name"]." 외";
+                                            }else{
+                                                $data_claim_detail["ca_m_sv_num"] = $row_cl["ca_m_sv_num"];
+                                                $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                            }
+                                        }
+                                        $this->db->where("cl_seq",$row_cl["cl_seq"]);
+                                        $this->db->update("payment_claim_list",$data_claim_detail);
+                                    }else{
+                                        $data_claim_detail = array(
+                                            "cl_ca_seq" => $pm_ca_seq,
+                                            "ca_item_name" => $row["sva_bill_name"],
+                                            "ca_item_price" => $total_price,
+                                            "ca_item_surtax" => floor($total_price*0.1),
+                                            "ca_sort" => $num,
+                                            "ca_m_sv_num" => $row["sv_number"],
+                                            "ca_main" => $main
+                                        );
+                                        $this->db->insert("payment_claim_list",$data_claim_detail);
+                                    }
+
+
+                                    $this->db->select("*");
+                                    $this->db->from("payment_claim");
+                                    $this->db->where("ca_seq",$pm_ca_seq);
+                                    $claim_query = $this->db->get();
+                                    $row_c = $claim_query->row_array();
+                                    $total_claim_price = $row_c["ca_price"]+$total_price;
+                                    $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
+                                    $total_claim_total_price = $total_claim_price+$total_claim_surtax;
+                                    $ca_empty_size = 11 - strlen($total_claim_total_price);
+                                    $ca_price_info1 = $total_claim_total_price;
+                                    $ca_price_info2 = $total_claim_total_price;
+
+                                    $data_update = array(
+                                        "ca_price" => $total_claim_price,
+                                        "ca_surtax" => $total_claim_surtax,
+                                        "ca_total_price" => $total_claim_total_price,
+                                        "ca_empty_size" => $ca_empty_size,
+                                        "ca_price_info1" => $ca_price_info1,
+                                        "ca_price_info2" => $ca_price_info2
+                                    );
+                                    $this->db->where("ca_seq",$pm_ca_seq);
+                                    $this->db->update("payment_claim",$data_update);
+                                }else{
+                                    $this->db->select("*");
+                                    $this->db->from("members");
+                                    $this->db->where("mb_seq",$row["sv_mb_seq"]);
+                                    $query_member = $this->db->get();
+
+                                    $row_member = $query_member->row_array();
+
+                                    $this->db->select("*"); // 아이온 정보 가져옴
+                                    $this->db->from("members");
+                                    $this->db->where("mb_seq",21);
+                                    $query_eyeon = $this->db->get();
+
+                                    $row_eyeon = $query_eyeon->row_array();
+
+
+                                    $data_claim = array(
+                                        "ca_from_number" => $row_eyeon["mb_number"],
+                                        "ca_to_number" => $row_member["mb_number"],
+                                        "ca_from_name" => $row_eyeon["mb_name"],
+                                        "ca_to_name" => $row_member["mb_name"],
+                                        "ca_from_ceo" => $row_eyeon["mb_ceo"],
+                                        "ca_to_ceo" => $row_member["mb_ceo"],
+                                        "ca_from_address" => $row_eyeon["mb_address"],
+                                        "ca_to_address"=> $row_member["mb_address"],
+                                        "ca_from_condition" => $row_eyeon["mb_business_conditions"],
+                                        "ca_to_condition" => $row_member["mb_business_conditions"],
+                                        "ca_from_type" => $row_eyeon["mb_business_type"],
+                                        "ca_to_type" => $row_member["mb_business_type"],
+                                        "ca_from_team" => $row_eyeon["mb_payment_team"],
+                                        "ca_to_team" => $row_member["mb_payment_team"],
+                                        "ca_from_charger" => $row_eyeon["mb_payment_name"],
+                                        "ca_to_charger" => $row_member["mb_payment_name"],
+                                        "ca_from_tel" => $row_eyeon["mb_payment_tel"],
+                                        "ca_to_tel" => $row_member["mb_payment_tel"],
+                                        "ca_from_email" => $row_eyeon["mb_payment_email"],
+                                        "ca_to_email" => $row_member["mb_payment_email"],
+                                        "ca_date" => $claim_date,
+                                        "ca_price" => $total_price,
+                                        "ca_surtax" => floor($total_price*0.1),
+                                        "ca_total_price" => floor($total_price*1.1),
+                                        "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
+                                        "ca_price_info1" => floor($total_price*1.1),
+                                        "ca_price_info2" => floor($total_price*1.1),
+                                        "ca_price_info3" => 0,
+                                        "ca_price_info4" => 0,
+                                        "ca_price_info5" => 0,
+                                        "ca_payment_type" => $row["sv_pay_publish_type"],
+                                        "ca_mb_seq" => $row["sv_mb_seq"],
+                                        "ca_cl_seq" => $row["svp_cl_seq"],
+                                        "ca_pm_seq" => $pm_seq
+                                    );
+                                    $this->db->insert("payment_claim",$data_claim);
+
+                                    $cl_ca_seq = $this->db->insert_id();
+                                    if($row["svp_cl_seq"] == ""){
+                                        $main ="M";
+                                        $num = 1;
+                                    }else{
+                                        $this->db->select("*");
+                                        $this->db->from("claim_detail");
+                                        $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                        $query = $this->db->get();
+                                        $row_cd = $query->row_array();
+                                        if($query->num_rows() > 0){
+                                            $row_cd = $query->row_array();
+                                            $main = $row_cd["cd_main"];
+                                            $num = $row_cd["cd_num"];
+                                        }else{
+                                            $main = "M";
+                                            $num = 1;
+                                        }
+                                    }
+                                    $data_claim_d = array(
+                                        "cl_ca_seq" => $cl_ca_seq,
+                                        "ca_item_name" => $row["sva_bill_name"],
+                                        "ca_item_price" => $total_price,
+                                        "ca_item_surtax" => floor($total_price*0.1),
+                                        "ca_sort" => $num,
+                                        "ca_m_sv_num" => $row["sv_number"],
+                                        "ca_main" => $main
+                                    );
+                                    $this->db->insert("payment_claim_list",$data_claim_d);
+
+                                    $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq;
+                                    $this->db->where("pm_seq",$pm_seq);
+                                    $this->db->update("payment",$data_pm_ca_seq);
+                                }
+                            }
+                        }
                     }
                 }
-            }else{ // 부가서비스 등록
-                $this->db->select("*");
-                $this->db->from("payment a");
-                $this->db->join("service_addoption b","a.pm_sva_seq = b.sva_seq","inner");
-                $this->db->join("service bb","b.sva_sv_seq = bb.sv_seq","left");
-                $this->db->join("service_price c","b.sva_seq = c.svp_sva_seq","inner");
-                $this->db->where("pm_sva_seq",$pm_sva_seq);
-
-                $this->db->order_by("pm_service_end desc");
-                $this->db->limit(1);
-
-                $query = $this->db->get();
-                //최초결제 없음
-
-                if($query->num_rows() == 0){
+            }
+        }else{ // 메인서비스 없이 부가서비스만 있을경우 로직은 동일
+            if(count($pm_sva_seq_arr) > 0){
+                for($j = 0;$j<count($pm_sva_seq_arr);$j++){
+                    $sva_seq_array = explode("|",$pm_sva_seq_arr[$j]);
+                    
+                    $pm_sv_seq_add = $sva_seq_array[0];
+                    $pm_sva_seq_add = $sva_seq_array[1];
                     $this->db->select("*");
-                    $this->db->from("service_addoption a");
-                    $this->db->join("service aa","a.sva_sv_seq = aa.sv_seq","left");
-                    $this->db->join("service_price b","a.sva_seq = b.svp_sva_seq","left");
-                    $this->db->where("sva_seq",$pm_sva_seq);
+                    $this->db->from("payment a");
+                    $this->db->join("service_addoption b","a.pm_sva_seq = b.sva_seq","inner");
+                    $this->db->join("service bb","b.sva_sv_seq = bb.sv_seq","left");
+                    $this->db->join("service_price c","b.sva_seq = c.svp_sva_seq","inner");
+                    $this->db->where("pm_sva_seq",$pm_sva_seq_add);
+                    $this->db->group_by("pm_seq");
+                    $this->db->order_by("pm_service_end desc");
+                    $this->db->limit(1);
+
                     $query = $this->db->get();
-                    $row = $query->row_array();
-                    // $pay_day = $row["sv_pay_day"];
-                    // if($row["sv_pay_type"] == "0"){ // 전월
-                    //     $standard_day = substr($row["sv_account_start"],8,2);
-                    //     if($pay_day > $standard_day){
-                    //         $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)-1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
-                    //     }else{
-                    //         $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
-                    //     }
-                    // }else if($row["sv_pay_type"] == "1"){ // 당월
-                    //     $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
-                    // }else if($row["sv_pay_type"] == "2"){ // 익월
-                    //     $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
-                    // }else{
-                    //     $claim_date = date("Y-m-".$pay_day);
-                    // }
-                    $claim_date = date("Y-m-d");
-                    $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
-                    if($row["svp_cl_seq"] == ""){
-                        $this->db->select("pm_ca_seq");
-                        $this->db->from("payment");
-                        $this->db->where("pm_mb_seq",$row["sv_mb_seq"]);
-                        $this->db->where("pm_date",$claim_date);
-                        $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
-                        $this->db->where("pm_end_date",$end_date);
-                        $this->db->where("pm_status = '0'");
-                        $this->db->limit(1);
-                        $query_claim = $this->db->get();
-                        if($query_claim->num_rows() > 0){
-                            $row_claim = $query_claim->row_array();
-                            $pm_ca_seq = $row_claim["pm_ca_seq"];
-                        }else{
-                            $pm_ca_seq = "";
-                        }
-                    }else{
-                        // 여기 수정해야함
+                    //최초결제 없음
+
+                    if($query->num_rows() == 0){
                         $this->db->select("*");
-                        $this->db->from("payment_claim");
-                        $this->db->where("ca_cl_seq",$row["svp_cl_seq"]);
-                        $this->db->where("ca_date",$claim_date);
-                        $this->db->limit(1);
-                        $query_claim = $this->db->get();
-                        if($query_claim->num_rows() > 0){
-                            $row_claim = $query_claim->row_array();
-                            $pm_ca_seq = $row_claim["pm_ca_seq"];
+                        $this->db->from("service_addoption a");
+                        $this->db->join("service aa","a.sva_sv_seq = aa.sv_seq","left");
+                        $this->db->join("service_price b","a.sva_seq = b.svp_sva_seq","left");
+                        $this->db->where("sva_seq",$pm_sva_seq_add);
+                        $query = $this->db->get();
+                        $row = $query->row_array();
+                        $pay_day = $row["sv_pay_day"];
+                        if($row["sv_pay_type"] == "0"){ // 전월
+                            $claim_date = date("Y-m-d");
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                        }else if($row["sv_pay_type"] == "2"){ // 익월
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
                         }else{
-                            $pm_ca_seq = "";
+                            $claim_date = date("Y-m-".$pay_day);
                         }
-                    }
+                        
+                        $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
 
+                        $sv_account_end = date("Y-m-d",mktime(0,0,0,substr($row["sv_account_start"],5,2)+$row["svp_payment_period"],substr($row["sv_account_start"],8,2)-1,substr($row["sv_account_start"],0,4)));
+                        $next_service_start = date("Y-m-d",mktime(0,0,0,substr($row["sv_account_end"],5,2),substr($row["sv_account_end"],8,2)+1,substr($row["sv_account_end"],0,4)));
+                        $next_service_end = date("Y-m-d",mktime(0,0,0,substr($row["sv_account_end"],5,2)+$row["svp_payment_period"],substr($row["sv_account_end"],8,2),substr($row["sv_account_end"],0,4)));
 
-                    $this->db->select("pm_code");
-                    $this->db->from("payment");
-                    $this->db->order_by("pm_seq","desc");
-                    $this->db->limit(1);
-                    $query_code = $this->db->get();
-
-                    if($query_code->num_rows() == 0){
-                        $pm_code = "CHA0000001";
-                    }else{
-                        $max_row = $query_code->row_array();
-                        $max_row1 = substr($max_row["pm_code"],0,3);
-                        $max_row2 = (int)substr($max_row["pm_code"],3,7);
-                        $max_row2 = $max_row2+1;
-
-                        $pm_code = $max_row1.sprintf("%07d",$max_row2);
-                    }
-                    $total_price = $row["svp_once_price"]-$row["svp_once_dis_price"]+$row["svp_month_price"]-$row["svp_month_dis_price"]-$row["svp_discount_price"];
-                    $payment_data = array(
-                        "pm_type" => "1",
-                        "pm_mb_seq" => $row["sv_mb_seq"],
-                        "pm_sv_seq" => $pm_sv_seq,
-                        "pm_sva_seq" => $pm_sva_seq,
-                        "pm_code" => $pm_code,
-                        "pm_date" => $claim_date,
-                        "pm_service_start" => $row["sv_account_start"],
-                        "pm_service_end" =>  $row["sv_account_end"],
-                        "pm_pay_type" => $row["sv_pay_type"],
-                        "pm_pay_period" => $row["sva_pay_day"],
-                        "pm_once_price" => $row["svp_once_price"],
-                        "pm_once_dis_price" => $row["svp_once_dis_price"],
-                        "pm_once_dis_msg" => $row["svp_once_dis_msg"],
-                        "pm_service_price" => $row["svp_month_price"],
-                        "pm_service_dis_price" => $row["svp_month_dis_price"],
-                        "pm_service_dis_msg" => $row["svp_month_dis_msg"],
-                        "pm_payment_dis_price" => $row["svp_discount_price"],
-                        "pm_delay_price" => 0,
-                        "pm_total_price" => $total_price,
-                        "pm_surtax_price" => $total_price*0.1,
-                        "pm_end_date" => $end_date,
-                        "pm_status" => 0,
-                        "pm_first_day_price" => $row["svp_first_day_price"],
-                        "pm_first_day_start" => $row["svp_first_day_start"],
-                        "pm_first_day_end" => $row["svp_first_day_end"],
-                        "pm_first_month_price" => $row["svp_first_month_price"],
-                        "pm_first_month_start" => $row["svp_first_month_start"],
-                        "pm_first_month_end" => $row["svp_first_month_end"],
-                        "pm_payment_publish_type" => $row["sv_pay_publish_type"],
-                        "pm_ca_seq" => $pm_ca_seq,
-                        "pm_claim_type" => "0"
-                    );
-                    $this->db->insert("payment",$payment_data);
-
-                    $pm_seq = $this->db->insert_id();
-
-                    if($pm_ca_seq != ""){
-                        if($row["svp_cl_seq"] == ""){
-                            $this->db->select("*");
-                            $this->db->from("payment_claim_list");
-                            $this->db->where("cl_ca_seq",$pm_ca_seq);
-                            $this->db->where("ca_sort",1);
-                            $query_c = $this->db->get();
-                            $main = "";
-                        }else{
-                            $this->db->select("*");
-                            $this->db->from("claim_detail");
-                            $this->db->where("cd_svp_seq",$row["svp_seq"]);
-                            $query = $this->db->get();
-                            $row_cd = $query->row_array();
-                            $main = $row_cd["cd_main"];
-                            $this->db->select("*");
-                            $this->db->from("payment_claim_list");
-                            $this->db->where("cl_ca_seq",$pm_ca_seq);
-                            $this->db->where("ca_sort",$row_cd["cd_num"]);
-                            $query_c = $this->db->get();
-                        }
-
-
-                        if($query_c->num_rows() > 0){
-                            $row_cl = $query_c->row_array();
-                            $ca_item_price = $row_cl["ca_item_price"]+$total_price;
-                            $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
-                            if($row_cl["ca_m_sv_num"] < $row["sv_number"]){
-                                $ca_m_sv_num = $row["sv_number"];
-                                $ca_item_name = $row["sva_bill_name"];
+                        $next_pay_day = $row["sv_pay_day"];
+                        if($row["sv_pay_type"] == "0"){ // 전월
+                            $next_standard_day = substr($next_service_start,8,2);
+                            if($next_pay_day > $next_standard_day){
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }else{
-                                $ca_m_sv_num = $row_cl["ca_m_sv_num"];
-                                $ca_item_name = $row_cl["ca_item_name"];
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }
-                            $data_claim_detail = array(
-                                "ca_item_name" => $ca_item_name,
-                                "ca_item_price" => $ca_item_price,
-                                "ca_item_surtax" => $ca_item_surtax,
-                                "ca_m_sv_num" => $ca_m_sv_num
-                            );
-                            $this->db->where("cl_seq",$row_cl["cl_seq"]);
-                            $this->db->update("payment_claim_list",$data_claim_detail);
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }else if($row["sv_pay_type"] == "2"){ // 익월
+                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }
+
+                        if($row["svp_cl_seq"] == ""){
+                            $this->db->select("pm_ca_seq");
+                            $this->db->from("payment");
+                            $this->db->where("pm_mb_seq",$row["sv_mb_seq"]);
+                            $this->db->where("pm_date",$claim_date);
+                            $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
+                            $this->db->where("pm_end_date",$end_date);
+                            $this->db->where("pm_status = '0'");
+                            $this->db->limit(1);
+                            $query_claim = $this->db->get();
+                            if($query_claim->num_rows() > 0){
+                                $row_claim = $query_claim->row_array();
+                                $pm_ca_seq = $row_claim["pm_ca_seq"];
+                            }else{
+                                $pm_ca_seq = "";
+                            }
                         }else{
-                            $data_claim_detail = array(
-                                "cl_ca_seq" => $pm_ca_seq,
+                            // 여기 수정해야함
+                            $this->db->select("*");
+                            $this->db->from("payment_claim");
+                            $this->db->where("ca_cl_seq",$row["svp_cl_seq"]);
+                            $this->db->where("ca_date",$claim_date);
+                            $this->db->limit(1);
+                            $query_claim = $this->db->get();
+                            if($query_claim->num_rows() > 0){
+                                $row_claim = $query_claim->row_array();
+                                $pm_ca_seq = $row_claim["ca_seq"];
+                            }else{
+                                $pm_ca_seq = "";
+                            }
+                        }
+
+
+                        $this->db->select("pm_code");
+                        $this->db->from("payment");
+                        $this->db->order_by("pm_seq","desc");
+                        $this->db->limit(1);
+                        $query_code = $this->db->get();
+
+                        if($query_code->num_rows() == 0){
+                            $pm_code = "CHA0000001";
+                        }else{
+                            $max_row = $query_code->row_array();
+                            $max_row1 = substr($max_row["pm_code"],0,3);
+                            $max_row2 = (int)substr($max_row["pm_code"],3,7);
+                            $max_row2 = $max_row2+1;
+
+                            $pm_code = $max_row1.sprintf("%07d",$max_row2);
+                        }
+
+                        $total_price = $row["svp_once_price"]-$row["svp_once_dis_price"]+$row["svp_first_day_price"]+$row["svp_first_month_price"];
+                        $payment_data = array(
+                            "pm_type" => "1",
+                            "pm_mb_seq" => $row["sv_mb_seq"],
+                            "pm_sv_seq" => $pm_sv_seq_add,
+                            "pm_sva_seq" => $pm_sva_seq_add,
+                            "pm_code" => $pm_code,
+                            "pm_date" => $claim_date,
+                            "pm_service_start" => $row["sv_account_start"],
+                            "pm_service_end" =>  $row["svp_first_month_end"],
+                            "pm_pay_type" => $row["sv_payment_type"],
+                            "pm_pay_period" => $row["svp_payment_period"],
+                            "pm_once_price" => $row["svp_once_price"],
+                            "pm_once_dis_price" => $row["svp_once_dis_price"],
+                            "pm_once_dis_msg" => $row["svp_once_dis_msg"],
+                            "pm_service_price" => $row["svp_month_price"],
+                            "pm_service_dis_price" => $row["svp_month_dis_price"],
+                            "pm_service_dis_msg" => $row["svp_month_dis_msg"],
+                            "pm_payment_dis_price" => $row["svp_discount_price"],
+                            "pm_delay_price" => 0,
+                            "pm_total_price" => $total_price,
+                            "pm_surtax_price" => $total_price*0.1,
+                            "pm_end_date" => $end_date,
+                            "pm_status" => 0,
+                            "pm_first_day_price" => $row["svp_first_day_price"],
+                            "pm_first_day_start" => $row["svp_first_day_start"],
+                            "pm_first_day_end" => $row["svp_first_day_end"],
+                            "pm_first_month_price" => $row["svp_first_month_price"],
+                            "pm_first_month_start" => $row["svp_first_month_start"],
+                            "pm_first_month_end" => $row["svp_first_month_end"],
+                            "pm_payment_publish" => $row["sv_pay_publish"],
+                            "pm_payment_publish_type" => $row["sv_pay_publish_type"],
+                            "pm_ca_seq" => $pm_ca_seq,
+                            "pm_claim_type" => "0",
+                            "pm_next_claim_date" => $next_claim_date
+                        );
+                        $this->db->insert("payment",$payment_data);
+
+                        $pm_seq = $this->db->insert_id();
+
+                        if($pm_ca_seq != ""){
+                            if($row["svp_cl_seq"] == ""){
+                                $this->db->select("*");
+                                $this->db->from("payment_claim_list");
+                                $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                $this->db->where("ca_sort",1);
+                                $query_c = $this->db->get();
+                                $main = "";
+                                $num = "1";
+                            }else{
+                                $this->db->select("*");
+                                $this->db->from("claim_detail");
+                                $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                $query = $this->db->get();
+                                if($query->num_rows() > 0){
+                                    $row_cd = $query->row_array();
+                                    $main = $row_cd["cd_main"];
+                                    $num = $row_cd["cd_num"];
+                                }else{
+                                    $main = "M";
+                                    $num = 1;
+                                }
+                                $this->db->select("*");
+                                $this->db->from("payment_claim_list");
+                                $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                $this->db->where("ca_sort",$num);
+                                $query_c = $this->db->get();
+                            }
+
+
+                            if($query_c->num_rows() > 0){
+                                $row_cl = $query_c->row_array();
+                                $ca_item_price = $row_cl["ca_item_price"]+$total_price;
+                                $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
+                                
+                                $data_claim_detail = array(
+                                    "ca_item_price" => $ca_item_price,
+                                    "ca_item_surtax" => $ca_item_surtax
+                                );
+                                if($main == "M"){
+                                    $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                    $data_claim_detail["ca_item_name"] = $row["sva_bill_name"]." 외";
+                                }else if($main == "S"){
+                                    $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                }else{
+                                    if($row_cl["ca_m_sv_num"] < $row["sv_number"]){ // 항목명 설정을 위한 비교
+                                        $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                        $data_claim_detail["ca_item_name"] = $row["sva_bill_name"]." 외";
+                                    }else{
+                                        $data_claim_detail["ca_m_sv_num"] = $row_cl["ca_m_sv_num"];
+                                        $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                    }
+                                }
+                                $this->db->where("cl_seq",$row_cl["cl_seq"]);
+                                $this->db->update("payment_claim_list",$data_claim_detail);
+                            }else{
+                                $data_claim_detail = array(
+                                    "cl_ca_seq" => $pm_ca_seq,
+                                    "ca_item_name" => $row["sva_bill_name"],
+                                    "ca_item_price" => $total_price,
+                                    "ca_item_surtax" => floor($total_price*0.1),
+                                    "ca_sort" => $num,
+                                    "ca_m_sv_num" => $row["sv_number"],
+                                    "ca_main" => $main
+                                );
+                                $this->db->insert("payment_claim_list",$data_claim_detail);
+                            }
+
+
+                            $this->db->select("*");
+                            $this->db->from("payment_claim");
+                            $this->db->where("ca_seq",$pm_ca_seq);
+                            $claim_query = $this->db->get();
+                            $row_c = $claim_query->row_array();
+                            $total_claim_price = $row_c["ca_price"]+$total_price;
+                            $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
+                            $total_claim_total_price = $total_claim_price+$total_claim_surtax;
+                            $ca_empty_size = 11 - strlen($total_claim_total_price);
+                            $ca_price_info1 = $total_claim_total_price;
+                            $ca_price_info2 = $total_claim_total_price;
+
+                            $data_update = array(
+                                "ca_price" => $total_claim_price,
+                                "ca_surtax" => $total_claim_surtax,
+                                "ca_total_price" => $total_claim_total_price,
+                                "ca_empty_size" => $ca_empty_size,
+                                "ca_price_info1" => $ca_price_info1,
+                                "ca_price_info2" => $ca_price_info2
+                            );
+                            $this->db->where("ca_seq",$pm_ca_seq);
+                            $this->db->update("payment_claim",$data_update);
+                        }else{
+                            $this->db->select("*");
+                            $this->db->from("members");
+                            $this->db->where("mb_seq",$row["sv_mb_seq"]);
+                            $query_member = $this->db->get();
+
+                            $row_member = $query_member->row_array();
+
+                            $this->db->select("*"); // 아이온 정보 가져옴
+                            $this->db->from("members");
+                            $this->db->where("mb_seq",21);
+                            $query_eyeon = $this->db->get();
+
+                            $row_eyeon = $query_eyeon->row_array();
+
+
+                            $data_claim = array(
+                                "ca_from_number" => $row_eyeon["mb_number"],
+                                "ca_to_number" => $row_member["mb_number"],
+                                "ca_from_name" => $row_eyeon["mb_name"],
+                                "ca_to_name" => $row_member["mb_name"],
+                                "ca_from_ceo" => $row_eyeon["mb_ceo"],
+                                "ca_to_ceo" => $row_member["mb_ceo"],
+                                "ca_from_address" => $row_eyeon["mb_address"],
+                                "ca_to_address"=> $row_member["mb_address"],
+                                "ca_from_condition" => $row_eyeon["mb_business_conditions"],
+                                "ca_to_condition" => $row_member["mb_business_conditions"],
+                                "ca_from_type" => $row_eyeon["mb_business_type"],
+                                "ca_to_type" => $row_member["mb_business_type"],
+                                "ca_from_team" => $row_eyeon["mb_payment_team"],
+                                "ca_to_team" => $row_member["mb_payment_team"],
+                                "ca_from_charger" => $row_eyeon["mb_payment_name"],
+                                "ca_to_charger" => $row_member["mb_payment_name"],
+                                "ca_from_tel" => $row_eyeon["mb_payment_tel"],
+                                "ca_to_tel" => $row_member["mb_payment_tel"],
+                                "ca_from_email" => $row_eyeon["mb_payment_email"],
+                                "ca_to_email" => $row_member["mb_payment_email"],
+                                "ca_date" => $claim_date,
+                                "ca_price" => $total_price,
+                                "ca_surtax" => floor($total_price*0.1),
+                                "ca_total_price" => floor($total_price*1.1),
+                                "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
+                                "ca_price_info1" => floor($total_price*1.1),
+                                "ca_price_info2" => floor($total_price*1.1),
+                                "ca_price_info3" => 0,
+                                "ca_price_info4" => 0,
+                                "ca_price_info5" => 0,
+                                "ca_payment_type" => $row["sv_pay_publish_type"],
+                                "ca_mb_seq" => $row["sv_mb_seq"],
+                                "ca_cl_seq" => $row["svp_cl_seq"],
+                                "ca_pm_seq" => $pm_seq
+                            );
+                            $this->db->insert("payment_claim",$data_claim);
+
+                            $cl_ca_seq = $this->db->insert_id();
+                            if($row["svp_cl_seq"] == ""){
+                                $main = "M";
+                                $num = 1;
+                            }else{
+                                $this->db->select("*");
+                                $this->db->from("claim_detail");
+                                $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                $query = $this->db->get();
+                                $row_cd = $query->row_array();
+                                if($query->num_rows() > 0){
+                                    $row_cd = $query->row_array();
+                                    $main = $row_cd["cd_main"];
+                                    $num = $row_cd["cd_num"];
+                                }else{
+                                    $main = "M";
+                                    $num = 1;
+                                }
+                            }
+
+                            $data_claim_d = array(
+                                "cl_ca_seq" => $cl_ca_seq,
                                 "ca_item_name" => $row["sva_bill_name"],
                                 "ca_item_price" => $total_price,
                                 "ca_item_surtax" => floor($total_price*0.1),
-                                "ca_sort" => 1,
-                                "ca_m_sv_num" => $row["sv_number"]
+                                "ca_sort" => $num,
+                                "ca_m_sv_num" => $row["sv_number"],
+                                "ca_main" => $main
                             );
-                            $this->db->insert("payment_claim_list",$data_claim_detail);
-                        }
+                            $this->db->insert("payment_claim_list",$data_claim_d);
 
-
-                        $this->db->select("*");
-                        $this->db->from("payment_claim");
-                        $this->db->where("ca_seq",$pm_ca_seq);
-                        $claim_query = $this->db->get();
-                        $row_c = $claim_query->row_array();
-                        $total_claim_price = $row_c["ca_price"]+$total_price;
-                        $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
-                        $total_claim_total_price = $total_claim_price+$total_claim_surtax;
-                        $ca_empty_size = 11 - strlen($total_claim_total_price);
-                        $ca_price_info1 = $total_claim_total_price;
-                        $ca_price_info2 = $total_claim_total_price;
-
-                        $data_update = array(
-                            "ca_price" => $total_claim_price,
-                            "ca_surtax" => $total_claim_surtax,
-                            "ca_total_price" => $total_claim_total_price,
-                            "ca_empty_size" => $ca_empty_size,
-                            "ca_price_info1" => $ca_price_info1,
-                            "ca_price_info2" => $ca_price_info2
-                        );
-                        $this->db->where("ca_seq",$pm_ca_seq);
-                        $this->db->update("payment_claim",$data_update);
-                    }else{
-                        $this->db->select("*");
-                        $this->db->from("members");
-                        $this->db->where("mb_seq",$row["sv_mb_seq"]);
-                        $query_member = $this->db->get();
-
-                        $row_member = $query_member->row_array();
-
-                        $data_claim = array(
-                            "ca_from_number" => "215-87-70318",
-                            "ca_to_number" => $row_member["mb_number"],
-                            "ca_from_name" => "아이온 시큐리티",
-                            "ca_to_name" => $row_member["mb_name"],
-                            "ca_from_ceo" => "김성혁",
-                            "ca_to_ceo" => $row_member["mb_ceo"],
-                            "ca_from_address" => "서울특별시 서초구 서초대로 255",
-                            "ca_to_address"=> $row_member["mb_address"],
-                            "ca_from_condition" => "서비스 외",
-                            "ca_to_condition" => $row_member["mb_business_conditions"],
-                            "ca_from_type" => "보안서비스 및 용역제공",
-                            "ca_to_type" => $row_member["mb_business_type"],
-                            "ca_from_team" => "영업2팀",
-                            "ca_to_team" => $row_member["mb_payment_team"],
-                            "ca_from_charger" => "전이준",
-                            "ca_to_charger" => $row_member["mb_payment_name"],
-                            "ca_from_tel" => "",
-                            "ca_to_tel" => $row_member["mb_payment_tel"],
-                            "ca_from_email" => "ijjun@eyeonsec.co.kr",
-                            "ca_to_email" => $row_member["mb_payment_email"],
-                            "ca_date" => $claim_date,
-                            "ca_price" => $total_price,
-                            "ca_surtax" => floor($total_price*0.1),
-                            "ca_total_price" => floor($total_price*1.1),
-                            "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
-                            "ca_price_info1" => floor($total_price*1.1),
-                            "ca_price_info2" => floor($total_price*1.1),
-                            "ca_price_info3" => 0,
-                            "ca_price_info4" => 0,
-                            "ca_price_info5" => 0,
-                            "ca_payment_type" => $row["sv_pay_publish_type"],
-                            "ca_mb_seq" => $row["sv_mb_seq"],
-                            "ca_cl_seq" => $row["svp_cl_seq"]
-                        );
-                        $this->db->insert("payment_claim",$data_claim);
-
-                        $cl_ca_seq = $this->db->insert_id();
-                        if($row["svp_cl_seq"] == ""){
-
-                            $num = 1;
-                        }else{
-                            $this->db->select("*");
-                            $this->db->from("claim_detail");
-                            $this->db->where("cd_svp_seq",$row["svp_seq"]);
-                            $query = $this->db->get();
-                            $row_cd = $query->row_array();
-                            $num = $row_cd["cd_num"];
-                        }
-
-                        $data_claim_d = array(
-                            "cl_ca_seq" => $cl_ca_seq,
-                            "ca_item_name" => $row["sva_bill_name"],
-                            "ca_item_price" => $total_price,
-                            "ca_item_surtax" => floor($total_price*0.1),
-                            "ca_sort" => $num,
-                            "ca_m_sv_num" => $row["sv_number"]
-                        );
-                        $this->db->insert("payment_claim_list",$data_claim_d);
-
-                        $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq;
-                        $this->db->where("pm_seq",$pm_seq);
-                        $this->db->update("payment",$data_pm_ca_seq);
-                    }
-                }else{
-                    $row = $query->row_array();
-                    $pm_service_start = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2),substr($row["pm_service_end"],8,2)+1,substr($row["pm_service_end"],0,4)));
-                    $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2)+1,substr($row["pm_service_end"],8,2),substr($row["pm_service_end"],0,4)));
-
-                    // $pay_day = $row["sv_pay_day"];
-                    // if($row["sv_pay_type"] == "0"){ // 전월
-                    //     $standard_day = substr($pm_service_start,8,2);
-                    //     if($pay_day > $standard_day){
-                    //         $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
-                    //     }else{
-                    //         $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
-                    //     }
-                    // }else if($row["sv_pay_type"] == "1"){ // 당월
-                    //     $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
-                    // }else if($row["sv_pay_type"] == "2"){ // 익월
-                    //     $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
-                    // }
-                    $claim_date = date("Y-m-d");
-
-                    $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
-
-                    if($row["svp_cl_seq"] == ""){
-                        $this->db->select("pm_ca_seq");
-                        $this->db->from("payment");
-                        $this->db->where("pm_mb_seq",$row["sv_mb_seq"]);
-                        $this->db->where("pm_date",$claim_date);
-                        $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
-                        $this->db->where("pm_end_date",$end_date);
-                        $this->db->where("pm_status = '0'");
-                        $this->db->limit(1);
-                        $query_claim = $this->db->get();
-                        if($query_claim->num_rows() > 0){
-                            $row_claim = $query_claim->row_array();
-                            $pm_ca_seq = $row_claim["pm_ca_seq"];
-                        }else{
-                            $pm_ca_seq = "";
+                            $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq;
+                            $this->db->where("pm_seq",$pm_seq);
+                            $this->db->update("payment",$data_pm_ca_seq);
                         }
                     }else{
-                        // 여기 수정해야함
-                        $this->db->select("*");
-                        $this->db->from("payment_claim");
-                        $this->db->where("ca_cl_seq",$row["svp_cl_seq"]);
-                        $this->db->where("ca_date",$claim_date);
-                        $this->db->limit(1);
-                        $query_claim = $this->db->get();
-                        if($query_claim->num_rows() > 0){
-                            $row_claim = $query_claim->row_array();
-                            $pm_ca_seq = $row_claim["pm_ca_seq"];
-                        }else{
-                            $pm_ca_seq = "";
-                        }
-                    }
+                        $row = $query->row_array();
+                        $pm_service_start = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2),substr($row["pm_service_end"],8,2)+1,substr($row["pm_service_end"],0,4)));
+                        $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["svp_payment_period"],substr($row["pm_service_end"],8,2),substr($row["pm_service_end"],0,4)));
 
-                    $this->db->select("pm_code");
-                    $this->db->from("payment");
-                    $this->db->order_by("pm_seq","desc");
-                    $this->db->limit(1);
-                    $query_code = $this->db->get();
-
-                    if($query_code->num_rows() == 0){
-                        $pm_code = "CHA0000001";
-                    }else{
-                        $max_row = $query_code->row_array();
-                        $max_row1 = substr($max_row["pm_code"],0,3);
-                        $max_row2 = (int)substr($max_row["pm_code"],3,7);
-                        $max_row2 = $max_row2+1;
-
-                        $pm_code = $max_row1.sprintf("%07d",$max_row2);
-                    }
-                    $total_price = $row["svp_once_price"]-$row["svp_once_dis_price"]+$row["svp_month_price"]-$row["svp_month_dis_price"]-$row["svp_discount_price"]+$row["svp_first_day_price"];
-                    $payment_data = array(
-                        "pm_type" => "1",
-                        "pm_mb_seq" => $row["sv_mb_seq"],
-                        "pm_sv_seq" => $pm_sv_seq,
-                        "pm_sva_seq" => $pm_sva_seq,
-                        "pm_code" => $pm_code,
-                        "pm_date" => $claim_date,
-                        "pm_service_start" => $pm_service_start,
-                        "pm_service_end" =>  $pm_service_end,
-                        "pm_pay_type" => $row["sv_pay_type"],
-                        "pm_pay_period" => $row["sva_pay_day"],
-                        "pm_once_price" => $row["svp_once_price"],
-                        "pm_once_dis_price" => $row["svp_once_dis_price"],
-                        "pm_once_dis_msg" => $row["svp_once_dis_msg"],
-                        "pm_service_price" => $row["svp_month_price"],
-                        "pm_service_dis_price" => $row["svp_month_dis_price"],
-                        "pm_service_dis_msg" => $row["svp_month_dis_msg"],
-                        "pm_payment_dis_price" => $row["svp_discount_price"],
-                        "pm_delay_price" => 0,
-                        "pm_total_price" => $total_price,
-                        "pm_surtax_price" => $total_price*0.1,
-                        "pm_end_date" => $end_date,
-                        "pm_status" => 0,
-                        "pm_payment_publish_type" => $row["sv_pay_publish_type"],
-                        "pm_ca_seq" => $pm_ca_seq
-                    );
-                    $this->db->insert("payment",$payment_data);
-
-                    $pm_seq = $this->db->insert_id();
-
-                    if($pm_ca_seq != ""){
-                        if($row["svp_cl_seq"] == ""){
-                            $this->db->select("*");
-                            $this->db->from("payment_claim_list");
-                            $this->db->where("cl_ca_seq",$pm_ca_seq);
-                            $this->db->where("ca_sort",1);
-                            $query_c = $this->db->get();
-                            $main = "";
-                        }else{
-                            $this->db->select("*");
-                            $this->db->from("claim_detail");
-                            $this->db->where("cd_svp_seq",$row["svp_seq"]);
-                            $query = $this->db->get();
-                            $row_cd = $query->row_array();
-                            $main = $row_cd["cd_main"];
-                            $this->db->select("*");
-                            $this->db->from("payment_claim_list");
-                            $this->db->where("cl_ca_seq",$pm_ca_seq);
-                            $this->db->where("ca_sort",$row_cd["cd_num"]);
-                            $query_c = $this->db->get();
-                        }
-
-
-                        if($query_c->num_rows() > 0){
-                            $row_cl = $query_c->row_array();
-                            $ca_item_price = $row_cl["ca_item_price"]+$total_price;
-                            $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
-                            if($row_cl["ca_m_sv_num"] < $row["sv_number"]){
-                                $ca_m_sv_num = $row["sv_number"];
-                                $ca_item_name = $row["sva_bill_name"];
+                        $pay_day = $row["sv_pay_day"];
+                        if($row["sv_pay_type"] == "0"){ // 전월
+                            $standard_day = substr($pm_service_start,8,2);
+                            if($pay_day > $standard_day){
+                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                             }else{
-                                $ca_m_sv_num = $row_cl["ca_m_sv_num"];
-                                $ca_item_name = $row_cl["ca_item_name"];
+                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                             }
-                            $data_claim_detail = array(
-                                "ca_item_name" => $ca_item_name,
-                                "ca_item_price" => $ca_item_price,
-                                "ca_item_surtax" => $ca_item_surtax,
-                                "ca_m_sv_num" => $ca_m_sv_num
-                            );
-                            $this->db->where("cl_seq",$row_cl["cl_seq"]);
-                            $this->db->update("payment_claim_list",$data_claim_detail);
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                        }else if($row["sv_pay_type"] == "2"){ // 익월
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                        }
+                        // $claim_date = date("Y-m-d");
+
+                        $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
+
+                        $next_service_start = date("Y-m-d",mktime(0,0,0,substr($pm_service_end,5,2),substr($pm_service_end,8,2)+1,substr($pm_service_end,0,4)));
+                        $next_service_end = date("Y-m-d",mktime(0,0,0,substr($pm_service_end,5,2)+1,substr($pm_service_end,8,2),substr($pm_service_end,0,4)));
+
+                        $next_pay_day = $row["sv_pay_day"];
+                        if($row["sv_pay_type"] == "0"){ // 전월
+                            $next_standard_day = substr($next_service_start,8,2);
+                            if($next_pay_day > $next_standard_day){
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }else{
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }else if($row["sv_pay_type"] == "2"){ // 익월
+                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }
+
+                        if($row["svp_cl_seq"] == ""){
+                            $this->db->select("pm_ca_seq");
+                            $this->db->from("payment");
+                            $this->db->where("pm_mb_seq",$row["sv_mb_seq"]);
+                            $this->db->where("pm_date",$claim_date);
+                            $this->db->where("pm_payment_publish_type",$row["sv_pay_publish_type"]);
+                            $this->db->where("pm_end_date",$end_date);
+                            $this->db->where("pm_status = '0'");
+                            $this->db->limit(1);
+                            $query_claim = $this->db->get();
+                            if($query_claim->num_rows() > 0){
+                                $row_claim = $query_claim->row_array();
+                                $pm_ca_seq = $row_claim["pm_ca_seq"];
+                            }else{
+                                $pm_ca_seq = "";
+                            }
                         }else{
-                            $data_claim_detail = array(
-                                "cl_ca_seq" => $pm_ca_seq,
+                            // 여기 수정해야함
+                            $this->db->select("*");
+                            $this->db->from("payment_claim");
+                            $this->db->where("ca_cl_seq",$row["svp_cl_seq"]);
+                            $this->db->where("ca_date",$claim_date);
+                            $this->db->limit(1);
+                            $query_claim = $this->db->get();
+                            if($query_claim->num_rows() > 0){
+                                $row_claim = $query_claim->row_array();
+                                $pm_ca_seq = $row_claim["ca_seq"];
+                            }else{
+                                $pm_ca_seq = "";
+                            }
+                        }
+
+                        $this->db->select("pm_code");
+                        $this->db->from("payment");
+                        $this->db->order_by("pm_seq","desc");
+                        $this->db->limit(1);
+                        $query_code = $this->db->get();
+
+                        if($query_code->num_rows() == 0){
+                            $pm_code = "CHA0000001";
+                        }else{
+                            $max_row = $query_code->row_array();
+                            $max_row1 = substr($max_row["pm_code"],0,3);
+                            $max_row2 = (int)substr($max_row["pm_code"],3,7);
+                            $max_row2 = $max_row2+1;
+
+                            $pm_code = $max_row1.sprintf("%07d",$max_row2);
+                        }
+                        $total_price = ($row["svp_month_price"]-$row["svp_month_dis_price"])*$row["svp_payment_period"]-$row["svp_discount_price"];
+                        $payment_data = array(
+                            "pm_type" => "1",
+                            "pm_mb_seq" => $row["sv_mb_seq"],
+                            "pm_sv_seq" => $pm_sv_seq_add,
+                            "pm_sva_seq" => $pm_sva_seq_add,
+                            "pm_code" => $pm_code,
+                            "pm_date" => $claim_date,
+                            "pm_service_start" => $pm_service_start,
+                            "pm_service_end" =>  $pm_service_end,
+                            "pm_pay_type" => $row["sv_payment_type"],
+                            "pm_pay_period" => $row["svp_payment_period"],
+                            "pm_once_price" => 0,
+                            "pm_once_dis_price" => 0,
+                            "pm_once_dis_msg" => "",
+                            "pm_service_price" => $row["svp_month_price"],
+                            "pm_service_dis_price" => $row["svp_month_dis_price"],
+                            "pm_service_dis_msg" => $row["svp_month_dis_msg"],
+                            "pm_payment_dis_price" => $row["svp_discount_price"],
+                            "pm_delay_price" => 0,
+                            "pm_total_price" => $total_price,
+                            "pm_surtax_price" => $total_price*0.1,
+                            "pm_end_date" => $end_date,
+                            "pm_status" => 0,
+                            "pm_payment_publish" => $row["sv_pay_publish"],
+                            "pm_payment_publish_type" => $row["sv_pay_publish_type"],
+                            "pm_ca_seq" => $pm_ca_seq,
+                            "pm_next_claim_date" => $next_claim_date,
+                            "pm_first_day_price" => 0,
+                            "pm_first_day_start" => $row["svp_first_day_start"],
+                            "pm_first_day_end" => $row["svp_first_day_end"],
+                            "pm_first_month_price" => $row["svp_first_month_price"],
+                            "pm_first_month_start" => $pm_service_start,
+                            "pm_first_month_end" => $pm_service_end
+                        );
+                        $this->db->insert("payment",$payment_data);
+
+                        $pm_seq = $this->db->insert_id();
+
+                        if($pm_ca_seq != ""){
+                            if($row["svp_cl_seq"] == ""){
+                                $this->db->select("*");
+                                $this->db->from("payment_claim_list");
+                                $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                $this->db->where("ca_sort",1);
+                                $query_c = $this->db->get();
+                                $main = "";
+                                $num = "1";
+                            }else{
+                                $this->db->select("*");
+                                $this->db->from("claim_detail");
+                                $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                $query = $this->db->get();
+                                if($query->num_rows() > 0){
+                                    $row_cd = $query->row_array();
+                                    $main = $row_cd["cd_main"];
+                                    $num = $row_cd["cd_num"];
+                                }else{
+                                    $main = "M";
+                                    $num = 1;
+                                }
+                                $this->db->select("*");
+                                $this->db->from("payment_claim_list");
+                                $this->db->where("cl_ca_seq",$pm_ca_seq);
+                                $this->db->where("ca_sort",$num);
+                                $query_c = $this->db->get();
+                            }
+
+
+                            if($query_c->num_rows() > 0){
+                                $row_cl = $query_c->row_array();
+                                $ca_item_price = $row_cl["ca_item_price"]+$total_price;
+                                $ca_item_surtax = $row_cl["ca_item_surtax"]+$total_price*0.1;
+                                $data_claim_detail = array(
+                                    "ca_item_price" => $ca_item_price,
+                                    "ca_item_surtax" => $ca_item_surtax
+                                );
+                                if($main == "M"){
+                                    $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                    $data_claim_detail["ca_item_name"] = $row["sva_bill_name"]." 외";
+                                }else if($main == "S"){
+                                    $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                }else{
+                                    if($row_cl["ca_m_sv_num"] < $row["sv_number"]){ // 항목명 설정을 위한 비교
+                                        $data_claim_detail["ca_m_sv_num"] = $row["sv_number"];
+                                        $data_claim_detail["ca_item_name"] = $row["sva_bill_name"]." 외";
+                                    }else{
+                                        $data_claim_detail["ca_m_sv_num"] = $row_cl["ca_m_sv_num"];
+                                        $data_claim_detail["ca_item_name"] = str_replace(" 외","",$row_cl["ca_item_name"])." 외";
+                                    }
+                                }
+                                $this->db->where("cl_seq",$row_cl["cl_seq"]);
+                                $this->db->update("payment_claim_list",$data_claim_detail);
+                            }else{
+                                $data_claim_detail = array(
+                                    "cl_ca_seq" => $pm_ca_seq,
+                                    "ca_item_name" => $row["sva_bill_name"],
+                                    "ca_item_price" => $total_price,
+                                    "ca_item_surtax" => floor($total_price*0.1),
+                                    "ca_sort" => $num,
+                                    "ca_m_sv_num" => $row["sv_number"],
+                                    "ca_main" => $main
+                                );
+                                $this->db->insert("payment_claim_list",$data_claim_detail);
+                            }
+
+
+                            $this->db->select("*");
+                            $this->db->from("payment_claim");
+                            $this->db->where("ca_seq",$pm_ca_seq);
+                            $claim_query = $this->db->get();
+                            $row_c = $claim_query->row_array();
+                            $total_claim_price = $row_c["ca_price"]+$total_price;
+                            $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
+                            $total_claim_total_price = $total_claim_price+$total_claim_surtax;
+                            $ca_empty_size = 11 - strlen($total_claim_total_price);
+                            $ca_price_info1 = $total_claim_total_price;
+                            $ca_price_info2 = $total_claim_total_price;
+
+                            $data_update = array(
+                                "ca_price" => $total_claim_price,
+                                "ca_surtax" => $total_claim_surtax,
+                                "ca_total_price" => $total_claim_total_price,
+                                "ca_empty_size" => $ca_empty_size,
+                                "ca_price_info1" => $ca_price_info1,
+                                "ca_price_info2" => $ca_price_info2
+                            );
+                            $this->db->where("ca_seq",$pm_ca_seq);
+                            $this->db->update("payment_claim",$data_update);
+                        }else{
+                            $this->db->select("*");
+                            $this->db->from("members");
+                            $this->db->where("mb_seq",$row["sv_mb_seq"]);
+                            $query_member = $this->db->get();
+
+                            $row_member = $query_member->row_array();
+
+                            $this->db->select("*"); // 아이온 정보 가져옴
+                            $this->db->from("members");
+                            $this->db->where("mb_seq",21);
+                            $query_eyeon = $this->db->get();
+
+                            $row_eyeon = $query_eyeon->row_array();
+
+
+                            $data_claim = array(
+                                "ca_from_number" => $row_eyeon["mb_number"],
+                                "ca_to_number" => $row_member["mb_number"],
+                                "ca_from_name" => $row_eyeon["mb_name"],
+                                "ca_to_name" => $row_member["mb_name"],
+                                "ca_from_ceo" => $row_eyeon["mb_ceo"],
+                                "ca_to_ceo" => $row_member["mb_ceo"],
+                                "ca_from_address" => $row_eyeon["mb_address"],
+                                "ca_to_address"=> $row_member["mb_address"],
+                                "ca_from_condition" => $row_eyeon["mb_business_conditions"],
+                                "ca_to_condition" => $row_member["mb_business_conditions"],
+                                "ca_from_type" => $row_eyeon["mb_business_type"],
+                                "ca_to_type" => $row_member["mb_business_type"],
+                                "ca_from_team" => $row_eyeon["mb_payment_team"],
+                                "ca_to_team" => $row_member["mb_payment_team"],
+                                "ca_from_charger" => $row_eyeon["mb_payment_name"],
+                                "ca_to_charger" => $row_member["mb_payment_name"],
+                                "ca_from_tel" => $row_eyeon["mb_payment_tel"],
+                                "ca_to_tel" => $row_member["mb_payment_tel"],
+                                "ca_from_email" => $row_eyeon["mb_payment_email"],
+                                "ca_to_email" => $row_member["mb_payment_email"],
+                                "ca_date" => $claim_date,
+                                "ca_price" => $total_price,
+                                "ca_surtax" => floor($total_price*0.1),
+                                "ca_total_price" => floor($total_price*1.1),
+                                "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
+                                "ca_price_info1" => floor($total_price*1.1),
+                                "ca_price_info2" => floor($total_price*1.1),
+                                "ca_price_info3" => 0,
+                                "ca_price_info4" => 0,
+                                "ca_price_info5" => 0,
+                                "ca_payment_type" => $row["sv_pay_publish_type"],
+                                "ca_mb_seq" => $row["sv_mb_seq"],
+                                "ca_cl_seq" => $row["svp_cl_seq"],
+                                "ca_pm_seq" => $pm_seq
+                            );
+                            $this->db->insert("payment_claim",$data_claim);
+
+                            $cl_ca_seq = $this->db->insert_id();
+                            if($row["svp_cl_seq"] == ""){
+                                $main = "M";
+                                $num = 1;
+                            }else{
+                                $this->db->select("*");
+                                $this->db->from("claim_detail");
+                                $this->db->where("cd_svp_seq",$row["svp_seq"]);
+                                $query = $this->db->get();
+                                if($query->num_rows() > 0){
+                                    $row_cd = $query->row_array();
+                                    $main = $row_cd["cd_main"];
+                                    $num = $row_cd["cd_num"];
+                                }else{
+                                    $main = "M";
+                                    $num = 1;
+                                }
+                            }
+                            $data_claim_d = array(
+                                "cl_ca_seq" => $cl_ca_seq,
                                 "ca_item_name" => $row["sva_bill_name"],
                                 "ca_item_price" => $total_price,
                                 "ca_item_surtax" => floor($total_price*0.1),
-                                "ca_sort" => 1,
-                                "ca_m_sv_num" => $row["sv_number"]
+                                "ca_sort" => $num,
+                                "ca_m_sv_num" => $row["sv_number"],
+                                "ca_main" => $main
                             );
-                            $this->db->insert("payment_claim_list",$data_claim_detail);
+                            $this->db->insert("payment_claim_list",$data_claim_d);
+
+                            $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq;
+                            $this->db->where("pm_seq",$pm_seq);
+                            $this->db->update("payment",$data_pm_ca_seq);
                         }
-
-
-                        $this->db->select("*");
-                        $this->db->from("payment_claim");
-                        $this->db->where("ca_seq",$pm_ca_seq);
-                        $claim_query = $this->db->get();
-                        $row_c = $claim_query->row_array();
-                        $total_claim_price = $row_c["ca_price"]+$total_price;
-                        $total_claim_surtax = $row_c["ca_surtax"]+floor($total_price*0.1);
-                        $total_claim_total_price = $total_claim_price+$total_claim_surtax;
-                        $ca_empty_size = 11 - strlen($total_claim_total_price);
-                        $ca_price_info1 = $total_claim_total_price;
-                        $ca_price_info2 = $total_claim_total_price;
-
-                        $data_update = array(
-                            "ca_price" => $total_claim_price,
-                            "ca_surtax" => $total_claim_surtax,
-                            "ca_total_price" => $total_claim_total_price,
-                            "ca_empty_size" => $ca_empty_size,
-                            "ca_price_info1" => $ca_price_info1,
-                            "ca_price_info2" => $ca_price_info2
-                        );
-                        $this->db->where("ca_seq",$pm_ca_seq);
-                        $this->db->update("payment_claim",$data_update);
-                    }else{
-                        $this->db->select("*");
-                        $this->db->from("members");
-                        $this->db->where("mb_seq",$row["sv_mb_seq"]);
-                        $query_member = $this->db->get();
-
-                        $row_member = $query_member->row_array();
-
-                        $data_claim = array(
-                            "ca_from_number" => "215-87-70318",
-                            "ca_to_number" => $row_member["mb_number"],
-                            "ca_from_name" => "아이온 시큐리티",
-                            "ca_to_name" => $row_member["mb_name"],
-                            "ca_from_ceo" => "김성혁",
-                            "ca_to_ceo" => $row_member["mb_ceo"],
-                            "ca_from_address" => "서울특별시 서초구 서초대로 255",
-                            "ca_to_address"=> $row_member["mb_address"],
-                            "ca_from_condition" => "서비스 외",
-                            "ca_to_condition" => $row_member["mb_business_conditions"],
-                            "ca_from_type" => "보안서비스 및 용역제공",
-                            "ca_to_type" => $row_member["mb_business_type"],
-                            "ca_from_team" => "영업2팀",
-                            "ca_to_team" => $row_member["mb_payment_team"],
-                            "ca_from_charger" => "전이준",
-                            "ca_to_charger" => $row_member["mb_payment_name"],
-                            "ca_from_tel" => "",
-                            "ca_to_tel" => $row_member["mb_payment_tel"],
-                            "ca_from_email" => "ijjun@eyeonsec.co.kr",
-                            "ca_to_email" => $row_member["mb_payment_email"],
-                            "ca_date" => $claim_date,
-                            "ca_price" => $total_price,
-                            "ca_surtax" => floor($total_price*0.1),
-                            "ca_total_price" => floor($total_price*1.1),
-                            "ca_empty_size" => 11-strlen(floor($total_price*1.1)),
-                            "ca_price_info1" => floor($total_price*1.1),
-                            "ca_price_info2" => floor($total_price*1.1),
-                            "ca_price_info3" => 0,
-                            "ca_price_info4" => 0,
-                            "ca_price_info5" => 0,
-                            "ca_payment_type" => $row["sv_pay_publish_type"],
-                            "ca_mb_seq" => $row["sv_mb_seq"],
-                            "ca_cl_seq" => $row["svp_cl_seq"]
-                        );
-                        $this->db->insert("payment_claim",$data_claim);
-
-                        $cl_ca_seq = $this->db->insert_id();
-                        if($row["svp_cl_seq"] == ""){
-
-                            $num = 1;
-                        }else{
-                            $this->db->select("*");
-                            $this->db->from("claim_detail");
-                            $this->db->where("cd_svp_seq",$row["svp_seq"]);
-                            $query = $this->db->get();
-                            $row_cd = $query->row_array();
-                            $num = $row_cd["cd_num"];
-                        }
-                        $data_claim_d = array(
-                            "cl_ca_seq" => $cl_ca_seq,
-                            "ca_item_name" => $row["sva_bill_name"],
-                            "ca_item_price" => $total_price,
-                            "ca_item_surtax" => floor($total_price*0.1),
-                            "ca_sort" => 1,
-                            "ca_m_sv_num" => $row["sv_number"]
-                        );
-                        $this->db->insert("payment_claim_list",$data_claim_d);
-
-                        $data_pm_ca_seq["pm_ca_seq"] = $cl_ca_seq;
-                        $this->db->where("pm_seq",$pm_seq);
-                        $this->db->update("payment",$data_pm_ca_seq);
                     }
+                    
                 }
             }
         }
@@ -6597,17 +8022,68 @@ class Api_model extends CI_Model {
 
     public function serviceInstallEdit(){
 
+        $this->db->select("*");
+        $this->db->from("service a");
+        $this->db->join("product d","a.sv_pr_seq = d.pr_seq","left");
+        $this->db->join("product_category e","a.sv_pc_seq = e.pc_seq","left");
+        $this->db->join("product_items ei","a.sv_pi_seq = ei.pi_seq","left");
+        $this->db->join("product_div pd","a.sv_pd_seq = pd.pd_seq","left");
+        $this->db->join("product_sub_div f","a.sv_ps_seq = f.ps_seq","left");
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+        $b_query = $this->db->get();
+        $b_row = $b_query->row_array();
+
+        if($b_row["sv_position"] != $this->input->post("sv_position")){
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','장비 위치',$b_row["sv_position"],$this->input->post("sv_position"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_out_serial"] != $this->input->post("sv_out_serial")){
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','장비 위치',$b_row["sv_out_serial"],$this->input->post("sv_out_serial"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_firmware"] != $this->input->post("sv_firmware")){
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','펌웨어 버전',$b_row["sv_firmware"],$this->input->post("sv_firmware"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_install_charger"] != $this->input->post("sv_install_charger")){
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','설치 담당자',$b_row["sv_install_charger"],$this->input->post("sv_install_charger"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_install_date"] != $this->input->post("sv_install_date")){
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','설치일',$b_row["sv_install_date"],$this->input->post("sv_install_date"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_security_level"] != $this->input->post("sv_security_level")){
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','관제 레벨',$b_row["sv_security_level"],$this->input->post("sv_security_level"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
+        if($b_row["sv_pc_seq"] != $this->input->post("sv_pc_seq")){
+            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','서비스 종류',$b_row["pc_name"],$this->input->post("sv_pc_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_pi_seq"] != $this->input->post("sv_pi_seq")){
+            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','제품군',$b_row["pi_name"],$this->input->post("sv_pi_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_pr_seq"] != $this->input->post("sv_pr_seq")){
+            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','상품명',$b_row["pr_name"],$this->input->post("sv_pr_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_pd_seq"] != $this->input->post("sv_pd_seq")){
+            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','대분류',$b_row["pd_name"],$this->input->post("sv_pd_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+        if($b_row["sv_ps_seq"] != $this->input->post("sv_ps_seq")){
+            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','소분류',$b_row["ps_name"],$this->input->post("sv_ps_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        }
+
         $data = array(
             "sv_position" => $this->input->post("sv_position"),
-            "sv_serial_number" => $this->input->post("sv_serial_number"),
+            "sv_out_serial" => $this->input->post("sv_out_serial"),
             "sv_firmware" => $this->input->post("sv_firmware"),
             "sv_install_charger" => $this->input->post("sv_install_charger"),
             "sv_install_date" => $this->input->post("sv_install_date"),
-            "sv_security_level" => $this->input->post("sv_security_level")
+            "sv_security_level" => $this->input->post("sv_security_level"),
+            "sv_pc_seq" => $this->input->post("sv_pc_seq"),
+            "sv_pi_seq" => $this->input->post("sv_pi_seq"),
+            "sv_pr_seq" => $this->input->post("sv_pr_seq"),
+            "sv_pd_seq" => $this->input->post("sv_pd_seq"),
+            "sv_ps_seq" => $this->input->post("sv_ps_seq")
         );
 
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
-        return $this->db->update("service_install",$data);
+        return $this->db->update("service",$data);
 
     }
 
@@ -6702,6 +8178,7 @@ class Api_model extends CI_Model {
         $this->db->select("*");
         $this->db->from("service_license");
         $this->db->where("sl_sv_seq",$this->input->get("sv_seq"));
+        $this->db->order_by("sl_seq desc");
         $query = $this->db->get();
 
         return $query->result_array();
@@ -6711,6 +8188,7 @@ class Api_model extends CI_Model {
         $this->db->select("*");
         $this->db->from("service_module");
         $this->db->where("sm_sv_seq",$this->input->get("sv_seq"));
+        $this->db->order_by("sm_seq desc");
         $query = $this->db->get();
 
         return $query->result_array();
@@ -6739,10 +8217,83 @@ class Api_model extends CI_Model {
 
     }
 
-    public function fetchLogs($lo_div,$lo_relation_seq){
+    public function countLogs($lo_div,$lo_relation_seq){
+        $this->db->select("count(*) as total");
+        $this->db->from("logs");
+        $this->db->where("lo_relation_seq",$lo_relation_seq);
+        $this->db->where("lo_div",$lo_div);
+
+        if($this->input->get("lo_type") != ""){
+            $this->db->where("lo_type",$this->input->get("lo_type"));
+        }
+
+        if($this->input->get("lo_item") != ""){
+            $this->db->where("lo_item",$this->input->get("lo_item"));
+        }
+
+        if($this->input->get("start_date") != "" && $this->input->get("end_date") != ""){
+            $this->db->where(" (date_format(lo_regdate,'%Y-%m-%d') >= '".$this->input->get("start_date")."' and date_format(lo_regdate,'%Y-%m-%d') <= '".$this->input->get("end_date")."' ) ");
+        }
+
+        if($this->input->get("lo_user") != ""){
+            $this->db->where("lo_user",$this->input->get("lo_user"));
+        }
+
+        if($this->input->get("lo_user") != ""){
+            $this->db->where("lo_user",$this->input->get("lo_user"));
+        }
+
+        if($this->input->get("searchType") != ""){
+            if($this->input->get("searchType") == "lo_ip"){
+                $this->db->where("lo_ip",$this->input->get("searchWord"));
+            }else{
+                // $this->db->where("lo_user",$this->input->get("lo_user"));
+            }
+        }
+        $query = $this->db->get();  
+
+        $row = $query->row_array();
+
+        return $row["total"];
+
+    }
+
+    public function fetchLogs($lo_div,$lo_relation_seq,$start,$end){
+        $start = ($start - 1)*$end;
         $this->db->select("*");
         $this->db->from("logs a");
         $this->db->where("lo_relation_seq",$lo_relation_seq);
+        $this->db->where("lo_div",$lo_div);
+
+        if($this->input->get("lo_type") != ""){
+            $this->db->where("lo_type",$this->input->get("lo_type"));
+        }
+
+        if($this->input->get("lo_item") != ""){
+            $this->db->where("lo_item",$this->input->get("lo_item"));
+        }
+
+        if($this->input->get("start_date") != "" && $this->input->get("end_date") != ""){
+            $this->db->where(" (date_format(lo_regdate,'%Y-%m-%d') >= '".$this->input->get("start_date")."' and date_format(lo_regdate,'%Y-%m-%d') <= '".$this->input->get("end_date")."' ) ");
+        }
+
+        if($this->input->get("lo_user") != ""){
+            $this->db->where("lo_user",$this->input->get("lo_user"));
+        }
+
+        if($this->input->get("lo_user") != ""){
+            $this->db->where("lo_user",$this->input->get("lo_user"));
+        }
+
+        if($this->input->get("searchType") != ""){
+            if($this->input->get("searchType") == "lo_ip"){
+                $this->db->where("lo_ip",$this->input->get("searchWord"));
+            }else{
+                // $this->db->where("lo_user",$this->input->get("lo_user"));
+            }
+        }
+        
+        $this->db->limit($end,$start);
         $query = $this->db->get();
 
         return $query->result_array();
@@ -6843,17 +8394,29 @@ class Api_model extends CI_Model {
         $pm_date = $this->input->post("pm_date");
         $pm_service_start = $this->input->post("pm_service_start");
         $pm_service_end = $this->input->post("pm_service_end");
+        $pm_end_date = $this->input->post("pm_end_date");
         for($i = 0;$i < count($pm_seq);$i++){
             $data = array(
                 "pm_date" => $pm_date[$i],
                 "pm_service_start" => $pm_service_start[$i],
-                "pm_service_end" => $pm_service_end[$i]
+                "pm_service_end" => $pm_service_end[$i],
+                "pm_end_date" => $pm_end_date[$i]
             );
             $this->db->where("pm_seq",$pm_seq[$i]);
             $this->db->update("payment",$data);
         }
 
         return true;
+    }
+
+    public function selectServiceOpenTime(){
+        $this->db->select("sv_service_start");
+        $this->db->from("service");
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        $query = $this->db->get();
+
+        return $query->row_array();
     }
 }
 

@@ -1,15 +1,15 @@
 <div style="background:#fff;width:100%;overflow-x:hidden">
-    <div class="popup_title" style="padding:10px">
+    <div class="popup_title" style="padding:10px;margin-right:5px">
 
         상세 계약 정보
 
     </div>
-    <div style="padding:5px">
+    <div style="padding:0px 5px 0px 0px;">
         <form name="registerForm" id="registerForm" method="post" >
             <input type="hidden" name="sg_sv_seq" id="sg_sv_seq" value="<?=$sv_seq?>">
             <input type="hidden" name="sv_auto_extension" id="sv_auto_extension" value="<?=$list[0]["sv_auto_extension"]?>">
             <div class="modal-title">
-                <div class="modal-title-text">기본 정보</div>
+                <div class="modal-title-text"><div>기본 정보</div></div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input">
@@ -102,7 +102,7 @@
             <button class="btn btn-default btn-edit" type="button">수정</button>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text">서비스 내역</div>
+            <div class="modal-title-text"><div>서비스 내역</div></div>
         </div>
         <div>
             <table class="table">
@@ -113,8 +113,8 @@
                     <th>서비스 종류</th>
                     <th>상품명</th>
                     <th>소분류</th>
-                    <th>초기 일회성</th>
-                    <th>월(기준)요금</th>
+                    <th style="text-align:right;">초기 일회성</th>
+                    <th style="text-align:right;">월(기준)요금</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -162,7 +162,7 @@
                         ?>
                     </tr>
                     <?php endforeach; ?>
-                    <tr>
+                    <tr style="border-top:3px double #d9d9d9;">
                         <td colspan="5">합계</td>
                         <td class="right"><?=number_format($totalprice1)?> 원</td>
                         <td class="right"><?=number_format($totalprice2)?> 원</td>
@@ -171,7 +171,7 @@
             </table>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text">계약 변경 내역</div>
+            <div class="modal-title-text"><div>계약 변경 내역</div></div>
         </div>
         <div>
             <table class="table">
@@ -217,7 +217,7 @@
                                 재 계약 필요
                             <?php endif; ?>
                         </td>
-                        <td><?=$row["sh_link"]?></td>
+                        <td><a href="<?=$row["sh_link"]?>" target="_blank"><?=$row["sh_link"]?></a></td>
                         <td><i class="fa fa-edit historyEdit" data-seq="<?=$row["sh_seq"]?>" data-shtype="<?=$row["sh_type"]?>" data-shservicestart="<?=$row["sh_service_start"]?>" data-shserviceend="<?=$row["sh_service_end"]?>" data-shlink="<?=$row["sh_link"]?>"></i> <i class="fa fa-trash historyDel" data-seq="<?=$row["sh_seq"]?>"></i></td>
                     </tr>
                     <?php endforeach; ?>
@@ -227,8 +227,8 @@
         <form id="historyAdd">
             <input type="hidden" id="sh_sv_code" name="sh_sv_code" value="<?=$sv_code?>">
             <input type="hidden" id="sh_seq" name="sh_seq" value="">
-        <div style="font-size:12px;padding:5px 0px">
-            <div style="display:inline-block;width:18%;">
+        <div style="font-size:12px;padding:5px 0px 5px 56px;">
+            <div style="display:inline-block;width:15%;">
                 <select name="sh_type" id="sh_type" class="select2" style="width:80%">
                     <option value="">선택</option>
                     <option value="1">변경 계약</option>
@@ -236,12 +236,13 @@
                     <option value="3">계약 해지</option>
                 </select>
             </div>
-            <div style="display:inline-block;width:32%;text-align:center" id="contract_date">
+            <div style="display:inline-block;width:44%;text-align:center" id="contract_date">
                 계약 기간
-                <input type="text" name="sh_service_start" id="sh_service_start" class="datepicker3" style="width:30%" value="<?=date("Y-m-d")?>"> ~ <input type="text" name="sh_service_end" id="sh_service_end" class="datepicker3" style="width:30%" value="<?=date("Y-m-d")?>">
+                <input type="text" name="sh_service_start" id="sh_service_start" class="datepicker3" style="width:20%" value="<?=date("Y-m-d")?>"> ~ <input type="text" name="sh_service_end" id="sh_service_end" class="datepicker3" style="width:20%" value="<?=date("Y-m-d")?>">
             </div>
-            <div style="display:inline-block;width:48%">
-                <i></i><input type="text" name="sh_link" id="sh_link" style="width:80%"><button class="btn btn-brown btn-history-add" type="button">등록</button>
+            <div style="display:inline-block;width:37%">
+				링크
+                <input type="text" name="sh_link" id="sh_link" style="width:75%"><button class="btn btn-brown btn-small btn-history-add" type="button">등록</button>
             </div>
         </div>
         </form>
@@ -272,9 +273,9 @@
                 <input type="hidden" name="sg_sv_code" id="sg_sv_code" value="<?=$sv_code?>">
                 <div style="display:inline-block;width:17%;text-align:right;vertical-align:top;padding:20px 5px 0px 0px">메모</div>
                 <div style="display:inline-block;width:70%;vertical-align:top">
-                    <textarea style="width:100%;height:50px" name="sg_msg" id="sg_msg"></textarea>
+                    <textarea style="width:99.5%;height:50px;background-color:#fff;" name="sg_msg" id="sg_msg"></textarea>
                 </div>
-                <div style="display:inline-block;width:10%;vertical-align:top"><button class="btn btn-service-msg" type="button" style="padding:20px 20px;">등록</button></div>
+                <div style="display:inline-block;width:10%;vertical-align:top"><button class="btn btn-brown btn-service-msg" type="button" style="padding:20px 20px;">등록</button></div>
             </form>
         </div>
     </div>
@@ -469,7 +470,7 @@ $(function(){
 function getMemo(){
 
     var url = "/api/serviceGroupMemoFetch";
-    var end = 10;
+    var end = 5;
     var start = (parseInt($("#memo_start").val())-1)*end;
 // alert(start);
     $.ajax({
@@ -481,7 +482,7 @@ function getMemo(){
             console.log(response);
             var html = "";
             for(var i = 0;i<response.list.length;i++){
-                var num = parseInt(response.list.length)  - i;
+                var num = parseInt(response.total) - (($("#memo_start").val()-1)*end) - i;
                 html += '<tr>\
                             <td>'+num+'</td>\
                             <td>'+response.list[i].sg_regdate+'</td>\

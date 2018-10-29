@@ -3,8 +3,8 @@
     <div class="popup_title" style="padding:10px">
           서비스 요금 상세
     </div>
-    <div style="padding:5px">
-    <form name="serviceUpdate" id="serviceUpdate">
+    <div style="padding:0px">
+    <form name="serviceUpdate" id="serviceUpdate" method="post" action="/api/serviceUpdate">
         <input type="hidden" name="mb_seq" id="mb_seq" value="<?=$info["mb_seq"]?>">
         <input type="hidden" name="sv_seq" class="sv_seq" value="<?=$info["sv_seq"]?>">
         <input type="hidden" name="sv_c_seq" id="sv_c_seq" value="<?=$info["sv_c_seq"]?>">
@@ -20,7 +20,21 @@
         <input type="hidden" name="svp_first_month_price" id="svp_first_month_price" value="<?=$info["svp_first_month_price"]?>">
         <input type="hidden" name="svp_first_month_start" id="svp_first_month_start" value="<?=$info["svp_first_month_start"]?>">
         <input type="hidden" name="svp_first_month_end" id="svp_first_month_end" value="<?=$info["svp_first_month_end"]?>">
-
+        <?php foreach($add_list as $row_add): ?>
+            <input type="hidden" name="sva_seq_add[]" id="sva_seq_<?=$row_add["sva_seq"]?>" class="addList" value="<?=$row_add["sva_seq"]?>" data-svaseq="<?=$row_add["sva_seq"]?>">
+            <input type="hidden" name="svp_seq_add[]" id="svp_seq_<?=$row_add["sva_seq"]?>"  value="<?=$row_add["svp_seq"]?>" >
+            <input type="hidden" name="svp_payment_period_add[]" id="svp_payment_period_<?=$row_add["sva_seq"]?>" value="<?=$row_add["svp_payment_period"]?>">
+            <input type="hidden" name="svp_month_price_add[]" id="svp_month_price_<?=$row_add["sva_seq"]?>" value="<?=$row_add["svp_month_price"]?>">
+            <input type="hidden" name="svp_month_dis_price_add[]" id="svp_month_dis_price_<?=$row_add["sva_seq"]?>" value="<?=$row_add["svp_month_dis_price"]?>">
+            <input type="hidden" name="svp_register_discount_add[]" id="svp_register_discount_<?=$row_add["sva_seq"]?>" value="<?=$row_add["svp_register_discount"]?>">
+            <input type="hidden" name="svp_discount_price_add[]" id="svp_discount_price_<?=$row_add["sva_seq"]?>" value="<?=$row_add["svp_discount_price"]?>">
+            <input type="hidden" name="svp_first_day_price_add[]" id="svp_first_day_price_<?=$row_add["sva_seq"]?>" value="<?=$row_add["svp_first_day_price"]?>">
+            <input type="hidden" name="svp_first_day_start_add[]" id="svp_first_day_start_<?=$row_add["sva_seq"]?>" value="<?=$row_add["svp_first_day_start"]?>">
+            <input type="hidden" name="svp_first_day_end_add[]" id="svp_first_day_end_<?=$row_add["sva_seq"]?>" value="<?=$row_add["svp_first_day_end"]?>">
+            <input type="hidden" name="svp_first_month_price_add[]" id="svp_first_month_price_<?=$row_add["sva_seq"]?>" value="<?=$row_add["svp_first_month_price"]?>">
+            <input type="hidden" name="svp_first_month_start_add[]" id="svp_first_month_start_<?=$row_add["sva_seq"]?>" value="<?=$row_add["svp_first_month_start"]?>">
+            <input type="hidden" name="svp_first_month_end_add[]" id="svp_first_month_end_<?=$row_add["sva_seq"]?>" value="<?=$row_add["svp_first_month_end"]?>">    
+        <?php endforeach; ?>
         <input type="hidden" name="b_sv_claim_name" value="<?=$info["sv_claim_name"]?>">
         <input type="hidden" name="b_sv_bill_name" value="<?=$info["sv_bill_name"]?>">
         <input type="hidden" name="b_sv_payment_type" value="<?=$info["sv_payment_type"]?>">
@@ -35,7 +49,7 @@
         <input type="hidden" name="b_svp_month_dis_price" value="<?=$info["svp_month_dis_price"]?>">
 
         <div class="modal-title">
-            <div class="modal-title-text">서비스 기본 정보</div>
+            <div class="modal-title-text"><div>서비스 기본 정보</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -96,7 +110,7 @@
         </div>
 
         <div class="modal-title">
-            <div class="modal-title-text">서비스 결제 조건</div>
+            <div class="modal-title-text"><div>서비스 결제 조건</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -111,7 +125,7 @@
             </div>
             <div class="modal-field-input">
                 <div class="label"><div>결제 주기</div></div>
-                <div class="input"><input type="text" name="svp_payment_period" id="svp_payment_period" style="width:70px" value="<?=$info["svp_payment_period"]?>"> 개월</div>
+                <div class="input"><input type="text" name="svp_payment_period" id="svp_payment_period" style="width:10%" value="<?=$info["svp_payment_period"]?>"> 개월</div>
             </div>
         </div>
         <div class="modal-field">
@@ -147,7 +161,7 @@
                     </select>
 
 
-                    <select name="sv_pay_publish_type" id="sv_pay_publish_type" class="select2" style="width:40%">
+                    <select name="sv_pay_publish_type" id="sv_pay_publish_type" class="<?=($info["sv_pay_publish"] == "1" ? "":"select2")?>" style="width:40%;<?=($info["sv_pay_publish"] == "1" ? "display:none":"")?>">
                         <option value="0" <?=($info["sv_pay_publish_type"] == "0" ? "selected":"")?>>영수 발행</option>
                         <option value="1" <?=($info["sv_pay_publish_type"] == "1" ? "selected":"")?>>청구 발행</option>
 
@@ -169,7 +183,7 @@
             </div>
             <div class="modal-field-input">
                 <div class="label"><div>최초 과금 만료일</div></div>
-                <div class="input"><input type="text" name="sv_account_end" id="sv_account_end" readonly value="<?=$info["sv_account_end"]?>"></div>
+                <div class="input"><input type="text" style="width:38.7%" name="sv_account_end" id="sv_account_end" readonly value="<?=$info["sv_account_end"]?>"></div>
             </div>
         </div>
         <div class="modal-field">
@@ -208,97 +222,97 @@
             </div>
             <div class="modal-field-input">
                 <div class="label"><div>등록할인율</div></div>
-                <div class="input"><input type="text" name="svp_register_discount" id="svp_register_discount" value="<?=$info["svp_register_discount"]?>" style="width:50%"> % <input type="checkbox" id="defaultRegister">기본값으로 변경</div>
+                <div class="input"><input type="text" name="svp_register_discount" id="svp_register_discount" value="<?=$info["svp_register_discount"]?>" style="width:10%"> % <input type="checkbox" id="defaultRegister">기본값으로 변경</div>
             </div>
         </div>
-        <div style="float:left;width:50%">
+        <div style="float:left;width:49.2%">
             <div class="modal-title">
-                <div class="modal-title-text">일회성 요금</div>
+                <div class="modal-title-text"><div>일회성 요금</div></div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>초기 청구 항목명</div></div>
-                    <div class="input" style="width:45%"><input type="text" name="svp_first_claim_name" id="svp_first_claim_name" value="<?=$info["svp_first_claim_name"]?>"> </div>
+                    <div class="label" style="width:38%;"><div>초기 청구 항목명</div></div>
+                    <div class="input" style="width:45%;padding-left:9px;"><input type="text" name="svp_first_claim_name" id="svp_first_claim_name" value="<?=$info["svp_first_claim_name"]?>"> </div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>초기 청구 요금</div></div>
-                    <div class="input" style="width:45%"><input type="text" name="svp_once_price" id="svp_once_price" style="text-align:right" value="<?=number_format($info["svp_once_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></div>
+                    <div class="label" style="width:38%"><div>초기 청구 요금</div></div>
+                    <div class="input" style="width:45%;padding-left:9px;"><input type="text" name="svp_once_price" id="svp_once_price" style="text-align:right" value="<?=number_format($info["svp_once_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></div>
                     <div style="display:inline-block">원</div>
                 </div>
             </div>
             <div class="modal-field">
-                <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>할인 금액</div></div>
-                    <div class="input" style="width:45%"> - <input type="text" name="svp_once_dis_price" id="svp_once_dis_price" style="text-align:right;width:85.5%" value="<?=number_format($info["svp_once_dis_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> </div>
-                    <div style="display:inline-block">원</div>
+                <div class="modal-field-input" style="width:100%;color:#fa0000;">
+                    <div class="label" style="width:38%;"><div>할인 금액</div></div>
+                    <div class="input" style="width:45%;"> - <input type="text" name="svp_once_dis_price" id="svp_once_dis_price" style="text-align:right;width:89%;color:#fa0000;" value="<?=number_format($info["svp_once_dis_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> </div>
+                    <div style="display:inline-block;padding-left:9px;">원</div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>할인 사유</div></div>
-                    <div class="input" style="width:45%"><input type="text" name="svp_once_dis_msg" id="svp_once_dis_msg" value="<?=$info["svp_once_dis_msg"]?>"></div>
+                    <div class="label" style="width:38%"><div>할인 사유</div></div>
+                    <div class="input" style="width:45%;padding-left:9px;"><input type="text" name="svp_once_dis_msg" id="svp_once_dis_msg" value="<?=$info["svp_once_dis_msg"]?>"></div>
                 </div>
             </div>
             <?php $once_price = $info["svp_once_price"]-$info["svp_once_dis_price"];?>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>합계</div></div>
-                    <div class="input" id="first_sum" style="text-align:right;width:43%;padding-right:10px"><?=number_format($once_price)?></div>
+                    <div class="label" style="width:38%"><div>합계</div></div>
+                    <div class="input" id="first_sum" style="text-align:right;width:43%;padding-right:19px"><?=number_format($once_price)?></div>
                     <div style="display:inline-block">원</div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>부가세</div></div>
-                    <div class="input" id="first_surtax" style="text-align:right;;width:43%;padding-right:10px"><?=number_format($once_price*0.1)?></div>
+                    <div class="label" style="width:38%"><div>부가세</div></div>
+                    <div class="input" id="first_surtax" style="text-align:right;;width:43%;padding-right:19px"><?=number_format($once_price*0.1)?></div>
                     <div style="display:inline-block">원</div>
                 </div>
             </div>
             <div class="modal-field">
-                <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>총계</div></div>
-                    <div class="input" id="first_total" style="text-align:right;width:43%;padding-right:10px"><?=number_format($once_price*1.1)?></div>
+                <div class="modal-field-input" style="width:100%;font-weight:bold;">
+                    <div class="label" style="width:38%;color:#0070C0;"><div>총계</div></div>
+                    <div class="input" id="first_total" style="text-align:right;width:43%;padding-right:19px"><?=number_format($once_price*1.1)?></div>
                     <div style="display:inline-block">원</div>
                 </div>
             </div>
         </div>
-        <div style="float:right;width:50%">
+        <div style="float:right;width:50.8%">
             <div class="modal-title">
-                <div class="modal-title-text">월 요금</div>
+                <div class="modal-title-text"><div>월 요금</div></div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>서비스 월 요금</div></div>
-                    <div class="input" style="width:45%"><input type="text" name="svp_month_price" id="svp_month_price" style="text-align:right" value="<?=number_format($info["svp_month_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> </div>
+                    <div class="label" style="width:38%;"><div>서비스 월 요금</div></div>
+                    <div class="input" style="width:45%;padding-left:10px;"><input type="text" name="svp_month_price" id="svp_month_price" style="text-align:right" value="<?=number_format($info["svp_month_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> </div>
+                    <div style="display:inline-block">원 / 월</div>
+                </div>
+            </div>
+            <div class="modal-field">
+                <div class="modal-field-input" style="width:100%;color:#fa0000;">
+                    <div class="label" style="width:38%;"><div>할인 금액</div></div>
+                    <div class="input" style="width:45%;"> - <input type="text" name="svp_month_dis_price" id="svp_month_dis_price" style="text-align:right;width:89%;color:#fa0000;" value="<?=number_format($info["svp_month_dis_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></div>
+                    <div style="display:inline-block;padding-left:9px;">원 / 월</div>
+                </div>
+            </div>
+            <div class="modal-field">
+                <div class="modal-field-input" style="width:100%">
+                    <div class="label" style="width:38%"><div>할인 사유</div></div>
+                    <div class="input" style="width:45%;padding-left:10px;"><input type="text" name="svp_month_dis_msg" id="svp_month_dis_msg" value="<?=$info["svp_month_dis_msg"]?>"> </div>
+                </div>
+            </div>
+            <div class="modal-field">
+                <div class="modal-field-input" style="width:100%">
+                    <div class="label" style="width:38%"><div>소계(월 요금 + 할인)</div></div>
+                    <div class="input" id="month_price1" style="text-align:right;width:43%;padding-right:19px"><?=number_format($info["svp_month_price"]-$info["svp_month_dis_price"])?></div>
                     <div style="display:inline-block">원 / 월</div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>할인 금액</div></div>
-                    <div class="input" style="width:45%"> - <input type="text" name="svp_month_dis_price" id="svp_month_dis_price" style="text-align:right;width:85.8%" value="<?=number_format($info["svp_month_dis_price"])?>" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></div>
-                    <div style="display:inline-block">원 / 월</div>
-                </div>
-            </div>
-            <div class="modal-field">
-                <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>할인 사유</div></div>
-                    <div class="input" style="width:45%"><input type="text" name="svp_month_dis_msg" id="svp_month_dis_msg" value="<?=$info["svp_month_dis_msg"]?>"> </div>
-                </div>
-            </div>
-            <div class="modal-field">
-                <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>소계(월 요금 + 할인)</div></div>
-                    <div class="input" id="month_price1" style="text-align:right;width:43%;padding-right:10px"><?=number_format($info["svp_month_price"]-$info["svp_month_dis_price"])?></div>
-                    <div style="display:inline-block">원 / 월</div>
-                </div>
-            </div>
-            <div class="modal-field">
-                <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>결제 기간 합계</div></div>
-                    <div class="input" id="month_price2" style="text-align:right;width:43%;padding-right:10px"><?=number_format(($info["svp_month_price"]*$info["svp_payment_period"]-$info["svp_month_dis_price"])*$info["sv_payment_period"])?></div>
+                    <div class="label" style="width:38%"><div>결제 기간 합계</div></div>
+                    <div class="input" id="month_price2" style="text-align:right;width:43%;padding-right:19px"><?=number_format(($info["svp_month_price"]*$info["svp_payment_period"]-$info["svp_month_dis_price"])*$info["sv_payment_period"])?></div>
                     <div style="display:inline-block">원 / <span class="total_contract"></span>개월</div>
                 </div>
             </div>
@@ -306,38 +320,38 @@
             $month_price = ($info["svp_month_price"]-$info["svp_month_dis_price"])*$info["sv_payment_period"]-$info["svp_register_discount"];
             ?>
             <div class="modal-field">
-                <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>결제 방법 할인(<input type="checkbox" name="svp_discount_yn" id="svp_discount_yn" value="Y" <?=($info["svp_discount_yn"] == "Y" ? "checked":"")?>> 적용)</div></div>
-                    <div class="input" id="month_price3" style="text-align:right;width:43%;padding-right:10px"><?=number_format($info["svp_discount_price"])?></div>
-                    <div style="display:inline-block">원</div>
+                <div class="modal-field-input" style="width:100%;color:#fa0000;">
+                    <div class="label" style="width:38%;"><div>결제 방법 할인(<input type="checkbox" name="svp_discount_yn" id="svp_discount_yn" value="Y" <?=($info["svp_discount_yn"] == "Y" ? "checked":"")?>> 적용)</div></div>
+                    <div class="input" id="month_price3" style="text-align:right;width:43%;padding-right:19px;"><?=number_format($info["svp_discount_price"])?></div>
+                    <div style="display:inline-block;">원</div>
                     <input type="hidden" name="svp_discount_price" id="svp_discount_price" value="<?=number_format($info["svp_discount_price"])?>">
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>서비스 청구 합계</div></div>
-                    <div class="input" id="month_price4" style="text-align:right;width:43%;padding-right:10px"><?=number_format($month_price)?></div>
+                    <div class="label" style="width:38%"><div>서비스 청구 합계</div></div>
+                    <div class="input" id="month_price4" style="text-align:right;width:43%;padding-right:19px"><?=number_format($month_price)?></div>
                     <div style="display:inline-block">원 / <span class="total_contract"></span>개월</div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>부가세</div></div>
-                    <div class="input" id="month_price5" style="text-align:right;width:43%;padding-right:10px"><?=number_format($month_price*0.1)?></div>
+                    <div class="label" style="width:38%"><div>부가세</div></div>
+                    <div class="input" id="month_price5" style="text-align:right;width:43%;padding-right:19px"><?=number_format($month_price*0.1)?></div>
                     <div style="display:inline-block">원</div>
                 </div>
             </div>
             <div class="modal-field">
-                <div class="modal-field-input" style="width:100%">
-                    <div class="label" style="width:35%"><div>총계</div></div>
-                    <div class="input" id="month_price_total" style="text-align:right;width:43%;padding-right:10px"><?=number_format($month_price*1.1)?></div>
+                <div class="modal-field-input" style="width:100%;font-weight:bold;">
+                    <div class="label" style="width:38%;color:#0070C0;"><div>총계</div></div>
+                    <div class="input" id="month_price_total" style="text-align:right;width:43%;padding-right:19px"><?=number_format($month_price*1.1)?></div>
                     <div style="display:inline-block">원</div>
                 </div>
             </div>
         </div>
         <div style="clear:both;width:100%;font-size:12px">
             <div style="height:50px;border-top:1px solid #ddd;border-bottom:1px solid #ddd">
-                <div style="display:inline-block;width:15%;padding:10px 0px 0px 20px">초기청구 요금<br>(VAT별도)</div>
+                <div style="display:inline-block;width:15%;padding:10px 0px 0px 20px;color:#0070C0;font-weight:bold;">초기 청구 요금<br>(VAT별도)</div>
                 <div style="display:inline-block;text-align:right;width:80%;">
                     <ul style="padding-top:10px;padding-right:5px;letter-spacing:-1">
                         <li style="text-align:right;font-size:11px">일회성 요금 (<span style=";color:red" id="one_price_str0">0</span>) + <span id="start_date_str_0_1">0000년 00월 00일</span> ~ <span id="end_date_str_0_1">0000년 00월 00일</span> 이용료 (<span style=";color:red" id="use_price_str_0_1">0</span>) <span id="view_add" style="display:none">+ <span id="start_date_str_0_2">0000년 00월 00일</span> ~ <span id="end_date_str_0_2">0000년 00월 00일</span> 이용료 (<span style=";color:red" id="use_price_str_0_2">0</span>)</span></li>
@@ -349,12 +363,12 @@
         <input type="hidden" id="sv_once_total_price" value="<?=($once_price*1.1)?>">
         <input type="hidden" id="sv_month_total_price" value="<?=($month_price*1.1)?>">
         <div class="modal-title">
-            <div class="modal-title-text">매입 정보</div>
+            <div class="modal-title-text"><div>매입 정보</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label"><div>매입처</div></div>
-                <div class="input"><input type="text" name="sv_c_name" id="sv_c_name" class="width-button" value="<?=$info["c_name"]?>"><button class="btn btn-brown " type="button">검색</button></div>
+                <div class="input"><input type="text" name="sv_c_name" id="sv_c_name" class="width-button" value="<?=$info["c_name"]?>"><button class="btn btn-brown btn-small" type="button">검색</button></div>
             </div>
 
             <div class="modal-field-input">
@@ -379,12 +393,75 @@
             </div>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text">관리자 메모</div>
+            <div class="modal-title-text"><div>관리자 메모</div></div>
         </div>
-        <div class="modal-field">
+        <div class="modal-field border-bottom-0">
             <div class="modal-field-input" style="width:100%">
-                <textarea name="svp_memo" style="width:98%;height:150px"><?=$info["svp_memo"]?></textarea>
+                <textarea name="svp_memo" style="width:99.4%;height:100px;background-color:#fafafa;"><?=$info["svp_memo"]?></textarea>
             </div>
+        </div>
+        <div class="modal-title">
+            <div class="modal-title-text"><div>변경 로그</div></div>
+        </div>
+        <div style="float:right;font-size:12px;padding:5px 0px">
+            <ul style="list-style:none;padding:0;margin:0">
+                <li style="float:left;padding-top:5px">구분 </li>
+                <li style="float:left;padding-left:3px">
+                    <select name="log_type" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-top:5px;padding-left:10px">항목</li>
+                <li style="float:left;padding-left:3px">
+                    <select name="log_type" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-top:5px;padding-left:10px">날짜</li>
+                <li style="float:left;padding-left:3px">
+                    <input type="text" name="start_date" class="datepicker3"> ~ <input type="text" name="end_date" class="datepicker3">
+                </li>
+            </ul>
+            <ul style="clear:both;list-style:none;padding:10px 0px 0px 0px;margin:0">
+                <li style="float:left;padding-top:5px">작업자 구분 : </li>
+                <li style="float:left;padding-top:3px;padding-left:10px">
+                    ADMIN <input type="checkbox"> SYSTEM <input type="checkbox"> USER <input type="checkbox">
+                </li>
+                <li style="float:left">
+                    <select name="" class="select2" style="width:120px">
+                        <option value="">작업자 이름</option>
+                        <option value="">작업자 ID</option>
+                        <option value="">접속 IP</option>
+                    </select>
+                </li>
+                <li style="float:left">
+                    <input type="text" name=""><button class="btn btn-brown btn-small" type="button">검색</button>
+                </li>
+
+            </ul>
+        </div>
+        <div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>No</th>
+                    <th>날짜</th>
+                    <th>구분</th>
+                    <th>항목</th>
+                    <th>변경 전</th>
+                    <th>변경 후</th>
+                    <th>작업자 구분</th>
+                    <th>작업자</th>
+                    <th>접속 IP</th>
+                </tr>
+                </thead>
+                <tbody id="log-list">
+                
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <div id="logPaging"></div>
         </div>
         <div class="modal-button">
             <button class="btn btn-black btn-payment-modify" type="button">수정</button>
@@ -453,4 +530,5 @@
 
     <div class="modal-close-btn" style="margin-top:14px"><button class="btn btn-black btn-small btn-price-policy">적용</button> <button class="btn btn-default btn-small" onclick="$('#dialogFirstSetting').dialog('close')">닫기</button></div>
 </div>
+<input type="hidden" id="log_start" value=1>
 <script src="/assets/js/memberPaymentView.js?date=<?=time()?>"></script>

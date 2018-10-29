@@ -9,7 +9,7 @@
 <script src="/assets/js/productRegister.js?date=<?=time()?>"></script>
 <div class="content">
     <h2 class="title">
-        <i class="fa fa-file"></i> 상품 등록
+        <i class="fa fa-folder-open"></i> 상품 등록
     </h2>
     <div class="content-tab">
 
@@ -180,7 +180,7 @@
     <div class="div-add" style="margin-top:20px;margin-left:10px">
 
         <div class="type-add-right">
-            <div style="display:inline-block"><input type="text" name="pd_name" id="pd_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-div-add" type="submit" style="padding:5.5px 7px;margin-bottom:3px">대분류 추가</button></div>
+            <div style="display:inline-block"><input type="text" name="pd_name" id="pd_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-div-add" type="submit">대분류 추가</button></div>
         </div>
     </div>
     </form>

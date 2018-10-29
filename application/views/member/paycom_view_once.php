@@ -1,6 +1,6 @@
 <div style="background:#fff;width:100%;overflow-x:hidden">
     <div class="popup_title" style="padding:10px">
-         청구 상세
+         결제 상세
     </div>
     <div style="padding:0px">
         <form name="payForm" id="payForm">
@@ -74,7 +74,7 @@
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label"><div>청구일</div></div>
-                <div class="input"><span id="p_pm_pay_day"><input type="text" name="pm_date" value="<?=$info["pm_date"]?>" class="datepicker3"></span>
+                <div class="input"><span id="p_pm_pay_day"><?=$info["pm_date"]?></span>
                     
                 </div>
             </div>
@@ -103,9 +103,9 @@
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label"><div>결제 기한</div></div>
-                <div class="input" id="p_pm_end_date">
-                    <input type="text" name="pm_end_date" id="pm_end_date" value="<?=$info["pm_end_date"] ?>" class="datepicker3">
+                <div class="label"><div>결제일</div></div>
+                <div class="input" id="p_pm_com_date">
+                    <input type="text" name="pm_com_date" value="<?=substr($info["pm_com_date"],0,10) ?>" class="datepicker3">
                 </div>
             </div>
         </div>
@@ -123,14 +123,14 @@
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%">
                     <div class="label" style="width:38%"><div>일회성 요금</div></div>
-                    <div class="input" style="width:45%;padding-left:9px;"><input type="text" name="pm_once_price" id="pm_once_price" class="border-no right" value="<?=number_format($info["pm_once_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" > </div>
+                    <div class="input" style="width:45%;padding-left:9px;"><input type="text" name="pm_once_price" class="border-no right" value="<?=number_format($info["pm_once_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" > </div>
                     <div style="display:inline-block">원</div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input" style="width:100%;color:#fa0000;">
                     <div class="label" style="width:38%"><div>할인 금액</div></div>
-                    <div class="input" style="width:45%"> - <input type="text" name="pm_once_dis_price" id="pm_once_dis_price" class="border-no right" style="color:#fa0000;" value="<?=number_format($info["pm_once_dis_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" > </div>
+                    <div class="input" style="width:45%"> - <input type="text" name="pm_once_dis_price" class="border-no right" style="color:#fa0000;" value="<?=number_format($info["pm_once_dis_price"])?>" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" > </div>
                     <div style="display:inline-block;padding-left:9px;">원</div>
                 </div>
             </div>
@@ -214,11 +214,10 @@
             </div>
         </div>
         <div class="modal-button">
-            <button class="btn btn-black btn-claim-modify" type="button">수정</button>
+            <button class="btn btn-black btn-paycom-modify" type="button">수정</button>
         </div>
     </form>
     </div>
 
 </div>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>
 <script src="/assets/js/memberClaimView.js?date=<?=time()?>"></script>

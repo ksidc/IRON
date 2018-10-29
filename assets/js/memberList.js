@@ -12,9 +12,7 @@ $(function(){
 
     // datepicker
     $( ".datepicker" ).datepicker({
-        dateFormat: 'yy-mm-dd',
-        showOn: "both",
-        buttonText: "<i class='fa fa-calendar-alt'></i>"
+        dateFormat: 'yy-mm-dd'
     });
 
     //등록 버튼 클릭
@@ -201,7 +199,10 @@ $(function(){
                 $("#mb_zipcode").val(response.mb_zipcode);
                 $("#b_mb_zipcode").val(response.mb_zipcode);
                 $("#mb_seq").val(response.mb_seq);
-
+                if(response.mb_payment_publish == 1){
+                    $("#mb_payment_publish_type").hide();
+                    $("#mb_payment_publish_type").next().hide();
+                }
                 $('#dialog').dialog({
                     title: '회원 수정',
                     modal: true,
@@ -497,13 +498,27 @@ $(function(){
         }else{
             $("#mb_payment_day").val("");
         }
+    });
+
+    $("#mb_payment_publish").change(function(){
+        if($(this).val() == "0"){
+            $("#mb_payment_publish_type").show();
+            $("#mb_payment_publish_type").next().show();
+        }else{
+            $("#mb_payment_publish_type").hide();
+            $("#mb_payment_publish_type").next().hide();
+        }
+    })
+
+    $("#serviceYn").click(function(){
+        getList();
     })
 })
 
 
 var getList = function(){
     var start = $("#start").val();
-    var end = 5;
+    var end = 40;
     var url = "/api/memberList/"+start+"/"+end;
     var searchForm = $("#searchForm").serialize();
     // console.log(url);
@@ -513,7 +528,7 @@ var getList = function(){
         dataType : 'JSON',
         data : searchForm,
         success:function(response){
-
+            console.log(response);
             var html = "";
             if(response.list.length > 0){
                 for(var i = 0; i < response.list.length;i++){
@@ -525,19 +540,19 @@ var getList = function(){
                                 <td>'+num+'</td>\
                                 <td><a href="/member/view/'+response.list[i].mb_seq+'">'+response.list[i].mb_id+'</a></td>\
                                 <td>'+response.list[i].mb_name+'</td>\
-                                <td></td>\
+                                <td>'+response.list[i].charger+'</td>\
                                 <td>'+response.list[i].mb_tel+'</td>\
                                 <td>'+response.list[i].mb_contract_name+'</td>\
                                 <td>'+response.list[i].mb_payment_name+'</td>\
                                 <td>'+response.list[i].mb_regdate+'</td>\
-                                <td>0</td>\
+                                <td>'+response.list[i].service_total+'</td>\
                                 <td class="btn-modify" data-seq="'+response.list[i].mb_seq+'" style="cursor:pointer"><i class="fas fa-edit"></i></td>\
                                 <td class="btn-delete" data-seq="'+response.list[i].mb_seq+'" style="cursor:pointer"><i class="fas fa-trash"></i></td>\
                             </tr>';
                 }
 
                 $(".pagination-html").bootpag({
-                    total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
+                    total : Math.ceil(parseInt(response.total)/40), // 총페이지수 (총 Row / list노출개수)
                     page : $("#start").val(), // 현재 페이지 default = 1
                     maxVisible:5, // 페이지 숫자 노출 개수
                     wrapClass : "pagination",

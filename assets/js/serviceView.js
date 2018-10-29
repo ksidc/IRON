@@ -1,5 +1,6 @@
 $(function(){
     getMemo();
+    getLog();
     $( "#dialogOut" ).dialog({
         autoOpen: false,
         modal: true,
@@ -14,7 +15,21 @@ $(function(){
         height : 450
     });
 
+    $( "#dialogForceStop" ).dialog({
+        autoOpen: false,
+        modal: true,
+        width:'700px',
+        height : 450
+    });
+
     $( "#dialogEnd" ).dialog({
+        autoOpen: false,
+        modal: true,
+        width:'700px',
+        height : 450
+    });
+
+    $( "#dialogForceEnd" ).dialog({
         autoOpen: false,
         modal: true,
         width:'700px',
@@ -111,7 +126,11 @@ $(function(){
                     if(response.result){
                         alert("처리완료");
                         $("#sv_out_date_str").html($("#sv_out_date").val());
-                        $('#dialogOut').dialog('close')
+                        $('#dialogOut').dialog('close');
+                        $("#sv_out_date_first").hide();
+                        $("#sv_out_date_second").css("display","inline-block");
+                        $(".btn-out-reg").data("modify","1");
+                        $(".btn-out-reg").html("수정");
                     }else{
                         alert("오류발생")
                     }
@@ -142,10 +161,12 @@ $(function(){
                 url : url,
                 type : 'POST',
                 dataType : 'JSON',
-                data : "sv_seq="+$("#sv_seq").val()+"&sv_status=2&sv_engineer_part="+$("#sv_engineer_charger").val()+"&sv_engineer_charger="+$("#sv_engineer_charger").val(),
+                data : "sv_seq="+$("#sv_seq").val()+"&sv_status=2&sv_engineer_part="+$("#sv_engineer_charger").val()+"&sv_engineer_charger="+$("#sv_engineer_charger").val()+"&sv_engineer_charger_str="+$("#sv_engineer_charger option:selected").text(),
                 success:function(response){
                     if(response.result){
                         alert("처리완료");
+                        $(".no_input").css("display","inline-block");
+                        $("#sv_status_str").html('<span style="color:#548235">서비스작업중</span>');
                         // $('#dialogOut').dialog('close')
                     }else{
                         alert("오류발생")
@@ -158,7 +179,7 @@ $(function(){
                 url : url,
                 type : 'POST',
                 dataType : 'JSON',
-                data : "sv_seq="+$("#sv_seq").val()+"&sv_engineer_part="+$("#sv_engineer_charger").val()+"&sv_engineer_charger="+$("#sv_engineer_charger").val(),
+                data : "sv_seq="+$("#sv_seq").val()+"&sv_engineer_part="+$("#sv_engineer_charger").val()+"&sv_engineer_charger="+$("#sv_engineer_charger").val()+"&sv_engineer_charger_str="+$("#sv_engineer_charger option:selected").text(),
                 success:function(response){
                     if(response.result){
                         alert("처리완료");
@@ -181,6 +202,22 @@ $(function(){
                 data : "sv_seq="+$("#sv_seq").val(),
                 success:function(response){
                     if(response.result){
+                        $("#sv_status_str").html('<span style="color:#000000">서비스중</span>');
+                        $(".no_input").hide();
+                        $(".yes_input").css("display","inline-block");
+                        var date1 = moment(response.date).format("YYYY-MM-DD");
+                        var date2 = moment(response.date).format("H");
+                        var date3 = moment(response.date).format("m");
+                        var date4 = moment(response.date).format("s");
+                        $("#view_service_open").html(response.date);
+                        $("#sv_service_start1").val(date1).trigger("change");
+                        $("#sv_service_start2").val(date2).trigger("change");
+                        $("#sv_service_start3").val(date3).trigger("change");
+                        $("#sv_service_start4").val(date4).trigger("change");
+                        $("#sv_end_date_str").css("display","inline-block");
+                        $("#sv_stop_date_str").css("display","inline-block");
+                        $("#sv_stop_date_button").css("display","inline-block");
+                        $("#sv_end_date_button").css("display","inline-block");
                         alert("처리완료");
                         // $('#dialogOut').dialog('close')
                     }else{
@@ -196,6 +233,14 @@ $(function(){
             $("#sv_service_end_msg_etc").show();
         }else{
             $("#sv_service_end_msg_etc").hide();
+        }
+    })
+
+    $("#sv_service_force_end_msg").change(function(){
+        if($(this).val() == "기타"){
+            $("#sv_service_force_end_msg_etc").show();
+        }else{
+            $("#sv_service_force_end_msg_etc").hide();
         }
     })
 
@@ -215,10 +260,15 @@ $(function(){
             return false;
         }
 
-        var monthAdd = moment($("#sv_service_stop").val()).add(1, 'M');
+        var monthAdd = moment($("#sv_service_stop").val()).add(1, 'M').format("YYYY-MM-DD");
         console.log(monthAdd);
-        if(monthAdd > $("#sv_service_restart").val()){
+        if(monthAdd <= $("#sv_service_restart").val()){
             alert("서비스 중지 기간은 1개월을 초과할 수 없습니다.");
+            return false;
+        }
+
+        if($("#sv_service_stop_msg").val() == ""){
+            alert("서비스 중지 사유를 입력하세요");
             return false;
         }
 
@@ -232,6 +282,11 @@ $(function(){
                 success:function(response){
                     if(response.result){
                         alert("처리완료");
+                        $("#sv_status_str").html('<span style="color:#FF0000">서비스중지</span>');
+                        $(".btn-service-stop").hide();
+                        $("#sv_stop_date_str").html($("#sv_service_stop").val());
+                        $("#sv_service_restart_str").css("display","inline-block");
+                        $("#sv_service_restart_button").css("display","inline-block");
                         $('#dialogStop').dialog('close')
                         // $('#dialogOut').dialog('close')
                     }else{
@@ -243,7 +298,7 @@ $(function(){
     })
 
     $(".btn-end-reg").click(function(){
-        if($("#sv_service_end_msg").val() == "etc"){
+        if($("#sv_service_end_msg").val() == "기타"){
             if($("#sv_service_end_msg_etc").val() == ""){
                 alert("기타 사유를 입력해 주세요");
                 return false;
@@ -267,6 +322,11 @@ $(function(){
                 data : "sv_seq="+$("#sv_seq").val(),
                 success:function(response){
                     if(response.result){
+                        $("#sv_status_str").html('<span style="color:#FF0000">직권중지</span>');
+                        $("#sv_stop_date_str").html(response.date);
+                        $("#sv_stop_date_button").hide();
+                        $("#sv_service_restart_str").css("display","inline-block");
+                        $("#sv_service_restart_button").css("display","inline-block");
                         alert("처리완료");
                         // $('#dialogStop').dialog('close')
                         // $('#dialogOut').dialog('close')
@@ -278,8 +338,8 @@ $(function(){
         }
     })
     $(".btn-forceend-reg").click(function(){
-        if($("#sv_service_end_msg").val() == "etc"){
-            if($("#sv_service_end_msg_etc").val() == ""){
+        if($("#sv_service_force_end_msg").val() == "etc"){
+            if($("#sv_service_force_end_msg_etc").val() == ""){
                 alert("기타 사유를 입력해 주세요");
                 return false;
             }
@@ -292,7 +352,7 @@ $(function(){
         }
     })
 
-    $(".btn-service-restart").click(function(){
+	$(".btn-service-restart").click(function(){
         if(confirm("서비스 상태를 [서비스중]으로 변경합니다. 진행하시겠습니까?")){
             var url = "/api/updateServiceRestart";
             $.ajax({
@@ -302,6 +362,23 @@ $(function(){
                 data : "sv_seq="+$("#sv_seq").val(),
                 success:function(response){
                     if(response.result){
+                        $("#sv_status_str").html('<span style="color:#000000">서비스중</span>');
+                        $("#sv_service_restart_str").html(response.date);
+                        $("#sv_service_restart_button").hide();
+                        //$("#sv_stop_date_button").css("display","inline-block");
+                        //$(".btn-service-stop").css("display","inline-block");
+                        //$("#sv_end_date_button").css("display","inline-block");
+                        //$(".btn-service-end").css("display","inline-block");
+                        //$(".btn-service-forceend").css("display","inline-block");
+						$("#sv_stop_date_str").css("display","inline-block");
+						$("#sv_end_date_str").css("display","inline-block");
+						$("#sv_stop_date_button").css("display","inline-block");
+                        $("#sv_end_date_button").css("display","inline-block");
+						$(".btn-service-stop").css("display","inline-block");
+						$(".btn-service-forcestop").css("display","inline-block");
+						$(".btn-service-end").css("display","inline-block");
+						$(".btn-service-forceend").css("display","inline-block");
+
                         alert("처리완료");
                         // $('#dialogStop').dialog('close')
                         // $('#dialogOut').dialog('close')
@@ -337,7 +414,7 @@ $(function(){
                                     <div><a href="/api/fileDownload/service_file/?filename='+data[i].sf_file+'&originname='+data[i].sf_origin_file+'">'+data[i].sf_origin_file+'</a></div>\
                                 </div>\
                                 <div style="float:right">\
-                                    <div><button class="btn btn-black btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
+                                    <div><button class="btn btn-black btn-small btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
                                 </div>\
                             </div>';
                 }
@@ -374,7 +451,7 @@ $(function(){
                                     <div><a href="/api/fileDownload/service_file/?filename='+data[i].sf_file+'&originname='+data[i].sf_origin_file+'">'+data[i].sf_origin_file+'</a></div>\
                                 </div>\
                                 <div style="float:right">\
-                                    <div><button class="btn btn-black btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
+                                    <div><button class="btn btn-black btn-small btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
                                 </div>\
                             </div>';
                 }
@@ -411,7 +488,7 @@ $(function(){
                                     <div><a href="/api/fileDownload/service_file/?filename='+data[i].sf_file+'&originname='+data[i].sf_origin_file+'">'+data[i].sf_origin_file+'</a></div>\
                                 </div>\
                                 <div style="float:right">\
-                                    <div><button class="btn btn-black btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
+                                    <div><button class="btn btn-black btn-small btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
                                 </div>\
                             </div>';
                 }
@@ -448,7 +525,7 @@ $(function(){
                                     <div><a href="/api/fileDownload/service_file/?filename='+data[i].sf_file+'&originname='+data[i].sf_origin_file+'">'+data[i].sf_origin_file+'</a></div>\
                                 </div>\
                                 <div style="float:right">\
-                                    <div><button class="btn btn-black btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
+                                    <div><button class="btn btn-black btn-small btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
                                 </div>\
                             </div>';
                 }
@@ -485,7 +562,7 @@ $(function(){
                                     <div><a href="/api/fileDownload/service_file/?filename='+data[i].sf_file+'&originname='+data[i].sf_origin_file+'">'+data[i].sf_origin_file+'</a></div>\
                                 </div>\
                                 <div style="float:right">\
-                                    <div><button class="btn btn-black btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
+                                    <div><button class="btn btn-black btn-small btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
                                 </div>\
                             </div>';
                 }
@@ -521,7 +598,7 @@ $(function(){
                                     <div><a href="/api/fileDownload/service_file/?filename='+data[i].sf_file+'&originname='+data[i].sf_origin_file+'">'+data[i].sf_origin_file+'</a></div>\
                                 </div>\
                                 <div style="float:right">\
-                                    <div><button class="btn btn-black btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
+                                    <div><button class="btn btn-black btn-small btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
                                 </div>\
                             </div>';
                 }
@@ -557,7 +634,7 @@ $(function(){
                                     <div><a href="/api/fileDownload/service_file/?filename='+data[i].sf_file+'&originname='+data[i].sf_origin_file+'">'+data[i].sf_origin_file+'</a></div>\
                                 </div>\
                                 <div style="float:right">\
-                                    <div><button class="btn btn-black btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
+                                    <div><button class="btn btn-black btn-small btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
                                 </div>\
                             </div>';
                 }
@@ -593,7 +670,7 @@ $(function(){
                                     <div><a href="/api/fileDownload/service_file/?filename='+data[i].sf_file+'&originname='+data[i].sf_origin_file+'">'+data[i].sf_origin_file+'</a></div>\
                                 </div>\
                                 <div style="float:right">\
-                                    <div><button class="btn btn-black btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
+                                    <div><button class="btn btn-black btn-small btn-upload-del" type="button" data-seq="'+data[i].sf_seq+'">삭제</button></div>\
                                 </div>\
                             </div>';
                 }
@@ -1137,20 +1214,28 @@ var getEndUserNextNumber = function(){
 }
 function serviceEnd(){
     if($("#end_yn").val() == "Y"){
-        var url = "/api/updateServiceEnd";
-        $.ajax({
-            url : url,
-            type : 'POST',
-            dataType : 'JSON',
-            data : "sv_seq="+$("#sv_seq").val()+"&sv_service_end="+$("#sv_service_end").val()+"&sv_service_end_msg="+$("#sv_service_end_msg").val()+"&sv_service_end_msg_etc="+$("#sv_service_end_msg_etc").val(),
-            success:function(response){
-                if(response.result){
-                    alert("처리완료")
-                }else{
-                    alert("오류발생")
+        if(confirm("서비스 상태를 [서비스 해지]로 변경합니다. 진행하시겠습니까?")){
+            var url = "/api/updateServiceEnd";
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : "sv_seq="+$("#sv_seq").val()+"&sv_service_end="+$("#sv_service_end").val()+"&sv_service_end_msg="+$("#sv_service_end_msg").val()+"&sv_service_end_msg_etc="+$("#sv_service_end_msg_etc").val(),
+                success:function(response){
+                    if(response.result){
+                        $("#sv_status_str").html('<span style="color:#808080">서비스해지</span>');
+                        $("#sv_end_date_str").html($("#sv_service_end").val());
+                        $("#sv_stop_date_button").hide();
+                        $("#sv_end_date_button").hide();
+						$("#sv_service_restart_str").css("display","inline-block");
+                        $("#sv_service_restart_button").css("display","inline-block");
+                        alert("처리완료")
+                    }else{
+                        alert("오류발생")
+                    }
                 }
-            }
-        });
+            });
+        }
     }else{
         $( "#dialogEnd" ).dialog("open");
         $("#dialogEnd").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
@@ -1159,22 +1244,30 @@ function serviceEnd(){
 
 function serviceForceEnd(){
     if($("#force_end_yn").val() == "Y"){
-        var url = "/api/updateServiceForceEnd";
-        $.ajax({
-            url : url,
-            type : 'POST',
-            dataType : 'JSON',
-            data : "sv_seq="+$("#sv_seq").val()+"&sv_service_end="+$("#sv_service_force_end").val()+"&sv_service_end_msg="+$("#sv_service_force_end_msg").val()+"&sv_service_end_msg_etc="+$("#sv_service_force_end_msg_etc").val(),
-            success:function(response){
-                if(response.result){
-                    alert("처리완료");
-                    // $('#dialogStop').dialog('close')
-                    // $('#dialogOut').dialog('close')
-                }else{
-                    alert("오류발생")
+        if(confirm("서비스 상태를 [직권 해지]로 변경합니다. 진행하시겠습니까?")){
+            var url = "/api/updateServiceForceEnd";
+            $.ajax({
+                url : url,
+                type : 'POST',
+                dataType : 'JSON',
+                data : "sv_seq="+$("#sv_seq").val()+"&sv_service_end="+$("#sv_service_force_end").val()+"&sv_service_force_end_msg="+$("#sv_service_force_end_msg").val()+"&sv_service_force_end_msg_etc="+$("#sv_service_force_end_msg_etc").val(),
+                success:function(response){
+                    if(response.result){
+                        $("#sv_status_str").html('<span style="color:#808080">직권해지</span>');
+                        $("#sv_end_date_str").html($("#sv_service_force_end").val());
+                        $("#sv_stop_date_button").hide();
+                        $(".btn-service-forceend").hide();
+						$("#sv_service_restart_str").css("display","inline-block");
+                        $("#sv_service_restart_button").css("display","inline-block");
+                        alert("처리완료");
+                        // $('#dialogStop').dialog('close')
+                        // $('#dialogOut').dialog('close')
+                    }else{
+                        alert("오류발생")
+                    }
                 }
-            }
-        });
+            });
+        }
     }else{
         $( "#dialogForceEnd" ).dialog("open");
         $("#dialogForceEnd").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();
@@ -1193,7 +1286,11 @@ function setServiceDate(){
                 dataType : 'JSON',
                 data : "sv_seq="+$("#sv_seq").val()+"&service_open="+$("#sv_service_start1").val()+" "+$("#sv_service_start2").val()+":"+$("#sv_service_start3").val()+":"+$("#sv_service_start4").val(),
                 success:function(response){
+                    console.log(response);
                     if(response.result){
+                        $("#view_service_open").show();
+                        $("#edit_service_open").hide();
+                        $("#view_service_open").html(response.date);
                         alert("처리완료");
                         // $('#dialogOut').dialog('close')
                     }else{
@@ -1208,7 +1305,7 @@ function setServiceDate(){
 function getMemo(){
 
     var url = "/api/serviceMemoFetch";
-    var end = 10;
+    var end = 5;
     var start = (parseInt($("#memo_start").val())-1)*end;
 // alert(start);
     $.ajax({
@@ -1220,7 +1317,7 @@ function getMemo(){
             console.log(response);
             var html = "";
             for(var i = 0;i<response.list.length;i++){
-                var num = parseInt(response.list.length)  - i;
+                var num = parseInt(response.total) - (($("#memo_start").val()-1)*end) - i;
                 html += '<tr>\
                             <td>'+num+'</td>\
                             <td>'+response.list[i].sm_regdate+'</td>\
@@ -1251,6 +1348,72 @@ function getMemo(){
                 $("#memo_start").val(num);
                 getMemo();
             })
+        }
+    });
+}
+
+function getLog(){
+
+    var url = "/api/fetchLogs/2/"+$("#sv_seq").val();
+    var end = 5;
+    var start = $("#log_start").val();
+// alert(start);
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        data : "sv_seq="+$("#sv_seq").val()+"&start="+start+"&end="+end,
+        success:function(response){
+            console.log(response);
+            var html = "";
+            for(var i = 0;i<response.list.length;i++){
+                var num = parseInt(response.total) - (($("#log_start").val()-1)*end) - i;
+                html += '<tr>\
+                            <td>'+num+'</td>\
+                            <td>'+response.list[i].lo_regdate+'</td>\
+                            <td>'+response.list[i].lo_type+'</td>\
+                            <td>'+response.list[i].lo_item+'</td>\
+                            <td>'+response.list[i].lo_origin+'</td>\
+                            <td>'+response.list[i].lo_after+'</td>\
+                            <td>';
+                                if(response.list[i].lo_user == "1"){
+                                    html += "ADMIN";
+                                }else if(response.list[i].lo_user == "2"){
+                                    html += "SYSTEM";
+                                }else{
+                                    html += "USER";
+                                }
+                            html += '</td>\
+                            <td></td>\
+                            <td>'+response.list[i].lo_ip+'</td>\
+                        </tr>';
+                
+            }
+            if(html == ""){
+                html = "<tr><td colspan=9 align=center>내용이 없습니다.</td></tr>";
+            }
+            console.log(html);
+            $("#log-list").html(html);
+
+            $("#logPaging").bootpag({
+                total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
+                page : $("#log_start").val(), // 현재 페이지 default = 1
+                maxVisible:5, // 페이지 숫자 노출 개수
+                wrapClass : "pagination",
+                next : ">",
+                prev : "<",
+                nextClass : "last",
+                prevClass : "first",
+                activeClass : "active"
+
+            }).on('page', function(event,num){ // 이벤트 액션
+                // document.location.href='/pageName/'+num; // 페이지 이동
+                $("#log_start").val(num);
+                getLog();
+            })
+        },
+        error: function(error){
+            console.log(error);
         }
     });
 }

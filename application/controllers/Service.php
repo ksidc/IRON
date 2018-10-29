@@ -50,6 +50,7 @@ class Service extends CI_Controller {
         // 마지막 결제
         $data["payment"] = $this->service_model->selectPaymentLast($sv_seq);
         $data["memberInfo"] = $this->api_model->selectMember($data["info"]["sv_mb_seq"]);
+        // $data["logList"] = $this->api_model->fetchLogs('2',$sv_seq);
         // echo $sv_seq;
         //첨부파일
         $data["files"] = $this->service_model->serviceFileAllFetch($sv_seq);

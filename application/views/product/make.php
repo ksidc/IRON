@@ -6,7 +6,7 @@
   .ui-tooltip {
     padding: 10px 20px;
     color: white;
-    border-radius: 2px;
+    border-radius: 6px;
     font-size:11px;
     text-transform: uppercase;
     box-shadow: 0 0 0px black;
@@ -73,10 +73,10 @@
             <input type="hidden" name="pr_pc_seq" id="pc_seq" value="<?=$pc_seq?>">
 
             <div class="modal-title">
-                <div class="modal-title-text" style="display:inline-block;width:20%">기본 정보</div>
+                <div class="modal-title-text" style="display:inline-block;width:17%">기본 정보</div>
                 <div style="display:inline-block;backround:#fff;width:77%">
-                    <div class="label padd" style="display:inline-block"><div>상품 코드</div></div>
-                    <div class="input padd"  style="display:inline-block;"><input type="text" name="pr_code" id="pr_code" style="border:1px solid #ddd" value="<?=$info["pr_code"]?>"></div>
+                    <div class="label padd" style="display:inline-block;background:#dddddd"><div>상품 코드</div></div>
+                    <div class="input padd"  style="display:inline-block;"><input type="text" name="pr_code" id="pr_code" style="border:1px solid #bfbfbf" value="<?=$info["pr_code"]?>"></div>
                 </div>
             </div>
             <div class="modal-field">
@@ -91,19 +91,19 @@
             </div>
               <div class="modal-field">
                 <div class="modal-field-input full">
-                    <div class="label padd"><div>부가항목</div></div>
+                    <div class="label padd" style="width:19.13%;"><div>부가항목</div></div>
                     <div class="input padd" id="addOption">제품군을 선택하면 제품군 등록 시 설정한 부가항목이 표시됩니다. 부가항목은 서비스 등록 시 옵션으로 설정할 수 있습니다.</div>
                 </div>
 
             </div>
             <div class="modal-field">
                 <div class="modal-field-input full">
-                    <div class="label padd"><div>상품명</div></div>
+                    <div class="label padd" style="width:19.13%;"><div>상품명</div></div>
                     <div class="input padd"><input type="text" name="pr_name" id="pr_name" style="width:20%" value="<?=$info["pr_name"]?>"> <b style="color:red">중복 등록 방지</b>를 위해 이미 등록된 유사한 상품이 있는 지 확인 후 등록하세요</div>
                 </div>
 
             </div>
-            <div class="modal-field">
+            <div class="modal-field" style="padding:10px 0px">
                 <div class="modal-field-input full">
                     상품명 등록 예시 : FortiGate 100E, WAPPLES 1000, DeepFinder, DeepFinder 관제, Dell R640
                 </div>

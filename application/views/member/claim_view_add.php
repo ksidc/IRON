@@ -18,7 +18,7 @@
             <div class="modal-field-input">
                 <div class="label"><div>서비스 종류</div></div>
                 <div class="input" id="p_pm_pc_name">
-                    <?=$info["pc_name"]?>
+                    <?=$info["pi_name"]?> - 부가항목
                 </div>
             </div>
             <div class="modal-field-input">
@@ -31,43 +31,32 @@
             <div class="modal-field-input">
                 <div class="label "><div>상품명</div></div>
 
-                <div class="input" id="p_pm_pr_name"><?=$info["pr_name"]?></div>
+                <div class="input" id="p_pm_pr_name"><?=$info["sva_name"]?></div>
             </div>
             <div class="modal-field-input">
-                <div class="label"><div>서비스 번호</div></div>
+                <div class="label"><div>대표 서비스 번호</div></div>
                 <div class="input" id="p_pm_sv_number"><?=$info["sv_number"]?></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label"><div>청구명</div></div>
-                <div class="input" id="p_pm_claim_name"><?=$info["sv_claim_name"]?></div>
+                <div class="input" id="p_pm_claim_name"><?=$info["sva_claim_name"]?></div>
             </div>
             <div class="modal-field-input">
-                <div class="label"><div>소분류</div></div>
-                <div class="input" id="p_pm_ps_name"><?=$info["ps_name"]?></div>
+                <div class="label"><div>부가항목 서비스 번호</div></div>
+                <div class="input" id="p_pm_ps_name"><?=$info["sva_number"]?></div>
             </div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label"><div>계산서 품목명</div></div>
-                <div class="input" id="p_pm_bill_name"><?=$info["sv_bill_name"]?></div>
+                <div class="input" id="p_pm_bill_name"><?=$info["sva_bill_name"]?></div>
             </div>
             <div class="modal-field-input">
-                <div class="label"><div>임대 형태</div></div>
+                <div class="label"><div>&nbsp;</div></div>
                 <div class="input" id="p_pm_rental">
-                    <?php
-                    if($info["sv_rental"] == "N"){
-                        $sv_rental = "";
-                    }else{
-                        if($info["sv_rental_type"] == "1"){
-                            $sv_rental = "영구임대";
-                        }else{
-                            $sv_rental = "소유권이전 ".$info["sv_rental_date"]."<span class='retaltype2'>개월</span>";
-                        }
-                    }
-                    echo $sv_rental;
-                    ?>
+                    &nbsp;
                 </div>
             </div>
         </div>
@@ -242,17 +231,11 @@
 
                         $diff = $date1->diff($date2);
                         // print_r($diff);
-                        // echo $diff->format("%d");
                         if($diff->format("%d") > 27){
                             $month = (($diff->format('%y') * 12) + $diff->format('%m'))+1;
                         }else{
                             $month = (($diff->format('%y') * 12) + $diff->format('%m'));
                         }
-                        // }else{
-                        //     $month = (($diff->format('%y') * 12) + $diff->format('%m'));
-                        // }
-                        
-                        
                         if($month == 0){
                             $month = 1;
                         }

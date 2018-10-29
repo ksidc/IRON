@@ -198,8 +198,8 @@ $(function(){
                 dataType : 'JSON',
                 success:function(response){
                     for(var i = 0; i < response.length;i++){
-                        addoption += '<input type="hidden" name="sa_c_seq[]" id="sa_c_seq_'+response[i].pis_seq+'" value="'+response[i].c_seq+'"><div class="modal-title" style="background:#ddd">\
-                                <div class="modal-title-text" style="display:inline-block;background:#ddd;font-size:12px;font-weight:normal">부가 항목 '+(i+1)+'</div>\
+                        addoption += '<input type="hidden" name="sa_c_seq[]" id="sa_c_seq_'+response[i].pis_seq+'" value="'+response[i].c_seq+'"><div class="modal-title" style="background:#eee">\
+                                <div class="modal-title-text" style="display:inline-block;background:#eee;font-size:12px;font-weight:normal">부가 항목 '+(i+1)+'</div>\
                                 <div style="display:inline-block"><input type="checkbox" data-seq="'+response[i].pis_seq+'" class="pis_yn" name="pis_yn[]" value="'+response[i].pis_seq+'" checked> 사용</div>\
                                 <div style="display:inline-block;padding-left:552px"></div>\
                             </div>\
@@ -210,14 +210,14 @@ $(function(){
                                         <li class="dib" style="padding:0px 10px">\
                                             <input type="text" style="width:570px" name="sa_name[]" id="sa_name_'+response[i].pis_seq+'" value="'+response[i].pis_name+'" readonly>\
                                         </li>\
-                                        <li class="dib" style="padding-right:50px"><input type="checkbox" data-num="'+(i+1)+'" data-seq="'+response[i].pis_seq+'" data-name="'+response[i].pis_name+'" data-piname="'+response[i].pi_name+'" class="etc_yn" name="etc_yn[]" id="etc_yn_'+response[i].pis_seq+'"> 계산서 품목 분류 <i class="fas fa-info-circle"></i></li>\
+                                        <li class="dib" style="padding-right:50px"><input type="checkbox" data-num="'+(i+1)+'" data-seq="'+response[i].pis_seq+'" data-name="'+response[i].pis_name+'" data-piname="'+response[i].pi_name+'" class="etc_yn" name="etc_yn[]" id="etc_yn_'+response[i].pis_seq+'"> 계산서 품목 분류 <i class="fas fa-info-circle" title="부가 항목을 세금계산서 내에 별도 품목으로 분류하려면 체크하세요." rel="tooltip"></i></li>\
                                     </ul>\
                                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px;display:none" class="more_view_'+response[i].pis_seq+'">\
                                         <li class="dib">청구명(*) <i class="fas fa-info-circle" title="부가 항목을 세금계산서 내에 별도 품목으로 분류하려면 체크하세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 10px">\
                                             <input type="text" style="width:286px" name="sa_claim_name[]" id="sa_claim_name_'+response[i].pis_seq+'">\
                                         </li>\
-                                        <li class="dib" style="padding-left:40px">계산서 품목명(*) <i class="fas fa-info-circle" title="부가 항목을 세금계산서 내에 별도 품목으로 분류하려면 체크하세요." rel="tooltip"></i></li>\
+                                        <li class="dib" style="padding-left:42px">계산서 품목명(*) <i class="fas fa-info-circle" title="부가 항목을 세금계산서 내에 별도 품목으로 분류하려면 체크하세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 0px 0px 10px">\
                                             <input type="text" style="width:285px" name="sa_bill_name[]" id="sa_bill_name_'+response[i].pis_seq+'" >\
                                         </li>\
@@ -232,16 +232,16 @@ $(function(){
                                             <input type="text" style="width:80px" name="sa_month_price[]" id="sa_month_price_'+response[i].pis_seq+'" class="sa_month_price right" data-seq="'+response[i].pis_seq+'" value="0" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"> 원/월\
                                         </li>\
                                         <li class="dib" style="padding-left:48px">결제주기 <i class="fas fa-info-circle" title="부가 항목에 대한 결제 주기를 개월 단위로 입력하세요." rel="tooltip"></i></li>\
-                                        <li class="dib" style="padding:0px 172px 0px 10px">\
+                                        <li class="dib" style="padding:0px 173px 0px 10px">\
                                             <input type="text" style="width:50px" name="sa_pay_day[]" id="sa_pay_day_'+response[i].pis_seq+'" class="sa_pay_day" data-seq="'+response[i].pis_seq+'" value="0"> 개월\
                                         </li>\
                                     </ul>\
                                     <ul style="text-align:right;padding-right:2px;padding-top:5px;padding-bottom:5px">\
                                         <li class="dib">부가 항목 매입처 <i class="fas fa-info-circle" title="부가 항목에 등록된 매입처를 자동으로 불러옵니다. (수정 가능)<br>나중에 입력하려면 공란으로 두세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 10px">\
-                                            <input type="text" style="width:146px" name="sa_c_name[]" id="sa_c_name_'+response[i].pis_seq+'" readonly value="'+response[i].c_name+'"><button class="btn btn-brown" type="button" onclick=\'$("#searchSeq").val("'+response[i].pis_seq+'");$( "#dialogClientSearch" ).dialog("open");$("#dialogClientSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();\'>검색</button>\
+                                            <input type="text" style="width:146px" name="sa_c_name[]" id="sa_c_name_'+response[i].pis_seq+'" readonly value="'+response[i].c_name+'"><button class="btn btn-brown btn-small" type="button" onclick=\'$("#searchSeq").val("'+response[i].pis_seq+'");$( "#dialogClientSearch" ).dialog("open");$("#dialogClientSearch").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();\'>검색</button>\
                                         </li>\
-                                        <li class="dib" style="padding-left:171px">부가 항목 매입가 <i class="fas fa-info-circle" title="부가 항목에 대한 매입가를 입력하세요.<br>예) 12개월 주기로 1,000,000원 씩 매입이면 1,000,000 입력<br>나중에 입력하려면 공란으로 두세요." rel="tooltip"></i></li>\
+                                        <li class="dib" style="padding-left:186px">부가 항목 매입가 <i class="fas fa-info-circle" title="부가 항목에 대한 매입가를 입력하세요.<br>예) 12개월 주기로 1,000,000원 씩 매입이면 1,000,000 입력<br>나중에 입력하려면 공란으로 두세요." rel="tooltip"></i></li>\
                                         <li class="dib" style="padding:0px 56px 0px 10px">\
                                             <input type="text" style="width:180px" name="sa_input_price[]" id="sa_input_price_'+response[i].pis_seq+'" class="right" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)">원\
                                         </li>\
@@ -252,7 +252,7 @@ $(function(){
                                             <input type="text" style="width:146px" name="sa_input_unit[]" id="sa_input_unit_'+response[i].pis_seq+'"> 개월\
                                         </li>\
                                         <li class="dib" style="padding-left:174px">부가 항목 매입 시작일 <i class="fas fa-info-circle" title="부가 항목에 대한 시작일(매입 기준)을 입력하세요.<br>나중에 입력하려면 공란으로 두세요." rel="tooltip"></i></li>\
-                                        <li class="dib" style="padding:0px 66px 0px 10px">\
+                                        <li class="dib" style="padding:0px 67px 0px 10px">\
                                             <input type="text" style="width:180px" name="sa_input_date[]" id="sa_input_date_'+response[i].pis_seq+'" class="sa_input_date datepicker3">\
                                         </li>\
                                     </ul>\
@@ -1482,7 +1482,7 @@ var calculateTotalPrice = function(){
 
     var show_total_price = 0;
     $(".total-cal-price").each(function(){
-        console.log($(this).data("price"));
+        // console.log($(this).data("price"));
         show_total_price = show_total_price + parseInt($(this).data("price"));
     })
     // console.log(show_total_price);
@@ -1812,7 +1812,8 @@ function contractPriceDateInfo(){
             $("#use_price_str_0_1").html($.number($("#sp_month_total_price").val().replace(/,/gi, "")));
             basic_date_info[0].price = $("#sp_month_total_price").val().replace(/,/gi, "");
             $("#sp_first_price").val(0);
-            $("#sp_first_month_price").val($.number(price));
+            // console.log(price);
+            $("#sp_first_month_price").val($("#sp_month_total_price").val());
         }
 
     }else if(basic_date_info.length == 2){

@@ -11,7 +11,7 @@ var category = '<?=json_encode($category)?>';
 <script src="/assets/js/estimateList.js?date=<?=time()?>"></script>
 <div class="content">
     <h2 class="title">
-        <i class="fa fa-file"></i> 견적 관리
+        <i class="fa fa-folder-open"></i> 견적 관리
     </h2>
     <div class="search">
         <form name="searchForm" id="searchForm" onsubmit="return getList();">
@@ -50,7 +50,7 @@ var category = '<?=json_encode($category)?>';
                     <select id="searchType" name="searchType" class="select2" style="width:140px">
                         <option value="es_name" selected>상호/이름</option>
                         <option value="es_number">견적번호</option>
-                        <option value="es_mb_id">회원아이디</option>
+                        <option value="mb_id">회원아이디</option>
                         <option value="es_charger">담당자</option>
                         <option value="es_tel">전화번호</option>
                         <option value="es_phone">휴대폰번호</option>
@@ -134,7 +134,7 @@ var category = '<?=json_encode($category)?>';
         <input type="hidden" name="dupleNumberYn" id="dupleNumberYn" value="">
         <input type="hidden" name="b_es_number" id="b_es_number">
         <div class="modal-title">
-            <div class="modal-title-text">등록자 정보</div>
+            <div class="modal-title-text"><div>등록자 정보</div></div>
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
@@ -169,10 +169,10 @@ var category = '<?=json_encode($category)?>';
 
         </div>
         <div class="modal-title">
-            <div class="modal-title-text" style="display:inline-block;width:20%">고객 정보</div>
-            <div style="display:inline-block;background:#fff;width:77%">
-                <div class="label padd" style="display:inline-block"><div>회원 아이디</div></div>
-                <div class="input padd"  style="display:inline-block;"><input type="text" name="mb_id" id="mb_id" style="border:1px solid #ddd;" readonly></div>
+            <div class="modal-title-text" style="display:inline-block;width:16.2%"><div>고객 정보</div></div>
+            <div style="display:inline-block;width:77%">
+                <div class="label padd" style="display:inline-block;background:#dddddd"><div>회원 아이디</div></div>
+                <div class="input padd"  style="display:inline-block;"><input type="text" name="mb_id" id="mb_id" readonly></div>
             </div>
         </div>
         <div class="modal-field">
@@ -222,9 +222,9 @@ var category = '<?=json_encode($category)?>';
             </div>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text" style="display:inline-block;width:20%">견적정보</div>
-            <div style="display:inline-block;width:77%;background:#fff">
-                <div class="label padd" style="display:inline-block"><div>견적번호</div></div>
+            <div class="modal-title-text" style="display:inline-block;width:16.2%"><div>견적정보</div></div>
+            <div style="display:inline-block;width:77%;">
+                <div class="label padd" style="display:inline-block;background:#dddddd"><div>견적번호</div></div>
                 <div class="input padd" style="display:inline-block"><input type="text" name="es_number1" id="es_number1" style="width:30%;border:1px solid #ddd;"> - <input type="text" name="es_number2" id="es_number2" style="width:20%;border:1px solid #ddd;"> <button class="btn btn-brown btn-small btn-number-duple" type="button">중복확인</button></div>
             </div>
         </div>
@@ -258,7 +258,7 @@ var category = '<?=json_encode($category)?>';
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
-                <div class="label"><img src="/assets/images/up.png" class="depthAdd"> <img src="/assets/images/down.png" class="depthMinus"></div>
+                <div class="label" style="padding:4px 0px 0px 0px;"><img src="/assets/images/up.png" class="depthAdd" style="cursor:pointer;" title="서비스종류/상품명 추가"> <img src="/assets/images/down.png" class="depthMinus" style="cursor:pointer;" title="서비스종류/상품명 제외"></div>
 
             </div>
 
@@ -277,15 +277,15 @@ var category = '<?=json_encode($category)?>';
 
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label padd" style="vertical-align:top"><div>메모</div></div>
-                <div class="input padd" style="width:75%"><textarea name="es_memo" id="es_memo" style="width:100%;height:100px"></textarea></div>
+                <div class="label padd" style="width:19%;vertical-align:top;height:114px"><div>메모</div></div>
+                <div class="input padd" style="width:76%"><textarea name="es_memo" id="es_memo" style="width:100%;height:100px;margin-top:4px;border:1px solid #bfbfbf;background-color:#fafafa;"></textarea></div>
             </div>
 
         </div>
         <div class="modal-field">
             <div class="modal-field-input">
                 <div class="label padd"><div>건적서 첨부</div></div>
-                <div class="input padd"><button class="btn btn-black" type="button" onclick="$('#es_file').trigger('click')">찾아보기</button></div>
+                <div class="input padd"><button class="btn btn-brown btn-small" type="button" onclick="$('#es_file').trigger('click')">찾아보기</button></div>
 
             </div>
         </div>
@@ -450,11 +450,9 @@ var category = '<?=json_encode($category)?>';
         </div>
     </div>
     </form>
-    <div class="modal-field">
-        <div class="modal-field-input">
-            <div class="label padd"><div><img src="/assets/images/up.png" class="basicFileAdd"> <img src="/assets/images/down.png" class="basicFileMinus"></div></div>
-        </div>
-    </div>
+	<div style="margin-top:4px; width:23%; text-align:right;">
+		<img src="/assets/images/up.png" class="basicFileAdd" style="cursor:pointer;"> <img src="/assets/images/down.png" class="basicFileMinus" style="cursor:pointer;">
+	</div>
     <div class="modal-button">
         <button class="btn btn-black btn-file-register" type="button">저장</button>
     </div>
@@ -465,16 +463,25 @@ var category = '<?=json_encode($category)?>';
     <div class="modal_search">
         <ul>
             <li>
-                <div class="selectbox" style="background:#fff;width:100px">
+               <!--  <div class="selectbox" style="background:#fff;width:100px">
                     <label for="memberSearchType" style="top:1.5px;padding:.52em .5em .3em .5em;font-size:12px">회원명</label>
                     <select name="memberSearchType" style="padding:.52em .5em .3em .5em;font-size:12px">
                         <option value="mb_name" selected>회원명</option>
 
                     </select>
-                </div>
+                </div> -->
+                <select name="memberSearchType" id="memberSearchType" class="select2" style="width:120px">
+                    <option value="mb_name" selected>회원명</option>
+                    <option value="mb_id" >회원아이디</option>  
+                    <option value="mb_number" >사업자번호/생년월일</option>
+                    <option value="mb_contract_name" >계약담당자</option>
+                    <option value="mb_tel" >전화번호</option>
+                    <option value="mb_phone" >휴대폰번호</option>
+                    <option value="mb_email" >이메일</option>
+                </select>
             </li>
             <li >
-                <input type="text" name="memberSearchWord" id="memberSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-member" type="submit" style="padding:5.5px 7px;margin-bottom:3px">검색</button>
+                <input type="text" name="memberSearchWord" id="memberSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-member" type="submit">검색</button>
             </li>
         </ul>
     </div>
@@ -506,7 +513,7 @@ var category = '<?=json_encode($category)?>';
                 분류명 (서비스 종류)
             </li>
             <li >
-                <input type="text" name="typeSearchWord" id="typeSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-type" type="submit" style="padding:5.5px 7px;margin-bottom:3px">검색</button>
+                <input type="text" name="typeSearchWord" id="typeSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-type" type="submit">검색</button>
             </li>
         </ul>
     </div>
@@ -535,7 +542,7 @@ var category = '<?=json_encode($category)?>';
         </div>
         <div class="type-add-right" style="padding-left:30px">
             <div style="display:inline-block">분류명</div>
-            <div style="display:inline-block"><input type="text" name="ct_name" id="ct_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-type-add" type="submit" style="padding:5.5px 7px;margin-bottom:3px">신규 등록</button></div>
+            <div style="display:inline-block"><input type="text" name="ct_name" id="ct_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-type-add" type="submit">신규 등록</button></div>
         </div>
     </div>
     </form>
@@ -550,7 +557,7 @@ var category = '<?=json_encode($category)?>';
                 END User
             </li>
             <li >
-                <input type="text" name="endSearchWord" id="endSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-end" type="submit" style="padding:5.5px 7px;margin-bottom:3px">검색</button>
+                <input type="text" name="endSearchWord" id="endSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-end" type="submit">검색</button>
             </li>
         </ul>
     </div>
@@ -579,7 +586,7 @@ var category = '<?=json_encode($category)?>';
         </div>
         <div class="type-add-right" style="padding-left:30px">
             <div style="display:inline-block">END User</div>
-            <div style="display:inline-block"><input type="text" name="eu_name" id="eu_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-end-add" type="submit" style="padding:5.5px 7px;margin-bottom:3px">신규 등록</button></div>
+            <div style="display:inline-block"><input type="text" name="eu_name" id="eu_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-end-add" type="submit">신규 등록</button></div>
         </div>
     </div>
     </form>

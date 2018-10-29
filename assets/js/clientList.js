@@ -507,7 +507,7 @@ $(function(){
 
 var getList = function(){
     var start = $("#start").val();
-    var end = 5;
+    var end = 40;
     var url = "/api/clientList/"+start+"/"+end;
     var searchForm = $("#searchForm").serialize();
     // console.log(url);
@@ -558,7 +558,7 @@ var getList = function(){
                 }
 
                 $(".pagination-html").bootpag({
-                    total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
+                    total : Math.ceil(parseInt(response.total)/40), // 총페이지수 (총 Row / list노출개수)
                     page : $("#start").val(), // 현재 페이지 default = 1
                     maxVisible:5, // 페이지 숫자 노출 개수
                     wrapClass : "pagination",

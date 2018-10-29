@@ -9,7 +9,7 @@
 <script src="/assets/js/serviceRegister.js?date=<?=time()?>"></script>
 <div class="content">
     <h2 class="title">
-        <i class="fa fa-file"></i> 서비스 등록
+        <i class="fa fa-folder-open"></i> 서비스 등록
     </h2>
     <div class="search">
         <form name="searchForm" id="searchForm" onsubmit="return getList();">
@@ -111,7 +111,7 @@
 <div id="dialogPolicy" class="dialog" >
     <form name="policyForm" id="policyForm">
         <div class="modal-title">
-            <div class="modal-title-text w35">요금 납부 방법 / 결제 주기 할인율</div>
+            <div class="modal-title-text w35"><div>요금 납부 방법 / 결제 주기 할인율</div></div>
         </div>
         <div class="modal-field service">
             <div class="modal-field-input full" >
@@ -122,14 +122,14 @@
                         <ul class="sb_add">
 
                         </ul>
-                        <div class="btn-service-label"><img src="/assets/images/up.png" class="sbAdd"> <img src="/assets/images/down.png" class="sbMinus"></div>
+                        <div class="btn-service-label"><img src="/assets/images/up.png" class="sbAdd" style="cursor:pointer;"> <img src="/assets/images/down.png" class="sbMinus" style="cursor:pointer;"></div>
                     </div>
                     <div class="modal-service-left">
                         <label class="service-label"> 카드</label>
                         <ul class="sc_add">
 
                         </ul>
-                        <div class="btn-service-label"><img src="/assets/images/up.png" class="scAdd"> <img src="/assets/images/down.png" class="scMinus"></div>
+                        <div class="btn-service-label"><img src="/assets/images/up.png" class="scAdd" style="cursor:pointer;"> <img src="/assets/images/down.png" class="scMinus" style="cursor:pointer;"></div>
                     </div>
                     <div class="modal-service-left" style="border-bottom:0px;padding-bottom:10px">
                         <label class="service-label"> CMS</label>
@@ -141,14 +141,14 @@
             </div>
         </div>
         <div class="modal-title">
-            <div class="modal-title-text w35">초기 일할 청구 설정</div>
+            <div class="modal-title-text w35"><div>초기 일할 청구 설정</div></div>
         </div>
         <div class="modal-field service">
             <div class="modal-field-input full" >
                 <div class="label service" >서비스 등록 시 기본값</div>
                 <div class="input service" >
                     <div class="modal-service-left" style="border-bottom:0px;padding-bottom:10px">
-                        <ul >
+                        <ul style="list-style:none;margin:0;padding-left:10px;padding-top:5px;padding-bottom:5px;">
                             <li style="display:inline-block;width:30%"><input type="radio" name="sp_basic_type" id="sp_basic_type_1" value="1">일할 계산</li>
                             <li style="display:inline-block"><input type="radio" name="sp_basic_type" id="sp_basic_type_2" value="2">과금 시작일 기준 결제 주기로 처리</li>
                         </ul>

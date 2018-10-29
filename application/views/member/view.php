@@ -15,11 +15,12 @@
 </style>
 <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
 <div class="content">
     <h2 class="title">
-        <i class="fa fa-file"></i> 회원 상세 정보
+        <i class="fa fa-folder-open"></i> 회원 상세 정보
     </h2>
-    <div style="border:1px solid #eee;background:#fff;border-radius:6px;height:550px;margin-top:20px">
+    <div class="header-box">
         <form id="update1">
             <input type="hidden" name="mb_seq" id="mb_seq" value="<?=$info["mb_seq"]?>">
             <input type="hidden" name="b_mb_type" id="b_mb_type" value="<?=$info["mb_type"]?>">
@@ -33,18 +34,20 @@
             <input type="hidden" name="b_mb_phone" id="b_mb_phone" value="<?=$info["mb_phone"]?>">
             <input type="hidden" name="b_mb_email" id="b_mb_email" value="<?=$info["mb_email"]?>">
             <input type="hidden" name="b_mb_fax" id="b_mb_fax" value="<?=$info["mb_fax"]?>">
-        <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left">회원정보</div>
+            <input type="hidden" name="b_mb_business_conditions" id="b_mb_business_conditions" value="<?=$info["mb_business_conditions"]?>">
+            <input type="hidden" name="b_mb_business_type" id="b_mb_business_type" value="<?=$info["mb_business_type"]?>">
+        <div class="header-title">
+            <div style="float:left"><div>회원정보</div></div>
             <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate1('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
         </div>
         <div class="view-body" style="clear:both;width:100%">
-            <div style="width:33.3%;float:left;">
+            <div style="width:35%;float:left;">
                 <div style="width:100%">
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label padd"><div>회원구분</div></div>
+                            <div class="label padd"><div>회원 구분</div></div>
                             <div class="input padd">
-                                <select name="mb_type" id="mb_type" class="select2" style="width:90%">
+                                <select name="mb_type" id="mb_type" class="select2" style="width:100px">
                                     <option value="0" <?=($info["mb_type"] == "0" ? "selected":"")?>>사업자</option>
                                     <option value="1" <?=($info["mb_type"] == "1" ? "selected":"")?>>개인</option>
 
@@ -64,7 +67,7 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div>거래처 코드</div></div>
                             <div class="input padd">
-                                <input type="text" class="width-button" name="c_code" id="c_code" readonly><button class="btn btn-brown " type="button" >거래처 등록</button>
+                                <input type="text" class="width-button" name="c_code" id="c_code" readonly><button class="btn btn-brown btn-small" type="button" >거래처 등록</button>
                             </div>
                         </div>
                     </div>
@@ -76,17 +79,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-field">
+                    <div class="modal-field border-bottom-0">
                         <div class="modal-field-input full">
-                            <div class="label padd"><div>주소</div></div>
+                            <div class="label padd"><div>주소(한글)</div></div>
                             <div class="input padd">
-                                <input type="text" class="width-button" name="mb_zipcode" id="mb_zipcode"  value="<?=$info["mb_zipcode"]?>"><button class="btn btn-brown " type="button" onclick="daumApi()">검색</button>
+                                <input type="text" class="width-button" name="mb_zipcode" id="mb_zipcode"  value="<?=$info["mb_zipcode"]?>"><button class="btn btn-brown btn-small" type="button" onclick="daumApi()">검색</button>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-field">
+                    <div class="modal-field border-bottom-0">
                         <div class="modal-field-input full">
-                            <div class="label padd"><div></div></div>
+                            <div class="label padd"><div>&nbsp;</div></div>
                             <div class="input padd">
                                 <input type="text" class="width-button" name="mb_address" id="mb_address"  value="<?=$info["mb_address"]?>">
                             </div>
@@ -94,7 +97,7 @@
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label padd"><div></div></div>
+                            <div class="label padd"><div>&nbsp;</div></div>
                             <div class="input padd">
                                 <input type="text" class="width-button" name="mb_detail_address" id="mb_detail_address" value="<?=$info["mb_detail_address"]?>">
                             </div>
@@ -104,7 +107,7 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div>업태</div></div>
                             <div class="input padd">
-                                <input type="text" class="width-button" name="mb_uptae" id="mb_uptae" value="">
+                                <input type="text" class="width-button" name="mb_business_conditions" id="mb_business_conditions" value="<?=$info["mb_business_conditions"]?>">
                             </div>
                         </div>
                     </div>
@@ -126,7 +129,7 @@
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label padd"><div>수신동의</div></div>
+                            <div class="label padd"><div>수신 동의</div></div>
                             <div class="input padd">
                                 <input type="checkbox" name="emailYn" value="Y"> 이메일 <input type="checkbox" name="smsYn" value="N"> SMS
                             </div>
@@ -134,13 +137,13 @@
                     </div>
                 </div>
             </div>
-            <div style="width:33.3%;float:left">
+            <div style="width:35%;float:left">
                 <div style="width:100%">
                     <div class="modal-field">
                         <div class="modal-field-input full">
                             <div class="label padd"><div>등급</div></div>
                             <div class="input padd">
-                                <select name="mb_level" id="mb_level" class="select2" style="width:90%">
+                                <select name="mb_level" id="mb_level" class="select2" style="width:100px">
                                     <option value="1" selected>1</option>
                                     <option value="2">2</option>
 
@@ -168,11 +171,11 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div>패스워드</div></div>
                             <div class="input padd">
-                                <button class="btn btn-brown " type="button" >임시 패스워드 발급</button>
+                                <button class="btn btn-brown" type="button" >임시 패스워드 발급</button>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-field">
+                    <div class="modal-field border-bottom-0">
                         <div class="modal-field-input full">
                             <div class="label padd"><div>주소(영문)</div></div>
                             <div class="input padd">
@@ -180,9 +183,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-field">
+                    <div class="modal-field border-bottom-0">
                         <div class="modal-field-input full">
-                            <div class="label padd"><div></div></div>
+                            <div class="label padd"><div>&nbsp;</div></div>
                             <div class="input padd">
                                 <input type="text" class="width-button" name="mb_address_eng" id="mb_address_eng">
                             </div>
@@ -190,7 +193,7 @@
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label padd"><div></div></div>
+                            <div class="label padd"><div>&nbsp;</div></div>
                             <div class="input padd">
                                 <input type="text" class="width-button" name="mb_detail_address_eng" id="mb_detail_address_eng" >
                             </div>
@@ -200,7 +203,7 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div>종목</div></div>
                             <div class="input padd">
-                                <input type="text" class="width-button" name="mb_jongmok" id="mb_jongmok" value="">
+                                <input type="text" class="width-button" name="mb_business_type" id="mb_business_type" value="<?=$info["mb_business_type"]?>">
                             </div>
                         </div>
                     </div>
@@ -222,23 +225,26 @@
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label padd"><div>알게된 경로</div></div>
+                            <div class="label padd"><div>알게 된 경로</div></div>
                             <div class="input padd">
-                                <select name="" id="" class="select2" style="width:90%">
-                                    <option value="1" selected>주위소개</option>
-                                    <option value="2">2</option>
-
+                                <select name="" id="" class="select2" style="width:63.8%">
+                                    <option value="1" selected>주위 소개</option>
+                                    <option value="2">네이버</option>
+									<option value="3">다음</option>
+									<option value="4">구글</option>
+									<option value="5">신문기사를 보고</option>
+									<option value="6">배너(기타 사이트)</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div style="width:33.3%;float:left">
+            <div style="width:30%;float:left">
                 <div style="width:100%">
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label padd"><div>회원가입일</div></div>
+                            <div class="label padd"><div>회원 가입일</div></div>
                             <div class="input padd">
                                 <?=$info["mb_regdate"]?>
                             </div>
@@ -248,7 +254,7 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div>최근 접속일</div></div>
                             <div class="input padd">
-                                0000-00-00 00:00:00
+                                <!-- 프론트 로그인 연동 -->
                             </div>
                         </div>
                     </div>
@@ -256,7 +262,7 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div>최근 접속 IP</div></div>
                             <div class="input padd">
-                                111.111.111.111
+                                <!-- 프론트 로그인 연동 -->
                             </div>
                         </div>
                     </div>
@@ -264,15 +270,15 @@
                         <div class="modal-field-input full">
                             <div class="label padd"><div>인증 구분</div></div>
                             <div class="input padd">
-                                (향후연동)
+                                <!-- 프론트 로그인 연동 -->
                             </div>
                         </div>
                     </div>
                     <div class="modal-field">
                         <div class="modal-field-input full">
-                            <div class="label padd" style="vertical-align:top"><div>메모</div></div>
+                            <div class="label padd" style="vertical-align:top;height:200px"><div>메모</div></div>
                             <div class="input padd">
-                                <textarea name="memo" style="width:90%;height:200px"></textarea>
+                                <textarea name="mb_memo" style="width:90%;height:186px;margin-top:4px;border:1px solid #bfbfbf;background-color:#fafafa;"><?=$info["mb_memo"]?></textarea>
                             </div>
                         </div>
                     </div>
@@ -282,309 +288,382 @@
         </div>
         </form>
     </div>
-    <div style="width:66%;float:left;border:1px solid #eee;background:#fff;border-radius:6px;height:170px;margin-top:20px" >
-        <form id="update3">
-            <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
-        <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left">회원 계좌 정보</div>
-            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate2('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
+	<div class="header-group">
+		<div class="header-box" style="width:66%;float:left;">
+			<form id="update2">
+				<input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
+			<div class="header-title">
+				<div style="float:left"><div>회원 계좌 정보</div></div>
+				<div style="float:right"><i class="fa fa-edit" onclick="memberUpdate2('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
+			</div>
+			<div class="view-body" style="clear:both;width:100%">
+
+				<div style="width:100%">
+					<div class="modal-field">
+						<div class="modal-field-input" style="width:33%">
+							<div class="label padd"><div>은행명</div></div>
+							<div class="input padd">
+								<input type="text" name="mb_bank" id="mb_bank" value="<?=$info["mb_bank"]?>">
+							</div>
+						</div>
+						<div class="modal-field-input" style="width:33%">
+							<div class="label padd"><div>예금주</div></div>
+							<div class="input padd">
+								<input type="text" style="width:38.7%" name="mb_bank_name" id="mb_bank_name" value="<?=$info["mb_bank_name"]?>">
+							</div>
+						</div>
+						<div class="modal-field-input" style="width:33%">
+							<div class="label padd" ><div>예금주와의 관계</div></div>
+							<div class="input padd">
+								<input type="text" style="width:30%" name="mb_bank_name_relationship" id="mb_bank_name_relationship" value="<?=$info["mb_bank_name_relationship"]?>">
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input">
+							<div class="label padd"><div>계좌번호(-포함)</div></div>
+							<div class="input padd">
+								<input type="text" name="mb_bank_input_number" id="mb_bank_input_number" value="<?=$info["mb_bank_input_number"]?>">
+							</div>
+						</div>
+						<div class="modal-field-input">
+							<div class="label padd"><div>사업자번호/생년월일</div></div>
+							<div class="input padd">
+								<input type="text" name="mb_bank_number" id="mb_bank_number" value="<?=$info["mb_bank_number"]?>">
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+			</form>
+		</div>
+		<div class="header-box" style="width:33%;float:right;">
+			<form id="update3">
+				<input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
+			<div class="header-title">
+				<div style="float:left"><div>결제 계좌 정보</div></div>
+				<div style="float:right"><i class="fa fa-edit" onclick="memberUpdate3('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
+			</div>
+			<div class="view-body" style="clear:both;width:100%">
+
+				<div style="width:100%">
+					<div class="modal-field">
+						<div class="modal-field-input">
+							<div class="label padd"><div>은행명</div></div>
+							<div class="input padd" style="width:59%">
+								<input type="text" class="width-button" name="mb_input_payment_bank" id="mb_input_payment_bank" value="<?=($info["mb_input_payment_bank"] != "" ? $info["mb_input_payment_bank"]:$eosec_view["mb_bank"])?>">
+							</div>
+						</div>
+						<div class="modal-field-input">
+							<div class="label padd"><div>예금주</div></div>
+							<div class="input padd" style="width:59%">
+								<input type="text" class="width-button" name="mb_input_payment_name" id="mb_input_payment_name" readonly value="<?=($info["mb_input_payment_name"] != "" ? $info["mb_input_payment_name"]:$eosec_view["mb_bank_name"])?>">
+							</div>
+						</div>
+
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>계좌번호(-포함)</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_input_payment_number" id="mb_input_payment_number" readonly value="<?=($info["mb_input_payment_number"] != "" ? $info["mb_input_payment_number"]:$eosec_view["mb_bank_input_number"])?>">
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+			</form>
+		</div>
+	</div>
+	<div class="header-group">
+		<div class="header-box" style="width:32.8%;float:left;margin-right:6px;">
+			<form id="update4">
+				<input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
+				<input type="hidden" name="b_mb_contract_name" id="b_mb_contract_name" value="<?=$info["mb_contract_name"]?>">
+				<input type="hidden" name="b_mb_contract_email" id="b_mb_contract_email" value="<?=$info["mb_contract_email"]?>">
+				<input type="hidden" name="b_mb_contract_tel" id="b_mb_contract_tel" value="<?=$info["mb_contract_tel"]?>">
+				<input type="hidden" name="b_mb_contract_phone" id="b_mb_contract_phone" value="<?=$info["mb_contract_phone"]?>">
+			<div class="header-title">
+				<div style="float:left"><div>계약 담당자</div></div>
+				<div style="float:right"><i class="fa fa-edit" onclick="memberUpdate4('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
+			</div>
+			<div class="view-body" style="clear:both;width:100%">
+
+				<div style="width:100%">
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>이름</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_contract_name" id="mb_contract_name" value="<?=$info["mb_contract_name"]?>">
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>이메일</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_contract_email" id="mb_contract_email" value="<?=$info["mb_contract_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_contract_email").val());$("#phone").val($("#mb_contract_phone").val());$( "#dialogEmail" ).dialog("open");'></i>
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>부서</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_contract_team" id="mb_contract_team" value="<?=$info["mb_contract_team"]?>">
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>직위/직책</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_contract_position" id="mb_contract_position" value="<?=$info["mb_contract_position"]?>">
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>휴대폰번호</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_contract_phone" id="mb_contract_phone" value="<?=$info["mb_contract_phone"]?>"> <i class="fas fa-mobile-alt"></i>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>전화번호</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_contract_tel" id="mb_contract_tel" value="<?=$info["mb_contract_tel"]?>">
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			</form>
+		</div>
+		<div class="header-box" style="width:32.8%;float:left;">
+			<form id="update5">
+				<input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
+				<input type="hidden" name="b_mb_service_name" id="b_mb_service_name" value="<?=$info["mb_service_name"]?>">
+				<input type="hidden" name="b_mb_service_email" id="b_mb_service_email" value="<?=$info["mb_service_email"]?>">
+				<input type="hidden" name="b_mb_service_tel" id="b_mb_service_tel" value="<?=$info["mb_service_tel"]?>">
+				<input type="hidden" name="b_mb_service_phone" id="b_mb_service_phone" value="<?=$info["mb_service_phone"]?>">
+			<div class="header-title">
+				<div style="float:left"><div>운영 담당자</div></div>
+				<div style="float:right"><i class="fa fa-edit" onclick="memberUpdate5('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
+			</div>
+			<div class="view-body" style="clear:both;width:100%">
+
+				<div style="width:100%">
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>이름</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_service_name" id="mb_service_name" value="<?=$info["mb_service_name"]?>">
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>이메일</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_service_email" id="mb_service_email" value="<?=$info["mb_service_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_service_email").val());$("#phone").val($("#mb_service_phone").val());$( "#dialogEmail" ).dialog("open");'></i>
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>부서</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_service_team" id="mb_service_team" value="<?=$info["mb_service_team"]?>">
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>직위/직책</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_service_position" id="mb_service_position" value="<?=$info["mb_service_position"]?>">
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>휴대폰번호</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_service_phone" id="mb_service_phone" value="<?=$info["mb_service_phone"]?>"> <i class="fas fa-mobile-alt"></i>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>전화번호</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_service_tel" id="mb_service_tel" value="<?=$info["mb_service_tel"]?>">
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			</form>
+		</div>
+		<div class="header-box" style="width:33%;float:right;">
+			<form id="update6">
+				<input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
+				<input type="hidden" name="b_mb_payment_name" id="b_mb_payment_name" value="<?=$info["mb_payment_name"]?>">
+				<input type="hidden" name="b_mb_payment_email" id="b_mb_payment_email" value="<?=$info["mb_payment_email"]?>">
+				<input type="hidden" name="b_mb_payment_tel" id="b_mb_payment_tel" value="<?=$info["mb_payment_tel"]?>">
+				<input type="hidden" name="b_mb_payment_phone" id="b_mb_payment_phone" value="<?=$info["mb_payment_phone"]?>">
+			<div class="header-title">
+				<div style="float:left;"><div>요금 담당자</div></div>
+				<div style="float:right;"><i class="fa fa-edit"  onclick="memberUpdate6('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
+			</div>
+			<div class="view-body" style="clear:both;width:100%">
+
+				<div style="width:100%">
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>이름</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_payment_name" id="mb_payment_name" value="<?=$info["mb_payment_name"]?>">
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>이메일</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_payment_email" id="mb_payment_email" value="<?=$info["mb_payment_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_payment_email").val());$("#phone").val($("#mb_payment_phone").val());$( "#dialogEmail" ).dialog("open");'></i>
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>부서</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_payment_team" id="mb_payment_team" value="<?=$info["mb_payment_team"]?>">
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>직위/직책</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_payment_position" id="mb_payment_position" value="<?=$info["mb_payment_position"]?>">
+							</div>
+						</div>
+					</div>
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>휴대폰번호</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_payment_phone" id="mb_payment_phone" value="<?=$info["mb_payment_phone"]?>"> <i class="fas fa-mobile-alt"></i>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-field">
+						<div class="modal-field-input full">
+							<div class="label padd"><div>전화번호</div></div>
+							<div class="input padd">
+								<input type="text" class="width-button" name="mb_payment_tel" id="mb_payment_tel" value="<?=$info["mb_payment_tel"]?>">
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			</form>
+		</div>
+
+	</div>
+    <div class="header-box">
+        <div class="header-title">
+            <div><div>변경 로그</div></div>
         </div>
-        <div class="view-body" style="clear:both;width:100%">
+        <div style="float:right;font-size:12px;padding:5px 0px">
+            <ul style="list-style:none;padding:0;margin:0">
+                <li style="float:left;padding-top:5px">구분 </li>
+                <li style="float:left;padding-left:3px">
+                    <select name="log_type" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-top:5px;padding-left:10px">항목</li>
+                <li style="float:left;padding-left:3px">
+                    <select name="log_type" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-top:5px;padding-left:10px">날짜</li>
+                <li style="float:left;padding-left:3px">
+                    <input type="text" name="start_date" class="datepicker3"> ~ <input type="text" name="end_date" class="datepicker3">
+                </li>
+            </ul>
+            <ul style="clear:both;list-style:none;padding:10px 0px 0px 0px;margin:0">
+                <li style="float:left;padding-top:5px">작업자 구분 : </li>
+                <li style="float:left;padding-top:3px;padding-left:10px">
+                    ADMIN <input type="checkbox"> SYSTEM <input type="checkbox"> USER <input type="checkbox">
+                </li>
+                <li style="float:left">
+                    <select name="" class="select2" style="width:120px">
+                        <option value="">작업자 이름</option>
+                        <option value="">작업자 ID</option>
+                        <option value="">접속 IP</option>
+                    </select>
+                </li>
+                <li style="float:left">
+                    <input type="text" name=""><button class="btn btn-brown btn-small" type="button">검색</button>
+                </li>
 
-            <div style="width:100%">
-                <div class="modal-field">
-                    <div class="modal-field-input" style="width:33%">
-                        <div class="label padd"><div>은행명</div></div>
-                        <div class="input padd">
-                            <input type="text" name="mb_bank" id="mb_bank" value="<?=$info["mb_bank"]?>">
-                        </div>
-                    </div>
-                    <div class="modal-field-input" style="width:33%">
-                        <div class="label padd"><div>예금주</div></div>
-                        <div class="input padd">
-                            <input type="text" style="width:38.7%" name="mb_bank_name" id="mb_bank_name" value="<?=$info["mb_bank_name"]?>">
-                        </div>
-                    </div>
-                    <div class="modal-field-input" style="width:33%">
-                        <div class="label padd" ><div>예금주와의 관계</div></div>
-                        <div class="input padd">
-                            <input type="text" style="width:30%" name="mb_bank_name_relationship" id="mb_bank_name_relationship" value="<?=$info["mb_bank_name_relationship"]?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input">
-                        <div class="label padd"><div>계좌번호(-포함)</div></div>
-                        <div class="input padd">
-                            <input type="text" name="mb_bank_input_number" id="mb_bank_input_number" value="<?=$info["mb_bank_input_number"]?>">
-                        </div>
-                    </div>
-                    <div class="modal-field-input">
-                        <div class="label padd"><div>사업자번호/생년월일</div></div>
-                        <div class="input padd">
-                            <input type="text" name="mb_bank_number" id="mb_bank_number" value="<?=$info["mb_bank_number"]?>">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
+            </ul>
         </div>
-        </form>
+        <div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>No</th>
+                    <th>날짜</th>
+                    <th>구분</th>
+                    <th>항목</th>
+                    <th>변경 전</th>
+                    <th>변경 후</th>
+                    <th>작업자 구분</th>
+                    <th>작업자</th>
+                    <th>접속 IP</th>
+                </tr>
+                </thead>
+                <tbody id="log-list">
+                
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <div id="logPaging"></div>
+        </div>
     </div>
-    <div style="width:33.3%;float:right;border:1px solid #eee;background:#fff;border-radius:6px;height:170px;margin-top:20px">
-        <form id="update3">
-            <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
-        <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left">결제 계좌 정보</div>
-            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate3('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
-        </div>
-        <div class="view-body" style="clear:both;width:100%">
-
-            <div style="width:100%">
-                <div class="modal-field">
-                    <div class="modal-field-input">
-                        <div class="label padd"><div>은행명</div></div>
-                        <div class="input padd" style="width:59%">
-                            <input type="text" class="width-button" name="mb_bank2" id="mb_bank2">
-                        </div>
-                    </div>
-                    <div class="modal-field-input">
-                        <div class="label padd"><div>예금주</div></div>
-                        <div class="input padd" style="width:59%">
-                            <input type="text" class="width-button" name="mb_bank_name2" id="mb_bank_name2" readonly>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>계좌번호(-포함)</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_bank_input_number2" id="mb_bank_input_number2" readonly>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-        </form>
-    </div>
-    <div style="width:33.1%;float:left;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:20px">
-        <form id="update4">
-            <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
-            <input type="hidden" name="b_mb_contract_name" id="b_mb_contract_name" value="<?=$info["mb_contract_name"]?>">
-            <input type="hidden" name="b_mb_contract_email" id="b_mb_contract_email" value="<?=$info["mb_contract_email"]?>">
-            <input type="hidden" name="b_mb_contract_tel" id="b_mb_contract_tel" value="<?=$info["mb_contract_tel"]?>">
-            <input type="hidden" name="b_mb_contract_phone" id="b_mb_contract_phone" value="<?=$info["mb_contract_phone"]?>">
-        <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left"><div>계약 담당자</div></div>
-            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate4('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
-        </div>
-        <div class="view-body" style="clear:both;width:100%">
-
-            <div style="width:100%">
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>이름</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_contract_name" id="mb_contract_name" value="<?=$info["mb_contract_name"]?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>이메일</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_contract_email" id="mb_contract_email" value="<?=$info["mb_contract_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_contract_email").val());$("#phone").val($("#mb_contract_phone").val());$( "#dialogEmail" ).dialog("open");'></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>부서</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_contract_team" id="mb_contract_team" value="<?=$info["mb_contract_team"]?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>직위/직책</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_contract_position" id="mb_contract_position" value="<?=$info["mb_contract_position"]?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>휴대폰번호</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_contract_phone" id="mb_contract_phone" value="<?=$info["mb_contract_phone"]?>"> <i class="fas fa-mobile-alt"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>전화번호</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_contract_tel" id="mb_contract_tel" value="<?=$info["mb_contract_tel"]?>">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        </form>
-    </div>
-    <div style="width:33.1%;float:left;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:20px">
-        <form id="update5">
-            <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
-            <input type="hidden" name="b_mb_service_name" id="b_mb_service_name" value="<?=$info["mb_service_name"]?>">
-            <input type="hidden" name="b_mb_service_email" id="b_mb_service_email" value="<?=$info["mb_service_email"]?>">
-            <input type="hidden" name="b_mb_service_tel" id="b_mb_service_tel" value="<?=$info["mb_service_tel"]?>">
-            <input type="hidden" name="b_mb_service_phone" id="b_mb_service_phone" value="<?=$info["mb_service_phone"]?>">
-        <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left" >운영 담당자</div>
-            <div style="float:right"><i class="fa fa-edit" onclick="memberUpdate5('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
-        </div>
-        <div class="view-body" style="clear:both;width:100%">
-
-            <div style="width:100%">
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>이름</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_service_name" id="mb_service_name" value="<?=$info["mb_service_name"]?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>이메일</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_service_email" id="mb_service_email" value="<?=$info["mb_service_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_service_email").val());$("#phone").val($("#mb_service_phone").val());$( "#dialogEmail" ).dialog("open");'></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>부서</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_service_team" id="mb_service_team" value="<?=$info["mb_service_team"]?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>직위/직책</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_service_position" id="mb_service_position" value="<?=$info["mb_service_position"]?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>휴대폰번호</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_service_phone" id="mb_service_phone" value="<?=$info["mb_service_phone"]?>"> <i class="fas fa-mobile-alt"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>전화번호</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_service_tel" id="mb_service_tel" value="<?=$info["mb_service_tel"]?>">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        </form>
-    </div>
-    <div style="width:33.1%;float:left;border:1px solid #eee;background:#fff;border-radius:6px;height:300px;margin-top:20px;margin-bottom:20px">
-        <form id="update6">
-            <input type="hidden" name="mb_seq" value="<?=$info["mb_seq"]?>">
-            <input type="hidden" name="b_mb_payment_name" id="b_mb_payment_name" value="<?=$info["mb_payment_name"]?>">
-            <input type="hidden" name="b_mb_payment_email" id="b_mb_payment_email" value="<?=$info["mb_payment_email"]?>">
-            <input type="hidden" name="b_mb_payment_tel" id="b_mb_payment_tel" value="<?=$info["mb_payment_tel"]?>">
-            <input type="hidden" name="b_mb_payment_phone" id="b_mb_payment_phone" value="<?=$info["mb_payment_phone"]?>">
-        <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left;" >요금 담당자</div>
-            <div style="float:right;"><i class="fa fa-edit"  onclick="memberUpdate6('<?=$info["mb_seq"]?>')"></i> <i class=""></i></div>
-        </div>
-        <div class="view-body" style="clear:both;width:100%">
-
-            <div style="width:100%">
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>이름</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_payment_name" id="mb_payment_name" value="<?=$info["mb_payment_name"]?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>이메일</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_payment_email" id="mb_payment_email" value="<?=$info["mb_payment_email"]?>"> <i class="far fa-envelope" onclick='$("#to").val($("#mb_payment_email").val());$("#phone").val($("#mb_payment_phone").val());$( "#dialogEmail" ).dialog("open");'></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>부서</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_payment_team" id="mb_payment_team" value="<?=$info["mb_payment_team"]?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>직위/직책</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_payment_position" id="mb_payment_position" value="<?=$info["mb_payment_position"]?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>휴대폰번호</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_payment_phone" id="mb_payment_phone" value="<?=$info["mb_payment_phone"]?>"> <i class="fas fa-mobile-alt"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-field">
-                    <div class="modal-field-input full">
-                        <div class="label padd"><div>전화번호</div></div>
-                        <div class="input padd">
-                            <input type="text" class="width-button" name="mb_payment_tel" id="mb_payment_tel" value="<?=$info["mb_payment_tel"]?>">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        </form>
-    </div>
-    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;min-height:300px;margin-top:40px">
-        <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left">서비스 정보</div>
-            <div style="float:right">
+	<div class="header-listbox">
+        <div class="header-title">
+            <div style="float:left"><div>서비스 정보</div></div>
+            <div style="float:right;">
                 <input type="checkbox" name=""> 서비스 해지 제외
                 <button class="btn btn-black btn-add btn-basic-view" type="button">확장하기(기본)</button>
                 <button class="btn btn-black btn-add btn-payment-view" type="button">확장하기(요금)</button>
-                <select class="select2" name="" style="width:90px">
+                <select class="select2" name="end" id="end" style="width:90px">
+                    <option value="10">10라인</option>
+                    <option value="20">20라인</option>
                     <option value="50">50라인</option>
+                    <option value="100">100라인</option>
                 </select>
             </div>
         </div>
@@ -640,12 +719,12 @@
 
         </div>
     </div>
-    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;min-height:300px;margin-top:40px">
-        <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left">요금 정보</div>
+    <div class="header-listbox">
+        <div class="header-title">
+            <div style="float:left"><div>요금 정보</div></div>
             <div style="float:right">
                 <input type="checkbox" id="service_display" > 서비스 요금 0원 숨기기
-                <button class="btn btn-black btn-add btn-payment-setting" onclick="openPopup('<?=$info["mb_seq"]?>')" type="button">계산서 설정</button>
+                <button class="btn btn-black" onclick="openPopup('<?=$info["mb_seq"]?>')" type="button">계산서 설정</button>
 
 
             </div>
@@ -685,117 +764,7 @@
                         </tr>
                     </thead>
                     <tbody id="payment-tbody-list">
-                    <?php if(count($payment_list) > 0): ?>
-                        <?php $i = 0; ?>
-                    <?php foreach($payment_list as $row): ?>
-                        <?php $num = count($payment_list) -  $i;?>
-                        <?php $once_price = ($row["svp_once_price"]-$row["svp_once_dis_price"]) ?>
-                        <?php $price = ( ($row["svp_month_price"]-$row["svp_month_dis_price"])*$row["svp_payment_period"]-$row["svp_discount_price"]); ?>
-                        <?php $price2 = ((($row["svp_month_price"]-$row["svp_month_dis_price"])*$row["svp_payment_period"]-$row["svp_discount_price"])*1.1)-(($row["svp_month_price"]-$row["svp_month_dis_price"])*$row["svp_payment_period"]-$row["svp_discount_price"]); ?>
-                        <!-- <?=$row["svp_discount_price"]?> -->
-
-                        <?php 
-                            if($row["svp_discount_price"] > 0){
-                                $price_1 = ($row["svp_month_price"]-$row["svp_month_dis_price"]-($row["svp_discount_price"]/$row["svp_payment_period"]));
-                                $price2_1 = (($row["svp_month_price"]-$row["svp_month_dis_price"]-($row["svp_discount_price"]/$row["svp_payment_period"]))*1.1)-($row["svp_month_price"]-$row["svp_month_dis_price"]-($row["svp_discount_price"]/$row["svp_payment_period"]));
-                            }else{
-                                $price_1 = ($row["svp_month_price"]-$row["svp_month_dis_price"]);
-                                $price2_1 = (($row["svp_month_price"]-$row["svp_month_dis_price"])*1.1)-($row["svp_month_price"]-$row["svp_month_dis_price"]);
-                            }
-                        ?>
-                        
-                        <tr class="payment_tr" data-price="<?=$price?>">
-                            <?php if($row["svp_display_yn"] == "Y"):?>
-                            <td><input type="checkbox" class="payment_check" value="<?=$row["sv_seq"]?>" data-price1="<?=$row["svp_once_price"]?>" data-price2="<?=$row["svp_once_dis_price"]?>" data-price3="<?=$once_price?>" data-price4="<?=$row["svp_month_price"]?>" data-price5="<?=$row["svp_month_dis_price"]?>" data-price6="<?=$row["svp_discount_price"]/$row["svp_payment_period"]?>" data-price7="<?=$price_1?>" data-price8="<?=$price2_1?>" data-price9="<?=($price_1+$price2_1)?>" data-svaseq="<?=$row["sva_seq"]?>" data-paypublish="<?=$row["sv_pay_publish"]?>" data-paypublishtype="<?=$row["sv_pay_publish_type"]?>" data-paymenttype="<?=$row["sv_payment_type"]?>" data-pmdate="<?=date('Y-m-d')?>"></td>
-                            <?php else: ?>
-                            <td><input type="checkbox" disabled></td>
-                            <?php endif; ?>
-                            <td><?=$num?></td>
-                            <!-- <td><?=$row["mb_name"]?></td> -->
-                            <td class="once_number"><a href="javascript:void(0)" onclick="openGroupView('<?=$row["sv_code"]?>')"><?=$row["sv_code"]?></td>
-                            <td class="once_service"><?=($row["sva_seq"] == "" ? $row["pc_name"]:"부가항목")?></td>
-                            <td class="once_product" ><a href="javascript:void(0)" onclick="openProductView('<?=$row["sv_seq"]?>')"><?=($row["sva_seq"] == "" ? $row["pr_name"]:$row["sva_name"])?></a></td>
-                            <td><?=($row["sva_seq"] == "" ? $row["ps_name"]:"")?></td>
-                            <td class="once_service_number"><a href="/service/view/<?=$row["sv_seq"]?>"><?=($row["sva_seq"] == "" ? $row["sv_number"]:$row["sva_number"])?></a></td>
-                            <td>
-                                <?php if($row["sv_payment_type"] == "1"): ?>
-                                무통장
-                                <?php elseif($row["sv_payment_type"] == "2"): ?>
-                                카드
-                                <?php else: ?>
-                                CMS
-                                <?php endif; ?>
-                            </td>
-                            <td><?=$row["svp_payment_period"]?>개월</td>
-                            <td class="payment-basic right"><?=number_format($row["svp_once_price"])?> 원</td>
-                            <td class="payment-basic right" style="color:#FF5353"> - <?=number_format($row["svp_once_dis_price"])?> 원</td>
-
-                            <td style="color:#404040" class="right"><?=number_format($once_price)?> 원</td>
-                            <td class="payment-basic right"><?=number_format($row["svp_month_price"]*$row["svp_payment_period"])?> 원</td>
-                            <td class="payment-basic right" style="color:#FF5353"> - <?=number_format($row["svp_month_dis_price"]*$row["svp_payment_period"])?> 원</td>
-                            <td class="payment-basic right" style="color:#FF7053"> - <?=number_format($row["svp_discount_price"])?> 원</td>
-
-                            <td style="color:#404040" class="right"><?=number_format($price)?> 원</td>
-                            <td class="right">
-                                <?=number_format($price2)?> 원
-                            </td>
-                            <td class="right"><?=number_format($price+$price2)?> 원</td>
-                            <td>
-                                <?php if($row["sv_pay_type"] == "0"): ?>
-                                    전월
-                                <?php elseif($row["sv_pay_type"] == "1"): ?>
-                                    당월
-                                <?php elseif($row["sv_pay_type"] == "2"): ?>
-                                    익월
-                                <?php endif; ?>
-                                <?=$row["sv_pay_day"]?>일
-                            </td>
-                            <td>
-                                <?=$row["sv_payment_day"]?>일 이내
-                            </td>
-                            <td>
-                                <?php if($row["sv_pay_type"] == "0"): ?>
-                                    <?php $cal1 = -1; ?>
-                                <?php elseif($row["sv_pay_type"] == "1"): ?>
-                                    <?php $cal1 = 0; ?>
-                                <?php elseif($row["sv_pay_type"] == "2"): ?>
-                                    <?php $cal1 = 1; ?>
-                                <?php endif; ?>
-                                <?php $cal = $cal1+($row["sv_pay_day"]/30) + ($row["sv_payment_day"]/30)?>
-                                <?php if($cal <= 0.3): ?>
-                                    선불
-                                <?php elseif($cal > 0.3 && $cal <= 1.3): ?>
-                                    후불
-                                <?php elseif($cal > 1.3 && $cal <= 2.3): ?>
-                                    후후불
-                                <?php elseif($cal > 2.3 && $cal <= 3.3): ?>
-                                    후후후불
-                                <?php elseif($cal > 3.3 ): ?>
-                                    조정필요
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <?php if($row["sv_pay_publish_type"] == 0): ?>
-                                    영수발행
-                                <?php else: ?>
-                                    청구발행
-                                <?php endif; ?>
-                            </td>
-                            <td>Default</td>
-                            <?php if($row["sva_seq"] == ""):// 부가서비스가 아닐때(기본) ?>
-                                <td><i class="fas fa-edit detailView" data-seq="<?=$row["svp_seq"]?>" data-paytype="S"></i></td>
-                            <?php else://부가서비스 일때 ?>
-                                <td><i class="fas fa-edit detailView" data-seq="<?=$row["svp_seq"]?>" data-paytype="A"></i></td>
-                            <?php endif; ?>
-                            <td></td>
-                        </tr>
-                        <?php $i++;?>
-                    <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                                <td colspan="19" style="text-align:center">요금 정보가 없습니다.</td>
-                            </tr>
-                    <?php endif;?>
+                    
                     </tbody>
                 </table>
                 </form>
@@ -833,9 +802,10 @@
             </div>
         </div>
     </div>
-    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;min-height:300px;margin-top:40px">
-        <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left">청구 내역 <img src="/assets/images/Picture1.png" class="memo" style="width:20px"> <img src="/assets/images/Picture2.png" class="" style="width:20px"></div>
+    <div class="header-listbox">
+        <div class="header-title">
+            <div style="float:left"><div>청구 내역</div></div>
+			<div style="float:left;margin-left:10px;"><img src="/assets/images/Picture1.png" class="memo" style="width:20px;cursor:pointer;"> <img src="/assets/images/Picture2.png" class="" style="width:20px;cursor:pointer;"></div>
             <div style="float:right">
                 <input type="checkbox" name="mb_auto_claim_yn" id="mb_auto_claim_yn" value="Y" <?=($info["mb_auto_claim_yn"] == "Y" || $info["mb_auto_claim_yn"] == "" ? "checked":"")?>> 서비스 비용 자동 청구
                 <input type="checkbox" name="mb_auto_email_yn" id="mb_auto_email_yn" value="Y" <?=($info["mb_auto_email_yn"] == "Y" || $info["mb_auto_email_yn"] == "" ? "checked":"")?>> 메일 자동 발송
@@ -884,137 +854,7 @@
                         </tr>
                     </thead>
                     <tbody id="tbody2-list">
-                        <?php if(count($claim_list) > 0): ?>
-                            <?php $b_pm_ca_seq = ""?>
-                            <?php $i = 0;?>
-                        <?php foreach($claim_list as $row): ?>
-                            <?php 
-                            if($row["sva_seq"] == ""){
-                                $sv_claim_name = $row["sv_claim_name"];
-                            }else{
-                                $sv_claim_name = $row["sva_claim_name"];
-                            }
-                            ?>
-                            <?php $num = count($claim_list) -  $i;?>
-                            <?php 
-                            if($row["pm_first_month_start"] == "" || $row["pm_first_month_start"] == "0000-00-00"){
-                                $month = 0;
-                            }else{
-                                $date1 = date('Y-m-d', strtotime($row["pm_first_month_end"] . ' +1 day'));
-
-                                $date1 = new DateTime($date1);
-                                $date2 = new DateTime($row["pm_first_month_start"]);
-
-                                $diff = $date1->diff($date2);
-                                // print_r($diff);
-                                $month = (($diff->format('%y') * 12) + $diff->format('%m'));
-                                if($month == 0){
-                                    $month = 1;
-                                }
-                            }
-                            ?>
-                            <?php $once_price = ($row["pm_once_price"]-$row["pm_once_dis_price"]) ?>
-                            <?php if($row["pm_payment_dis_price"] > 0): ?>
-                                <?php $price = $row["pm_first_day_price"]+$once_price+( ($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month); ?>
-                                <?php $price2 = ((($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)*1.1)-(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month); ?>
-                            <?php else: ?>
-                                <?php $price = $row["pm_first_day_price"]+$once_price+( ($row["pm_service_price"]-$row["pm_service_dis_price"])*$month); ?>
-                                <?php $price2 = ((($row["pm_service_price"]-$row["pm_service_dis_price"])*$month)*1.1)-(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month); ?>
-                            <?php endif; ?>
-                            <?php 
-                                if($row["pm_payment_dis_price"] > 0){
-                                    $price_1 = ($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]));
-                                    $price2_1 = (($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]))*1.1)-($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]));
-                                }else{
-                                    $price_1 = ($row["pm_service_price"]-$row["pm_service_dis_price"]);
-                                    $price2_1 = (($row["pm_service_price"]-$row["pm_service_dis_price"])*1.1)-($row["pm_service_price"]-$row["pm_service_dis_price"]);
-                                }
-                            ?>
-                        <tr><input type="hidden" name="pm_seq[]" value="<?=$row["pm_seq"]?>">
-                            <?php if($row["pm_payment_dis_price"] > 0):?>
-                            <td><input type="checkbox" class="claim_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]*$month?>" data-price6="<?=$row["pm_service_dis_price"]*$month?>" data-price7="<?=($row["pm_payment_dis_price"] == 0 ? 0:($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?>" data-price8="<?=($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month?>" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$price?>" data-price11="<?=($price*0.1)?>" data-price12="<?=($price*1.1)?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
-                            <?php else: ?>
-                            <td><input type="checkbox" class="claim_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]*$month?>" data-price6="<?=$row["pm_service_dis_price"]*$month?>" data-price7="<?=($row["pm_payment_dis_price"] == 0 ? 0:($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?>" data-price8="<?=($row["pm_service_price"]-$row["pm_service_dis_price"])*$month?>" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$price?>" data-price11="<?=($price*0.1)?>" data-price12="<?=($price*1.1)?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>    
-                            <?php endif; ?>
-                            <td><?=$num?></td>
-                            <td><?=($row["pm_type"] == "1" ? "서비스비용":"일회성비용")?></td>
-
-                            <td><?=$row["pm_code"]?></td>
-                            <td>
-                                <input type="text" name="pm_date[]" class="border-trans datepicker3" value="<?=$row["pm_date"]?>" style="width:80px;font-size:9pt;color:#7f7f7f" onfocus="$(this).removeClass('border-trans')" onfocusout="$(this).addClass('border-trans')" >
-                            </td>
-                            <td>
-                                 <input type="text" name="pm_service_start[]" class="border-trans datepicker3" value="<?=$row["pm_service_start"]?>" style="width:80px;font-size:9pt;color:#7f7f7f" onfocus="$(this).removeClass('border-trans')" onfocusout="$(this).addClass('border-trans')"> ~ <input type="text" name="pm_service_end[]" class="border-trans datepicker3" value="<?=$row["pm_service_end"]?>" style="width:80px;font-size:9pt;color:#7f7f7f" onfocus="$(this).removeClass('border-trans')" onfocusout="$(this).addClass('border-trans')">
-                            </td>
-                            <td ><?=($row["sva_seq"] == "" ? $row["pc_name"]:"부가항목")?></td>
-                            <td ><a href="javascript:void(0)" onclick="openProductView('<?=$row["sv_seq"]?>')"><?=($row["sva_seq"] == "" ? $row["pr_name"]:$row["sva_name"])?></a></td>
-                            <td><?=($row["sva_seq"] == "" ? $row["ps_name"]:"")?></td>
-                            <td ><a href="/service/view/<?=$row["sv_seq"]?>"><?=($row["sva_seq"] == "" ? $row["sv_number"]:$row["sva_number"])?></a></td>
-                            <!-- <td><?=$row["pc_name"]?></td>
-                            <td><?=$row["pr_name"]?></td>
-                            <td><?=$row["ps_name"]?></td>
-                            <td><?=$row["sv_number"]?></td> -->
-                            <td>
-                                <?php if($row["sv_payment_type"] == "1"): ?>
-                                    무통장
-                                <?php elseif($row["sv_payment_type"] == "2"): ?>
-                                    카드
-                                <?php else: ?>
-                                    CMS
-                                <?php endif; ?>
-                            </td>
-                            <td><?=$row["pm_pay_period"]?>개월</td>
-                            <td class="claim_payment"><?=($row["pm_claim_name"] == "" ? $sv_claim_name:$row["pm_claim_name"])?></td>
-                            <td class="claim_payment right"><?=number_format($row["pm_once_price"])?> 원</td>
-                            <td class="claim_payment right" style="color:#FF5353"> - <?=number_format($row["pm_once_dis_price"])?> 원</td>
-                            <td class="claim_payment right" style="color:#404040"><?=number_format($once_price)?> 원</td>
-                            <td class="claim_payment right"><?=number_format($row["pm_first_day_price"])?> 원</td>
-                            <td class="claim_payment right"><?=number_format($row["pm_service_price"]*$month)?> 원</td>
-                            <td class="claim_payment right" style="color:#FF5353"> - <?=number_format($row["pm_service_dis_price"]*$month)?> 원</td>
-                            <?php if($row["pm_payment_dis_price"] > 0):?>
-                            <td class="claim_payment right" style="color:#FF7053"> - <?=number_format($row["pm_payment_dis_price"]/$row["pm_pay_period"]*$month)?> 원</td>
-                            <td class="claim_payment right" style="color:#404040"><?=number_format(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?> 원</td>
-                            <?php else: ?>
-                            <td class="claim_payment right" style="color:#FF7053"> - 0 원</td>
-                            <td class="claim_payment right" style="color:#404040"><?=number_format(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month)?> 원</td>
-                            <?php endif; ?>
-                            
-                            <td class="claim_payment right"><?=$row["pm_delay_price"]?></td>
-                            <td class="right"><?=number_format($price)?> 원</td>
-                            <td class="right"><?=number_format($price*0.1)?> 원</td>
-                            <td class="right"><?=number_format($price*1.1)?> 원</td>
-                            <td><?=$row["pm_end_date"]?></td>
-                            <td>
-                                <?php if($row["pm_status"] == "1"): ?>
-                                    완납
-                                <?php elseif($row["pm_status"] == "0"): ?>
-                                    <?=($row["pm_end_date"] >= date("Y-m-d") ? "청구":"미납")?>
-                                <?php elseif($row["pm_status"] == "9"):?>
-                                    가결제
-                                <?php endif; ?>    
-                            </td>
-                            <?php if($b_pm_ca_seq != $row["pm_ca_seq"]): ?>
-                            <td rowspan="<?=$row["pm_ca_total"]?>"><i class="fas fa-edit claimView" data-seq="<?=$row["pm_ca_seq"]?>"></i></td>
-                            <td class="billView" data-seq="<?=$row["pm_ca_seq"]?>" rowspan="<?=$row["pm_ca_total"]?>">
-                                <?php if($row["pm_payment_publish_type"] == "0"):?>
-                                    영수발행
-                                <?php else: ?>
-                                    청구발행
-                                <?php endif; ?>
-                            </td>
-                            <?php endif; ?>
-                            <td><i class="fas fa-edit detailPView" data-seq="<?=$row["pm_seq"]?>" data-pmtype="<?=$row["pm_type"]?>"></i></td>
-
-                            <td></td>
-                        </tr>
-                        <?php $b_pm_ca_seq = $row["pm_ca_seq"]?>
-                        <?php $i++;?>
-                        <?php endforeach; ?>
-                        <?php else: ?>
-                        <tr>
-                                <td colspan="19" style="text-align:center">요금 정보가 없습니다.</td>
-                            </tr>
-                        <?php endif; ?>
+                        
                     </tbody>
                 </table>
                 </form>
@@ -1058,21 +898,34 @@
                 <button class="btn btn-default btn-com" type="button">가결제 처리</button>
                 <button class="btn btn-default btn-check-delete" type="button">선택 삭제</button>
                 <button class="btn btn-default btn-com-pay" type="button">완납 처리</button>
-                <button class="btn btn-default" type="button">청구 메일 발송</button>
+                <button class="btn btn-default" type="button" onclick='$("#to").val($("#mb_email").val()+","+$("#mb_payment_email").val());$("#phone").val($("#mb_phone").val());$( "#dialogEmail" ).dialog("open");'>청구 메일 발송</button>
             </div>
         </div>
     </div>
-    <div style="clear:both;border:1px solid #eee;background:#fff;border-radius:6px;min-height:300px;margin-top:40px">
-        <div class="header-title" style="padding:10px;background:#ddd;height:25px">
-            <div style="float:left">결제 내역 </div>
-            <div style="float:right">
-                <select name="" class="select2" style="width:120px">
-                    <option value="">서비스 번호</option>
+    <div class="header-listbox">
+        <div class="header-title">
+            <div style="float:left"><div>결제 내역</div></div>
+            <form id="searchForm">
+            <div style="float:right;font-size:12px">
+                <select name="search_type" class="select2" style="width:120px">
+                    <option value="sv_number">서비스 번호</option>
+                    <option value="pr_name">상품명</option>
                 </select>
-                <input type="text"><button class="btn btn-search btn-small" type="button">검색</button>
-                <select name="" class="select2" style="width:70px"></select> 년
-                <select name="" class="select2" style="width:70px"></select> 월
+                <input type="text" name="search_word"><button class="btn btn-search btn-small" type="button" onclick="getComList(true)">검색</button>
+                <select name="search_year" id="search_year" class="select2" style="width:70px">
+                    <option value="">전체</option>
+                    <?php for($i = 2012;$i <= date("Y");$i++): ?>
+                        <option value="<?=$i?>" <?=($i == date("Y") ? "selected":"")?> ><?=$i?></option>
+                    <?php endfor; ?>        
+                </select> 년
+                <select name="search_month" id="search_month" class="select2" style="width:70px" onchange="getComList(true)">
+                    <option value="">전체</option>
+                    <?php for($i = 1;$i <= 12;$i++): ?>
+                        <option value="<?=$i?>" <?=($i == date("m") ? "selected":"")?> ><?=$i?></option>
+                    <?php endfor; ?>     
+                </select> 월
             </div>
+            </form>
         </div>
         <div class="view-body" style="clear:both;width:100%">
             <div class="table-list" style="margin-top:0px">
@@ -1092,6 +945,7 @@
                             <th>소분류</th>
                             <th>서비스 번호</th>
                             <th>납부방법</th>
+                            <th>개월수</th>
                             <th class="paycom_payment">청구명</th>
                             <th class="paycom_payment">일회성 요금</th>
                             <th class="paycom_payment">일회성 할인</th>
@@ -1112,106 +966,7 @@
                         </tr>
                     </thead>
                     <tbody id="tbody3-list">
-                        <?php if(count($paycom_list) > 0): ?>
-                            <?php $b_pm_ca_seq = ""?>
-                            <?php $i = 0 ?>
-                        <?php foreach($paycom_list as $row): ?>
-                            <?php $num = count($paycom_list) -  $i;?>
-
-                            <?php 
-                            if($row["pm_first_month_start"] == "" || $row["pm_first_month_start"] == "0000-00-00"){
-                                $month = 0;
-                            }else{
-                                $date1 = date('Y-m-d', strtotime($row["pm_first_month_end"] . ' +1 day'));
-
-                                $date1 = new DateTime($date1);
-                                $date2 = new DateTime($row["pm_first_month_start"]);
-
-                                $diff = $date1->diff($date2);
-                                // print_r($diff);
-                                $month = (($diff->format('%y') * 12) + $diff->format('%m'));
-                                if($month == 0){
-                                    $month = 1;
-                                }
-                            }
-                            ?>
-                            <?php $once_price = ($row["pm_once_price"]-$row["pm_once_dis_price"]) ?>
-                            <?php if($row["pm_payment_dis_price"] > 0): ?>
-                                <?php $price = $row["pm_first_day_price"]+$once_price+( ($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month); ?>
-                                <?php $price2 = ((($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)*1.1)-(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month); ?>
-                            <?php else: ?>
-                                <?php $price = $row["pm_first_day_price"]+$once_price+( ($row["pm_service_price"]-$row["pm_service_dis_price"])*$month); ?>
-                                <?php $price2 = ((($row["pm_service_price"]-$row["pm_service_dis_price"])*$month)*1.1)-(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month); ?>
-                            <?php endif; ?>
-                            <?php 
-                                if($row["pm_payment_dis_price"] > 0){
-                                    $price_1 = ($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]));
-                                    $price2_1 = (($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]))*1.1)-($row["pm_service_price"]-$row["pm_service_dis_price"]-($row["pm_payment_dis_price"]/$row["pm_pay_period"]));
-                                }else{
-                                    $price_1 = ($row["pm_service_price"]-$row["pm_service_dis_price"]);
-                                    $price2_1 = (($row["pm_service_price"]-$row["pm_service_dis_price"])*1.1)-($row["pm_service_price"]-$row["pm_service_dis_price"]);
-                                }
-                            ?>
-                        <tr>
-                            <td><input type="checkbox" class="paycom_check" value="<?=$row["pm_seq"]?>" data-price1="<?=$row["pm_once_price"]?>" data-price2="<?=$row["pm_once_dis_price"]?>" data-price3="<?=$row["pm_once_price"]-$row["pm_once_dis_price"]?>" data-price4="<?=$row["pm_first_day_price"]?>" data-price5="<?=$row["pm_service_price"]*$month?>" data-price6="<?=$row["pm_service_dis_price"]*$month?>" data-price7="<?=($row["pm_payment_dis_price"] == 0 ? 0:($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?>" data-price8="<?=($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month?>" data-price9="<?=$row["pm_delay_price"]?>" data-price10="<?=$price?>" data-price11="<?=($price*0.1)?>" data-price12="<?=($price*1.1)?>" data-caseq="<?=$row["pm_ca_seq"]?>" data-caseqcount="<?=$row["pm_ca_total"]?>" data-publish="<?=$row["pm_payment_publish_type"]?>"></td>
-                            <td><?=$num?></td>
-                            <td><?=($row["pm_type"] == "1" ? "서비스비용":"일회성비용")?></td>
-                            <td><?=$row["pm_code"]?></td>
-                            <td>
-                                <?=$row["pm_date"]?>
-                            </td>
-                            <td>ㄱ결제일</td>
-                            <td>
-                                <?=$row["pm_service_start"]?> ~ <?=$row["pm_service_end"]?>
-                            </td>
-                            <td><?=$row["pc_name"]?></td>
-                            <td><?=$row["pr_name"]?></td>
-                            <td><?=$row["ps_name"]?></td>
-                            <td><?=$row["sv_number"]?></td>
-                            <td>
-                                <?php if($row["sv_payment_type"] == "1"): ?>
-                                    무통장
-                                <?php elseif($row["sv_payment_type"] == "2"): ?>
-                                    카드
-                                <?php else: ?>
-                                    CMS
-                                <?php endif; ?>
-                            </td>
-                            <td class="paycom_payment">청구명</td>
-                            <td class="paycom_payment right"><?=number_format($row["pm_once_price"])?> 원</td>
-                            <td class="paycom_payment right"><?=number_format($row["pm_once_dis_price"])?> 원</td>
-                            <td class="paycom_payment right"><?=number_format($row["pm_once_price"]-$row["pm_once_dis_price"])?> 원</td>
-                            <td class="paycom_payment right"><?=number_format($row["pm_first_day_price"])?> 원</td>
-                            <td class="paycom_payment right"><?=number_format($row["pm_service_price"]*$month)?> 원</td>
-                            <td class="paycom_payment right"><?=number_format($row["pm_service_dis_price"]*$month)?> 원</td>
-                            <td class="paycom_payment right"><?=number_format($row["pm_payment_dis_price"]/$row["pm_pay_period"]*$month)?> 원</td>
-                            <td class="paycom_payment right"><?=number_format(($row["pm_service_price"]-$row["pm_service_dis_price"])*$month-($row["pm_payment_dis_price"]/$row["pm_pay_period"])*$month)?> 원</td>
-                            <td class="paycom_payment right"><?=number_format($row["pm_delay_price"])?> 원</td>
-                            <td class="right"><?=number_format($price)?> 원</td>
-                            <td class="right"><?=number_format($price*0.1)?> 원</td>
-                            <td class="right"><?=number_format($price*1.1)?> 원</td>
-                            <?php if($b_pm_ca_seq != $row["pm_ca_seq"]): ?>
-                            <td rowspan="<?=$row["pm_ca_total"]?>"><i class="fas fa-edit claimView" data-seq="<?=$row["pm_ca_seq"]?>"></i></td>
-                            <td class="billView" data-seq="<?=$row["pm_ca_seq"]?>" rowspan="<?=$row["pm_ca_total"]?>">
-                                <?php if($row["pm_payment_publish_type"] == "0"):?>
-                                    영수발행
-                                <?php else: ?>
-                                    청구발행
-                                <?php endif; ?>
-                            </td>
-                            <?php endif; ?>
-                            <td><i class="fas fa-edit detailCView" data-seq="<?=$row["pm_seq"]?>"></i></td>
-
-                            <td></td>
-                        </tr>
-                        <?php $b_pm_ca_seq = $row["pm_ca_seq"]?>
-                        <?php $i++?>
-                        <?php endforeach; ?>
-                        <?php else: ?>
-                        <tr>
-                                <td colspan="19" style="text-align:center">요금 정보가 없습니다.</td>
-                            </tr>
-                        <?php endif; ?>
+                        
                     </tbody>
                 </table>
                 </form>
@@ -1237,13 +992,13 @@
                     </tr>
                     <tr>
                         <td class="paycom_price1 paycom_payment"></td>
-                        <td class="paycom_price2 paycom_payment"></td>
-                        <td class="paycom_price3 paycom_payment"></td>
+                        <td class="paycom_price2 paycom_payment" style="color:#FF5353"></td>
+                        <td class="paycom_price3 paycom_payment" style="color:#404040"></td>
                         <td class="paycom_price4 paycom_payment"></td>
                         <td class="paycom_price5 paycom_payment"></td>
-                        <td class="paycom_price6 paycom_payment"></td>
-                        <td class="paycom_price7 paycom_payment"></td>
-                        <td class="paycom_price8 paycom_payment"></td>
+                        <td class="paycom_price6 paycom_payment" style="color:#FF5353"></td>
+                        <td class="paycom_price7 paycom_payment" style="color:#FF7053"></td>
+                        <td class="paycom_price8 paycom_payment" style="color:#404040"></td>
                         <td class="paycom_price9 paycom_payment"></td>
                         <td class="paycom_price10"></td>
                         <td class="paycom_price11"></td>
@@ -1384,7 +1139,7 @@
             <div class="modal-field-input">
                 <div class="label padd"><div>요금 납부 방법</div></div>
                 <div class="input padd">
-                    <select name="pm_com_type" id="pm_com_type" class="select2">
+                    <select name="pm_pay_type" id="pm_pay_type" class="select2">
                         <option value="1">무통장</option>
                         <option value="2">카드</option>
                         <option value="3">CMS</option>
@@ -1514,9 +1269,9 @@
         <table width='700px' cellpadding='0' cellspacing='0' align='center' class='border_all payment_claim' id="payment1" >
             <tr>
                 <td width='100%'>
-                    <table cellpadding='0' cellspacing='0' height='65' width='100%'>
+                    <table cellpadding='0' cellspacing='0' height='35' width='100%'>
                         <tr>
-                            <td rowspan='2' align='center' width='100%' class='border_tit'><font size='6'><b>거래명세서</b></font></td>
+                            <td align='center' width='100%' class='sur_border_bottom2' style="font-size:21px"><b>거래명세서</b></td>
 
 
                         </tr>
@@ -1528,60 +1283,60 @@
                 <td>
                     <table cellpadding='0' cellspacing='0' width='700px'>
                         <tr>
-                            <td class='border_up' align='center' width='17px' rowspan='7'>공<br><br><br>급<br><br><br>자</td>
-                            <td class='border_up' align='center' width='55px' height='33'>등록번호</td>
-                            <td class='border_up' align='center' width='278px' colspan='5'><input type="text" name="ca_from_number" id="ca_from_number" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='17px' rowspan='7'>공<br>급<br>받<br>는<br>자</td>
-                            <td class='border_up' align='center' width='55px'>등록번호</td>
-                            <td class='border_top' align='center' width='278px' colspan='5'><input type="text" name="ca_to_number" id="ca_to_number" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_bottom2' align='center' width='17px' rowspan='7'>공<br><br><br>급<br><br><br>자</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55px' height='33'>등록번호</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='278px' colspan='5'><input type="text" name="ca_from_number" id="ca_from_number" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' width='17px' rowspan='7'>공<br>급<br>받<br>는<br>자</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55px'>등록번호</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='278px' colspan='5'><input type="text" name="ca_to_number" id="ca_to_number" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55' height='33'>상 호<br>(법인명)</td>
-                            <td class='border_up' align='center' width='160' colspan='3'><input type="text" name="ca_from_name" id="ca_from_name" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>성<br>명</td>
-                            <td class='border_up' align='left' width='94' colspan='1'><input type="text" name="ca_from_ceo" id="ca_from_ceo" value="" class="border-no width90" style="width:65px;padding:0" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"> (인)</td>
-                            <td class='border_up' align='center' width='55'>상 호<br>(법인명)</td>
-                            <td class='border_up' align='center' width='160' colspan='3'><input type="text" name="ca_to_name" id="ca_to_name" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>성<br>명</td>
-                            <td class='border_top' align='left' width='94' colspan='1'><input type="text" name="ca_to_ceo" id="ca_to_ceo" value="" class="border-no width90" style="width:65px;padding:0" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"> (인)</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55' height='33'>상 호<br>(법인명)</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='160' colspan='3'><input type="text" name="ca_from_name" id="ca_from_name" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>성<br>명</td>
+                            <td class='sur_border_left sur_border_bottom' align='left' width='94' colspan='1'><input type="text" name="ca_from_ceo" id="ca_from_ceo" value="" class="border-no width90" style="width:65px;padding:0" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"> (인)</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>상 호<br>(법인명)</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='160' colspan='3'><input type="text" name="ca_to_name" id="ca_to_name" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>성<br>명</td>
+                            <td class='sur_border_left sur_border_bottom' align='left' width='94' colspan='1'><input type="text" name="ca_to_ceo" id="ca_to_ceo" value="" class="border-no width90" style="width:65px;padding:0" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"> (인)</td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55' height='33'>사업장<br>주  소</td>
-                            <td class='border_up' align='center' width='278' colspan='5'><input type="text" name="ca_from_address" id="ca_from_address" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='55'>사업장<br>주  소</td>
-                            <td class='border_top' align='center' width='278' colspan='5'><input type="text" name="ca_to_address" id="ca_to_address" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55' height='33'>사업장<br>주  소</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='278' colspan='5'><input type="text" name="ca_from_address" id="ca_from_address" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>사업장<br>주  소</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='278' colspan='5'><input type="text" name="ca_to_address" id="ca_to_address" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55' height='33'>업  태</td>
-                            <td class='border_up' align='center' width='148' colspan='1'><input type="text" name="ca_from_condition" id="ca_from_condition" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>종<br>목</td>
-                            <td class='border_up' align='center' width='106' colspan='3'><input type="text" name="ca_from_type" id="ca_from_type" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='55'>업 &nbsp; 태</td>
-                            <td class='border_up' align='center' width='148' colspan='1'><input type="text" name="ca_to_condition" id="ca_to_condition" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>종<br>목</td>
-                            <td class='border_top' align='center' width='106' colspan='3'><input type="text" name="ca_to_type" id="ca_to_type" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55' height='33'>업  태</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='148' colspan='1'><input type="text" name="ca_from_condition" id="ca_from_condition" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>종<br>목</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='106' colspan='3'><input type="text" name="ca_from_type" id="ca_from_type" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>업 &nbsp; 태</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='148' colspan='1'><input type="text" name="ca_to_condition" id="ca_to_condition" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>종<br>목</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='106' colspan='3'><input type="text" name="ca_to_type" id="ca_to_type" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55' height='33'>담당부서</td>
-                            <td class='border_up' align='center' width='148' colspan='1'><input type="text" name="ca_from_team" id="ca_from_team" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>성명</td>
-                            <td class='border_up' align='center' width='106' colspan='3'><input type="text" name="ca_from_charger" id="ca_from_charger" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='55'>담당부서</td>
-                            <td class='border_up' align='center' width='148' colspan='1'><input type="text" name="ca_to_team" id="ca_to_team" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>성명</td>
-                            <td class='border_top' align='center' width='106' colspan='3'><input type="text" name="ca_to_charger" id="ca_to_charger" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55' height='33'>담당부서</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='148' colspan='1'><input type="text" name="ca_from_team" id="ca_from_team" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>성명</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='106' colspan='3'><input type="text" name="ca_from_charger" id="ca_from_charger" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>담당부서</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='148' colspan='1'><input type="text" name="ca_to_team" id="ca_to_team" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>성명</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='106' colspan='3'><input type="text" name="ca_to_charger" id="ca_to_charger" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55' height='33' >연락처</td>
-                            <td class='border_up' align='center' width='266' colspan='5' ><input type="text" name="ca_from_tel" id="ca_from_tel" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='55'>연락처</td>
-                            <td class='border_up' align='center' width='266' colspan='5'><input type="text" name="ca_to_tel" id="ca_to_tel" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55' height='33' >연락처</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='266' colspan='5' ><input type="text" name="ca_from_tel" id="ca_from_tel" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>연락처</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='266' colspan='5'><input type="text" name="ca_to_tel" id="ca_to_tel" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55'>이메일</td>
-                            <td class='border_up' align='center' width='266' colspan='5'><input type="text" name="ca_from_email" id="ca_from_email" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='55'>이메일</td>
-                            <td class='border_up' align='center' width='266' colspan='5'><input type="text" name="ca_to_email" id="ca_to_email" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' width='55'>이메일</td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' width='266' colspan='5'><input type="text" name="ca_from_email" id="ca_from_email" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>이메일</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='266' colspan='5'><input type="text" name="ca_to_email" id="ca_to_email" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                     </table>
                 </td>
@@ -1590,18 +1345,18 @@
                 <td width='700px'>
                     <table cellpadding='0' cellspacing='0' width='700px'>
                         <tr>
-                            <td class='border_up' align='center' width='85' height='21'>작 &nbsp; 성</td>
-                            <td class='border_up'  width='250' align='center'>공 &nbsp; 급 &nbsp; 가 &nbsp; 액</td>
-                            <td class='border_up'  align='center' width='4' height='15'>&nbsp;</td>
-                            <td class='border_up' align='center' width='190' height='15'>세 &nbsp; 액</td>
-                            <td class='border_top' align='center' width='156'>합계금액</td>
+                            <td class='sur_border_bottom' align='center' width='85' height='21'>작성일자</td>
+                            <td class='sur_border_left sur_border_bottom'  width='250' align='center'>공 &nbsp; 급 &nbsp; 가 &nbsp; 액</td>
+                            <td class='sur_border_left sur_border_bottom'  align='center' width='4' height='15'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='190' height='15'>세 &nbsp; 액</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='156'>합계금액</td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='85' height='21'><input type="text" name="ca_date" id="ca_date" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' ><input type="text" name="ca_price" id="ca_price" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' ></td>
-                            <td class='border_up' align='center' ><input type="text" name="ca_surtax" id="ca_surtax" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_top' align='center' width='156' ><input type="text" name="ca_total_price" id="ca_total_price" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_bottom2' align='center' width='85' height='21'><input type="text" name="ca_date" id="ca_date" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' ><input type="text" name="ca_price" id="ca_price" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' ></td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' ><input type="text" name="ca_surtax" id="ca_surtax" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' width='156' ><input type="text" name="ca_total_price" id="ca_total_price" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
                         </tr>
 
                     </table>
@@ -1611,58 +1366,63 @@
                 <td width='700px'>
                     <table cellpadding='0' cellspacing='0' width='700px'>
                         <tr>
-                            <td class='border_up' align='center' width='50' height='21'>월 일</td>
-                            <td class='border_up' align='center' width='195'>품 &nbsp; &nbsp; &nbsp; 목</td>
-                            <td class='border_up' align='center' width='42'>규 격</td>
-                            <td class='border_up' align='center' width='65'>수 량</td>
-                            <td class='border_up' align='center' width='55'>단 가</td>
-                            <td class='border_up' align='center' width='150'>공급가액</td>
-                            <td class='border_up' align='center' width='83'>세 액</td>
-                            <td class='border_top' align='center' width='60'>비고</td>
+                            <td class='sur_border_bottom' align='center' width='25' height='21'>월</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='25' height='21'>일</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='195'>품 &nbsp; &nbsp; &nbsp; 목</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='42'>규 격</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='65'>수 량</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>단 가</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='150'>공급가액</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='83'>세 액</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='60'>비고</td>
                         </tr>
                         <tr>
                             <input type="hidden" name="cl_seq1" id="cl_seq1" >
-                            <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date1" id="ca_item_date1" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name1" id="ca_item_name1" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='42' >&nbsp;</td>
-                            <td class='border_up' align='center' width='65'>&nbsp;</td>
-                            <td class='border_up' align='center' width='55'>&nbsp;</td>
-                            <td class='border_up' align='center' width='150' ><input type="text" name="ca_item_price1" id="ca_item_price1" value="" class="border-no width90"  onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='83' ><input type="text" name="ca_item_surtax1" id="ca_item_surtax1" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg1" id="ca_item_msg1" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date1_1" id="ca_item_date1_1" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date1_2" id="ca_item_date1_2" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='195' ><input type="text" name="ca_item_name1" id="ca_item_name1" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='42' >&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='65'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='150' ><input type="text" name="ca_item_price1" id="ca_item_price1" value="" class="border-no width90 right"  onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='83' ><input type="text" name="ca_item_surtax1" id="ca_item_surtax1" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='60' ><input type="text" name="ca_item_msg1" id="ca_item_msg1" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
                             <input type="hidden" name="cl_seq2" id="cl_seq2" >
-                            <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date2" id="ca_item_date2" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name2" id="ca_item_name2" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='42' >&nbsp;</td>
-                            <td class='border_up' align='center' width='65'>&nbsp;</td>
-                            <td class='border_up' align='center' width='55'>&nbsp;</td>
-                            <td class='border_up' align='center' width='150' ><input type="text" name="ca_item_price2" id="ca_item_price2" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='83' ><input type="text" name="ca_item_surtax2" id="ca_item_surtax2" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg2" id="ca_item_msg2" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date2_1" id="ca_item_date2_1" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date2_2" id="ca_item_date2_2" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='195' ><input type="text" name="ca_item_name2" id="ca_item_name2" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='42' >&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='65'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='150' ><input type="text" name="ca_item_price2" id="ca_item_price2" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='83' ><input type="text" name="ca_item_surtax2" id="ca_item_surtax2" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='60' ><input type="text" name="ca_item_msg2" id="ca_item_msg2" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
                             <input type="hidden" name="cl_seq3" id="cl_seq3" >
-                            <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date3" id="ca_item_date3" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name3" id="ca_item_name3" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='42' >&nbsp;</td>
-                            <td class='border_up' align='center' width='65'>&nbsp;</td>
-                            <td class='border_up' align='center' width='55'>&nbsp;</td>
-                            <td class='border_up' align='center' width='150' ><input type="text" name="ca_item_price3" id="ca_item_price3" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='83' ><input type="text" name="ca_item_surtax3" id="ca_item_surtax3" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg3" id="ca_item_msg3" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date3_1" id="ca_item_date3_1" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date3_2" id="ca_item_date3_2" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='195' ><input type="text" name="ca_item_name3" id="ca_item_name3" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='42' >&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='65'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='150' ><input type="text" name="ca_item_price3" id="ca_item_price3" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='83' ><input type="text" name="ca_item_surtax3" id="ca_item_surtax3" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='60' ><input type="text" name="ca_item_msg3" id="ca_item_msg3" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
                             <input type="hidden" name="cl_seq4" id="cl_seq4" >
-                            <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date4" id="ca_item_date4" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name4" id="ca_item_name4" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='42' >&nbsp;</td>
-                            <td class='border_up' align='center' width='65'>&nbsp;</td>
-                            <td class='border_up' align='center' width='55'>&nbsp;</td>
-                            <td class='border_up' align='center' width='150' ><input type="text" name="ca_item_price4" id="ca_item_price4" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='83' ><input type="text" name="ca_item_surtax4" id="ca_item_surtax4" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg4" id="ca_item_msg4" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date4_1" id="ca_item_date4_1" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date4_2" id="ca_item_date4_2" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='195' ><input type="text" name="ca_item_name4" id="ca_item_name4" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='42' >&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='65'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='150' ><input type="text" name="ca_item_price4" id="ca_item_price4" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='83' ><input type="text" name="ca_item_surtax4" id="ca_item_surtax4" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='60' ><input type="text" name="ca_item_msg4" id="ca_item_msg4" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                     </table>
                 </td>
@@ -1688,13 +1448,14 @@
         <table width='700px' cellpadding='0' cellspacing='0' align='center' class='border_all payment_claim' id="payment1" >
             <tr>
                 <td width='100%'>
-                    <table cellpadding='0' cellspacing='0' height='65' width='100%'>
+                    <table cellpadding='0' cellspacing='0' height='35' width='100%'>
                         <tr>
-                            <td rowspan='2' align='center' width='100%' class='border_tit'><font size='6'><b>세금계산서</b></font></td>
-
-
+                            <td align='center' width='460' class='sur_border_bottom2' style="font-size:21px"><b>전자세금계산서</b></td>
+                            
+                            <td align='center' width='85' class='sur_border_bottom2 sur_border_left'>승인번호</td>
+                            <td  align='right' class='sur_border_bottom2 sur_border_left'></td>
                         </tr>
-
+                        
                     </table>
                 </td>
             </tr>
@@ -1702,61 +1463,61 @@
                 <td>
                     <table cellpadding='0' cellspacing='0' width='700px'>
                         <tr>
-                            <td class='border_up' align='center' width='17px' rowspan='7'>공<br><br><br>급<br><br><br>자</td>
-                            <td class='border_up' align='center' width='55px' height='33'>등록번호</td>
-                            <td class='border_up' align='center' width='278px' colspan='5'><input type="text" name="ca_from_number" id="ba_from_number" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='17px' rowspan='7'>공<br>급<br>받<br>는<br>자</td>
-                            <td class='border_up' align='center' width='55px'>등록번호</td>
-                            <td class='border_top' align='center' width='278px' colspan='5'><input type="text" name="ca_to_number" id="ba_to_number" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class=' sur_border_bottom2' align='center' width='17' rowspan='7'>공<br><br><br>급<br><br><br>자</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55' height='33'>등록번호</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='278' colspan='5'><input type="text" name="ca_from_number" id="ba_from_number" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' width='17' rowspan='7'>공<br>급<br>받<br>는<br>자</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>등록번호</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='278' colspan='5'><input type="text" name="ca_to_number" id="ba_to_number" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55' height='33'>상 호<br>(법인명)</td>
-                            <td class='border_up' align='center' width='160' colspan='3'><input type="text" name="ca_from_name" id="ba_from_name" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>성<br>명</td>
-                            <td class='border_up' align='left' width='94' colspan='1'><input type="text" name="ca_from_ceo" id="ba_from_ceo" value="" class="border-no width90" style="width:65px;padding:0" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"> (인)</td>
-                            <td class='border_up' align='center' width='55'>상 호<br>(법인명)</td>
-                            <td class='border_up' align='center' width='160' colspan='3'><input type="text" name="ca_to_name" id="ba_to_name" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>성<br>명</td>
-                            <td class='border_top' align='left' width='94' colspan='1'><input type="text" name="ca_to_ceo" id="ba_to_ceo" value="" class="border-no width90" style="width:65px;padding:0" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"> (인)</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55' height='33'>상 호<br>(법인명)</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='160' colspan='3'><input type="text" name="ca_from_name" id="ba_from_name" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>성<br>명</td>
+                            <td class='sur_border_left sur_border_bottom' align='right' width='94' colspan='1'><input type="text" name="ca_from_ceo" id="ba_from_ceo" value="" class="border-no width90" style="width:65px;padding:0" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"> (인)</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>상 호<br>(법인명)</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='160' colspan='3'><input type="text" name="ca_to_name" id="ba_to_name" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>성<br>명</td>
+                            <td class='sur_border_left sur_border_bottom' align='right' width='94' colspan='1'><input type="text" name="ca_to_ceo" id="ba_to_ceo" value="" class="border-no width90" style="width:65px;padding:0" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"> (인)</td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55' height='33'>사업장<br>주  소</td>
-                            <td class='border_up' align='center' width='278' colspan='5'><input type="text" name="ca_from_address" id="ba_from_address" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='55'>사업장<br>주  소</td>
-                            <td class='border_top' align='center' width='278' colspan='5'><input type="text" name="ca_to_address" id="ba_to_address" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55' height='33'>사업장<br>주  소</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='278' colspan='5'><input type="text" name="ca_from_address" id="ba_from_address" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>사업장<br>주  소</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='278' colspan='5'><input type="text" name="ca_to_address" id="ba_to_address" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55' height='33'>업  태</td>
-                            <td class='border_up' align='center' width='148' colspan='1'><input type="text" name="ca_from_condition" id="ba_from_condition" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>종<br>목</td>
-                            <td class='border_up' align='center' width='106' colspan='3'><input type="text" name="ca_from_type" id="ba_from_type" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='55'>업 &nbsp; 태</td>
-                            <td class='border_up' align='center' width='148' colspan='1'><input type="text" name="ca_to_condition" id="ba_to_condition" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>종<br>목</td>
-                            <td class='border_top' align='center' width='106' colspan='3'><input type="text" name="ca_to_type" id="ba_to_type" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55' height='33'>업  태</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='148' colspan='1'><input type="text" name="ca_from_condition" id="ba_from_condition" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>종<br>목</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='106' colspan='3'><input type="text" name="ca_from_type" id="ba_from_type" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>업 &nbsp; 태</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='148' colspan='1'><input type="text" name="ca_to_condition" id="ba_to_condition" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>종<br>목</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='106' colspan='3'><input type="text" name="ca_to_type" id="ba_to_type" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55' height='33'>담당부서</td>
-                            <td class='border_up' align='center' width='148' colspan='1'><input type="text" name="ca_from_team" id="ba_from_team" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>성명</td>
-                            <td class='border_up' align='center' width='106' colspan='3'><input type="text" name="ca_from_charger" id="ba_from_charger" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='55'>담당부서</td>
-                            <td class='border_up' align='center' width='148' colspan='1'><input type="text" name="ca_to_team" id="ba_to_team" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='12' colspan='1'>성명</td>
-                            <td class='border_top' align='center' width='106' colspan='3'><input type="text" name="ca_to_charger" id="ba_to_charger" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55' height='33'>담당부서</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='148' colspan='1'><input type="text" name="ca_from_team" id="ba_from_team" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>성명</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='106' colspan='3'><input type="text" name="ca_from_charger" id="ba_from_charger" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>담당부서</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='148' colspan='1'><input type="text" name="ca_to_team" id="ba_to_team" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='12' colspan='1'>성명</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='106' colspan='3'><input type="text" name="ca_to_charger" id="ba_to_charger" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55' height='33' >연락처</td>
-                            <td class='border_up' align='center' width='266' colspan='5' ><input type="text" name="ca_from_tel" id="ba_from_tel" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='55'>연락처</td>
-                            <td class='border_up' align='center' width='266' colspan='5'><input type="text" name="ca_to_tel" id="ba_to_tel" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' width='55' height='53' rowspan=2>이메일</td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' width='266' colspan='5' rowspan=2><input type="text" name="ca_from_email" id="ba_from_email" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>이메일</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='266' colspan='5'><input type="text" name="ca_to_email" id="ba_to_email" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='55'>이메일</td>
-                            <td class='border_up' align='center' width='266' colspan='5'><input type="text" name="ca_from_email" id="ba_from_email" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='55'>이메일</td>
-                            <td class='border_up' align='center' width='266' colspan='5'><input type="text" name="ca_to_email" id="ba_to_email" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+
+                            <td class='sur_border_left sur_border_bottom2' align='center' width='55'>이메일</td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' width='266' colspan='5'></td>
                         </tr>
+                        
                     </table>
                 </td>
             </tr>
@@ -1764,20 +1525,19 @@
                 <td width='700px'>
                     <table cellpadding='0' cellspacing='0' width='700px'>
                         <tr>
-                            <td class='border_up' align='center' width='85' height='21'>작 &nbsp; 성</td>
-                            <td class='border_up' align='center' width='50'>공란수</td>
-                            <td class='border_up'  width='200' align='center'>공 &nbsp; 급 &nbsp; 가 &nbsp; 액</td>
-                            <td class='border_up'  align='center' width='4' height='15'>&nbsp;</td>
-                            <td class='border_up' align='center' width='190' height='15'>세 &nbsp; 액</td>
-                            <td class='border_top' align='center' width='156'>합계금액</td>
+                            <td class='sur_border_bottom' align='center' width='120' height='21'>작성일자</td>
+                            <td class='sur_border_left sur_border_bottom'  width='70' align='center'>공란수</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='175' height='15'>공급가액</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='130' height='15'>세액</td>
+                            <td class='sur_border_left sur_border_bottom' align='center''>비고</td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='85' height='21'><input type="text" name="ca_date" id="ba_date" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='50'><input type="text" name="ca_empty_size" id="ba_empty_size" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' ><input type="text" name="ca_price" id="ba_price" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' ></td>
-                            <td class='border_up' align='center' ><input type="text" name="ca_surtax" id="ba_surtax" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_top' align='center' width='156' ><input type="text" name="ca_total_price" id="ba_total_price" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_bottom2' align='center' height='21'><input type="text" name="ca_date" id="ba_date" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom2' align='center' id="number0"><input type="text" name="ca_empty_size" id="ba_empty_size" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom2 right' align='center' id="top_totalprice0"><input type="text" name="ca_price" id="ba_price" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom2 right' align='center' id="top_surtax0"><input type="text" name="ca_surtax" id="ba_surtax" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            
+                            <td class='sur_border_left sur_border_bottom2 reset' align='center' >&nbsp;</td>
                         </tr>
 
                     </table>
@@ -1787,58 +1547,63 @@
                 <td width='700px'>
                     <table cellpadding='0' cellspacing='0' width='700px'>
                         <tr>
-                            <td class='border_up' align='center' width='50' height='21'>월 일</td>
-                            <td class='border_up' align='center' width='195'>품 &nbsp; &nbsp; &nbsp; 목</td>
-                            <td class='border_up' align='center' width='42'>규 격</td>
-                            <td class='border_up' align='center' width='65'>수 량</td>
-                            <td class='border_up' align='center' width='55'>단 가</td>
-                            <td class='border_up' align='center' width='150'>공급가액</td>
-                            <td class='border_up' align='center' width='83'>세 액</td>
-                            <td class='border_top' align='center' width='60'>비고</td>
+                            <td class='sur_border_bottom' align='center' width='25' height='21'>월</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='25'>일</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='232'>품 &nbsp; &nbsp; &nbsp; 목</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='42'>규 격</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='65'>수 량</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>단 가</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='150'>공급가액</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='83'>세 액</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='60'>비고</td>
                         </tr>
                         <tr>
                             <input type="hidden" name="cl_seq1" id="bl_seq1" >
-                            <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date1" id="ba_item_date1" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name1" id="ba_item_name1" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='42' >&nbsp;</td>
-                            <td class='border_up' align='center' width='65'>&nbsp;</td>
-                            <td class='border_up' align='center' width='55'>&nbsp;</td>
-                            <td class='border_up' align='center' width='150' ><input type="text" name="ca_item_price1" id="ba_item_price1" value="" class="border-no width90"  onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='83' ><input type="text" name="ca_item_surtax1" id="ba_item_surtax1" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg1" id="ba_item_msg1" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date1_1" id="ba_item_date1_1" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date1_2" id="ba_item_date1_2" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='195' ><input type="text" name="ca_item_name1" id="ba_item_name1" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='42' >&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='65'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='150' ><input type="text" name="ca_item_price1" id="ba_item_price1" value="" class="border-no width90 right"  onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='83' ><input type="text" name="ca_item_surtax1" id="ba_item_surtax1" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='60' ><input type="text" name="ca_item_msg1" id="ba_item_msg1" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
                             <input type="hidden" name="cl_seq2" id="bl_seq2" >
-                            <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ca_item_date2" id="ba_item_date2" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name2" id="ba_item_name2" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='42' >&nbsp;</td>
-                            <td class='border_up' align='center' width='65'>&nbsp;</td>
-                            <td class='border_up' align='center' width='55'>&nbsp;</td>
-                            <td class='border_up' align='center' width='150' ><input type="text" name="ca_item_price2" id="ba_item_price2" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='83' ><input type="text" name="ca_item_surtax2" id="ba_item_surtax2" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg2" id="ba_item_msg2" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date2_1" id="ba_item_date2_1" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date2_2" id="ba_item_date2_2" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='195' ><input type="text" name="ca_item_name2" id="ba_item_name2" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='42' >&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='65'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='150' ><input type="text" name="ca_item_price2" id="ba_item_price2" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='83' ><input type="text" name="ca_item_surtax2" id="ba_item_surtax2" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='60' ><input type="text" name="ca_item_msg2" id="ba_item_msg2" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
                             <input type="hidden" name="cl_seq3" id="bl_seq3" >
-                            <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ba_item_date3" id="ca_item_date3" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name3" id="ba_item_name3" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='42' >&nbsp;</td>
-                            <td class='border_up' align='center' width='65'>&nbsp;</td>
-                            <td class='border_up' align='center' width='55'>&nbsp;</td>
-                            <td class='border_up' align='center' width='150' ><input type="text" name="ca_item_price3" id="ba_item_price3" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='83' ><input type="text" name="ca_item_surtax3" id="ba_item_surtax3" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg3" id="ba_item_msg3" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date3_1" id="ba_item_date3_1" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date3_2" id="ba_item_date3_2" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='195' ><input type="text" name="ca_item_name3" id="ba_item_name3" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='42' >&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='65'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='150' ><input type="text" name="ca_item_price3" id="ba_item_price3" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='83' ><input type="text" name="ca_item_surtax3" id="ba_item_surtax3" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='60' ><input type="text" name="ca_item_msg3" id="ba_item_msg3" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                         <tr>
                             <input type="hidden" name="cl_seq4" id="bl_seq4" >
-                            <td class='border_up' align='center' width='50' height='30' ><input type="text" name="ba_item_date4" id="ca_item_date4" value="" class="border-no width90" style="width:40px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='195' ><input type="text" name="ca_item_name4" id="ba_item_name4" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='42' >&nbsp;</td>
-                            <td class='border_up' align='center' width='65'>&nbsp;</td>
-                            <td class='border_up' align='center' width='55'>&nbsp;</td>
-                            <td class='border_up' align='center' width='150' ><input type="text" name="ca_item_price4" id="ba_item_price4" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='83' ><input type="text" name="ca_item_surtax4" id="ba_item_surtax4" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_top' align='center' width='60' ><input type="text" name="ca_item_msg4" id="ba_item_msg4" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date4_1" id="ba_item_date4_1" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='25' height='30' ><input type="text" name="ca_item_date4_2" id="ba_item_date4_2" value="" class="border-no width90" style="width:20px;padding:0px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='195' ><input type="text" name="ca_item_name4" id="ba_item_name4" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='42' >&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='65'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='55'>&nbsp;</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='150' ><input type="text" name="ca_item_price4" id="ba_item_price4" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='83' ><input type="text" name="ca_item_surtax4" id="ba_item_surtax4" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='60' ><input type="text" name="ca_item_msg4" id="ba_item_msg4" value="" class="border-no width90" style="width:50px" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
                         </tr>
                     </table>
                 </td>
@@ -1847,19 +1612,19 @@
                 <td width='100%'>
                     <table cellpadding='0' cellspacing='0' width='700'>
                         <tr align='justify'>
-                            <td class='border_up' align='center' width='122' height='2' >합계금액</td>
-                            <td class='border_up' align='center' width='108'>현 &nbsp; &nbsp; 금</td>
-                            <td class='border_up' align='center' width='108'>수 &nbsp; &nbsp; 표</td>
-                            <td class='border_up' align='center' width='108'>어 &nbsp; &nbsp; 음</td>
-                            <td class='border_up' align='center' width='108'>외상미수금</td>
-                            <td class='border_top' rowspan='2' align='center' width='143'>이 금액을 <span id="paytype1">&nbsp;  &nbsp; &nbsp; &nbsp;</span>함</td>
+                            <td class='sur_border_bottom' align='center' width='132' height='2' >합계금액</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='108'>현 &nbsp; &nbsp; 금</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='108'>수 &nbsp; &nbsp; 표</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='108'>어 &nbsp; &nbsp; 음</td>
+                            <td class='sur_border_left sur_border_bottom' align='center' width='108'>외상미수금</td>
+                            <td class='sur_border_left' rowspan='2' align='center' width='140'>이 금액을 <span id="paytype1"></span>함</td>
                         </tr>
                         <tr>
-                            <td class='border_up' align='center' width='122' height='25'><input type="text" name="ca_price_info1" id="ba_price_info1" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='108'><input type="text" name="ca_price_info2" id="ba_price_info2" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='108'><input type="text" name="ca_price_info3" id="ba_price_info3" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='108'><input type="text" name="ca_price_info4" id="ba_price_info4" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
-                            <td class='border_up' align='center' width='108'><input type="text" name="ca_price_info5" id="ba_price_info5" value="" class="border-no width90" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')"></td>
+                            <td class='' align='center' width='122' height='25'><input type="text" name="ca_price_info1" id="ba_price_info1" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left' align='center' width='108'><input type="text" name="ca_price_info2" id="ba_price_info2" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left' align='center' width='108'><input type="text" name="ca_price_info3" id="ba_price_info3" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left' align='center' width='108'><input type="text" name="ca_price_info4" id="ba_price_info4" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
+                            <td class='sur_border_left' align='center' width='108'><input type="text" name="ca_price_info5" id="ba_price_info5" value="" class="border-no width90 right" onfocus="$(this).removeClass('border-no')" onfocusout="$(this).addClass('border-no')" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)"></td>
                         </tr>
                     </table>
                 </td>
@@ -1969,5 +1734,6 @@
     <div class="modal-close-btn"><button class="btn btn-black btn-small" onclick="$('#dialogMailPreview').dialog('close')">닫기</button></div>
 </div>
 <input type="hidden" id="start" value=1>
+<input type="hidden" id="log_start" value=1>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>
 <script type="text/javascript" src="/assets/js/memberView.js?time=<?=time()?>"></script>
