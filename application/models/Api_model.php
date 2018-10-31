@@ -5025,7 +5025,18 @@ class Api_model extends CI_Model {
         }
 
         if($b_row["sv_pay_day"] != $this->input->post("sv_pay_day")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','자동 청구일',$b_row["sv_pay_day"],$this->input->post("sv_pay_day"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            if($b_row["sv_pay_day"] == 28){
+                $b_row["sv_pay_day"] = "말일";
+            }else{
+                $b_row["sv_pay_day"] = $b_row["sv_pay_day"]."일";
+            }
+
+            if($this->input->post("sv_pay_day") == 28){
+                $sv_pay_day = "말일";
+            }else{
+                $sv_pay_day = $this->input->post("sv_pay_day")."일";
+            }
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','자동 청구일',$b_row["sv_pay_day"],$sv_pay_day,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["sv_pay_publish"] != $this->input->post("sv_pay_publish") || $b_row["sv_pay_publish_type"] != $this->input->post("sv_pay_publish_type")){
