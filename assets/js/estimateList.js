@@ -96,7 +96,7 @@ $(function(){
                     var html = "";
                     for(var i =0;i < response.files.length;i++){
                         html += '<div style="width:100%;height:30px" class="fileCount" data-filesize="'+response.files[i].ef_file_size+'">\
-                                    <div style="width:200px;display:inline-block" >'+response.files[i].ef_origin_file+'</div> <button class="btn btn-default" type="button" style="display:inline-block" onclick="$(this).parent().remove()">삭제</button>\
+                                    <div style="width:200px;display:inline-block" >'+response.files[i].ef_origin_file+'</div> <button class="btn btn-default" type="button" style="position:relative;top:2px;" onclick="$(this).parent().remove()">삭제</button>\
                                     <input type="hidden" name="ef_file_seq[]" value="'+response.files[i].ef_seq+'|'+response.files[i].ef_origin_file+'|'+response.files[i].ef_file+'">\
                                 </div>';
                         fileTotalSize = fileTotalSize+parseInt(response.files[i].ef_file_size);
@@ -1331,13 +1331,13 @@ $(function(){
     };
 
     $('#sms').keyup(function(){
-        cut_80(this);
+        cut_90(this);
     });
 
     $('#sms').click(function(){
         var str_length = getTextLength($('#sms').val());
-        if(str_length > 80){
-            alert("문자는 80바이트 이하로 적어 주세요.");
+        if(str_length > 90){
+            alert("문자는 90바이트 이하로 적어 주세요.");
             return false;
         }
     });
@@ -1507,10 +1507,10 @@ function getTextLength(str) {
     return len;
 }
 
-function cut_80(obj){
+function cut_90(obj){
     var text = $(obj).val();
     var leng = text.length;
-    while(getTextLength(text) > 80){
+    while(getTextLength(text) > 90){
         leng--;
         text = text.substring(0, leng);
     }

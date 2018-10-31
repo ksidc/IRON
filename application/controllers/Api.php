@@ -2004,4 +2004,16 @@ class Api extends CI_Controller {
 
         echo json_encode($result);
     }
+
+    public function fetchAllLogs($mb_seq){
+        $total = $this->api_model->countAllLogs($mb_seq);
+        $list = $this->api_model->fetchALLLogs($mb_seq,$this->input->get("start"),$this->input->get("end"));
+
+        $result = [
+            "total" => $total,
+            "list" => $list
+        ];
+
+        echo json_encode($result);
+    }
 }

@@ -16,7 +16,7 @@ var category = '<?=json_encode($category)?>';
     <div class="search">
         <form name="searchForm" id="searchForm" onsubmit="return getList();">
             <div class="search1">
-                <div class="form-group">
+                <div class="form-group" style="position:relative;top:-1px">
 
                         <select id="searchDepth1" name="searchDepth1" class="select2" style="width:140px">
                             <option value="" selected>서비스 종류 선택</option>
@@ -26,7 +26,7 @@ var category = '<?=json_encode($category)?>';
                         </select>
 
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="position:relative;top:-1px">
 
                     <select id="searchDepth2" name="searchDepth2" class="select2" style="width:140px">
                         <option value="">상품명 선택</option>
@@ -34,16 +34,16 @@ var category = '<?=json_encode($category)?>';
 
                 </div>
                 <div class="form-group">
-                    <input type="checkbox" name="es_status[]" id="es_status1" value="0"> <span style="color:#0070C0">등록</span>
+                    <input type="checkbox" name="es_status[]" id="es_status1" value="0" class="c"> <span style="color:#0070C0">등록</span>
                 </div>
                 <div class="form-group">
-                    <input type="checkbox" name="es_status[]" id="es_status2" value="1"> <span style="color:#FF0000">신청완료</span>
+                    <input type="checkbox" name="es_status[]" id="es_status2" value="1" class="c"> <span style="color:#FF0000">신청완료</span>
                 </div>
             </div>
             <div class="search2">
                 <div class="form-group">
                     <label>등록일</label>
-                    <input type="text" style="width:80px" name="startDate" id="startDate" class="datepicker" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker" value="<?=date('Y-m-d')?>">
+                    <input type="text" style="width:80px;margin-left:5px;" name="startDate" id="startDate" class="datepicker" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker" value="<?=date('Y-m-d')?>">
                 </div>
                 <div class="form-group ml15" style="text-align:left">
 
@@ -332,7 +332,7 @@ var category = '<?=json_encode($category)?>';
         <div class="modal-field">
             <div class="modal-field-input full" >
                 <div class="label padd"><div><input type="checkbox" name="sms_yn" id="sms_yn" value="Y"> SMS 발송 | 내용</div></div>
-                <div class="input padd"><input type="text" name="sms" id="sms" style="width:70%" > <span class="bytes">0</span>byte / 80byte</div>
+                <div class="input padd"><input type="text" name="sms" id="sms" style="width:70%" > <span class="bytes">0</span>byte / 90byte</div>
             </div>
         </div>
         <div class="modal-field">
@@ -360,29 +360,29 @@ var category = '<?=json_encode($category)?>';
                 <div class="input">파일 <span id="attachedCnt"></span>개 | 용량 <span id="attachedSize"></span> / 20MB</div>
             </div>
         </div>
-        <div class="modal-field" style="border-top:2px solid #ddd">
-            <div class="modal-field-input full">
+        <div class="modal-field">
+            <div class="modal-field-input full" style="border-top:1px solid #ddd;">
                 <div class="label padd"><div>견적서</div></div>
                 <div class="input es_file padd">
 
                 </div>
             </div>
         </div>
-        <div class="modal-field" style="border-top:2px solid #ddd">
-            <div class="modal-field-input">
+        <div class="modal-field">
+            <div class="modal-field-input full">
                 <div class="label padd" style="vertical-align:top"><div>기본 첨부 파일 리스트</div></div>
                 <div class="input es_basic_file padd">
 
                 </div>
             </div>
         </div>
-        <div class="modal-field" style="border-top:2px solid #ddd">
+        <div class="modal-field">
             <div class="modal-field-input full">
                 <div class="label padd" style="vertical-align:top"><div>추가 첨부 파일</div></div>
                 <div class="input padd">
                     <div>
-                        <button class="btn btn-default" type="button" onclick="$('#em_file').trigger('click')">추가</button>
-                        <button class="btn btn-default btn-addfile-delete" type="button">삭제</button>
+                        <button class="btn btn-default" style="position:relative;top:2px;" type="button" onclick="$('#em_file').trigger('click')">추가</button>
+                        <button class="btn btn-default btn-addfile-delete" style="position:relative;top:2px;" type="button">삭제</button>
                     </div>
                     <div id="mail_add_file" style="padding-left:53px;padding-top:10px">
 

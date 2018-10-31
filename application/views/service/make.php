@@ -203,10 +203,10 @@
                     <div class="input">
                         <select name="sr_pay_day" id="sr_pay_day" class="select2" style="width:180px">
                             <option value="">자동 청구일을 선택하세요</option>
-                            <?php for($i = 0; $i < 28;$i++): ?>
+                            <?php for($i = 0; $i < 27;$i++): ?>
                             <option value="<?=($i+1)?>"><?=($i+1)?>일</option>
                             <?php endfor; ?>
-                            <option value="말일">말일</option>
+                            <option value="28">말일</option>
                         </select>
                         <!-- <input type="text" name="sr_pay_day" id="sr_pay_day" style="width:70px"> 일 -->
                     </div>

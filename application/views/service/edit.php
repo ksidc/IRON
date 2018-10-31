@@ -205,7 +205,7 @@
                     <div class="label"><div>자동 청구일(*)</div></div>
 
                     <div class="input">
-                        <input type="text" name="sr_pay_day" id="sr_pay_day" style="width:70px" value="<?=$service["sr_pay_day"]?>"> 일
+                        <input type="text" name="sr_pay_day" id="sr_pay_day" style="width:70px" value="<?=($service["sr_pay_day"] == "28" ? "말":$service["sr_pay_day"])?>"> 일
                     </div>
                 </div>
             </div>

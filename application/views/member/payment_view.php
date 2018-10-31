@@ -1,4 +1,5 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
 <div style="background:#fff;width:100%;overflow-x:hidden">
     <div class="popup_title" style="padding:10px">
           서비스 요금 상세
@@ -145,7 +146,7 @@
                         <?php for($i = 1; $i < 28;$i++): ?>
                         <option value="<?=($i)?>" <?=($info["sv_pay_day"] == $i ? "selected":"")?>><?=($i)?>일</option>
                         <?php endfor; ?>
-                        <option value="말일" <?=($info["sv_pay_day"] > "28" ? "selected":"")?>>말일</option>
+                        <option value="28" <?=($info["sv_pay_day"] == "28" ? "selected":"")?>>말일</option>
                     </select>
                 </div>
             </div>
@@ -402,18 +403,28 @@
         </div>
         <div class="modal-title">
             <div class="modal-title-text"><div>변경 로그</div></div>
+            <div style="float:right;position:relative;top:-26px;right:10px;">
+                <select class="select2" name="log_end" id="log_end" style="width:90px;">
+                    <option value="10">10라인</option>
+                    <option value="20" selected>20라인</option>
+                    <option value="30">30라인</option>
+                    <option value="50">50라인</option>
+                    <option value="100">100라인</option>
+                </select>
+            </div>
         </div>
+        <form id="logForm">
         <div style="float:right;font-size:12px;padding:5px 0px">
             <ul style="list-style:none;padding:0;margin:0">
                 <li style="float:left;padding-top:5px">구분 </li>
                 <li style="float:left;padding-left:3px">
-                    <select name="log_type" class="select2" style="width:100px">
+                    <select name="lo_type" class="select2" style="width:100px">
                         <option value="">전체 로그</option>
                     </select>
                 </li>
                 <li style="float:left;padding-top:5px;padding-left:10px">항목</li>
                 <li style="float:left;padding-left:3px">
-                    <select name="log_type" class="select2" style="width:100px">
+                    <select name="lo_item" class="select2" style="width:100px">
                         <option value="">전체 로그</option>
                     </select>
                 </li>
@@ -425,21 +436,23 @@
             <ul style="clear:both;list-style:none;padding:10px 0px 0px 0px;margin:0">
                 <li style="float:left;padding-top:5px">작업자 구분 : </li>
                 <li style="float:left;padding-top:3px;padding-left:10px">
-                    ADMIN <input type="checkbox"> SYSTEM <input type="checkbox"> USER <input type="checkbox">
+                    ADMIN <input type="checkbox" name="lo_user[]" value="1"> SYSTEM <input type="checkbox" name="lo_user[]" value="2"> USER <input type="checkbox" name="lo_user[]" value="3">
                 </li>
                 <li style="float:left">
-                    <select name="" class="select2" style="width:120px">
+                    <select name="searchType" class="select2" style="width:120px">
                         <option value="">작업자 이름</option>
                         <option value="">작업자 ID</option>
-                        <option value="">접속 IP</option>
+                        <option value="lo_ip">접속 IP</option>
                     </select>
                 </li>
-                <li style="float:left">
-                    <input type="text" name=""><button class="btn btn-brown btn-small" type="button">검색</button>
+                <li style="float:left;padding-left:5px">
+                    <input type="text" name="searchWord"><button class="btn btn-brown btn-small btn-log-search" type="button">검색</button>
+                    
                 </li>
 
             </ul>
         </div>
+        </form>
         <div>
             <table class="table">
                 <thead>
@@ -532,3 +545,6 @@
 </div>
 <input type="hidden" id="log_start" value=1>
 <script src="/assets/js/memberPaymentView.js?date=<?=time()?>"></script>
+<script>
+    getLog();
+</script>

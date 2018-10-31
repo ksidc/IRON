@@ -240,7 +240,9 @@ $(function(){
     });
 
     $("#sv_pc_seq").change(function(){
+
         if($(this).val() != ""){
+            $("#pc_name").val($("#sv_pc_seq option:selected").text());
             var url = "/api/productItemSearch/"+$(this).val();
             $.ajax({
                 url : url,
@@ -278,6 +280,7 @@ $(function(){
 
     $("#sv_pi_seq").change(function(){
         if($(this).val() != ""){
+            $("#pi_name").val($("#sv_pi_seq option:selected").text());
             var url = "/api/productSearch/"+$("#sv_pc_seq").val();
             $.ajax({
                 url : url,
@@ -315,6 +318,7 @@ $(function(){
 
     $("#sv_pr_seq").change(function(){
         if($(this).val() != ""){
+            $("#pr_name").val($("#sv_pr_seq option:selected").text());
             $("#sv_pr_name").html($("#sv_pr_seq option:selected").text());
             $("#sv_c_seq_str").val($("#sv_pr_seq option:selected").data("cname"));
             $("#sv_c_seq").val($("#sv_pr_seq option:selected").data("cseq"));
@@ -344,6 +348,7 @@ $(function(){
 
     $("#sv_pd_seq").change(function(){
         if($(this).val() != ""){
+            $("#pd_name").val($("#sv_pd_seq option:selected").text());
             var url = "/api/productSubDepth2Search/"+$("#sv_pr_seq").val()+"/"+$(this).val();
             $.ajax({
                 url : url,
@@ -369,11 +374,20 @@ $(function(){
         if($(this).val() == ""){
             $("#sv_ps_name").html("소분류");
         }else{
+            $("#ps_name").val($("#sv_ps_seq option:selected").text());
             $("#sv_ps_name").html($("#sv_ps_seq option:selected").text());
             
         }
 
     });
+
+    $(".btn-log-search").click(function(){
+        getLog();
+    })
+
+    $("#log_end").change(function(){
+        getLog();
+    })
 })
 
 function addServiceUrl(){
@@ -511,14 +525,15 @@ function getServiceModule(){
 function getLog(){
 
     var url = "/api/fetchLogs/5/"+$("#sv_seq").val();
-    var end = 5;
+    var end = $("#log_end").val();
     var start = $("#log_start").val();
+    var datas = $("#logForm").serialize();
 // alert(start);
     $.ajax({
         url : url,
         type : 'GET',
         dataType : 'JSON',
-        data : "sv_seq="+$("#sv_seq").val()+"&start="+start+"&end="+end,
+        data : datas+"&sv_seq="+$("#sv_seq").val()+"&start="+start+"&end="+end,
         success:function(response){
             console.log(response);
             var html = "";
@@ -552,7 +567,7 @@ function getLog(){
             $("#log-list").html(html);
 
             $("#logPaging").bootpag({
-                total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
+                total : Math.ceil(parseInt(response.total)/end), // 총페이지수 (총 Row / list노출개수)
                 page : $("#log_start").val(), // 현재 페이지 default = 1
                 maxVisible:5, // 페이지 숫자 노출 개수
                 wrapClass : "pagination",

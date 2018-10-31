@@ -2,7 +2,7 @@ var basic_date_info = [];
 $(function(){
     priceInfoDate();
     calculatePrice();
-
+    
     
     $( "#dialogFirstSetting" ).dialog({
         autoOpen: false,
@@ -286,6 +286,13 @@ $(function(){
             $(".type-hidden").hide();
         }
     });
+    $(".btn-log-search").click(function(){
+        getLog();
+    })
+
+    $("#log_end").change(function(){
+        getLog();
+    })
 })
 
 var basic_date_info = [];
@@ -1152,15 +1159,17 @@ function contractPriceDateInfoAdd(sva_seq){
 
 function getLog(){
 
-    var url = "/api/fetchLogs/1/"+$("#sv_seq").val();
-    var end = 5;
+    var url = "/api/fetchLogs/3/"+$(".sv_seq").val();
+    console.log(url);
+    var end = $("#log_end").val();
     var start = $("#log_start").val();
+    var datas = $("#logForm").serialize();
 // alert(start);
     $.ajax({
         url : url,
         type : 'GET',
         dataType : 'JSON',
-        data : "sv_seq="+$("#sv_seq").val()+"&start="+start+"&end="+end,
+        data : datas+"&sv_seq="+$("#sv_seq").val()+"&start="+start+"&end="+end,
         success:function(response){
             console.log(response);
             var html = "";
@@ -1194,7 +1203,75 @@ function getLog(){
             $("#log-list").html(html);
 
             $("#logPaging").bootpag({
-                total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
+                total : Math.ceil(parseInt(response.total)/end), // 총페이지수 (총 Row / list노출개수)
+                page : $("#log_start").val(), // 현재 페이지 default = 1
+                maxVisible:5, // 페이지 숫자 노출 개수
+                wrapClass : "pagination",
+                next : ">",
+                prev : "<",
+                nextClass : "last",
+                prevClass : "first",
+                activeClass : "active"
+
+            }).on('page', function(event,num){ // 이벤트 액션
+                // document.location.href='/pageName/'+num; // 페이지 이동
+                $("#log_start").val(num);
+                getLog();
+            })
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+}
+
+function getAddLog(){
+
+    var url = "/api/fetchLogs/6/"+$(".sva_seq").val();
+    console.log(url);
+    var end = $("#log_end").val();
+    var start = $("#log_start").val();
+    var datas = $("#logForm").serialize();
+// alert(start);
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        data : datas+"&sva_seq="+$(".sva_seq").val()+"&start="+start+"&end="+end,
+        success:function(response){
+            console.log(response);
+            var html = "";
+            for(var i = 0;i<response.list.length;i++){
+                var num = parseInt(response.total) - (($("#log_start").val()-1)*end) - i;
+                html += '<tr>\
+                            <td>'+num+'</td>\
+                            <td>'+response.list[i].lo_regdate+'</td>\
+                            <td>'+response.list[i].lo_type+'</td>\
+                            <td>'+response.list[i].lo_item+'</td>\
+                            <td>'+response.list[i].lo_origin+'</td>\
+                            <td>'+response.list[i].lo_after+'</td>\
+                            <td>';
+                                if(response.list[i].lo_user == "1"){
+                                    html += "ADMIN";
+                                }else if(response.list[i].lo_user == "2"){
+                                    html += "SYSTEM";
+                                }else{
+                                    html += "USER";
+                                }
+                            html += '</td>\
+                            <td></td>\
+                            <td>'+response.list[i].lo_ip+'</td>\
+                        </tr>';
+                
+            }
+            if(html == ""){
+                html = "<tr><td colspan=9 align=center>내용이 없습니다.</td></tr>";
+            }
+            console.log(html);
+            $("#log-list").html(html);
+
+            $("#logPaging").bootpag({
+                total : Math.ceil(parseInt(response.total)/end), // 총페이지수 (총 Row / list노출개수)
                 page : $("#log_start").val(), // 현재 페이지 default = 1
                 maxVisible:5, // 페이지 숫자 노출 개수
                 wrapClass : "pagination",

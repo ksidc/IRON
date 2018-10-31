@@ -38,6 +38,24 @@ ul {
     padding:0;
     margin:0;
 }
+
+input[type="checkbox"].c {
+    position:relative;
+	top:3px;
+}
+
+input[type="checkbox"].sv_date {
+	margin-left:15px;
+	position:relative;
+	top:3px;
+}
+
+input[type="checkbox"].sv_status {
+	margin-left:15px;
+	position:relative;
+	top:3px;
+}
+
 input[type="text"] {
     height:19px;
     padding:0px 5px;
@@ -196,7 +214,7 @@ nav ul li.active {
 
 .left-icon {
     display:inline-block;
-    color:#7f7f7f;
+    color:#555;
     padding-right:10px;
     float:right;
 }
@@ -211,13 +229,13 @@ nav ul li.active {
 .sub-menu p{
     padding:15px 0px 0px 15px;
     font-size:12pt;
-    color:#7f7f7f;
+    color:#555;
     height:32px;
     margin:0px;
 }
 
 .sub-menu p a{
-    color:#7f7f7f;
+    color:#555;
 }
 
 .sub-menu p:hover, .sub-menu p.active , .sub-menu p a:hover, .sub-menu p a.active {
@@ -313,6 +331,12 @@ nav ul li.active {
     background-color:#fff;
 }
 
+.table-list.memo {
+    overflow:auto;
+	height:145px;
+	margin:5px 0px 0px 0px;
+}
+
 .table {
     width:100%;
 }
@@ -331,7 +355,7 @@ nav ul li.active {
 
 .table > tbody {
     background-color:#fff;
-    color:#7f7f7f;
+    color:#555;
     font-size:9pt;
     text-align:center;
 }
@@ -348,6 +372,23 @@ nav ul li.active {
 
 .table > tbody > tr > td > a:hover {
     text-decoration:none;
+}
+
+.table.total {
+	border: 1px solid #bbb;
+	border-collapse: collapse;
+}
+
+.table > tbody > tr.total_tr_1 > td {
+	background:#ddd;
+	padding:0px 20px;
+	border: 1px solid #bbb;
+}
+
+.table > tbody > tr.total_tr_2 > td {
+	background:#fff;
+	padding:0px 20px;
+	border: 1px solid #bbb;
 }
 
 .top-button-group {
@@ -533,7 +574,7 @@ nav ul li.active {
     height:19px;
     width:90%;
 	background-color:#fafafa;
-	border:1px solid #bfbfbf;
+	border:1px solid #acacac;
 }
 
 
@@ -649,7 +690,7 @@ nav ul li.active {
 
 .modal-close-btn {
     text-align:center;
-    background:#dedede;
+    background:#ddd;
     margin-top:5px;
     line-height:40px
 }
@@ -770,56 +811,56 @@ nav ul li.active {
 
 .searchStep1 {
     padding-left:15px;
-    padding-top:5px;
-    padding-bottom:5px;
-
+    padding-top:7px;
+    padding-bottom:7px;
+	border-bottom: 1px dashed #afafaf;
 }
 
 .searchStep2 {
     padding-left:15px;
-    padding-top:5px;
-    padding-bottom:5px;
+    padding-top:3px;
+    padding-bottom:3px;
     width:45%;
     display:inline-block;
 }
 
 .searchStep3 {
     padding-left:15px;
-    padding-top:5px;
-    padding-bottom:5px;
+    padding-top:2px;
+    padding-bottom:2px;
 }
 
 .searchStep4 {
     padding-left:15px;
-    padding-top:5px;
-    padding-bottom:5px;
+    padding-top:2px;
+    padding-bottom:2px;
 }
 
-.border_tit {font-family:굴림, verdana, arial; font-size: 11px;color: #000000;}
+.border_tit {font-size: 11px;color: #000000;}
 
-.border_up {font-family:굴림, verdana, arial; font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#DCCBAC; border-top-style:solid; border-left-style:none; border-right-style:solid; border-bottom-style:none;}
+.border_up {font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#DCCBAC; border-top-style:solid; border-left-style:none; border-right-style:solid; border-bottom-style:none;}
 
-.border_all {font-family:굴림, verdana, arial; font-size: 11px;color: #000000; border-top-width:2; border-right-width:2; border-bottom-width:2; border-left-width:2; border-color:#DCCBAC; border-top-style:solid; border-left-style:solid; border-right-style:solid; border-bottom-style:solid; }
+.border_all {font-size: 11px;color: #000000; border-top-width:2; border-right-width:2; border-bottom-width:2; border-left-width:2; border-color:#DCCBAC; border-top-style:solid; border-left-style:solid; border-right-style:solid; border-bottom-style:solid; }
 
-.border_both {font-family:굴림, verdana, arial; font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#DCCBAC; border-top-style:none; border-left-style:solid; border-right-style:solid; border-bottom-style:none;}
+.border_both {font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#DCCBAC; border-top-style:none; border-left-style:solid; border-right-style:solid; border-bottom-style:none;}
 
-.border_top {font-family:굴림, verdana, arial; font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#DCCBAC; border-top-style:solid; border-left-style:none; border-right-style:none; border-bottom-style:none;}
+.border_top {font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#DCCBAC; border-top-style:solid; border-left-style:none; border-right-style:none; border-bottom-style:none;}
 
-.border_back {font-family:굴림, verdana, arial; font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#DCCBAC; border-top-style:solid; border-left-style:solid; border-right-style:solid; border-bottom-style:none;}
-
-
-.border_all {font-family:굴림, verdana, arial; font-size: 12px;color: #000000; border:2px solid #DCCBAC; }
+.border_back {font-size: 11px;color: #000000; border-top-width:1; border-right-width:1; border-bottom-width:1; border-left-width:1; border-color:#DCCBAC; border-top-style:solid; border-left-style:solid; border-right-style:solid; border-bottom-style:none;}
 
 
-.sur_border_top { font-family:굴림, verdana, arial; font-size: 12px;color: #000000; border-top:1px solid #DCCBAC; }
-.sur_border_left { font-family:굴림, verdana, arial; font-size: 12px;color: #000000; border-left:1px solid #DCCBAC; }
-.sur_border_bottom { font-family:굴림, verdana, arial; font-size: 12px;color: #000000; border-bottom:1px solid #DCCBAC; }
-.sur_border_right { font-family:굴림, verdana, arial; font-size: 12px;color: #000000; border-right:1px solid #DCCBAC; }
+.border_all {font-size: 12px;color: #000000; border:2px solid #DCCBAC; }
 
-.sur_border_top2 { font-family:굴림, verdana, arial; font-size: 12px;color: #000000; border-top:2px solid #DCCBAC; }
-.sur_border_left2 { font-family:굴림, verdana, arial; font-size: 12px;color: #000000; border-left:2px solid #DCCBAC; }
-.sur_border_bottom2 { font-family:굴림, verdana, arial; font-size: 12px;color: #000000; border-bottom:2px solid #DCCBAC; }
-.sur_border_right2 { font-family:굴림, verdana, arial; font-size: 12px;color: #000000; border-right:2px solid #DCCBAC; }
+
+.sur_border_top { font-size: 12px;color: #000000; border-top:1px solid #DCCBAC; }
+.sur_border_left { font-size: 12px;color: #000000; border-left:1px solid #DCCBAC; }
+.sur_border_bottom { font-size: 12px;color: #000000; border-bottom:1px solid #DCCBAC; }
+.sur_border_right { font-size: 12px;color: #000000; border-right:1px solid #DCCBAC; }
+
+.sur_border_top2 { font-size: 12px;color: #000000; border-top:2px solid #DCCBAC; }
+.sur_border_left2 { font-size: 12px;color: #000000; border-left:2px solid #DCCBAC; }
+.sur_border_bottom2 { font-size: 12px;color: #000000; border-bottom:2px solid #DCCBAC; }
+.sur_border_right2 { font-size: 12px;color: #000000; border-right:2px solid #DCCBAC; }
 
 .border-no {
     border:0px;
@@ -884,7 +925,7 @@ nav ul li.active {
 .header-box {
 	overflow:hidden;
 	height:auto;
-	border:1px solid #fff;
+	border:1px solid #ccc;
 	background:#fff;
 	border-radius:6px;
 	margin-top:20px;
@@ -893,7 +934,7 @@ nav ul li.active {
 
 .header-listbox {
 	clear:both;
-	border:1px solid #fff;
+	border:1px solid #ccc;
 	background:#fff;
 	border-radius:6px;
 	min-height:300px;
@@ -905,7 +946,7 @@ nav ul li.active {
 	padding:10px;
 	background:#ddd;
 	height:15px;
-	border-bottom:1px solid #bfbfbf;
+	border-bottom:1px solid #fff;
 	border-top-left-radius:6px;
 	border-top-right-radius:6px;
 	font-size:14px;
@@ -915,4 +956,16 @@ nav ul li.active {
     margin-left: 2px;
     border-left: 8px solid gray;
     padding-left: 8px;
+}
+
+p {
+	font-size:12px;
+	margin-top:10px;
+}
+
+textarea.memo {
+	width:99.5%;
+	height:50px;
+	background-color:#fff;
+	border:1px solid #acacac;
 }

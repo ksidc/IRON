@@ -179,26 +179,26 @@ class Service extends CI_Controller {
         $html = "";
         foreach($category as $key => $row){
             if($key%2 == 0){
-                $background = "style='background:#f2f2f2'";
+                $background = "style='background:#f2f2f2;border_bottom'";
             }else{
                 $background = "";
             }
             $html .= '<div class="searchStep1" data-tag="'.$row["pc_name"].'" data-step="1" '.$background.'>
-                        <div style="width:100%;font-weight:900"><input type="checkbox" name="pc_seq[]" value="'.$row["pc_seq"].'" class="pc_seq">'.$row["pc_name"].'</div>';
+                        <div style="width:100%;font-weight:900"><input type="checkbox" name="pc_seq[]" value="'.$row["pc_seq"].'" class="pc_seq c">'.$row["pc_name"].'</div>';
             $productItem = $this->api_model->fetchProductSearch($row["pc_seq"]);
             foreach($productItem as $pi_row){
                 $html .= '<div class="searchStep2" data-tag="'.$row["pc_name"].'|'.$pi_row["pi_name"].'" data-step="2">
-                            <input type="checkbox" name="pi_seq[]" value="'.$pi_row["pi_seq"].'" class="pc_seq_'.$row["pc_seq"].' pi_seq"> '.$pi_row["pi_name"];
+                            <input type="checkbox" name="pi_seq[]" value="'.$pi_row["pi_seq"].'" class="pc_seq_'.$row["pc_seq"].' pi_seq c"> '.$pi_row["pi_name"];
                 $productDiv = $this->api_model->fetchProductDiv($row["pc_seq"]);
 
                 foreach($productDiv as $pd_row){
                     $html .= '<div class="searchStep3" data-tag="'.$row["pc_name"].'|'.$pi_row["pi_name"].'|'.$pd_row["pd_name"].'" data-step="3">
-                                <input type="checkbox" name="pd_seq[]" value="'.$pd_row["pd_seq"].'" class="pi_seq_'.$pi_row["pi_seq"].' pd_seq"> '.$pd_row["pd_name"];
+                                <input type="checkbox" name="pd_seq[]" value="'.$pd_row["pd_seq"].'" class="pi_seq_'.$pi_row["pi_seq"].' pd_seq c"> '.$pd_row["pd_name"];
                     $productDivSub = $this->api_model->fetchProductDivSub($pd_row["pd_seq"]);
 
                     foreach($productDivSub as $ps_row){
                         $html .= '<div class="searchStep4" data-tag="'.$row["pc_name"].'|'.$pi_row["pi_name"].'|'.$pd_row["pd_name"].'|'.$ps_row["ps_name"].'" data-parent1="'.$row["pc_name"].'" data-parent2="'.$pi_row["pi_name"].'" data-parent3="'.$pd_row["pd_name"].'" data-parent4="'.$ps_row["ps_name"].'" data-step="4">
-                                    <input type="checkbox" name="ps_seq[]" value="'.$ps_row["ps_seq"].'" class="pd_seq_'.$pi_row["pi_seq"].' ps_seq"> '.$ps_row["ps_name"].'
+                                    <input type="checkbox" name="ps_seq[]" value="'.$ps_row["ps_seq"].'" class="pd_seq_'.$pi_row["pi_seq"].' ps_seq c"> '.$ps_row["ps_name"].'
                                 </div>';
                     }
                     $html .= '</div>';

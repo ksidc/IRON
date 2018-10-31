@@ -12,12 +12,12 @@
                     분류명 (서비스 종류)
                 </li>
                 <li >
-                    <input type="text" name="typeSearchWord" id="typeSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-type" type="submit" style="padding:5.5px 7px;margin-bottom:3px">검색</button>
+                    <input type="text" name="typeSearchWord" id="typeSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-type" type="submit">검색</button>
                 </li>
             </ul>
         </div>
         </form>
-        <div class="modal_search_list" style="height:230px;overflow:auto">
+        <div class="modal_search_list" style="height:400px;overflow:auto">
             <table class="table" >
                 <thead>
                 <tr>
@@ -27,7 +27,7 @@
                     <th>삭제</th>
                 </tr>
                 </thead>
-                <tbody style="height:230px" id="modalSearchType">
+                <tbody style="height:400px" id="modalSearchType">
 
                 </tbody>
             </table>
@@ -41,7 +41,7 @@
             </div>
             <div class="type-add-right" style="padding-left:30px">
                 <div style="display:inline-block">분류명</div>
-                <div style="display:inline-block"><input type="text" name="ct_name" id="ct_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-type-add" type="submit" style="padding:5.5px 7px;margin-bottom:3px">신규 등록</button></div>
+                <div style="display:inline-block"><input type="text" name="ct_name" id="ct_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-type-add" type="submit">신규 등록</button></div>
             </div>
         </div>
         </form>
@@ -54,12 +54,12 @@
                     END User
                 </li>
                 <li >
-                    <input type="text" name="endSearchWord" id="endSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-end" type="submit" style="padding:5.5px 7px;margin-bottom:3px">검색</button>
+                    <input type="text" name="endSearchWord" id="endSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-end" type="submit">검색</button>
                 </li>
             </ul>
         </div>
         </form>
-        <div class="modal_search_list" style="height:230px;overflow:auto">
+        <div class="modal_search_list" style="height:400px;overflow:auto">
             <table class="table">
                 <thead>
                 <tr>
@@ -69,7 +69,7 @@
                     <th>삭제</th>
                 </tr>
                 </thead>
-                <tbody style="height:230px" id="modalSearchEnd">
+                <tbody style="height:400px" id="modalSearchEnd">
 
                 </tbody>
             </table>
@@ -83,7 +83,7 @@
             </div>
             <div class="type-add-right" style="padding-left:30px">
                 <div style="display:inline-block">END User</div>
-                <div style="display:inline-block"><input type="text" name="eu_name" id="eu_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-end-add" type="submit" style="padding:5.5px 7px;margin-bottom:3px">신규 등록</button></div>
+                <div style="display:inline-block"><input type="text" name="eu_name" id="eu_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-end-add" type="submit">신규 등록</button></div>
             </div>
         </div>
         </form>

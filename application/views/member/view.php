@@ -146,8 +146,7 @@
                                 <select name="mb_level" id="mb_level" class="select2" style="width:100px">
                                     <option value="1" selected>1</option>
                                     <option value="2">2</option>
-
-                                </select>
+                                </select> <i>* 미구현</i>
                             </div>
                         </div>
                     </div>
@@ -255,6 +254,7 @@
                             <div class="label padd"><div>최근 접속일</div></div>
                             <div class="input padd">
                                 <!-- 프론트 로그인 연동 -->
+								 <i>* 연동 예정입니다.</i>
                             </div>
                         </div>
                     </div>
@@ -263,6 +263,7 @@
                             <div class="label padd"><div>최근 접속 IP</div></div>
                             <div class="input padd">
                                 <!-- 프론트 로그인 연동 -->
+								 <i>* 연동 예정입니다.</i>
                             </div>
                         </div>
                     </div>
@@ -271,6 +272,7 @@
                             <div class="label padd"><div>인증 구분</div></div>
                             <div class="input padd">
                                 <!-- 프론트 로그인 연동 -->
+								<i>* 연동 예정입니다.</i>
                             </div>
                         </div>
                     </div>
@@ -309,7 +311,7 @@
 						<div class="modal-field-input" style="width:33%">
 							<div class="label padd"><div>예금주</div></div>
 							<div class="input padd">
-								<input type="text" style="width:38.7%" name="mb_bank_name" id="mb_bank_name" value="<?=$info["mb_bank_name"]?>">
+								<input type="text" name="mb_bank_name" id="mb_bank_name" value="<?=$info["mb_bank_name"]?>">
 							</div>
 						</div>
 						<div class="modal-field-input" style="width:33%">
@@ -320,13 +322,13 @@
 						</div>
 					</div>
 					<div class="modal-field">
-						<div class="modal-field-input">
+						<div class="modal-field-input" style="width:33%">
 							<div class="label padd"><div>계좌번호(-포함)</div></div>
 							<div class="input padd">
 								<input type="text" name="mb_bank_input_number" id="mb_bank_input_number" value="<?=$info["mb_bank_input_number"]?>">
 							</div>
 						</div>
-						<div class="modal-field-input">
+						<div class="modal-field-input" style="width:33%">
 							<div class="label padd"><div>사업자번호/생년월일</div></div>
 							<div class="input padd">
 								<input type="text" name="mb_bank_number" id="mb_bank_number" value="<?=$info["mb_bank_number"]?>">
@@ -351,15 +353,15 @@
 				<div style="width:100%">
 					<div class="modal-field">
 						<div class="modal-field-input">
-							<div class="label padd"><div>은행명</div></div>
-							<div class="input padd" style="width:59%">
-								<input type="text" class="width-button" name="mb_input_payment_bank" id="mb_input_payment_bank" value="<?=($info["mb_input_payment_bank"] != "" ? $info["mb_input_payment_bank"]:$eosec_view["mb_bank"])?>">
+							<div class="label padd" style="width:45%"><div>은행명</div></div>
+							<div class="input padd" style="width:50%">
+								<input type="text" class="width-button" style="width:90%" name="mb_input_payment_bank" id="mb_input_payment_bank" value="<?=($info["mb_input_payment_bank"] != "" ? $info["mb_input_payment_bank"]:$eosec_view["mb_bank"])?>">
 							</div>
 						</div>
 						<div class="modal-field-input">
-							<div class="label padd"><div>예금주</div></div>
-							<div class="input padd" style="width:59%">
-								<input type="text" class="width-button" name="mb_input_payment_name" id="mb_input_payment_name" readonly value="<?=($info["mb_input_payment_name"] != "" ? $info["mb_input_payment_name"]:$eosec_view["mb_bank_name"])?>">
+							<div class="label padd" style="width:25%"><div>예금주</div></div>
+							<div class="input padd" style="width:65%">
+								<input type="text" class="width-button" style="width:90%" name="mb_input_payment_name" id="mb_input_payment_name" value="<?=($info["mb_input_payment_name"] != "" ? $info["mb_input_payment_name"]:$eosec_view["mb_bank_name"])?>">
 							</div>
 						</div>
 
@@ -368,7 +370,7 @@
 						<div class="modal-field-input full">
 							<div class="label padd"><div>계좌번호(-포함)</div></div>
 							<div class="input padd">
-								<input type="text" class="width-button" name="mb_input_payment_number" id="mb_input_payment_number" readonly value="<?=($info["mb_input_payment_number"] != "" ? $info["mb_input_payment_number"]:$eosec_view["mb_bank_input_number"])?>">
+								<input type="text" class="width-button" style="width:50%" name="mb_input_payment_number" id="mb_input_payment_number" value="<?=($info["mb_input_payment_number"] != "" ? $info["mb_input_payment_number"]:$eosec_view["mb_bank_input_number"])?>">
 							</div>
 						</div>
 
@@ -587,70 +589,11 @@
 		</div>
 
 	</div>
-    <div class="header-box">
-        <div class="header-title">
-            <div><div>변경 로그</div></div>
-        </div>
-        <div style="float:right;font-size:12px;padding:5px 0px">
-            <ul style="list-style:none;padding:0;margin:0">
-                <li style="float:left;padding-top:5px">구분 </li>
-                <li style="float:left;padding-left:3px">
-                    <select name="log_type" class="select2" style="width:100px">
-                        <option value="">전체 로그</option>
-                    </select>
-                </li>
-                <li style="float:left;padding-top:5px;padding-left:10px">항목</li>
-                <li style="float:left;padding-left:3px">
-                    <select name="log_type" class="select2" style="width:100px">
-                        <option value="">전체 로그</option>
-                    </select>
-                </li>
-                <li style="float:left;padding-top:5px;padding-left:10px">날짜</li>
-                <li style="float:left;padding-left:3px">
-                    <input type="text" name="start_date" class="datepicker3"> ~ <input type="text" name="end_date" class="datepicker3">
-                </li>
-            </ul>
-            <ul style="clear:both;list-style:none;padding:10px 0px 0px 0px;margin:0">
-                <li style="float:left;padding-top:5px">작업자 구분 : </li>
-                <li style="float:left;padding-top:3px;padding-left:10px">
-                    ADMIN <input type="checkbox"> SYSTEM <input type="checkbox"> USER <input type="checkbox">
-                </li>
-                <li style="float:left">
-                    <select name="" class="select2" style="width:120px">
-                        <option value="">작업자 이름</option>
-                        <option value="">작업자 ID</option>
-                        <option value="">접속 IP</option>
-                    </select>
-                </li>
-                <li style="float:left">
-                    <input type="text" name=""><button class="btn btn-brown btn-small" type="button">검색</button>
-                </li>
-
-            </ul>
-        </div>
-        <div>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>No</th>
-                    <th>날짜</th>
-                    <th>구분</th>
-                    <th>항목</th>
-                    <th>변경 전</th>
-                    <th>변경 후</th>
-                    <th>작업자 구분</th>
-                    <th>작업자</th>
-                    <th>접속 IP</th>
-                </tr>
-                </thead>
-                <tbody id="log-list">
-                
-                </tbody>
-            </table>
-        </div>
-        <div>
-            <div id="logPaging"></div>
-        </div>
+	<p style="color:#0070C0">* 이메일과 휴대폰번호는 띄어쓰기 없이 콤마( , )로 구분하여 추가할 수 있습니다.</p>
+    
+    <div style="text-align:center;padding:20px 0px">
+        <button class="btn btn-default" type="button" onclick='$( "#dialogLog" ).dialog("open");$("#dialogLog").dialog().parents(".ui-dialog").find(".ui-dialog-titlebar").remove();'>변경로그</button>
+        
     </div>
 	<div class="header-listbox">
         <div class="header-title">
@@ -675,7 +618,7 @@
                         <tr>
                             <th><input type="checkbox" id="all"></th>
                             <th>No</th>
-                            <th>회원명</th>
+                            <th>상호/이름</th>
                             <th class="basic">End User</th>
                             <th>담당자</th>
                             <th>계약번호</th>
@@ -737,7 +680,6 @@
                         <tr>
                             <th><input type="checkbox" id="all_payment"></th>
                             <th>No</th>
-                           <!--  <th>회원명</th> -->
                             <th>계약번호</th>
                             <th>서비스 종류</th>
                             <th>상품명</th>
@@ -760,7 +702,7 @@
                             <th>계산서</th>
                             <th>TaxCode</th>
                             <th>상세보기</th>
-                            <th onclick="viewAll()" id="payment_extend"><</th>
+                            <th onclick="viewAll()" id="payment_extend" style="cursor:pointer"><</th>
                         </tr>
                     </thead>
                     <tbody id="payment-tbody-list">
@@ -770,29 +712,29 @@
                 </form>
 
             </div>
-            <div style="float:right;margin-top:20px">
-                <table class="table">
-                    <tr>
-                        <td class="payment-basic" style="background:#ddd;">일회성 요금</td>
-                        <td class="payment-basic" style="background:#ddd;">일회성 할인</td>
-                        <td style="background:#ddd;width:100px">일회성 요금 합계</td>
-                        <td class="payment-basic" style="background:#ddd;">서비스 요금(월)</td>
-                        <td class="payment-basic" style="background:#ddd;">서비스 할인(월)</td>
-                        <td class="payment-basic" style="background:#ddd;">결제방법할인(월)</td>
-                        <td style="background:#ddd;width:100px">월 요금 합계</td>
-                        <td style="background:#ddd;width:100px">부가세</td>
-                        <td style="background:#ddd;width:100px">총 월 요금 합계</td>
+            <div style="float:right;margin:20px">
+                <table class="table total">
+                    <tr class="total_tr_1">
+                        <td class="payment-basic">일회성 요금</td>
+                        <td class="payment-basic" style="color:#FF5353">일회성 할인</td>
+                        <td style="color:#404040;font-weight:bold;">일회성 요금 합계</td>
+                        <td class="payment-basic">서비스 요금(월)</td>
+                        <td class="payment-basic" style="color:#FF5353">서비스 할인(월)</td>
+                        <td class="payment-basic" style="color:#FF7053">결제 방법 할인(월)</td>
+                        <td style="color:#404040;font-weight:bold;">월 요금 합계</td>
+                        <td>부가세</td>
+                        <td>총 월 요금 합계</td>
                     </tr>
-                    <tr>
-                        <td class="payment-basic payment_price1 right"></td>
-                        <td class="payment-basic payment_price2 right" style="color:#FF5353"></td>
-                        <td class="payment_price3 right" style="color:#404040"></td>
-                        <td class="payment-basic payment_price4 right"></td>
-                        <td class="payment-basic payment_price5 right" style="color:#FF5353"></td>
-                        <td class="payment-basic payment_price6 right" style="color:#FF7053"></td>
-                        <td class="payment_price7 right" style="color:#404040"></td>
-                        <td class="payment_price8 right"></td>
-                        <td class="payment_price9 right"></td>
+                    <tr class="total_tr_2">
+                        <td class="payment-basic payment_price1"></td>
+                        <td class="payment-basic payment_price2" style="color:#FF5353"></td>
+                        <td class="payment_price3" style="color:#404040;font-weight:bold;"></td>
+                        <td class="payment-basic payment_price4"></td>
+                        <td class="payment-basic payment_price5" style="color:#FF5353"></td>
+                        <td class="payment-basic payment_price6" style="color:#FF7053"></td>
+                        <td class="payment_price7" style="color:#404040;font-weight:bold;"></td>
+                        <td class="payment_price8"></td>
+                        <td class="payment_price9"></td>
                     </tr>
                 </table>
             </div>
@@ -850,7 +792,7 @@
                             <th>거래명세서</th>
                             <th>세금계산서</th>
                             <th>수정</th>
-                            <th onclick="viewAll2()" id="claim_extend"><</th>
+                            <th onclick="viewAll2()" id="claim_extend" style="cursor:pointer"><</th>
                         </tr>
                     </thead>
                     <tbody id="tbody2-list">
@@ -862,33 +804,33 @@
 
                 </div>
             </div>
-            <div style="float:right;margin-top:20px">
-                <table class="table">
-                    <tr>
-                        <td style="background:#ddd" class="claim_payment">일회성 요금</td>
-                        <td style="background:#ddd" class="claim_payment">일회성 할인</td>
-                        <td style="background:#ddd" class="claim_payment">일회성 청구 합계</td>
-                        <td style="background:#ddd" class="claim_payment">초기 일할 요금</td>
-                        <td style="background:#ddd" class="claim_payment">서비스 요금</td>
-                        <td style="background:#ddd" class="claim_payment">서비스 할인</td>
-                        <td style="background:#ddd" class="claim_payment">결제 방법 할인</td>
-                        <td style="background:#ddd" class="claim_payment">서비스 청구 합계</td>
-                        <td style="background:#ddd" class="claim_payment">연체 수수료</td>
-                        <td style="background:#ddd;width:150px">청구 합계</td>
-                        <td style="background:#ddd;width:150px">부가세</td>
-                        <td style="background:#ddd;width:150px">총 청구 합계</td>
+            <div style="float:right;margin:20px">
+                <table class="table total">
+                    <tr class="total_tr_1">
+                        <td class="claim_payment">일회성 요금</td>
+                        <td class="claim_payment" style="color:#FF5353">일회성 할인</td>
+                        <td class="claim_payment" style="color:#404040;font-weight:bold;">일회성 청구 합계</td>
+                        <td class="claim_payment">초기 일할 요금</td>
+                        <td class="claim_payment">서비스 요금</td>
+                        <td class="claim_payment" style="color:#FF5353">서비스 할인</td>
+                        <td class="claim_payment" style="color:#FF7053">결제 방법 할인</td>
+                        <td class="claim_payment" style="color:#404040;font-weight:bold;">서비스 청구 합계</td>
+                        <td class="claim_payment">연체 수수료</td>
+                        <td style="color:#404040;font-weight:bold;">청구 합계</td>
+                        <td>부가세</td>
+                        <td>총 청구 합계</td>
                     </tr>
-                    <tr>
+                    <tr class="total_tr_2">
                         <td class="claim_price1 claim_payment"></td>
                         <td class="claim_price2 claim_payment" style="color:#FF5353"></td>
-                        <td class="claim_price3 claim_payment" style="color:#404040"></td>
+                        <td class="claim_price3 claim_payment" style="color:#404040;font-weight:bold;"></td>
                         <td class="claim_price4 claim_payment"></td>
                         <td class="claim_price5 claim_payment"></td>
                         <td class="claim_price6 claim_payment" style="color:#FF5353"></td>
                         <td class="claim_price7 claim_payment" style="color:#FF7053"></td>
-                        <td class="claim_price8 claim_payment" style="color:#404040"></td>
+                        <td class="claim_price8 claim_payment" style="color:#404040;font-weight:bold;"></td>
                         <td class="claim_price9 claim_payment"></td>
-                        <td class="claim_price10"></td>
+                        <td class="claim_price10" style="color:#404040;font-weight:bold;"></td>
                         <td class="claim_price11"></td>
                         <td class="claim_price12"></td>
                     </tr>
@@ -962,7 +904,7 @@
                             <th>거래명세서</th>
                             <th>세금계산서</th>
                             <th>수정</th>
-                            <th onclick="viewAll3()" id="paycom_extend"><</th>
+                            <th onclick="viewAll3()" id="paycom_extend" style="cursor:pointer"><</th>
                         </tr>
                     </thead>
                     <tbody id="tbody3-list">
@@ -974,33 +916,33 @@
 
                 </div>
             </div>
-            <div style="float:right;margin-top:20px">
-                <table class="table">
-                    <tr>
-                        <td style="background:#ddd" class="paycom_payment">일회성 요금</td>
-                        <td style="background:#ddd" class="paycom_payment">일회성 할인</td>
-                        <td style="background:#ddd" class="paycom_payment">일회성 청구 합계</td>
-                        <td style="background:#ddd" class="paycom_payment">초기 일할 요금</td>
-                        <td style="background:#ddd" class="paycom_payment">서비스 요금</td>
-                        <td style="background:#ddd" class="paycom_payment">서비스 할인</td>
-                        <td style="background:#ddd" class="paycom_payment">결제 방법 할인</td>
-                        <td style="background:#ddd" class="paycom_payment">서비스 청구 합계</td>
-                        <td style="background:#ddd" class="paycom_payment">연체 수수료</td>
-                        <td style="background:#ddd;width:150px">결제 합계</td>
-                        <td style="background:#ddd;width:150px">부가세</td>
-                        <td style="background:#ddd;width:150px">총 결제 합계</td>
+            <div style="float:right;margin:20px">
+                <table class="table total">
+                    <tr class="total_tr_1">
+                        <td class="paycom_payment">일회성 요금</td>
+                        <td class="paycom_payment" style="color:#FF5353">일회성 할인</td>
+                        <td class="paycom_payment" style="color:#404040;font-weight:bold;">일회성 청구 합계</td>
+                        <td class="paycom_payment">초기 일할 요금</td>
+                        <td class="paycom_payment">서비스 요금</td>
+                        <td class="paycom_payment" style="color:#FF5353">서비스 할인</td>
+                        <td class="paycom_payment" style="color:#FF7053">결제 방법 할인</td>
+                        <td class="paycom_payment" style="color:#404040;font-weight:bold;">서비스 청구 합계</td>
+                        <td class="paycom_payment">연체 수수료</td>
+                        <td style="color:#404040;font-weight:bold;">결제 합계</td>
+                        <td>부가세</td>
+                        <td>총 결제 합계</td>
                     </tr>
-                    <tr>
+                    <tr class="total_tr_2">
                         <td class="paycom_price1 paycom_payment"></td>
                         <td class="paycom_price2 paycom_payment" style="color:#FF5353"></td>
-                        <td class="paycom_price3 paycom_payment" style="color:#404040"></td>
+                        <td class="paycom_price3 paycom_payment" style="color:#404040;font-weight:bold;"></td>
                         <td class="paycom_price4 paycom_payment"></td>
                         <td class="paycom_price5 paycom_payment"></td>
                         <td class="paycom_price6 paycom_payment" style="color:#FF5353"></td>
                         <td class="paycom_price7 paycom_payment" style="color:#FF7053"></td>
-                        <td class="paycom_price8 paycom_payment" style="color:#404040"></td>
+                        <td class="paycom_price8 paycom_payment" style="color:#404040;font-weight:bold;"></td>
                         <td class="paycom_price9 paycom_payment"></td>
-                        <td class="paycom_price10"></td>
+                        <td class="paycom_price10" style="color:#404040;font-weight:bold;"></td>
                         <td class="paycom_price11"></td>
                         <td class="paycom_price12"></td>
                     </tr>
@@ -1011,6 +953,89 @@
                 <button class="btn btn-default btn-paycomcheck-delete" type="button">선택 삭제</button>
 
             </div>
+        </div>
+    </div>
+    <div class="header-box">
+        <div class="header-title">
+            <div style="float:left"><div>통합 로그</div></div>
+            <div style="float:right">
+                <select class="select2" name="log_all_end" id="log_all_end" style="width:90px">
+                    <option value="10">10라인</option>
+                    <option value="20" selected>20라인</option>
+                    <option value="30">30라인</option>
+                    <option value="50">50라인</option>
+                    <option value="100">100라인</option>
+                </select>
+            </div>
+        </div>
+        <form id="logFormAll">
+        <div style="float:right;font-size:12px;padding:5px 10px">
+            <ul style="list-style:none;padding:0;margin:0">
+                <li style="float:left;padding-left:5px">
+                    <select name="sv_number" class="select2" style="width:100px">
+                        <option value="">서비스번호</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-top:5px">구분 </li>
+                <li style="float:left;padding-left:3px">
+                    <select name="lo_type" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-top:5px;padding-left:10px">항목</li>
+                <li style="float:left;padding-left:3px">
+                    <select name="lo_item" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-top:5px;padding-left:10px">날짜</li>
+                <li style="float:left;padding-left:3px">
+                    <input type="text" name="start_date" class="datepicker3"> ~ <input type="text" name="end_date" class="datepicker3">
+                </li>
+            </ul>
+            <ul style="clear:both;list-style:none;padding:10px 0px 0px 0px;margin:0">
+                <li style="float:left;padding-top:5px">작업자 구분 : </li>
+                <li style="float:left;padding-top:3px;padding-left:10px">
+                    ADMIN <input type="checkbox" name="lo_user[]" value="1"> SYSTEM <input type="checkbox" name="lo_user[]" value="2"> USER <input type="checkbox" name="lo_user[]" value="3">
+                </li>
+                <li style="float:left">
+                    <select name="searchType" class="select2" style="width:120px">
+                        <option value="">작업자 이름</option>
+                        <option value="">작업자 ID</option>
+                        <option value="lo_ip">접속 IP</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-left:5px">
+                    <input type="text" name="searchWord"><button class="btn btn-brown btn-small btn-log-search" type="button">검색</button>
+                    
+                </li>
+
+            </ul>
+        </div>
+        </form>
+        <div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>No</th>
+                    <th>날짜</th>
+                    <th>서비스번호</th>
+                    <th>구분</th>
+                    <th>항목</th>
+                    <th>변경 전</th>
+                    <th>변경 후</th>
+                    <th>작업자 구분</th>
+                    <th>작업자</th>
+                    <th>접속 IP</th>
+                </tr>
+                </thead>
+                <tbody id="log-list-all">
+                
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <div id="logPagingAll"></div>
         </div>
     </div>
 </div>
@@ -1028,15 +1053,17 @@
     <form id="memoReg">
         <input type="hidden" name="po_mb_seq" value="<?=$info["mb_seq"]?>">
         <input type="hidden" name="po_seq" id="po_seq" value="">
-        <div class="modal-field">
-            <div class="modal-field-input">
-                <div class="label"><div>회원명</div></div>
+        <div class="modal-field" style="margin-top:5px;border-top:1px solid #ddd">
+            <div class="modal-field-input" style="width:100%">
+                <div class="label" style="width:20%"><div>회원명</div></div>
                 <div class="input">
                     <div><?=$info["mb_name"]?></div>
                 </div>
             </div>
-            <div class="modal-field-input">
-                <div class="label"><div>요금 담당자</div></div>
+		</div>
+		<div class="modal-field">
+            <div class="modal-field-input" style="width:100%">
+                <div class="label" style="width:20%"><div>요금 담당자</div></div>
 
                 <div class="input" style="font-size:11px">
                     <div><?=$info["mb_payment_name"]?> / <?=$info["mb_payment_tel"]?> / <?=$info["mb_payment_phone"]?></div>
@@ -1044,16 +1071,16 @@
             </div>
         </div>
         <div class="modal-field">
-            <div class="modal-field-input">
-                <div class="label"><div>입금예정일</div></div>
+            <div class="modal-field-input" style="width:100%">
+                <div class="label" style="width:20%"><div>입금예정일</div></div>
                 <div class="input">
                     <div><input type="text" name="po_input_date" id="po_input_date" class="datepicker3"></div>
                 </div>
             </div>
         </div>
         <div class="modal-field">
-            <div class="modal-field-input">
-                <div class="label"><div>메모</div></div>
+            <div class="modal-field-input" style="width:100%">
+                <div class="label" style="width:20%"><div>메모</div></div>
                 <div class="input">
                     <div><input type="text" name="po_memo" id="po_memo" style="width:95%"></div>
                 </div>
@@ -1061,8 +1088,8 @@
         </div>
     </form>
 
-    <div class="modal-close-btn" style="margin-top:115px"><button class="btn btn-black btn-small btn-memo-reg" type="button">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogMemo').dialog('close')" type="button">닫기</button></div>
-    <div class="table-list">
+    <div class="modal-close-btn" style="margin-top:5px"><button class="btn btn-black btn-small btn-memo-reg" type="button">등록</button> <button class="btn btn-default btn-small" onclick="$('#dialogMemo').dialog('close')" type="button">닫기</button></div>
+    <div class="table-list memo">
         <table class="table">
             <thead>
                 <tr>
@@ -1122,7 +1149,7 @@
                 <div class="input padd" id="once_service_number"></div>
             </div>
         </div>
-        <div class="modal-field">
+        <div class="modal-field" style="border-top:1px solid #ddd">
             <div class="modal-field-input">
                 <div class="label padd"><div>일회성 청구명</div></div>
                 <div class="input padd">
@@ -1179,7 +1206,7 @@
             </div>
         </div>
         <div class="modal-field">
-            <div class="modal-field-input">
+            <div class="modal-field-input" style="color:red">
                 <div class="label padd"><div>할인 금액</div></div>
                 <div class="input padd">
                     - <input type="text" name="pm_service_dis_price" id="pm_service_dis_price" onkeypress="return onlyNumDecimalInput(this);" onkeyup="fn_press_han(this)" class="right" style="width:80%" value="0"> 원
@@ -1218,7 +1245,7 @@
                 </div>
             </div>
             <div class="modal-field-input">
-                <div class="label padd"><div>총 청구 합계</div></div>
+                <div class="label padd"><div><b>총 청구 합계</b></div></div>
 
                 <div class="input padd right" id="once_total_price"></div>
             </div>
@@ -1663,7 +1690,7 @@
         <div class="modal-field">
             <div class="modal-field-input full" >
                 <div class="label padd"><div><input type="checkbox" name="sms_yn" id="sms_yn" value="Y"> SMS 발송 | 내용</div></div>
-                <div class="input padd"><input type="text" name="sms" id="sms" style="width:70%" > <span class="bytes">0</span>byte / 80byte</div>
+                <div class="input padd"><input type="text" name="sms" id="sms" style="width:70%" > <span class="bytes">0</span>byte / 90byte</div>
             </div>
         </div>
         <div class="modal-field">
@@ -1693,13 +1720,13 @@
         </div>
 
 
-        <div class="modal-field" style="border-top:2px solid #ddd">
+        <div class="modal-field" style="border-top:1px solid #ddd">
             <div class="modal-field-input full">
                 <div class="label padd" style="vertical-align:top"><div>첨부 파일</div></div>
                 <div class="input padd">
                     <div>
-                        <button class="btn btn-default" type="button" onclick="$('#mf_file').trigger('click')">추가</button>
-                        <button class="btn btn-default btn-addfile-delete" type="button">삭제</button>
+                        <button class="btn btn-default" style="position:relative;top:2px;" type="button" onclick="$('#mf_file').trigger('click')">추가</button>
+                        <button class="btn btn-default btn-addfile-delete" style="position:relative;top:2px;" type="button">삭제</button>
                     </div>
                     <div id="mail_add_file" style="padding-left:53px;padding-top:10px">
 
@@ -1733,7 +1760,88 @@
     </div>
     <div class="modal-close-btn"><button class="btn btn-black btn-small" onclick="$('#dialogMailPreview').dialog('close')">닫기</button></div>
 </div>
+<div id="dialogLog" class="dislog" style="top:-10px;padding:0px 10px">
+    <div class="header-box">
+        <div class="header-title">
+            <div style="float:left"><div>변경 로그</div></div>
+            <div style="float:right">
+                <select class="select2" name="log_end" id="log_end" style="width:90px">
+                    <option value="10">10라인</option>
+                    <option value="20" selected>20라인</option>
+                    <option value="30">30라인</option>
+                    <option value="50">50라인</option>
+                    <option value="100">100라인</option>
+                </select>
+            </div>
+        </div>
+        <form id="logForm">
+        <div style="float:right;font-size:12px;padding:5px 10px">
+            <ul style="list-style:none;padding:0;margin:0">
+                <li style="float:left;padding-top:5px">구분 </li>
+                <li style="float:left;padding-left:3px">
+                    <select name="lo_type" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-top:5px;padding-left:10px">항목</li>
+                <li style="float:left;padding-left:3px">
+                    <select name="lo_item" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-top:5px;padding-left:10px">날짜</li>
+                <li style="float:left;padding-left:3px">
+                    <input type="text" name="start_date" class="datepicker3"> ~ <input type="text" name="end_date" class="datepicker3">
+                </li>
+            </ul>
+            <ul style="clear:both;list-style:none;padding:10px 0px 0px 0px;margin:0">
+                <li style="float:left;padding-top:5px">작업자 구분 : </li>
+                <li style="float:left;padding-top:3px;padding-left:10px">
+                    ADMIN <input type="checkbox" name="lo_user[]" value="1"> SYSTEM <input type="checkbox" name="lo_user[]" value="2"> USER <input type="checkbox" name="lo_user[]" value="3">
+                </li>
+                <li style="float:left">
+                    <select name="searchType" class="select2" style="width:120px">
+                        <option value="">작업자 이름</option>
+                        <option value="">작업자 ID</option>
+                        <option value="lo_ip">접속 IP</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-left:5px">
+                    <input type="text" name="searchWord"><button class="btn btn-brown btn-small btn-log-search" type="button">검색</button>
+                    
+                </li>
+
+            </ul>
+        </div>
+        </form>
+        <div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>No</th>
+                    <th>날짜</th>
+                    <th>구분</th>
+                    <th>항목</th>
+                    <th>변경 전</th>
+                    <th>변경 후</th>
+                    <th>작업자 구분</th>
+                    <th>작업자</th>
+                    <th>접속 IP</th>
+                </tr>
+                </thead>
+                <tbody id="log-list">
+                
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <div id="logPaging"></div>
+        </div>
+    </div>
+    <div class="modal-close-btn"><button class="btn btn-black btn-small" onclick="$('#dialogLog').dialog('close')">닫기</button></div>
+</div>
 <input type="hidden" id="start" value=1>
 <input type="hidden" id="log_start" value=1>
+<input type="hidden" id="log_all_start" value=1>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>
 <script type="text/javascript" src="/assets/js/memberView.js?time=<?=time()?>"></script>

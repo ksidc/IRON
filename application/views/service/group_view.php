@@ -268,12 +268,12 @@
         <div>
             <div id="memoPaging"></div>
         </div>
-        <div style="background:#f4f4f4;padding-top:3px">
+        <div style="background:#f4f4f4;padding:10px 0px 30px">
             <form name="service_msg" id="service_msg">
                 <input type="hidden" name="sg_sv_code" id="sg_sv_code" value="<?=$sv_code?>">
                 <div style="display:inline-block;width:17%;text-align:right;vertical-align:top;padding:20px 5px 0px 0px">메모</div>
                 <div style="display:inline-block;width:70%;vertical-align:top">
-                    <textarea style="width:99.5%;height:50px;background-color:#fff;" name="sg_msg" id="sg_msg"></textarea>
+                    <textarea class="memo" name="sg_msg" id="sg_msg"></textarea>
                 </div>
                 <div style="display:inline-block;width:10%;vertical-align:top"><button class="btn btn-brown btn-service-msg" type="button" style="padding:20px 20px;">등록</button></div>
             </form>

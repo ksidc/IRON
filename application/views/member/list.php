@@ -10,10 +10,10 @@
         <form name="searchForm" id="searchForm" onsubmit="return getList();">
             <div class="search1">
                 <div class="form-group">
-                    <input type="checkbox" name="serviceYn" id="serviceYn" value="Y" > 서비스 이용 중인 회원만 표시
+                    <input type="checkbox" name="serviceYn" id="serviceYn" value="Y" class="c"> 서비스 이용 중인 회원만 표시
                 </div>
-                <div class="form-group">
-                    <select id="serviceSelect" name="serviceSelect" class="select2" style="width:150px" onchange="getList()">
+                <div class="form-group" style="position:relative;top:-1px;left:4px;">
+                    <select id="serviceSelect" name="serviceSelect" class="select2" style="width:150px;" onchange="getList()">
                         <option value="" selected>서비스 전체</option>
                         <?php foreach($category_list as $row): ?>
                             <option value="<?=$row["pc_seq"]?>"><?=$row["pc_name"]?></option>
@@ -24,7 +24,7 @@
             <div class="search2">
                 <div class="form-group">
                     <label>등록일</label>
-                    <input type="text" style="width:80px" name="startDate" id="startDate" class="datepicker" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker" value="<?=date('Y-m-d')?>">
+                    <input type="text" style="width:80px;margin-left:5px;" name="startDate" id="startDate" class="datepicker" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker" value="<?=date('Y-m-d')?>">
                 </div>
                 <div class="form-group ml15" style="text-align:left">
 
@@ -42,6 +42,7 @@
 
                     <input type="text" name="searchWord" id="searchWord">
                     <button class="btn btn-search btn-form-search" type="submit">검색</button>
+                    
                 </div>
             </div>
         </form>

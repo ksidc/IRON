@@ -213,51 +213,53 @@ class Api_model extends CI_Model {
             "mb_payment_day" => $this->input->post("mb_payment_day")
         );
         $this->db->where("mb_seq",$mb_seq);
+        $result = $this->db->update("members",$data);
+
         if($this->input->post("b_mb_type") != $this->input->post("mb_type")){
-            $this->logInsert(1,$mb_seq,'회원 정보','회원 구분',$this->input->post("b_mb_type"),$this->input->post("mb_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','회원 구분',$this->input->post("b_mb_type"),$this->input->post("mb_type"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_name") != $this->input->post("mb_name")){
-            $this->logInsert(1,$mb_seq,'회원 정보','상호/이름',$this->input->post("b_mb_name"),$this->input->post("mb_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','상호/이름',$this->input->post("b_mb_name"),$this->input->post("mb_name"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_number") != $this->input->post("mb_number")){
-            $this->logInsert(1,$mb_seq,'회원 정보','사업자번호/생년월일',$this->input->post("b_mb_number"),$this->input->post("mb_number"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','사업자번호/생년월일',$this->input->post("b_mb_number"),$this->input->post("mb_number"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_ceo") != $this->input->post("mb_ceo")){
-            $this->logInsert(1,$mb_seq,'회원 정보','대표자',$this->input->post("b_mb_ceo"),$this->input->post("mb_ceo"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','대표자',$this->input->post("b_mb_ceo"),$this->input->post("mb_ceo"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_address") != $this->input->post("mb_address") || $this->input->post("b_mb_zipcode") != $this->input->post("mb_zipcode") || $this->input->post("b_mb_detail_address") != $this->input->post("mb_detail_address")){
-            $this->logInsert(1,$mb_seq,'회원 정보','주소(한글)',$this->input->post("b_mb_zipcode")." ".$this->input->post("b_mb_address")." ".$this->input->post("b_mb_detail_address"),$this->input->post("mb_zipcode")." ".$this->input->post("mb_address")." ".$this->input->post("mb_detail_address"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','주소(한글)',$this->input->post("b_mb_zipcode")." ".$this->input->post("b_mb_address")." ".$this->input->post("b_mb_detail_address"),$this->input->post("mb_zipcode")." ".$this->input->post("mb_address")." ".$this->input->post("mb_detail_address"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_business_conditions") != $this->input->post("mb_business_conditions")){
-            $this->logInsert(1,$mb_seq,'회원 정보','업태',$this->input->post("b_mb_business_conditions"),$this->input->post("mb_business_conditions"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','업태',$this->input->post("b_mb_business_conditions"),$this->input->post("mb_business_conditions"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_business_type") != $this->input->post("mb_business_type")){
-            $this->logInsert(1,$mb_seq,'회원 정보','종목',$this->input->post("b_mb_business_type"),$this->input->post("mb_business_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','종목',$this->input->post("b_mb_business_type"),$this->input->post("mb_business_type"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_tel") != $this->input->post("mb_tel")){
-            $this->logInsert(1,$mb_seq,'회원 정보','전화번호',$this->input->post("b_mb_tel"),$this->input->post("mb_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','전화번호',$this->input->post("b_mb_tel"),$this->input->post("mb_tel"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_phone") != $this->input->post("mb_phone")){
-            $this->logInsert(1,$mb_seq,'회원 정보','휴대폰번호',$this->input->post("b_mb_phone"),$this->input->post("mb_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','휴대폰번호',$this->input->post("b_mb_phone"),$this->input->post("mb_phone"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_email") != $this->input->post("mb_email")){
-            $this->logInsert(1,$mb_seq,'회원 정보','이메일',$this->input->post("b_mb_email"),$this->input->post("mb_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','이메일',$this->input->post("b_mb_email"),$this->input->post("mb_email"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_fax") != $this->input->post("mb_fax")){
-            $this->logInsert(1,$mb_seq,'회원 정보','팩스',$this->input->post("b_mb_fax"),$this->input->post("mb_fax"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','팩스',$this->input->post("b_mb_fax"),$this->input->post("mb_fax"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
 
         if($this->input->post("b_mb_contract_name") != $this->input->post("mb_contract_name")){
-            $this->logInsert(1,$mb_seq,'계약 담당자','이름',$this->input->post("b_mb_contract_name"),$this->input->post("mb_contract_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'계약 담당자','이름',$this->input->post("b_mb_contract_name"),$this->input->post("mb_contract_name"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_contract_email") != $this->input->post("mb_contract_email")){
-            $this->logInsert(1,$mb_seq,'계약 담당자','이메일',$this->input->post("b_mb_contract_email"),$this->input->post("mb_contract_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'계약 담당자','이메일',$this->input->post("b_mb_contract_email"),$this->input->post("mb_contract_email"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_contract_phone") != $this->input->post("mb_contract_phone")){
-            $this->logInsert(1,$mb_seq,'계약 담당자','휴대폰번호',$this->input->post("b_mb_contract_phone"),$this->input->post("mb_contract_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'계약 담당자','휴대폰번호',$this->input->post("b_mb_contract_phone"),$this->input->post("mb_contract_phone"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_contract_tel") != $this->input->post("mb_contract_tel")){
-            $this->logInsert(1,$mb_seq,'계약 담당자','전화번호',$this->input->post("b_mb_contract_tel"),$this->input->post("mb_contract_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'계약 담당자','전화번호',$this->input->post("b_mb_contract_tel"),$this->input->post("mb_contract_tel"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
 
         // if($this->input->post("b_mb_service_name") != $this->input->post("mb_service_name")){
@@ -274,24 +276,27 @@ class Api_model extends CI_Model {
         // }
 
         if($this->input->post("b_mb_payment_name") != $this->input->post("mb_payment_name")){
-            $this->logInsert(1,$mb_seq,'요금 담당자','이름',$this->input->post("b_mb_payment_name"),$this->input->post("mb_payment_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'요금 담당자','이름',$this->input->post("b_mb_payment_name"),$this->input->post("mb_payment_name"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_payment_email") != $this->input->post("mb_payment_email")){
-            $this->logInsert(1,$mb_seq,'요금 담당자','이메일',$this->input->post("b_mb_payment_email"),$this->input->post("mb_payment_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'요금 담당자','이메일',$this->input->post("b_mb_payment_email"),$this->input->post("mb_payment_email"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_payment_phone") != $this->input->post("mb_payment_phone")){
-            $this->logInsert(1,$mb_seq,'요금 담당자','휴대폰번호',$this->input->post("b_mb_payment_phone"),$this->input->post("mb_payment_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'요금 담당자','휴대폰번호',$this->input->post("b_mb_payment_phone"),$this->input->post("mb_payment_phone"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_payment_tel") != $this->input->post("mb_payment_tel")){
-            $this->logInsert(1,$mb_seq,'요금 담당자','전화번호',$this->input->post("b_mb_payment_tel"),$this->input->post("mb_service_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'요금 담당자','전화번호',$this->input->post("b_mb_payment_tel"),$this->input->post("mb_payment_tel"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         // ci 이용 디비 인서트
-        return $this->db->update("members",$data);
+        return true;
     }
 
     // 회원 삭제
     public function memberDelete($mb_seq){
 
+        $this->db->where_in("lo_mb_seq",$mb_seq);
+        $this->db->delete("logs");
+        
         $this->db->where_in("mb_seq",$mb_seq);
 
         return $this->db->delete("members");
@@ -2558,6 +2563,11 @@ class Api_model extends CI_Model {
     }
 
     public function serviceRegisterEdit($sr_seq){
+        if($this->input->post("sr_pay_day") == "말"){
+            $sr_pay_day = 28;
+        }else{
+            $sr_pay_day = $this->input->post("sr_pay_day");
+        }
         $data = array(
             "sr_mb_seq" => $this->input->post("sr_mb_seq"),
             "sr_eu_seq" => $this->input->post("sr_eu_seq"),
@@ -2574,7 +2584,7 @@ class Api_model extends CI_Model {
             "sr_payment_type" => $this->input->post("sr_payment_type"),
             "sr_payment_period" => $this->input->post("sr_payment_period"),
             "sr_pay_type" => $this->input->post("sr_pay_type"),
-            "sr_pay_day" => $this->input->post("sr_pay_day"),
+            "sr_pay_day" => $sr_pay_day,
             "sr_pay_publish" => $this->input->post("sr_pay_publish"),
             "sr_pay_publish_type" => $this->input->post("sr_pay_publish_type"),
             "sr_payment_day" => $this->input->post("sr_payment_day"),
@@ -3086,37 +3096,37 @@ class Api_model extends CI_Model {
     public function memberUpdate1($mb_seq)
     {
         if($this->input->post("b_mb_type") != $this->input->post("mb_type")){
-            $this->logInsert(1,$mb_seq,'회원 정보','회원 구분',$this->input->post("b_mb_type"),$this->input->post("mb_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','회원 구분',$this->input->post("b_mb_type"),$this->input->post("mb_type"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_name") != $this->input->post("mb_name")){
-            $this->logInsert(1,$mb_seq,'회원 정보','상호/이름',$this->input->post("b_mb_name"),$this->input->post("mb_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','상호/이름',$this->input->post("b_mb_name"),$this->input->post("mb_name"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_number") != $this->input->post("mb_number")){
-            $this->logInsert(1,$mb_seq,'회원 정보','사업자번호/생년월일',$this->input->post("b_mb_number"),$this->input->post("mb_number"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','사업자번호/생년월일',$this->input->post("b_mb_number"),$this->input->post("mb_number"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_ceo") != $this->input->post("mb_ceo")){
-            $this->logInsert(1,$mb_seq,'회원 정보','대표자',$this->input->post("b_mb_ceo"),$this->input->post("mb_ceo"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','대표자',$this->input->post("b_mb_ceo"),$this->input->post("mb_ceo"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_address") != $this->input->post("mb_address") || $this->input->post("b_mb_zipcode") != $this->input->post("mb_zipcode") || $this->input->post("b_mb_detail_address") != $this->input->post("mb_detail_address")){
-            $this->logInsert(1,$mb_seq,'회원 정보','주소(한글)',$this->input->post("b_mb_zipcode")." ".$this->input->post("b_mb_address")." ".$this->input->post("b_mb_detail_address"),$this->input->post("mb_zipcode")." ".$this->input->post("mb_address")." ".$this->input->post("mb_detail_address"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','주소(한글)',$this->input->post("b_mb_zipcode")." ".$this->input->post("b_mb_address")." ".$this->input->post("b_mb_detail_address"),$this->input->post("mb_zipcode")." ".$this->input->post("mb_address")." ".$this->input->post("mb_detail_address"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_business_conditions") != $this->input->post("mb_business_conditions")){
-            $this->logInsert(1,$mb_seq,'회원 정보','업태',$this->input->post("b_mb_business_conditions"),$this->input->post("mb_business_conditions"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','업태',$this->input->post("b_mb_business_conditions"),$this->input->post("mb_business_conditions"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_business_type") != $this->input->post("mb_business_type")){
-            $this->logInsert(1,$mb_seq,'회원 정보','종목',$this->input->post("b_mb_business_type"),$this->input->post("mb_business_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','종목',$this->input->post("b_mb_business_type"),$this->input->post("mb_business_type"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_tel") != $this->input->post("mb_tel")){
-            $this->logInsert(1,$mb_seq,'회원 정보','전화번호',$this->input->post("b_mb_tel"),$this->input->post("mb_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','전화번호',$this->input->post("b_mb_tel"),$this->input->post("mb_tel"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_phone") != $this->input->post("mb_phone")){
-            $this->logInsert(1,$mb_seq,'회원 정보','휴대폰번호',$this->input->post("b_mb_phone"),$this->input->post("mb_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','휴대폰번호',$this->input->post("b_mb_phone"),$this->input->post("mb_phone"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_email") != $this->input->post("mb_email")){
-            $this->logInsert(1,$mb_seq,'회원 정보','이메일',$this->input->post("b_mb_email"),$this->input->post("mb_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','이메일',$this->input->post("b_mb_email"),$this->input->post("mb_email"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_fax") != $this->input->post("mb_fax")){
-            $this->logInsert(1,$mb_seq,'회원 정보','팩스',$this->input->post("b_mb_fax"),$this->input->post("mb_fax"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'회원 정보','팩스',$this->input->post("b_mb_fax"),$this->input->post("mb_fax"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
 
         $data = array(
@@ -3172,16 +3182,16 @@ class Api_model extends CI_Model {
     public function memberUpdate4($mb_seq)
     {
         if($this->input->post("b_mb_contract_name") != $this->input->post("mb_contract_name")){
-            $this->logInsert(1,$mb_seq,'계약 담당자','이름',$this->input->post("b_mb_contract_name"),$this->input->post("mb_contract_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'계약 담당자','이름',$this->input->post("b_mb_contract_name"),$this->input->post("mb_contract_name"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_contract_email") != $this->input->post("mb_contract_email")){
-            $this->logInsert(1,$mb_seq,'계약 담당자','이메일',$this->input->post("b_mb_contract_email"),$this->input->post("mb_contract_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'계약 담당자','이메일',$this->input->post("b_mb_contract_email"),$this->input->post("mb_contract_email"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_contract_phone") != $this->input->post("mb_contract_phone")){
-            $this->logInsert(1,$mb_seq,'계약 담당자','휴대폰번호',$this->input->post("b_mb_contract_phone"),$this->input->post("mb_contract_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'계약 담당자','휴대폰번호',$this->input->post("b_mb_contract_phone"),$this->input->post("mb_contract_phone"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_contract_tel") != $this->input->post("mb_contract_tel")){
-            $this->logInsert(1,$mb_seq,'계약 담당자','전화번호',$this->input->post("b_mb_contract_tel"),$this->input->post("mb_contract_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'계약 담당자','전화번호',$this->input->post("b_mb_contract_tel"),$this->input->post("mb_contract_tel"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         $data = array(
             "mb_contract_name"=>$this->input->post("mb_contract_name"),
@@ -3200,16 +3210,16 @@ class Api_model extends CI_Model {
     public function memberUpdate5($mb_seq)
     {
         if($this->input->post("b_mb_service_name") != $this->input->post("mb_service_name")){
-            $this->logInsert(1,$mb_seq,'운영 담당자','이름',$this->input->post("b_mb_service_name"),$this->input->post("mb_service_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'운영 담당자','이름',$this->input->post("b_mb_service_name"),$this->input->post("mb_service_name"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_service_email") != $this->input->post("mb_service_email")){
-            $this->logInsert(1,$mb_seq,'운영 담당자','이메일',$this->input->post("b_mb_service_email"),$this->input->post("mb_service_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'운영 담당자','이메일',$this->input->post("b_mb_service_email"),$this->input->post("mb_service_email"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_service_phone") != $this->input->post("mb_service_phone")){
-            $this->logInsert(1,$mb_seq,'운영 담당자','휴대폰번호',$this->input->post("b_mb_service_phone"),$this->input->post("mb_service_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'운영 담당자','휴대폰번호',$this->input->post("b_mb_service_phone"),$this->input->post("mb_service_phone"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_service_tel") != $this->input->post("mb_service_tel")){
-            $this->logInsert(1,$mb_seq,'운영 담당자','전화번호',$this->input->post("b_mb_service_tel"),$this->input->post("mb_service_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'운영 담당자','전화번호',$this->input->post("b_mb_service_tel"),$this->input->post("mb_service_tel"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         $data = array(
             "mb_service_name"=>$this->input->post("mb_service_name"),
@@ -3228,16 +3238,16 @@ class Api_model extends CI_Model {
     public function memberUpdate6($mb_seq)
     {
         if($this->input->post("b_mb_payment_name") != $this->input->post("mb_payment_name")){
-            $this->logInsert(1,$mb_seq,'요금 담당자','이름',$this->input->post("b_mb_payment_name"),$this->input->post("mb_payment_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'요금 담당자','이름',$this->input->post("b_mb_payment_name"),$this->input->post("mb_payment_name"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_payment_email") != $this->input->post("mb_payment_email")){
-            $this->logInsert(1,$mb_seq,'요금 담당자','이메일',$this->input->post("b_mb_payment_email"),$this->input->post("mb_payment_email"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'요금 담당자','이메일',$this->input->post("b_mb_payment_email"),$this->input->post("mb_payment_email"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_payment_phone") != $this->input->post("mb_payment_phone")){
-            $this->logInsert(1,$mb_seq,'요금 담당자','휴대폰번호',$this->input->post("b_mb_payment_phone"),$this->input->post("mb_payment_phone"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'요금 담당자','휴대폰번호',$this->input->post("b_mb_payment_phone"),$this->input->post("mb_payment_phone"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         if($this->input->post("b_mb_payment_tel") != $this->input->post("mb_payment_tel")){
-            $this->logInsert(1,$mb_seq,'요금 담당자','전화번호',$this->input->post("b_mb_payment_tel"),$this->input->post("mb_service_tel"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(1,$mb_seq,'요금 담당자','전화번호',$this->input->post("b_mb_payment_tel"),$this->input->post("mb_payment_tel"),1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
         }
         $data = array(
             "mb_payment_name"=>$this->input->post("mb_payment_name"),
@@ -3387,6 +3397,7 @@ class Api_model extends CI_Model {
         $this->db->insert("service_history",$data_history);
 
         $pay_day = $row["sr_pay_day"];
+
         if($row["sr_pay_type"] == "0"){ // 전월
             // $standard_day = substr($row["sr_account_start"],8,2);
             // if($pay_day > $standard_day){
@@ -3396,9 +3407,18 @@ class Api_model extends CI_Model {
             // }
             $claim_date = date("Y-m-d");
         }else if($row["sr_pay_type"] == "1"){ // 당월
-            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sr_account_start"],5,2),substr($row["sr_account_start"],8,2),substr($row["sr_account_start"],0,4)));
+            if($pay_day == "28"){
+                $claim_date = date("Y-m-t",mktime(0,0,0,substr($row["sr_account_start"],5,2),substr($row["sr_account_start"],8,2),substr($row["sr_account_start"],0,4)));
+            }else{
+                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sr_account_start"],5,2),substr($row["sr_account_start"],8,2),substr($row["sr_account_start"],0,4)));
+            }
+            
         }else if($row["sr_pay_type"] == "2"){ // 익월
-            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sr_account_start"],5,2)+1,substr($row["sr_account_start"],8,2),substr($row["sr_account_start"],0,4)));
+            if($pay_day == "28"){
+                $claim_date = date("Y-m-t",mktime(0,0,0,substr($row["sr_account_start"],5,2)+1,substr($row["sr_account_start"],8,2),substr($row["sr_account_start"],0,4)));
+            }else{
+                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sr_account_start"],5,2)+1,substr($row["sr_account_start"],8,2),substr($row["sr_account_start"],0,4)));
+            }
         }
 
         $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sr_payment_day"],substr($claim_date,0,4)));
@@ -3409,15 +3429,36 @@ class Api_model extends CI_Model {
         $next_pay_day = $row["sr_pay_day"];
         if($row["sr_pay_type"] == "0"){ // 전월
             $next_standard_day = substr($next_service_start,8,2);
-            if($next_pay_day > $next_standard_day){
-                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+            if($next_pay_day == 28){
+                $between_day = date("t",strtotime($next_service_start));
+            }else{
+                $between_day = $next_pay_day;
+            }
+            if($between_day >= $next_standard_day){
+                if($next_pay_day == "28"){
+                    $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                }else{
+                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                }
+            }else{
+                if($next_pay_day == "28"){
+                    $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                }else{
+                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                }
+            }
+        }else if($row["sr_pay_type"] == "1"){ // 당월
+            if($next_pay_day == "28"){
+                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
             }else{
                 $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
             }
-        }else if($row["sr_pay_type"] == "1"){ // 당월
-            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
         }else if($row["sr_pay_type"] == "2"){ // 익월
-            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+            if($next_pay_day == "28"){
+                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+            }else{
+                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+            }
         }
 
         $this->db->select("pm_ca_seq");
@@ -3741,9 +3782,18 @@ class Api_model extends CI_Model {
                         // }
                         $claim_date = date("Y-m-d");
                     }else if($row_sr["sr_pay_type"] == "1"){ // 당월
-                        $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row_sr["sr_account_start"],5,2),substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
+                        if($pay_day == "28"){
+                            $claim_date = date("Y-m-t",mktime(0,0,0,substr($row_sr["sr_account_start"],5,2),substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
+                        }else{
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row_sr["sr_account_start"],5,2),substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
+                        }
+                        
                     }else if($row_sr["sr_pay_type"] == "2"){ // 익월
-                        $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row_sr["sr_account_start"],5,2)+1,substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
+                        if($pay_day == "28"){
+                            $claim_date = date("Y-m-t",mktime(0,0,0,substr($row_sr["sr_account_start"],5,2)+1,substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
+                        }else{
+                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row_sr["sr_account_start"],5,2)+1,substr($row_sr["sr_account_start"],8,2),substr($row_sr["sr_account_start"],0,4)));
+                        }
                     }
                     $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row_sr["sr_payment_day"],substr($claim_date,0,4)));
 
@@ -3753,15 +3803,37 @@ class Api_model extends CI_Model {
                     $next_pay_day = $row_sr["sr_pay_day"];
                     if($row_sr["sr_pay_type"] == "0"){ // 전월
                         $next_standard_day = substr($next_service_start,8,2);
-                        if($next_pay_day > $next_standard_day){
-                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        if($next_pay_day == 28){
+                            $between_day = date("t",strtotime($next_service_start));
+                        }else{
+                            $between_day = $next_pay_day;
+                        }
+                        if($between_day >= $next_standard_day){
+                            if($next_pay_day == "28"){
+                                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }else{
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }
+                            
+                        }else{
+                            if($next_pay_day == "28"){
+                                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }else{
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }
+                        }
+                    }else if($row_sr["sr_pay_type"] == "1"){ // 당월
+                        if($next_pay_day == "28"){
+                            $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                         }else{
                             $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                         }
-                    }else if($row_sr["sr_pay_type"] == "1"){ // 당월
-                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                     }else if($row_sr["sr_pay_type"] == "2"){ // 익월
-                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        if($next_pay_day == "28"){
+                            $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }else{
+                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                        }
                     }
 
                     $this->db->select("pm_ca_seq");
@@ -4648,8 +4720,19 @@ class Api_model extends CI_Model {
                 "cd_svp_seq" => $cd_svp_seq[$i]
             );
 
-            $this->db->insert("claim_detail",$data_detail);
+            $this->db->select("*");
+            $this->db->from("service_price");
+            $this->db->where("svp_seq",$cd_svp_seq[$i]);
+            $query = $this->db->get();
+            $row = $query->row_array();
 
+            $this->db->insert("claim_detail",$data_detail);
+            if($row["svp_sva_seq"] != ""){
+                $this->logInsert(6,$row["svp_sva_seq"],'계산서 설정','TaxCode','',"T0".$this->input->post("cl_code")."-0".$cd_num[$i].$cd_main[$i],1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
+            }else{
+                $this->logInsert(3,$row["svp_sv_seq"],'계산서 설정','TaxCode','',"T0".$this->input->post("cl_code")."-0".$cd_num[$i].$cd_main[$i],1,'',$_SERVER["REMOTE_ADDR"],$mb_seq);
+            }
+            
             $data_svp["svp_cl_seq"] = $cl_seq;
             $this->db->where("svp_seq",$cd_svp_seq[$i]);
             $this->db->update("service_price",$data_svp);
@@ -4676,7 +4759,8 @@ class Api_model extends CI_Model {
         for($i =0;$i < count($cd_seq);$i++){
             if($cd_seq[$i] == ""){ // insert
                 $this->db->select("*");
-                $this->db->from("claim_detail");
+                $this->db->from("claim_detail a");
+                $this->db->join("claims b","a.cd_cl_seq = b.cl_seq","left");
                 $this->db->where("cd_cl_seq",$cl_seq);
                 $this->db->where("cd_svp_seq",$cd_svp_seq[$i]);
                 $query2 = $this->db->get();
@@ -4688,9 +4772,29 @@ class Api_model extends CI_Model {
                         "cd_name" => $cd_name[$i],
                         "insert_yn" => "Y"
                     );
+                    
+
+                    if($cd_seq2["cd_num"] != $cd_num[$i] || $cd_seq2["cd_main"] != $cd_main[$i]){
+                        $this->db->select("*");
+                        $this->db->from("service_price");
+                        $this->db->where("svp_seq",$cd_svp_seq[$i]);
+                        $query = $this->db->get();
+                        $row = $query->row_array();
+                        if($row["svp_sva_seq"] != ""){
+                            $this->logInsert(6,$row["svp_sva_seq"],'계산서 설정','TaxCode',"T0".$cd_seq2["cl_code"]."-0".$cd_seq2["cd_num"].$cd_seq2["cd_main"],"T0".$cd_seq2["cl_code"]."-0".$cd_num[$i].$cd_main[$i],1,'',$_SERVER["REMOTE_ADDR"],$cd_seq2["cl_mb_seq"]);
+                        }else{
+                            $this->logInsert(3,$row["svp_sv_seq"],'계산서 설정','TaxCode',"T0".$cd_seq2["cl_code"]."-0".$cd_seq2["cd_num"].$cd_seq2["cd_main"],"T0".$cd_seq2["cl_code"]."-0".$cd_num[$i].$cd_main[$i],1,'',$_SERVER["REMOTE_ADDR"],$cd_seq2["cl_mb_seq"]);
+                        }
+                    }
+                    
                     $this->db->where("cd_seq",$cd_seq2["cd_seq"]);
                     $this->db->update("claim_detail",$data_detail);
                 }else{
+                    $this->db->select("*");
+                    $this->db->from("claims ");
+                    $this->db->where("cl_seq",$cl_seq);
+                    $query2 = $this->db->get();
+                    $cd_seq2 = $query2->row_array();
                     $data_detail = array(
                         "cd_cl_seq" => $cl_seq,
                         "cd_num" => $cd_num[$i],
@@ -4699,11 +4803,29 @@ class Api_model extends CI_Model {
                         "cd_svp_seq" => $cd_svp_seq[$i],
                         "insert_yn" => "Y"
                     );
-
+                    
                     $this->db->insert("claim_detail",$data_detail);
+
+                    $this->db->select("*");
+                    $this->db->from("service_price");
+                    $this->db->where("svp_seq",$cd_svp_seq[$i]);
+                    $query = $this->db->get();
+                    $row = $query->row_array();
+                    if($row["svp_sva_seq"] != ""){
+                        $this->logInsert(6,$row["svp_sva_seq"],'계산서 설정','TaxCode','',"T0".$this->input->post("cl_code")."-0".$cd_num[$i].$cd_main[$i],1,'',$_SERVER["REMOTE_ADDR"],$cd_seq2["cl_mb_seq"]);
+                    }else{
+                        $this->logInsert(3,$row["svp_sv_seq"],'계산서 설정','TaxCode','',"T0".$this->input->post("cl_code")."-0".$cd_num[$i].$cd_main[$i],1,'',$_SERVER["REMOTE_ADDR"],$cd_seq2["cl_mb_seq"]);
+                    }
                 }
                 
             }else{
+                $this->db->select("*");
+                $this->db->from("claim_detail a");
+                $this->db->join("claims b","a.cd_cl_seq = b.cl_seq","left");
+                $this->db->where("cd_seq",$cd_seq[$i]);
+                $query2 = $this->db->get();
+                $cd_seq2 = $query2->row_array();
+
                 $data_detail = array(
                     "cd_num" => $cd_num[$i],
                     "cd_main" => $cd_main[$i],
@@ -4712,6 +4834,19 @@ class Api_model extends CI_Model {
                 );
                 $this->db->where("cd_seq",$cd_seq[$i]);
                 $this->db->update("claim_detail",$data_detail);
+
+                if($cd_seq2["cd_num"] != $cd_num[$i] || $cd_seq2["cd_main"] != $cd_main[$i]){
+                    $this->db->select("*");
+                    $this->db->from("service_price");
+                    $this->db->where("svp_seq",$cd_seq2["cd_svp_seq"]);
+                    $query = $this->db->get();
+                    $row = $query->row_array();
+                    if($row["svp_sva_seq"] != ""){
+                        $this->logInsert(6,$row["svp_sva_seq"],'계산서 설정','TaxCode',"T0".$cd_seq2["cl_code"]."-0".$cd_seq2["cd_num"].$cd_seq2["cd_main"],"T0".$cd_seq2["cl_code"]."-0".$cd_num[$i].$cd_main[$i],1,'',$_SERVER["REMOTE_ADDR"],$cd_seq2["cl_mb_seq"]);
+                    }else{
+                        $this->logInsert(3,$row["svp_sv_seq"],'계산서 설정','TaxCode',"T0".$cd_seq2["cl_code"]."-0".$cd_seq2["cd_num"].$cd_seq2["cd_main"],"T0".$cd_seq2["cl_code"]."-0".$cd_num[$i].$cd_main[$i],1,'',$_SERVER["REMOTE_ADDR"],$cd_seq2["cl_mb_seq"]);
+                    }
+                }
             }
             
 
@@ -4842,54 +4977,102 @@ class Api_model extends CI_Model {
         }
 
         if($b_row["sv_claim_name"] != $this->input->post("sv_claim_name")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 기본 정보','청구명',$b_row["b_sv_claim_name"],$this->input->post("sv_claim_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 기본 정보','청구명',$b_row["sv_claim_name"],$this->input->post("sv_claim_name"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
-        if($b_row["b_sv_bill_name"] != $this->input->post("sv_bill_name")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 기본 정보','계산서 품목명',$b_row["b_sv_bill_name"],$this->input->post("sv_bill_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["sv_bill_name"] != $this->input->post("sv_bill_name")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 기본 정보','계산서 품목명',$b_row["sv_bill_name"],$this->input->post("sv_bill_name"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
-        if($b_row["b_sv_payment_type"] != $this->input->post("sv_payment_type")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','요금 납부 방법',$b_row["b_sv_payment_type"],$this->input->post("sv_payment_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["sv_payment_type"] != $this->input->post("sv_payment_type")){
+            if($b_row["sv_payment_type"] == "1"){
+                $b_payment_type = "무통장";
+            }else if($b_row["sv_payment_type"] == "2"){
+                $b_payment_type = "카드";
+            }else if($b_row["sv_payment_type"] == "3"){
+                $b_payment_type = "CMS";
+            }
+            if($this->input->post("sv_payment_type") == "1"){
+                $payment_type = "무통장";
+            }else if($this->input->post("sv_payment_type") == "2"){
+                $payment_type = "카드";
+            }else if($this->input->post("sv_payment_type") == "3"){
+                $payment_type = "CMS";
+            }
+
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','요금 납부 방법',$b_payment_type,$payment_type,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
-        if($b_row["b_sv_payment_period"] != $this->input->post("svp_payment_period")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','결제 주기',$b_row["b_sv_payment_period"],$this->input->post("svp_payment_period"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["sv_payment_period"] != $this->input->post("svp_payment_period")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','결제 주기',$b_row["sv_payment_period"],$this->input->post("svp_payment_period"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
-        if($b_row["b_sv_pay_type"] != $this->input->post("sv_pay_type")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','청구 기준',$b_row["b_sv_pay_type"],$this->input->post("sv_pay_type"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["sv_pay_type"] != $this->input->post("sv_pay_type")){
+            if($b_row["sv_pay_type"] == "0"){
+                $b_pay_type = "전월";
+            }else if($b_row["sv_pay_type"] == "1"){
+                $b_pay_type = "당월";
+            }else if($b_row["sv_pay_type"] == "2"){
+                $b_pay_type = "익월";
+            }
+            if($this->input->post("sv_pay_type") == "0"){
+                $pay_type = "전월";
+            }else if($this->input->post("sv_pay_type") == "1"){
+                $pay_type = "당월";
+            }else if($this->input->post("sv_pay_type") == "2"){
+                $pay_type = "익월";
+            }
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','청구 기준',$b_pay_type,$pay_type,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
-        if($b_row["b_sv_pay_day"] != $this->input->post("sv_pay_day")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','자동 청구일',$b_row["b_sv_pay_day"],$this->input->post("sv_pay_day"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["sv_pay_day"] != $this->input->post("sv_pay_day")){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','자동 청구일',$b_row["sv_pay_day"],$this->input->post("sv_pay_day"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
-        if($b_row["b_sv_pay_publish"] != $this->input->post("sv_pay_publish") || $b_row["b_sv_pay_publish_type"] != $this->input->post("sv_pay_publish_type")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','계산서 발행',$b_row["b_sv_pay_publish"],$this->input->post("sv_pay_publish"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["sv_pay_publish"] != $this->input->post("sv_pay_publish") || $b_row["sv_pay_publish_type"] != $this->input->post("sv_pay_publish_type")){
+            if($b_row["sv_pay_publish"] == "1"){
+                $b_pay_publish = "미발행";
+            }else{
+                if($b_row["sv_pay_publish_type"] == "0"){
+                    $b_pay_publish = "영수발행";
+                }else{
+                    $b_pay_publish = "청구발행";
+                }
+            }
+
+            if($this->input->post("sv_pay_publish") == "1"){
+                $pay_publish = "미발행";
+            }else{
+                if($this->input->post("sv_pay_publish_type") == "0"){
+                    $pay_publish = "영수발행";
+                }else{
+                    $pay_publish = "청구발행";
+                }
+            }
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','계산서 발행',$b_pay_publish,$pay_publish,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["sv_payment_day"] != $this->input->post("sv_payment_day")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','결제일',$b_row["sv_payment_day"],$this->input->post("sv_payment_day"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','결제일',$b_row["sv_payment_day"],$this->input->post("sv_payment_day"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["svp_register_discount"] != $this->input->post("svp_register_discount")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','등록할인율',$b_row["svp_register_discount"],$this->input->post("svp_register_discount"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','등록할인율',$b_row["svp_register_discount"],$this->input->post("svp_register_discount"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
-        if($b_row["svp_month_price"] != $this->input->post("svp_month_price")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','서비스 월 요금',$b_row["svp_month_price"],$this->input->post("svp_month_price"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["svp_month_price"] != str_replace(",","",$this->input->post("svp_month_price"))){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','서비스 월 요금',number_format($b_row["svp_month_price"]),$this->input->post("svp_month_price"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
-        if($b_row["svp_month_dis_price"] != $this->input->post("svp_month_dis_price")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','서비스 할인 요금',$b_row["svp_month_dis_price"],$this->input->post("svp_month_dis_price"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if($b_row["svp_month_dis_price"] != str_replace(",","",$this->input->post("svp_month_dis_price"))){
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','서비스 할인 요금',number_format($b_row["svp_month_dis_price"]),$this->input->post("svp_month_dis_price"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         $b_total_price = ($b_row["svp_month_price"]-$b_row["svp_month_dis_price"])*$b_row["svp_payment_period"]-$b_row["svp_discount_price"];
-        $total_price = ($this->input->post("svp_month_price")-$this->input->post("svp_month_dis_price"))*$this->input->post("svp_payment_period")-$this->input->post("svp_discount_price");
+        $total_price = (str_replace(",","",$this->input->post("svp_month_price"))-str_replace(",","",$this->input->post("svp_month_dis_price")))*$this->input->post("svp_payment_period")-str_replace(",","",$this->input->post("svp_discount_price"));
         if($b_total_price != $total_price){
-            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','서비스 요금 합계',number_format($b_total_price)." / ".$b_row["svp_payment_period"]."개월",number_format($total_price)." / ".$this->input->post("svp_payment_period")."개월",1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','서비스 요금 합계',number_format($b_total_price)." / ".$b_row["svp_payment_period"]."개월",number_format($total_price)." / ".$this->input->post("svp_payment_period")."개월",1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["svp_memo"] != $this->input->post("svp_memo")){
-            $this->logInsert(3,$this->input->post("sv_seq"),'관리자 메모','메모',$b_row["svp_memo"],$this->input->post("svp_memo"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(3,$this->input->post("sv_seq"),'관리자 메모','메모',$b_row["svp_memo"],$this->input->post("svp_memo"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         return true;
     }
@@ -4914,23 +5097,23 @@ class Api_model extends CI_Model {
         $b_row = $query->row_array();
 
         if($b_row["sv_eu_seq"] != $this->input->post("sv_eu_seq") ){
-            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','End User',$b_row["eu_name"],$this->input->post("sv_eu_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','End User',$b_row["eu_name"],$this->input->post("eu_name"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_ct_seq"] != $this->input->post("sv_ct_seq") ){
-            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','업체분류',$b_row["ct_name"],$this->input->post("sv_ct_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','업체분류',$b_row["ct_name"],$this->input->post("ct_name"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_code"] != $this->input->post("sv_code1")."-".$this->input->post("sv_code2") ){
-            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 번호',$b_row["sv_code"],$this->input->post("sv_code1")."-".$this->input->post("sv_code2"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 번호',$b_row["sv_code"],$this->input->post("sv_code1")."-".$this->input->post("sv_code2"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["sv_part"] != $this->input->post("sv_part") ||  $b_row["sv_charger"] != $this->input->post("sv_charger")){
-            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','사내담당자',$b_row["sv_part"]." ".$b_row["sv_charger"],$this->input->post("sv_part")." ".$this->input->post("sv_charger"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','사내담당자',$b_row["sv_part"]." ".$b_row["sv_charger"],$this->input->post("sv_part")." ".$this->input->post("sv_charger"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_contract_start"] != $this->input->post("sv_contract_start") ){
-            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 시작일',$b_row["sv_contract_start"],$this->input->post("sv_contract_start"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 시작일',$b_row["sv_contract_start"],$this->input->post("sv_contract_start"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_contract_end"] != $this->input->post("sv_contract_end") ){
-            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 만료일',$b_row["sv_contract_end"],$this->input->post("sv_contract_end"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 만료일',$b_row["sv_contract_end"],$this->input->post("sv_contract_end"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_auto_extension"] != $this->input->post("sv_auto_extension") || $b_row["sv_auto_extension_month"] != $this->input->post("sv_auto_extension_month") ){
             if($b_row["sv_auto_extension"] == "0"){
@@ -4943,16 +5126,16 @@ class Api_model extends CI_Model {
             }else{
                 $after = "자동 계약 연장 ".$this->input->post("sv_auto_extension_month")."개월";
             }
-            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','자동 계약 연장 여부',$before,$after,1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','자동 계약 연장 여부',$before,$after,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["sv_contract_extension_end"] != $this->input->post("sv_contract_end") ){
-            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 만료일(연장)',$b_row["sv_contract_extension_end"],$this->input->post("sv_contract_end"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'기본 정보','계약 만료일(연장)',$b_row["sv_contract_extension_end"],$this->input->post("sv_contract_end"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
-        if($b_row["sv_rental_end_date"] != $this->input->post("sv_rental_end_date") ){
-            $this->logInsert(2,$this->input->post("sv_seq"),'상품 정보','소유권 이전일',$b_row["sv_rental_end_date"],$this->input->post("sv_rental_end_date"),1,'',$_SERVER["REMOTE_ADDR"]);
-        }
+        // if($b_row["sv_rental_end_date"] != $this->input->post("sv_rental_end_date") ){
+        //     $this->logInsert(2,$this->input->post("sv_seq"),'상품 정보','소유권 이전일',$b_row["sv_rental_end_date"],$this->input->post("sv_rental_end_date"),1,'',$_SERVER["REMOTE_ADDR"]);
+        // }
 
         if($b_row["sv_rental_date"] != $this->input->post("sv_rental_type") ){
             if($b_row["sv_rental_date"] == "1"){
@@ -4965,7 +5148,7 @@ class Api_model extends CI_Model {
             }else{
                 $after = "소유권 이전 ".$this->input->post("sv_rental_date")."개월";
             }
-            $this->logInsert(2,$this->input->post("sv_seq"),'상품 정보','임대 형태',$before,$after,1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'상품 정보','임대 형태',$before,$after,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         $new_data = array(
@@ -4981,8 +5164,7 @@ class Api_model extends CI_Model {
             "sv_auto_extension_month" => $this->input->post("sv_auto_extension_month"),
             "sv_claim_name" => $this->input->post("sv_claim_name"),
             "sv_rental_type" => $this->input->post("sv_rental_type"),
-            "sv_rental_date" => $this->input->post("sv_rental_date"),
-            "sv_rental_end_date" => $this->input->post("sv_rental_end_date")
+            "sv_rental_date" => $this->input->post("sv_rental_date")
         );
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
         return $this->db->update("service",$new_data);
@@ -5003,6 +5185,123 @@ class Api_model extends CI_Model {
         $this->db->update("service_addoption",$new_data);
         
         if($this->input->post("sva_claim_type") == "0"){
+            $this->db->select("*",true);
+            $this->db->from("service a");
+            $this->db->join("service_price ap","a.sv_seq=ap.svp_sv_seq","left" );
+            $this->db->join("service_addoption sa","ap.svp_sva_seq = sa.sva_seq ","left");
+            $this->db->join("members b","a.sv_mb_seq = b.mb_seq","left");
+            $this->db->join("end_users c","a.sv_eu_seq = c.eu_seq","left");
+            $this->db->join("company_type cc","a.sv_ct_seq = cc.ct_seq","left");
+            $this->db->join("product d","a.sv_pr_seq = d.pr_seq","left");
+            $this->db->join("product_category e","a.sv_pc_seq = e.pc_seq","left");
+            $this->db->join("product_items ei","a.sv_pi_seq = ei.pi_seq","left");
+            $this->db->join("product_div pd","a.sv_pd_seq = pd.pd_seq","left");
+            $this->db->join("product_sub_div f","a.sv_ps_seq = f.ps_seq","left");
+            $this->db->join("clients cl","a.sv_c_seq = cl.c_seq","left");
+
+            $this->db->where("sva_seq",$this->input->post("sva_seq"));
+
+            $query = $this->db->get();
+            $b_row = $query->row_array();
+
+            if($b_row["sva_claim_name"] != $this->input->post("sva_claim_name")){
+                $this->logInsert(6,$this->input->post("sva_seq"),'서비스 기본 정보','청구명',$b_row["sva_claim_name"],$this->input->post("sva_claim_name"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            }
+
+            if($b_row["sva_bill_name"] != $this->input->post("sva_bill_name")){
+                $this->logInsert(6,$this->input->post("sva_seq"),'서비스 기본 정보','계산서 품목명',$b_row["sva_bill_name"],$this->input->post("sva_bill_name"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            }
+
+            // if($b_row["sv_payment_type"] != $this->input->post("sv_payment_type")){
+            //     if($b_row["sv_payment_type"] == "0"){
+            //         $b_payment_type = "무통장";
+            //     }else if($b_row["sv_payment_type"] == "1"){
+            //         $b_payment_type = "카드";
+            //     }else if($b_row["sv_payment_type"] == "2"){
+            //         $b_payment_type = "CMS";
+            //     }
+            //     if($this->input->post("sv_payment_type") == "0"){
+            //         $payment_type = "무통장";
+            //     }else if($this->input->post("sv_payment_type") == "1"){
+            //         $payment_type = "카드";
+            //     }else if($this->input->post("sv_payment_type") == "2"){
+            //         $payment_type = "CMS";
+            //     }
+
+            //     $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','요금 납부 방법',$b_payment_type,$payment_type,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            // }
+
+            if($b_row["svp_payment_period"] != $this->input->post("svp_payment_period")){
+                $this->logInsert(6,$this->input->post("sva_seq"),'서비스 결제 조건','결제 주기',$b_row["svp_payment_period"],$this->input->post("svp_payment_period"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            }
+            // if($b_row["sv_pay_type"] != $this->input->post("sv_pay_type")){
+            //     if($b_row["sv_pay_type"] == "0"){
+            //         $b_pay_type = "전월";
+            //     }else if($b_row["sv_pay_type"] == "1"){
+            //         $b_pay_type = "당월";
+            //     }else if($b_row["sv_pay_type"] == "2"){
+            //         $b_pay_type = "익월";
+            //     }
+            //     if($this->input->post("sv_pay_type") == "0"){
+            //         $pay_type = "전월";
+            //     }else if($this->input->post("sv_pay_type") == "1"){
+            //         $pay_type = "당월";
+            //     }else if($this->input->post("sv_pay_type") == "2"){
+            //         $pay_type = "익월";
+            //     }
+            //     $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','청구 기준',$b_pay_type,$pay_type,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            // }
+
+            // if($b_row["sv_pay_day"] != $this->input->post("sv_pay_day")){
+            //     $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','자동 청구일',$b_row["sv_pay_day"],$this->input->post("sv_pay_day"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            // }
+
+            // if($b_row["sv_pay_publish"] != $this->input->post("sv_pay_publish") || $b_row["sv_pay_publish_type"] != $this->input->post("sv_pay_publish_type")){
+            //     if($b_row["sv_pay_publish"] == "1"){
+            //         $b_pay_publish = "미발행";
+            //     }else{
+            //         if($b_row["sv_pay_publish_type"] == "0"){
+            //             $b_pay_publish = "영수발행";
+            //         }else{
+            //             $b_pay_publish = "청구발행";
+            //         }
+            //     }
+
+            //     if($this->input->post("sv_pay_publish") == "1"){
+            //         $pay_publish = "미발행";
+            //     }else{
+            //         if($this->input->post("sv_pay_publish_type") == "0"){
+            //             $pay_publish = "영수발행";
+            //         }else{
+            //             $pay_publish = "청구발행";
+            //         }
+            //     }
+            //     $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','계산서 발행',$b_pay_publish,$pay_publish,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            // }
+
+            // if($b_row["sv_payment_day"] != $this->input->post("sv_payment_day")){
+            //     $this->logInsert(3,$this->input->post("sv_seq"),'서비스 결제 조건','결제일',$b_row["sv_payment_day"],$this->input->post("sv_payment_day"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            // }
+
+            if($b_row["svp_register_discount"] != $this->input->post("svp_register_discount")){
+                $this->logInsert(6,$this->input->post("sva_seq"),'서비스 결제 조건','등록할인율',$b_row["svp_register_discount"],$this->input->post("svp_register_discount"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            }
+
+            if($b_row["svp_month_price"] != str_replace(",","",$this->input->post("svp_month_price"))){
+                $this->logInsert(6,$this->input->post("sva_seq"),'서비스 결제 조건','서비스 월 요금',number_format($b_row["svp_month_price"]),$this->input->post("svp_month_price"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            }
+
+            if($b_row["svp_month_dis_price"] != str_replace(",","",$this->input->post("svp_month_dis_price"))){
+                $this->logInsert(6,$this->input->post("sva_seq"),'서비스 결제 조건','서비스 할인 요금',number_format($b_row["svp_month_dis_price"]),$this->input->post("svp_month_dis_price"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            }
+            $b_total_price = ($b_row["svp_month_price"]-$b_row["svp_month_dis_price"])*$b_row["svp_payment_period"]-$b_row["svp_discount_price"];
+            $total_price = (str_replace(",","",$this->input->post("svp_month_price"))-str_replace(",","",$this->input->post("svp_month_dis_price")))*$this->input->post("svp_payment_period")-str_replace(",","",$this->input->post("svp_discount_price"));
+            if($b_total_price != $total_price){
+                $this->logInsert(6,$this->input->post("sva_seq"),'서비스 결제 조건','서비스 요금 합계',number_format($b_total_price)." / ".$b_row["svp_payment_period"]."개월",number_format($total_price)." / ".$this->input->post("svp_payment_period")."개월",1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            }
+            if($b_row["svp_memo"] != $this->input->post("svp_memo")){
+                $this->logInsert(3,$this->input->post("sva_seq"),'관리자 메모','메모',$b_row["svp_memo"],$this->input->post("svp_memo"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            }
             $data_price = array(
                 "svp_once_price" => str_replace(",","",$this->input->post("svp_once_price")),
                 "svp_once_dis_price" => str_replace(",","",$this->input->post("svp_once_dis_price")),
@@ -5265,21 +5564,23 @@ class Api_model extends CI_Model {
         $this->db->update("payment",$data);
 
 
-        $this->db->select("*");
-        $this->db->from("payment a");
-        $this->db->join("service b","a.pm_sv_seq = b.sv_seq","inner");
-        $this->db->where("pm_seq",$this->input->post("pm_seq"));
-
-        $query = $this->db->get();
-
-        $row = $query->row_array();
-        if($row["sv_status"] == "0"){
-            $data_status["sv_status"] = "1";
-            $this->db->where("sv_seq",$row["sv_seq"]);
-            $this->db->update("service",$data_status);
-        }
+       
         for($i = 0; $i < count($seq);$i++){
-            $this->logInsert(4,$seq[$i],'결제 처리','가결제 처리',"","",1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->db->select("*");
+            $this->db->from("payment a");
+            $this->db->join("service b","a.pm_sv_seq = b.sv_seq","inner");
+            $this->db->where("pm_seq",$seq[$i]);
+
+            $query = $this->db->get();
+
+            $row = $query->row_array();
+            if($row["sv_status"] == "0"){
+                $data_status["sv_status"] = "1";
+                $this->db->where("sv_seq",$row["sv_seq"]);
+                $this->db->update("service",$data_status);
+            }
+
+            $this->logInsert(4,$row["sv_seq"],'결제 처리','가결제 처리',"","가결제 처리됨",1,'',$_SERVER["REMOTE_ADDR"],$row["sv_mb_seq"]);
         }
         
         return true;
@@ -5294,8 +5595,8 @@ class Api_model extends CI_Model {
         $query = $this->db->get();
 
         $b_row = $query->row_array();
-        if($b_row["sv_out_date"] != $this->input->post("sv_out_date")){
-            $this->logInsert(2,$seq[$i],'서비스 상태','재품 출고일',$b_row["sv_out_date"],$this->input->post("sv_out_date"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if(substr($b_row["sv_out_date"],0,10) != $this->input->post("sv_out_date")){
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','재품 출고일',substr($b_row["sv_out_date"],0,10),$this->input->post("sv_out_date"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         $data = array(
             "sv_out_date" => $this->input->post("sv_out_date"),
@@ -5310,58 +5611,65 @@ class Api_model extends CI_Model {
     }
 
     public function updateServiceCharger(){
-        $data = array(
-            "sv_engineer_part" => $this->input->post("sv_engineer_part"),
-            "sv_engineer_charger" => $this->input->post("sv_engineer_charger")
-        );
         $this->db->select("*");
         $this->db->from("service");
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
         $query = $this->db->get();
-        $row = $query->row_array();
-        if($row["sv_install_charger"] == ""){
+        $b_row = $query->row_array();
+        if($this->input->post("sv_status") != ""){
+            if($b_row["sv_status"] != $this->input->post("sv_status")){
+                if($b_row["sv_status"] == "0"){
+                    $b_sv_status = '입금대기중';
+                }else if($b_row["sv_status"] == "1"){
+                    $b_sv_status = '서비스준비중';
+                }else if($b_row["sv_status"] == "2"){
+                    $b_sv_status = '서비스작업중';
+                }else if($b_row["sv_status"] == "3"){
+                    $b_sv_status = '서비스중';
+                }else if($b_row["sv_status"] == "4"){
+                    $b_sv_status = '서비스중지';
+                }else if($b_row["sv_status"] == "5"){
+                    $b_sv_status = '서비스해지';
+                }else if($b_row["sv_status"] == "6"){
+                    $b_sv_status = '직권중지';
+                }else if($b_row["sv_status"] == "7"){
+                    $b_sv_status = '직권해지';
+                }
+
+                if($this->input->post("sv_status") == "0"){
+                    $sv_status = '입금대기중';
+                }else if($this->input->post("sv_status") == "1"){
+                    $sv_status = '서비스준비중';
+                }else if($this->input->post("sv_status") == "2"){
+                    $sv_status = '서비스작업중';
+                }else if($this->input->post("sv_status") == "3"){
+                    $sv_status = '서비스중';
+                }else if($this->input->post("sv_status") == "4"){
+                    $sv_status = '서비스중지';
+                }else if($this->input->post("sv_status") == "5"){
+                    $sv_status = '서비스해지';
+                }else if($this->input->post("sv_status") == "6"){
+                    $sv_status = '직권중지';
+                }else if($this->input->post("sv_status") == "7"){
+                    $sv_status = '직권해지';
+                }
+                $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            }
+        }
+        if($b_row["sv_engineer_part"] != $this->input->post("sv_engineer_part") || $b_row["sv_engineer_charger"] != $this->input->post("sv_engineer_charger")){
+            $this->logInsert(2,$this->input->post("sv_seq"),'상품 정보','기술/관제 담당자',$b_row["sv_engineer_part"]." ".$b_row["sv_engineer_charger"],$this->input->post("sv_engineer_part")." ".$this->input->post("sv_engineer_charger"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+        }
+        $data = array(
+            "sv_engineer_part" => $this->input->post("sv_engineer_part"),
+            "sv_engineer_charger" => $this->input->post("sv_engineer_charger")
+        );
+        
+        if($b_row["sv_install_charger"] == ""){
             $data["sv_install_charger"] = $this->input->post("sv_engineer_charger_str");
             $data["sv_install_date"] = date("Y-m-d");
         }
 
-        if($b_row["sv_status"] != $this->input->post("sv_status")){
-            if($b_row["sv_status"] == "0"){
-                $b_sv_status = '입금대기중';
-            }else if($b_row["sv_status"] == "1"){
-                $b_sv_status = '서비스준비중';
-            }else if($b_row["sv_status"] == "2"){
-                $b_sv_status = '서비스작업중';
-            }else if($b_row["sv_status"] == "3"){
-                $b_sv_status = '서비스중';
-            }else if($b_row["sv_status"] == "4"){
-                $b_sv_status = '서비스중지';
-            }else if($b_row["sv_status"] == "5"){
-                $b_sv_status = '서비스해지';
-            }else if($b_row["sv_status"] == "6"){
-                $b_sv_status = '직권중지';
-            }else if($b_row["sv_status"] == "7"){
-                $b_sv_status = '직권해지';
-            }
-
-            if($this->input->post("sv_status") == "0"){
-                $sv_status = '입금대기중';
-            }else if($this->input->post("sv_status") == "1"){
-                $sv_status = '서비스준비중';
-            }else if($this->input->post("sv_status") == "2"){
-                $sv_status = '서비스작업중';
-            }else if($this->input->post("sv_status") == "3"){
-                $sv_status = '서비스중';
-            }else if($this->input->post("sv_status") == "4"){
-                $sv_status = '서비스중지';
-            }else if($this->input->post("sv_status") == "5"){
-                $sv_status = '서비스해지';
-            }else if($this->input->post("sv_status") == "6"){
-                $sv_status = '직권중지';
-            }else if($this->input->post("sv_status") == "7"){
-                $sv_status = '직권해지';
-            }
-            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
-        }
+        
 
         if($this->input->post("sv_status") != ""){
             $data["sv_status"] = $this->input->post("sv_status");
@@ -5381,8 +5689,8 @@ class Api_model extends CI_Model {
         $query = $this->db->get();
 
         $b_row = $query->row_array();
-        if($b_row["sv_service_start"] != $date){
-            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 개시일',$b_row["sv_service_start"],$date,1,'',$_SERVER["REMOTE_ADDR"]);
+        if(substr($b_row["sv_service_start"],0,10) != $date){
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 개시일',substr($b_row["sv_service_start"],0,10),$date,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["sv_status"] != 3){
@@ -5407,7 +5715,7 @@ class Api_model extends CI_Model {
             
             $sv_status = '서비스중';
             
-            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         $data["sv_status"] = 3;
@@ -5418,6 +5726,18 @@ class Api_model extends CI_Model {
     }
 
     public function updateServiceOpenTime(){
+        $this->db->select("*");
+        $this->db->from("service ");
+
+        $this->db->where("sv_seq",$this->input->post("sv_seq"));
+
+        $query = $this->db->get();
+
+        $b_row = $query->row_array();
+        if(substr($b_row["sv_service_start"],0,10) != $this->input->post("service_open")){
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 개시일',substr($b_row["sv_service_start"],0,10),$this->input->post("service_open"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+        }
+
         $data["sv_service_start"] = $this->input->post("service_open");
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
 
@@ -5433,8 +5753,8 @@ class Api_model extends CI_Model {
         $query = $this->db->get();
 
         $b_row = $query->row_array();
-        if($b_row["sv_service_stop"] != $this->input->post("sv_service_stop")){
-            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 중지일',$b_row["sv_service_stop"],$this->input->post("sv_service_stop"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if(substr($b_row["sv_service_stop"],0,10) != $this->input->post("sv_service_stop")){
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 중지일',substr($b_row["sv_service_stop"],0,10),$this->input->post("sv_service_stop"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["sv_status"] != 4){
@@ -5459,7 +5779,7 @@ class Api_model extends CI_Model {
             
             $sv_status = '서비스중지';
             
-            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         $data["sv_service_stop"] = $this->input->post("sv_service_stop");
@@ -5480,8 +5800,8 @@ class Api_model extends CI_Model {
         $query = $this->db->get();
 
         $b_row = $query->row_array();
-        if($b_row["sv_service_end"] != $this->input->post("sv_service_end")){
-            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 해지일',$b_row["sv_service_end"],$this->input->post("sv_service_end"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if(substr($b_row["sv_service_end"],0,10) != $this->input->post("sv_service_end")){
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 해지일',substr($b_row["sv_service_end"],0,10),$this->input->post("sv_service_end"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["sv_status"] != 5){
@@ -5506,7 +5826,7 @@ class Api_model extends CI_Model {
             
             $sv_status = '서비스해지';
             
-            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         $data["sv_service_end"] = $this->input->post("sv_service_end");
@@ -5532,8 +5852,8 @@ class Api_model extends CI_Model {
         $query = $this->db->get();
 
         $b_row = $query->row_array();
-        if($b_row["sv_service_stop"] != $date){
-            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 중지일',$b_row["sv_service_stop"],$date,1,'',$_SERVER["REMOTE_ADDR"]);
+        if(substr($b_row["sv_service_stop"],0,10) != $date){
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 중지일',substr($b_row["sv_service_stop"],0,10),$date,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["sv_status"] != 6){
@@ -5558,7 +5878,7 @@ class Api_model extends CI_Model {
             
             $sv_status = '직권중지';
             
-            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         $data["sv_status"] = 6;
@@ -5578,8 +5898,8 @@ class Api_model extends CI_Model {
         $query = $this->db->get();
 
         $b_row = $query->row_array();
-        if($b_row["sv_service_end"] != date("Y-m-d H:i:s")){
-            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 해지일',$b_row["sv_service_end"],date("Y-m-d H:i:s"),1,'',$_SERVER["REMOTE_ADDR"]);
+        if(substr($b_row["sv_service_end"],0,10) != date("Y-m-d H:i:s")){
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 해지일',substr($b_row["sv_service_end"],0,10),date("Y-m-d H:i:s"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["sv_status"] != 7){
@@ -5604,7 +5924,7 @@ class Api_model extends CI_Model {
             
             $sv_status = '직권해지';
             
-            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         $data["sv_status"] = 7;
         $data["sv_service_end"] = date("Y-m-d H:i:s");
@@ -5627,8 +5947,8 @@ class Api_model extends CI_Model {
         $query = $this->db->get();
 
         $b_row = $query->row_array();
-        if($b_row["sv_service_restart"] != $date){
-            $this->logInsert(2,$seq[$i],'서비스 상태','서비스 재시작일',$b_row["sv_service_restart"],$date,1,'',$_SERVER["REMOTE_ADDR"]);
+        if(substr($b_row["sv_service_restart"],0,10) != $date){
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 재시작일',substr($b_row["sv_service_restart"],0,10),$date,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["sv_status"] != 3){
@@ -5653,7 +5973,7 @@ class Api_model extends CI_Model {
             
             $sv_status = '서비스중';
             
-            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(2,$this->input->post("sv_seq"),'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         $data["sv_status"] = 3;
         $data["sv_service_restart"] = $date;
@@ -5899,8 +6219,33 @@ class Api_model extends CI_Model {
                 $data_service["sv_status"] = 1;
                 $this->db->where("sv_seq" , $row2["sv_seq"]);
                 $this->db->update("service",$data_service);
+
+                if($row2["sv_status"] != 1){
+                    if($row2["sv_status"] == "0"){
+                        $b_sv_status = '입금대기중';
+                    }else if($row2["sv_status"] == "1"){
+                        $b_sv_status = '서비스준비중';
+                    }else if($row2["sv_status"] == "2"){
+                        $b_sv_status = '서비스작업중';
+                    }else if($row2["sv_status"] == "3"){
+                        $b_sv_status = '서비스중';
+                    }else if($row2["sv_status"] == "4"){
+                        $b_sv_status = '서비스중지';
+                    }else if($row2["sv_status"] == "5"){
+                        $b_sv_status = '서비스해지';
+                    }else if($row2["sv_status"] == "6"){
+                        $b_sv_status = '직권중지';
+                    }else if($row2["sv_status"] == "7"){
+                        $b_sv_status = '직권해지';
+                    }
+
+                   
+                    $sv_status = '서비스준비중';
+                    
+                    $this->logInsert(2,$row2["sv_seq"],'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"],$row2["sv_mb_seq"]);
+                }
             }
-            $this->logInsert(4,$data[$i],'결제 처리','완납 처리',"","",1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(4,$row2["sv_seq"],'결제 처리','완납 처리',"","완납 처리됨",1,'',$_SERVER["REMOTE_ADDR"],$row2["sv_mb_seq"]);
         }
         return true;
     }
@@ -6029,7 +6374,9 @@ class Api_model extends CI_Model {
             $this->db->update("payment_claim_list",$data_claim_d);
             // return true;
         }
+        
         for($i = 0; $i < count($data);$i++){
+
             $data_array = array(
                 "pm_status" => "1",
                 "pm_com_date" => date("Y-m-d H:i:s")
@@ -6038,7 +6385,7 @@ class Api_model extends CI_Model {
             $this->db->where("pm_seq" , $data[$i]);
             $this->db->update("payment",$data_array);
 
-            $this->logInsert(4,$data[$i],'결제 처리','완납 처리',"","",1,'',$_SERVER["REMOTE_ADDR"]);
+            
         }
         //서비스 상태 변경
         for($i = 0; $i < count($data);$i++){
@@ -6050,10 +6397,36 @@ class Api_model extends CI_Model {
             $query = $this->db->get();
 
             $row = $query->row_array();
+            $this->logInsert(4,$row["sv_seq"],'결제 처리','완납 처리',"","완납 처리됨",1,'',$_SERVER["REMOTE_ADDR"],$row["sv_mb_seq"]);
             if($row["sv_status"] == "0"){
                 $data_status["sv_status"] = "1";
                 $this->db->where("sv_seq",$row["sv_seq"]);
                 $this->db->update("service",$data_status);
+
+                if($row["sv_status"] != 1){
+                    if($row["sv_status"] == "0"){
+                        $b_sv_status = '입금대기중';
+                    }else if($row["sv_status"] == "1"){
+                        $b_sv_status = '서비스준비중';
+                    }else if($row["sv_status"] == "2"){
+                        $b_sv_status = '서비스작업중';
+                    }else if($row["sv_status"] == "3"){
+                        $b_sv_status = '서비스중';
+                    }else if($row["sv_status"] == "4"){
+                        $b_sv_status = '서비스중지';
+                    }else if($row["sv_status"] == "5"){
+                        $b_sv_status = '서비스해지';
+                    }else if($row["sv_status"] == "6"){
+                        $b_sv_status = '직권중지';
+                    }else if($row["sv_status"] == "7"){
+                        $b_sv_status = '직권해지';
+                    }
+
+                   
+                    $sv_status = '서비스준비중';
+                    
+                    $this->logInsert(2,$row["sv_seq"],'서비스 상태','서비스 상태',$b_sv_status,$sv_status,1,'',$_SERVER["REMOTE_ADDR"],$row["sv_mb_seq"]);
+                }
             }
         }
         return true;
@@ -6104,11 +6477,24 @@ class Api_model extends CI_Model {
                         if($row["sv_pay_type"] == "0"){ // 전월
                             $claim_date = date("Y-m-d");
                         }else if($row["sv_pay_type"] == "1"){ // 당월
-                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            if($pay_day == "28"){
+                                $claim_date = date("Y-m-t",mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            }else{
+                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            }
+                            
                         }else if($row["sv_pay_type"] == "2"){ // 익월
-                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            if($pay_day == "28"){
+                                $claim_date = date("Y-m-t",mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            }else{
+                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            }
                         }else{
-                            $claim_date = date("Y-m-".$pay_day);
+                            if($pay_day == "28"){
+                                $claim_date = date("Y-m-".$pay_day);
+                            }else{
+                                $claim_date = date("Y-m-t");
+                            }
                         }
                         
                         $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
@@ -6119,15 +6505,36 @@ class Api_model extends CI_Model {
                         $next_pay_day = $row["sv_pay_day"];
                         if($row["sv_pay_type"] == "0"){ // 전월
                             $next_standard_day = substr($next_service_start,8,2);
-                            if($next_pay_day > $next_standard_day){
-                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            if($next_pay_day == 28){
+                                $between_day = date("t",strtotime($next_service_start));
+                            }else{
+                                $between_day = $next_pay_day;
+                            }
+                            if($between_day >= $next_standard_day){
+                                if($next_pay_day == "28"){
+                                    $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }else{
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }
+                            }else{
+                                if($next_pay_day == "28"){
+                                    $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }else{
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }
+                            }
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            if($next_pay_day == "28"){
+                                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }else{
                                 $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }
-                        }else if($row["sv_pay_type"] == "1"){ // 당월
-                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                         }else if($row["sv_pay_type"] == "2"){ // 익월
-                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            if($next_pay_day == "28"){
+                                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }else{
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }
                         }
 
                         if($row["svp_cl_seq"] == ""){ // 요금에 계산서 설정이 없다면 tax code 가 default
@@ -6410,15 +6817,38 @@ class Api_model extends CI_Model {
                         $pay_day = $row["sv_pay_day"];
                         if($row["sv_pay_type"] == "0"){ // 전월
                             $standard_day = substr($pm_service_start,8,2);
-                            if($pay_day > $standard_day){
-                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                            
+                            if($pay_day == 28){
+                                $between_day = date("t",strtotime($pm_service_start));
+                            }else{
+                                $between_day = $pay_day;
+                            }
+                            if($between_day >= $standard_day){
+                                if($pay_day == "28"){
+                                    $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                }else{
+                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                }
+                                
+                            }else{
+                                if($pay_day == "28"){
+                                    $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                }else{
+                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                }
+                            }
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            if($pay_day == "28"){
+                                $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                             }else{
                                 $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                             }
-                        }else if($row["sv_pay_type"] == "1"){ // 당월
-                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                         }else if($row["sv_pay_type"] == "2"){ // 익월
-                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                            if($pay_day == "28"){
+                                $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                            }else{
+                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                            }
                         }
                         // $claim_date = date("Y-m-d");
 
@@ -6430,15 +6860,36 @@ class Api_model extends CI_Model {
                         $next_pay_day = $row["sv_pay_day"];
                         if($row["sv_pay_type"] == "0"){ // 전월
                             $next_standard_day = substr($next_service_start,8,2);
-                            if($next_pay_day > $next_standard_day){
-                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            if($next_pay_day == 28){
+                                $between_day = date("t",strtotime($next_service_start));
+                            }else{
+                                $between_day = $next_pay_day;
+                            }
+                            if($between_day >= $next_standard_day){
+                                if($next_pay_day == "28"){
+                                    $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }else{
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }
+                            }else{
+                                if($next_pay_day == "28"){
+                                    $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }else{
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }
+                            }
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            if($next_pay_day == "28"){
+                                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }else{
                                 $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }
-                        }else if($row["sv_pay_type"] == "1"){ // 당월
-                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                         }else if($row["sv_pay_type"] == "2"){ // 익월
-                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            if($next_pay_day == "28"){
+                                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }else{
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }
                         }
 
 
@@ -6740,11 +7191,24 @@ class Api_model extends CI_Model {
                                 if($row["sv_pay_type"] == "0"){ // 전월
                                     $claim_date = date("Y-m-d");
                                 }else if($row["sv_pay_type"] == "1"){ // 당월
-                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                                    if($pay_day == "28"){
+                                        $claim_date = date("Y-m-t",mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                                    }else{
+                                        $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                                    }
+                                    
                                 }else if($row["sv_pay_type"] == "2"){ // 익월
-                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                                    if($pay_day == "28"){
+                                        $claim_date = date("Y-m-t",mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                                    }else{
+                                        $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                                    }
                                 }else{
-                                    $claim_date = date("Y-m-".$pay_day);
+                                    if($pay_day == "28"){
+                                        $claim_date = date("Y-m-t");
+                                    }else{
+                                        $claim_date = date("Y-m-".$pay_day);
+                                    }
                                 }
                                 
                                 $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
@@ -6756,15 +7220,36 @@ class Api_model extends CI_Model {
                                 $next_pay_day = $row["sv_pay_day"];
                                 if($row["sv_pay_type"] == "0"){ // 전월
                                     $next_standard_day = substr($next_service_start,8,2);
-                                    if($next_pay_day > $next_standard_day){
-                                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                    if($next_pay_day == 28){
+                                        $between_day = date("t",strtotime($next_service_start));
+                                    }else{
+                                        $between_day = $next_pay_day;
+                                    }
+                                    if($between_day >= $next_standard_day){
+                                        if($next_pay_day == "28"){
+                                            $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                        }else{
+                                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                        }
+                                    }else{
+                                        if($next_pay_day == "28"){
+                                            $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                        }else{
+                                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                        }
+                                    }
+                                }else if($row["sv_pay_type"] == "1"){ // 당월
+                                    if($next_pay_day == "28"){
+                                        $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                                     }else{
                                         $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                                     }
-                                }else if($row["sv_pay_type"] == "1"){ // 당월
-                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                                 }else if($row["sv_pay_type"] == "2"){ // 익월
-                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                    if($next_pay_day == "28"){
+                                        $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                    }else{
+                                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                    }
                                 }
 
                                 if($row["svp_cl_seq"] == ""){
@@ -7043,15 +7528,37 @@ class Api_model extends CI_Model {
                                 $pay_day = $row["sv_pay_day"];
                                 if($row["sv_pay_type"] == "0"){ // 전월
                                     $standard_day = substr($pm_service_start,8,2);
-                                    if($pay_day > $standard_day){
-                                        $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                    if($pay_day == 28){
+                                        $between_day = date("t",strtotime($pm_service_start));
+                                    }else{
+                                        $between_day = $pay_day;
+                                    }
+                                    if($between_day >= $standard_day){
+                                        if($pay_day == "28"){
+                                            $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                        }else{
+                                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                        }
+                                        
+                                    }else{
+                                        if($pay_day == "28"){
+                                            $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                        }else{
+                                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                        }
+                                    }
+                                }else if($row["sv_pay_type"] == "1"){ // 당월
+                                    if($pay_day == "28"){
+                                        $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                                     }else{
                                         $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                                     }
-                                }else if($row["sv_pay_type"] == "1"){ // 당월
-                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                                 }else if($row["sv_pay_type"] == "2"){ // 익월
-                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                    if($pay_day == "28"){
+                                        $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                    }else{
+                                        $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                    }
                                 }
                                 // $claim_date = date("Y-m-d");
 
@@ -7064,14 +7571,30 @@ class Api_model extends CI_Model {
                                 if($row["sv_pay_type"] == "0"){ // 전월
                                     $next_standard_day = substr($next_service_start,8,2);
                                     if($next_pay_day > $next_standard_day){
-                                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                        if($next_pay_day == "28"){
+                                            $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                        }else{
+                                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                        }
+                                    }else{
+                                        if($next_pay_day == "28"){
+                                            $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                        }else{
+                                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                        }
+                                    }
+                                }else if($row["sv_pay_type"] == "1"){ // 당월
+                                    if($next_pay_day == "28"){
+                                        $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                                     }else{
                                         $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                                     }
-                                }else if($row["sv_pay_type"] == "1"){ // 당월
-                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                                 }else if($row["sv_pay_type"] == "2"){ // 익월
-                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                    if($next_pay_day == "28"){
+                                        $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                    }else{
+                                        $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                    }
                                 }
 
                                 if($row["svp_cl_seq"] == ""){
@@ -7376,11 +7899,25 @@ class Api_model extends CI_Model {
                         if($row["sv_pay_type"] == "0"){ // 전월
                             $claim_date = date("Y-m-d");
                         }else if($row["sv_pay_type"] == "1"){ // 당월
-                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            if($pay_day == "28"){
+                                $claim_date = date("Y-m-t",mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            }else{
+                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2),substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            }
+                            
                         }else if($row["sv_pay_type"] == "2"){ // 익월
-                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            if($pay_day == "28"){
+                                $claim_date = date("Y-m-t",mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            }else{
+                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($row["sv_account_start"],5,2)+1,substr($row["sv_account_start"],8,2),substr($row["sv_account_start"],0,4)));
+                            }
+
                         }else{
-                            $claim_date = date("Y-m-".$pay_day);
+                            if($pay_day == "28"){
+                                $claim_date = date("Y-m-t");
+                            }else{
+                                $claim_date = date("Y-m-".$pay_day);
+                            }
                         }
                         
                         $end_date = date("Y-m-d",mktime(0,0,0,substr($claim_date,5,2),substr($claim_date,8,2)+$row["sv_payment_day"],substr($claim_date,0,4)));
@@ -7392,15 +7929,36 @@ class Api_model extends CI_Model {
                         $next_pay_day = $row["sv_pay_day"];
                         if($row["sv_pay_type"] == "0"){ // 전월
                             $next_standard_day = substr($next_service_start,8,2);
-                            if($next_pay_day > $next_standard_day){
-                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            if($next_pay_day == 28){
+                                $between_day = date("t",strtotime($next_service_start));
+                            }else{
+                                $between_day = $next_pay_day;
+                            }
+                            if($between_day >= $next_standard_day){
+                                if($next_pay_day == "28"){
+                                    $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }else{
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }
+                            }else{
+                                if($next_pay_day == "28"){
+                                    $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }else{
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }
+                            }
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            if($next_pay_day == "28"){
+                                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }else{
                                 $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }
-                        }else if($row["sv_pay_type"] == "1"){ // 당월
-                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                         }else if($row["sv_pay_type"] == "2"){ // 익월
-                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            if($next_pay_day == "28"){
+                                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }else{
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }
                         }
 
                         if($row["svp_cl_seq"] == ""){
@@ -7681,15 +8239,37 @@ class Api_model extends CI_Model {
                         $pay_day = $row["sv_pay_day"];
                         if($row["sv_pay_type"] == "0"){ // 전월
                             $standard_day = substr($pm_service_start,8,2);
-                            if($pay_day > $standard_day){
-                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                            if($pay_day == 28){
+                                $between_day = date("t",strtotime($pm_service_start));
+                            }else{
+                                $between_day = $pay_day;
+                            }
+                            if($between_day >= $standard_day){
+                                if($pay_day == 28){
+                                    $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                }else{
+                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)-1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                }
+                                
+                            }else{
+                                if($pay_day == 28){
+                                    $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                }else{
+                                    $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                                }
+                            }
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            if($pay_day == 28){
+                                $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                             }else{
                                 $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                             }
-                        }else if($row["sv_pay_type"] == "1"){ // 당월
-                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2),substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
                         }else if($row["sv_pay_type"] == "2"){ // 익월
-                            $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                            if($pay_day == 28){
+                                $claim_date = date("Y-m-t",mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                            }else{
+                                $claim_date = date("Y-m-".$pay_day,mktime(0,0,0,substr($pm_service_start,5,2)+1,substr($pm_service_start,8,2),substr($pm_service_start,0,4)));
+                            }
                         }
                         // $claim_date = date("Y-m-d");
 
@@ -7699,17 +8279,39 @@ class Api_model extends CI_Model {
                         $next_service_end = date("Y-m-d",mktime(0,0,0,substr($pm_service_end,5,2)+1,substr($pm_service_end,8,2),substr($pm_service_end,0,4)));
 
                         $next_pay_day = $row["sv_pay_day"];
+
                         if($row["sv_pay_type"] == "0"){ // 전월
                             $next_standard_day = substr($next_service_start,8,2);
-                            if($next_pay_day > $next_standard_day){
-                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            if($next_pay_day == 28){
+                                $between_day = date("t",strtotime($next_service_start));
+                            }else{
+                                $between_day = $next_pay_day;
+                            }
+                            if($between_day >= $next_standard_day){
+                                if($next_pay_day == 28){
+                                    $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }else{
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)-1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }
+                            }else{
+                                if($next_pay_day == 28){
+                                    $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }else{
+                                    $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                                }
+                            }
+                        }else if($row["sv_pay_type"] == "1"){ // 당월
+                            if($next_pay_day == 28){
+                                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }else{
                                 $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                             }
-                        }else if($row["sv_pay_type"] == "1"){ // 당월
-                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2),substr($next_service_start,8,2),substr($next_service_start,0,4)));
                         }else if($row["sv_pay_type"] == "2"){ // 익월
-                            $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            if($next_pay_day == 28){
+                                $next_claim_date = date("Y-m-t",mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }else{
+                                $next_claim_date = date("Y-m-".$next_pay_day,mktime(0,0,0,substr($next_service_start,5,2)+1,substr($next_service_start,8,2),substr($next_service_start,0,4)));
+                            }
                         }
 
                         if($row["svp_cl_seq"] == ""){
@@ -8009,11 +8611,26 @@ class Api_model extends CI_Model {
     }
 
     public function serviceDelete(){
+        $this->db->where("lo_relation_seq",$this->input->post("sv_seq"));
+        $this->db->where("lo_div in (2,3,4,5) ");
+        $this->db->delete("logs");
+
+        $this->db->select("*");
+        $this->db->from("service_addoption");
+        $this->db->where("sva_sv_seq",$this->input->post("sv_seq"));
+        $query = $this->db->get();
+        foreach($query->result_array() as $row){
+            $this->db->where("lo_relation_seq",$row["sva_seq"]);
+            $this->db->where("lo_div = 6");
+            $this->db->delete("logs");
+        }
         $this->db->where("sva_sv_seq",$this->input->post("sv_seq"));
         $this->db->delete("service_addoption");
 
         $this->db->where("svp_sv_seq",$this->input->post("sv_seq"));
         $this->db->delete("service_price");
+
+
 
         $this->db->where("sv_seq",$this->input->post("sv_seq"));
         return $this->db->delete("service");
@@ -8034,38 +8651,38 @@ class Api_model extends CI_Model {
         $b_row = $b_query->row_array();
 
         if($b_row["sv_position"] != $this->input->post("sv_position")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','장비 위치',$b_row["sv_position"],$this->input->post("sv_position"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','장비 위치',$b_row["sv_position"],$this->input->post("sv_position"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_out_serial"] != $this->input->post("sv_out_serial")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','장비 위치',$b_row["sv_out_serial"],$this->input->post("sv_out_serial"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','장비 위치',$b_row["sv_out_serial"],$this->input->post("sv_out_serial"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_firmware"] != $this->input->post("sv_firmware")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','펌웨어 버전',$b_row["sv_firmware"],$this->input->post("sv_firmware"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','펌웨어 버전',$b_row["sv_firmware"],$this->input->post("sv_firmware"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_install_charger"] != $this->input->post("sv_install_charger")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','설치 담당자',$b_row["sv_install_charger"],$this->input->post("sv_install_charger"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','설치 담당자',$b_row["sv_install_charger"],$this->input->post("sv_install_charger"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_install_date"] != $this->input->post("sv_install_date")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','설치일',$b_row["sv_install_date"],$this->input->post("sv_install_date"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','설치일',$b_row["sv_install_date"],$this->input->post("sv_install_date"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_security_level"] != $this->input->post("sv_security_level")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','관제 레벨',$b_row["sv_security_level"],$this->input->post("sv_security_level"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','관제 레벨',$b_row["sv_security_level"],$this->input->post("sv_security_level"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         if($b_row["sv_pc_seq"] != $this->input->post("sv_pc_seq")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','서비스 종류',$b_row["pc_name"],$this->input->post("sv_pc_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','서비스 종류',$b_row["pc_name"],$this->input->post("pc_name"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_pi_seq"] != $this->input->post("sv_pi_seq")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','제품군',$b_row["pi_name"],$this->input->post("sv_pi_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','제품군',$b_row["pi_name"],$this->input->post("pi_name"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_pr_seq"] != $this->input->post("sv_pr_seq")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','상품명',$b_row["pr_name"],$this->input->post("sv_pr_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','상품명',$b_row["pr_name"],$this->input->post("pr_name"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_pd_seq"] != $this->input->post("sv_pd_seq")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','대분류',$b_row["pd_name"],$this->input->post("sv_pd_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','대분류',$b_row["pd_name"],$this->input->post("pd_name"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_ps_seq"] != $this->input->post("sv_ps_seq")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','소분류',$b_row["ps_name"],$this->input->post("sv_ps_name"),1,'',$_SERVER["REMOTE_ADDR"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'기본 상품 정보','소분류',$b_row["ps_name"],$this->input->post("ps_name"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
 
         $data = array(
@@ -8199,7 +8816,7 @@ class Api_model extends CI_Model {
         return $this->db->delete("product_item_sub");
     }
 
-    public function logInsert($lo_div,$lo_relation_seq,$lo_type,$lo_item,$lo_origin,$lo_after,$lo_user,$lo_charger_seq,$lo_ip){
+    public function logInsert($lo_div,$lo_relation_seq,$lo_type,$lo_item,$lo_origin,$lo_after,$lo_user,$lo_charger_seq,$lo_ip,$mb_seq){
         $data = array(
             "lo_div" => $lo_div,
             "lo_relation_seq" => $lo_relation_seq,
@@ -8210,7 +8827,8 @@ class Api_model extends CI_Model {
             "lo_user" => $lo_user,
             "lo_charger_seq" => $lo_charger_seq,
             "lo_ip" => $lo_ip,
-            "lo_regdate" => date("Y-m-d H:i:s")
+            "lo_regdate" => date("Y-m-d H:i:s"),
+            "lo_mb_seq" => $mb_seq
         );
 
         $this->db->insert("logs",$data);
@@ -8292,7 +8910,99 @@ class Api_model extends CI_Model {
                 // $this->db->where("lo_user",$this->input->get("lo_user"));
             }
         }
+        $this->db->order_by("lo_seq desc");
+        $this->db->limit($end,$start);
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
+
+    public function countALLLogs($mb_seq){
+        $this->db->select("count(*) as total");
+        $this->db->from("logs a");
+        $this->db->join("service b","a.lo_relation_seq = b.sv_seq and a.lo_div in (2,3,4,5)","left");
+        $this->db->where("lo_mb_seq",$mb_seq);
         
+
+        if($this->input->get("lo_type") != ""){
+            $this->db->where("lo_type",$this->input->get("lo_type"));
+        }
+
+        if($this->input->get("sv_number") != ""){
+            $this->db->where("sv_number",$this->input->get("sv_number"));
+        }
+
+        if($this->input->get("lo_item") != ""){
+            $this->db->where("lo_item",$this->input->get("lo_item"));
+        }
+
+        if($this->input->get("start_date") != "" && $this->input->get("end_date") != ""){
+            $this->db->where(" (date_format(lo_regdate,'%Y-%m-%d') >= '".$this->input->get("start_date")."' and date_format(lo_regdate,'%Y-%m-%d') <= '".$this->input->get("end_date")."' ) ");
+        }
+
+        if($this->input->get("lo_user") != ""){
+            $this->db->where("lo_user",$this->input->get("lo_user"));
+        }
+
+        if($this->input->get("lo_user") != ""){
+            $this->db->where("lo_user",$this->input->get("lo_user"));
+        }
+
+        if($this->input->get("searchType") != ""){
+            if($this->input->get("searchType") == "lo_ip"){
+                $this->db->where("lo_ip",$this->input->get("searchWord"));
+            }else{
+                // $this->db->where("lo_user",$this->input->get("lo_user"));
+            }
+        }
+        $query = $this->db->get();  
+
+        $row = $query->row_array();
+
+        return $row["total"];
+
+    }
+
+    public function fetchALLLogs($mb_seq,$start,$end){
+        $start = ($start - 1)*$end;
+        $this->db->select("*");
+        $this->db->from("logs a");
+        $this->db->join("service b","a.lo_relation_seq = b.sv_seq and a.lo_div in (2,3,4,5)","left");
+        $this->db->join("service_addoption c","a.lo_relation_seq = c.sva_seq and a.lo_div =6","left");
+        $this->db->where("lo_mb_seq",$mb_seq);
+
+        if($this->input->get("sv_number") != ""){
+            $this->db->where("sv_number",$this->input->get("sv_number"));
+        }
+
+        if($this->input->get("lo_type") != ""){
+            $this->db->where("lo_type",$this->input->get("lo_type"));
+        }
+
+        if($this->input->get("lo_item") != ""){
+            $this->db->where("lo_item",$this->input->get("lo_item"));
+        }
+
+        if($this->input->get("start_date") != "" && $this->input->get("end_date") != ""){
+            $this->db->where(" (date_format(lo_regdate,'%Y-%m-%d') >= '".$this->input->get("start_date")."' and date_format(lo_regdate,'%Y-%m-%d') <= '".$this->input->get("end_date")."' ) ");
+        }
+
+        if($this->input->get("lo_user") != ""){
+            $this->db->where("lo_user",$this->input->get("lo_user"));
+        }
+
+        if($this->input->get("lo_user") != ""){
+            $this->db->where("lo_user",$this->input->get("lo_user"));
+        }
+
+        if($this->input->get("searchType") != ""){
+            if($this->input->get("searchType") == "lo_ip"){
+                $this->db->where("lo_ip",$this->input->get("searchWord"));
+            }else{
+                // $this->db->where("lo_user",$this->input->get("lo_user"));
+            }
+        }
+        $this->db->order_by("lo_seq desc");
         $this->db->limit($end,$start);
         $query = $this->db->get();
 

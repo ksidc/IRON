@@ -662,13 +662,13 @@ function getItemList(){
         type : 'GET',
         dataType : 'JSON',
         success:function(response){
-            var html = '<div class="form-group">\
-                            <input type="checkbox" id="pi_seq0" value=""> 전체\
+            var html = '<div class="form-group" style="margin-right:10px;">\
+                            <input type="checkbox" id="pi_seq0" value="" class="c"> <b>전체</b>\
                         </div>';
             if(response.length > 0){
                 for(var i = 0; i < response.length;i++){
-                    html += '<div class="form-group">\
-                                <input type="checkbox" name="pi_seq[]" id="pi_seq'+(i+1)+'" class="pi_seq" value="'+response[i].pi_seq+'"> '+response[i].pi_name+'\
+                    html += '<div class="form-group" style="margin-right:10px;">\
+                                <input type="checkbox" name="pi_seq[]" id="pi_seq'+(i+1)+'" class="pi_seq c" value="'+response[i].pi_seq+'"> '+response[i].pi_name+'\
                             </div>';
                 }
 

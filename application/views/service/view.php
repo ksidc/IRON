@@ -81,12 +81,12 @@
                 <div class="label padd"><div>사내 담당자</div></div>
                 <div class="input">
                     <select name="sv_part" class="select2" style="width:110px">
-                        <option value="">기술팀</option>
-                        <option value=""></option>
+                        <option value="기술팀" <?=($info["sv_part"] == "기술팀" ? "selected":"")?>>기술팀</option>
+                        <option value="영업팀" <?=($info["sv_part"] == "영업팀" ? "selected":"")?>>영업팀</option>
                     </select>
                     <select name="sv_charger" class="select2" style="width:110px">
-                        <option value="">노성민</option>
-                        <option value=""></option>
+                        <option value="노성민" <?=($info["sv_charger"] == "노성민" ? "selected":"")?>>노성민</option>
+                        <option value="김지훈" <?=($info["sv_charger"] == "김지훈" ? "selected":"")?>>김지훈</option>
                     </select>
                 </div>
             </div>
@@ -393,7 +393,7 @@
                                         </select> 초
                                     </div>
                                 </div>
-                                <div style="text-align:right;width:8%;display:none" class="yes_input">
+                                <div style="text-align:right;width:5%;display:none" class="yes_input">
                                     <i class="fa fa-edit"  type="button" onclick="setServiceDate()"></i>
                                 </div>
                                 <?endif; ?>
@@ -419,7 +419,7 @@
                                         </select> 초
                                     </div>
                                 </div>
-                                <div style="text-align:right;display:inline-block;width:8%">
+                                <div style="text-align:right;display:inline-block;width:5%">
                                     <i class="fa fa-edit"  type="button" onclick="setServiceDate()"></i>
                                 </div>
                             <?php endif;?>
@@ -451,7 +451,7 @@
                                     </select> 초
                                 </div>
                             </div>
-                            <div style="text-align:right;width:8%;display:none" class="yes_input">
+                            <div style="text-align:right;width:5%;display:none" class="yes_input">
                                 <i class="fa fa-edit"  type="button" onclick="setServiceDate()"></i>
                             </div>
                         <?php endif; ?>
@@ -875,7 +875,7 @@
                 <input type="hidden" name="sv_seq" value="<?=$info["sv_seq"]?>">
                 <div style="display:inline-block;width:17%;text-align:right;vertical-align:top;padding:20px 5px 0px 0px">메모</div>
                 <div style="display:inline-block;width:70%;vertical-align:top">
-                    <textarea style="width:99.5%;height:50px;background-color:#fff;" name="sm_msg" id="sm_msg"></textarea>
+                    <textarea class="memo" name="sm_msg" id="sm_msg"></textarea>
                 </div>
                 <div style="display:inline-block;width:10%;vertical-align:top"><button class="btn btn-brown btn-service-msg" type="button" style="padding:20px 20px;">등록</button></div>
             </form>
@@ -883,19 +883,29 @@
 	</div>
 	<div class="header-box">
         <div class="header-title">
-            <div><div>변경 로그</div></div>
+            <div style="float:left"><div>변경 로그</div></div>
+            <div style="float:right">
+                <select class="select2" name="log_end" id="log_end" style="width:90px">
+                    <option value="10">10라인</option>
+                    <option value="20" selected>20라인</option>
+                    <option value="30">30라인</option>
+                    <option value="50">50라인</option>
+                    <option value="100">100라인</option>
+                </select>
+            </div>
         </div>
-        <div style="float:right;font-size:12px;padding:5px 0px">
+        <form id="logForm">
+        <div style="float:right;font-size:12px;padding:5px 10px">
             <ul style="list-style:none;padding:0;margin:0">
                 <li style="float:left;padding-top:5px">구분 </li>
                 <li style="float:left;padding-left:3px">
-                    <select name="log_type" class="select2" style="width:100px">
+                    <select name="lo_type" class="select2" style="width:100px">
                         <option value="">전체 로그</option>
                     </select>
                 </li>
                 <li style="float:left;padding-top:5px;padding-left:10px">항목</li>
                 <li style="float:left;padding-left:3px">
-                    <select name="log_type" class="select2" style="width:100px">
+                    <select name="lo_item" class="select2" style="width:100px">
                         <option value="">전체 로그</option>
                     </select>
                 </li>
@@ -907,21 +917,23 @@
             <ul style="clear:both;list-style:none;padding:10px 0px 0px 0px;margin:0">
                 <li style="float:left;padding-top:5px">작업자 구분 : </li>
                 <li style="float:left;padding-top:3px;padding-left:10px">
-                    ADMIN <input type="checkbox"> SYSTEM <input type="checkbox"> USER <input type="checkbox">
+                    ADMIN <input type="checkbox" name="lo_user[]" value="1"> SYSTEM <input type="checkbox" name="lo_user[]" value="2"> USER <input type="checkbox" name="lo_user[]" value="3">
                 </li>
                 <li style="float:left">
-                    <select name="" class="select2" style="width:120px">
+                    <select name="searchType" class="select2" style="width:120px">
                         <option value="">작업자 이름</option>
                         <option value="">작업자 ID</option>
-                        <option value="">접속 IP</option>
+                        <option value="lo_ip">접속 IP</option>
                     </select>
                 </li>
-                <li style="float:left">
-                    <input type="text" name=""><button class="btn btn-brown btn-small" type="button">검색</button>
+                <li style="float:left;padding-left:5px">
+                    <input type="text" name="searchWord"><button class="btn btn-brown btn-small btn-log-search" type="button">검색</button>
+                    
                 </li>
 
             </ul>
         </div>
+        </form>
         <div>
             <table class="table">
                 <thead>
@@ -957,7 +969,7 @@
                 END User
             </li>
             <li >
-                <input type="text" name="endSearchWord" id="endSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-end" type="submit" style="padding:5.5px 7px;margin-bottom:3px">검색</button>
+                <input type="text" name="endSearchWord" id="endSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-end" type="submit">검색</button>
             </li>
         </ul>
     </div>
@@ -986,7 +998,7 @@
         </div>
         <div class="type-add-right" style="padding-left:30px">
             <div style="display:inline-block">END User</div>
-            <div style="display:inline-block" ><input type="text" name="eu_name" id="add_eu_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-end-add" type="submit" style="padding:5.5px 7px;margin-bottom:3px">신규 등록</button></div>
+            <div style="display:inline-block" ><input type="text" name="eu_name" id="add_eu_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-end-add" type="submit">신규 등록</button></div>
         </div>
     </div>
     </form>
@@ -1000,7 +1012,7 @@
                 분류명 (서비스 종류)
             </li>
             <li >
-                <input type="text" name="typeSearchWord" id="typeSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-type" type="submit" style="padding:5.5px 7px;margin-bottom:3px">검색</button>
+                <input type="text" name="typeSearchWord" id="typeSearchWord" style="vertical-align:top"><button class="btn btn-brown btn-small btn-search-type" type="submit">검색</button>
             </li>
         </ul>
     </div>
@@ -1029,7 +1041,7 @@
         </div>
         <div class="type-add-right" style="padding-left:30px">
             <div style="display:inline-block">분류명</div>
-            <div style="display:inline-block"><input type="text" name="ct_name" id="add_ct_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-type-add" type="submit" style="padding:5.5px 7px;margin-bottom:3px">신규 등록</button></div>
+            <div style="display:inline-block"><input type="text" name="ct_name" id="add_ct_name" style="vertical-align:top"><button class="btn btn-brown btn-small btn-type-add" type="submit">신규 등록</button></div>
         </div>
     </div>
     </form>
@@ -1047,7 +1059,7 @@
     </div>
     <form id="outForm">
 
-        <div class="modal-field" style="margin-top:20px">
+        <div class="modal-field" style="margin-top:20px;border-top:1px solid #ddd">
             <div class="modal-field-input">
                 <div class="label"><div>출고일</div></div>
                 <div class="input">
@@ -1062,7 +1074,7 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label"><div>제품 시리얼 No.</div></div>
+                <div class="label" style="width:19%"><div>제품 시리얼 No.</div></div>
                 <div class="input">
                     <input type="text" name="sv_out_serial" id="sv_out_serial" value="<?=$info["sv_out_serial"]?>">
                 </div>
@@ -1070,7 +1082,7 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label"><div>메모</div></div>
+                <div class="label" style="width:19%"><div>메모</div></div>
                 <div class="input">
                     <input type="text" name="sv_out_memo" id="sv_out_memo" value="<?=$info["sv_out_memo"]?>">
                 </div>
@@ -1095,7 +1107,7 @@
     </div>
     <form id="stopForm">
 
-        <div class="modal-field" style="margin-top:20px">
+        <div class="modal-field" style="margin-top:20px;border-top:1px solid #ddd;">
             <div class="modal-field-input">
                 <div class="label"><div>서비스 중지일</div></div>
                 <div class="input">
@@ -1110,7 +1122,7 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label"><div>서비스 중지 사유</div></div>
+                <div class="label" style="width:19%"><div>서비스 중지 사유</div></div>
                 <div class="input">
                     <input type="text" name="sv_service_stop_msg" id="sv_service_stop_msg" value="<?=$info["sv_service_stop_msg"]?>">
                 </div>
@@ -1132,7 +1144,7 @@
     </div>
     <form id="endForm">
 
-        <div class="modal-field" style="margin-top:20px">
+        <div class="modal-field" style="margin-top:20px;border-top:1px solid #ddd;">
             <div class="modal-field-input">
                 <div class="label"><div>서비스 해지일</div></div>
                 <div class="input">
@@ -1142,7 +1154,7 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label"><div>서비스 해지 사유</div></div>
+                <div class="label" style="width:19%"><div>서비스 해지 사유</div></div>
                 <div class="input">
                     <select name="sv_service_end_msg" id="sv_service_end_msg" class="select2" style="width:35%;display:inline-block">
                         <option value="서비스 축소">서비스 축소</option>
@@ -1172,7 +1184,7 @@
     </div>
     <form id="forceEndForm">
 
-        <div class="modal-field" style="margin-top:20px">
+        <div class="modal-field" style="margin-top:20px;border-top:1px solid #ddd;"">
             <div class="modal-field-input">
                 <div class="label"><div>직권 해지일</div></div>
                 <div class="input">
@@ -1182,7 +1194,7 @@
         </div>
         <div class="modal-field">
             <div class="modal-field-input full">
-                <div class="label"><div>직권 해지 사유</div></div>
+                <div class="label" style="width:19%"><div>직권 해지 사유</div></div>
                 <div class="input">
                     <select name="sv_service_force_end_msg" id="sv_service_force_end_msg" class="select2" style="width:35%;display:inline-block">
                         <option value="요금 체납">요금 체납</option>
@@ -1225,7 +1237,7 @@
         <div class="modal-field">
             <div class="modal-field-input full" >
                 <div class="label padd"><div><input type="checkbox" name="sms_yn" id="sms_yn" value="Y"> SMS 발송 | 내용</div></div>
-                <div class="input padd"><input type="text" name="sms" id="sms" style="width:70%" > <span class="bytes">0</span>byte / 80byte</div>
+                <div class="input padd"><input type="text" name="sms" id="sms" style="width:70%" > <span class="bytes">0</span>byte / 90byte</div>
             </div>
         </div>
         <div class="modal-field">
@@ -1255,13 +1267,13 @@
         </div>
 
 
-        <div class="modal-field" style="border-top:2px solid #ddd">
+        <div class="modal-field" style="border-top:1px solid #ddd">
             <div class="modal-field-input full">
                 <div class="label padd" style="vertical-align:top"><div>첨부 파일</div></div>
                 <div class="input padd">
                     <div>
-                        <button class="btn btn-default" type="button" onclick="$('#mf_file').trigger('click')">추가</button>
-                        <button class="btn btn-default btn-addfile-delete" type="button">삭제</button>
+                        <button class="btn btn-default" style="position:relative;top:2px;" type="button" onclick="$('#mf_file').trigger('click')">추가</button>
+                        <button class="btn btn-default btn-addfile-delete" style="position:relative;top:2px;" type="button">삭제</button>
                     </div>
                     <div id="mail_add_file" style="padding-left:53px;padding-top:10px">
 

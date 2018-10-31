@@ -16,16 +16,16 @@
             <div class="search1">
 
                 <div class="form-group">
-                    <input type="checkbox" name="sr_status[]" id="sr_status1" value="0"> 등록
+                    <input type="checkbox" name="sr_status[]" id="sr_status1" value="0" class="c"> <span style="color:#0070C0">등록</span>
                 </div>
                 <div class="form-group">
-                    <input type="checkbox" name="sr_status[]" id="sr_status2" value="1"> 신청완료
+                    <input type="checkbox" name="sr_status[]" id="sr_status2" value="1" class="c"> <span style="color:#FF0000">신청완료</span>
                 </div>
             </div>
             <div class="search2">
                 <div class="form-group">
                     <label>등록일</label>
-                    <input type="text" style="width:80px" name="startDate" id="startDate" class="datepicker3" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker3" value="<?=date('Y-m-d')?>">
+                    <input type="text" style="width:80px;margin-left:5px;" name="startDate" id="startDate" class="datepicker3" value="2012-01-01"> ~ <input type="text" name="endDate" id="endDate" style="width:80px" class="datepicker3" value="<?=date('Y-m-d')?>">
                 </div>
                 <div class="form-group ml15" style="text-align:left">
                     <select id="searchType" name="searchType" class="select2" style="width:140px">
@@ -40,6 +40,7 @@
 
                     <input type="text" name="searchWord" id="searchWord">
                     <button class="btn btn-search btn-form-search" type="submit">검색</button>
+                    
                 </div>
             </div>
         </form>

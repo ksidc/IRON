@@ -171,6 +171,9 @@ $(function(){
                     }else{
                         alert("오류발생")
                     }
+                },
+                error:function(error){
+                    console.log(error);
                 }
             });
         }else{
@@ -187,6 +190,9 @@ $(function(){
                     }else{
                         alert("오류발생")
                     }
+                },
+                error:function(error){
+                    console.log(error);
                 }
             });
         }
@@ -828,6 +834,7 @@ $(function(){
                 dataType : 'JSON',
                 data : datas,
                 success:function(response){
+                    console.log(response);
                     if(response.result){
                         alert("수정되었습니다");
                         // getMemo();
@@ -835,7 +842,11 @@ $(function(){
                     }else{
                         alert("오류발생")
                     }
+                },
+                error:function(error){
+                    console.log(error);
                 }
+                
             });
         }
     })
@@ -1107,13 +1118,13 @@ $(function(){
     });
 
     $('#sms').keyup(function(){
-        cut_80(this);
+        cut_90(this);
     });
 
     $('#sms').click(function(){
         var str_length = getTextLength($('#sms').val());
-        if(str_length > 80){
-            alert("문자는 80바이트 이하로 적어 주세요.");
+        if(str_length > 90){
+            alert("문자는 90바이트 이하로 적어 주세요.");
             return false;
         }
     });
@@ -1197,6 +1208,14 @@ $(function(){
             }
         }
     });
+
+    $(".btn-log-search").click(function(){
+        getLog();
+    })
+
+    $("#log_end").change(function(){
+        getLog();
+    })
 })
 
 var getEndUserNextNumber = function(){
@@ -1355,14 +1374,15 @@ function getMemo(){
 function getLog(){
 
     var url = "/api/fetchLogs/2/"+$("#sv_seq").val();
-    var end = 5;
+    var end = $("#log_end").val();
     var start = $("#log_start").val();
+    var datas = $("#logForm").serialize();
 // alert(start);
     $.ajax({
         url : url,
         type : 'GET',
         dataType : 'JSON',
-        data : "sv_seq="+$("#sv_seq").val()+"&start="+start+"&end="+end,
+        data : datas+"&sv_seq="+$("#sv_seq").val()+"&start="+start+"&end="+end,
         success:function(response){
             console.log(response);
             var html = "";
@@ -1396,7 +1416,7 @@ function getLog(){
             $("#log-list").html(html);
 
             $("#logPaging").bootpag({
-                total : Math.ceil(parseInt(response.total)/5), // 총페이지수 (총 Row / list노출개수)
+                total : Math.ceil(parseInt(response.total)/end), // 총페이지수 (총 Row / list노출개수)
                 page : $("#log_start").val(), // 현재 페이지 default = 1
                 maxVisible:5, // 페이지 숫자 노출 개수
                 wrapClass : "pagination",
@@ -1466,10 +1486,10 @@ function getTextLength(str) {
     return len;
 }
 
-function cut_80(obj){
+function cut_90(obj){
     var text = $(obj).val();
     var leng = text.length;
-    while(getTextLength(text) > 80){
+    while(getTextLength(text) > 90){
         leng--;
         text = text.substring(0, leng);
     }

@@ -6,6 +6,8 @@ $(function(){
     getPriceList();
     getClaimList();
     getComList(false);
+    getLog();
+    getAllLog();
     $( "#dialogFirstSetting" ).dialog({
         autoOpen: false,
         modal: true,
@@ -53,6 +55,14 @@ $(function(){
         title: '이메일 발송',
         modal: true,
         width: '800px',
+        draggable: true
+    });
+
+    $('#dialogLog').dialog({
+        autoOpen: false,
+        title: '변경로그',
+        modal: true,
+        width: '1200px',
         draggable: true
     });
 
@@ -359,6 +369,7 @@ $(function(){
                         alert("청구 완료");
                         // document.location.reload();
                         getClaimList();
+						$('#dialogOnce').dialog('close')
                     }
                     // document.location.reload();
                 }
@@ -1228,13 +1239,13 @@ $(function(){
     });
 
     $('#sms').keyup(function(){
-        cut_80(this);
+        cut_90(this);
     });
 
     $('#sms').click(function(){
         var str_length = getTextLength($('#sms').val());
-        if(str_length > 80){
-            alert("문자는 80바이트 이하로 적어 주세요.");
+        if(str_length > 90){
+            alert("문자는 90바이트 이하로 적어 주세요.");
             return false;
         }
     });
@@ -1332,6 +1343,18 @@ $(function(){
         console.log(end);
         target.val(end);
     })
+
+    $(".btn-log-search").click(function(){
+        getLog();
+    })
+
+    $("#log_end").change(function(){
+        getLog();
+    })
+
+    $("#log_all_end").change(function(){
+        getAllLog();
+    })
 })
 
 var fileCheck = function(){
@@ -1376,10 +1399,10 @@ function getTextLength(str) {
     return len;
 }
 
-function cut_80(obj){
+function cut_90(obj){
     var text = $(obj).val();
     var leng = text.length;
-    while(getTextLength(text) > 80){
+    while(getTextLength(text) > 90){
         leng--;
         text = text.substring(0, leng);
     }
@@ -2240,13 +2263,13 @@ function getPriceList(){
                     html += '<td class="right">'+$.number(price2)+' 원</td>';
                     html += '<td class="right">'+$.number(price+price2)+' 원</td>';
                     if(response[i].sv_pay_type == "0"){
-                        html += '<td>전월 '+response[i].sv_pay_day+'일</td>';
+                        html += '<td>전월 '+(response[i].sv_pay_day != '28' ? response[i].sv_pay_day:"말")+'일</td>';
                         var cal1 = -1;
                     }else if(response[i].sv_pay_type == "1"){
-                        html += '<td>당월 '+response[i].sv_pay_day+'일</td>';
+                        html += '<td>당월 '+(response[i].sv_pay_day != '28' ? response[i].sv_pay_day:"말")+'일</td>';
                         var cal1 = 0;
                     }else if(response[i].sv_pay_type == "2"){
-                        html += '<td>익월 '+response[i].sv_pay_day+'일</td>';
+                        html += '<td>익월 '+(response[i].sv_pay_day != '28' ? response[i].sv_pay_day:"말")+'일</td>';
                         var cal1 = 1;
                     }
                     html += '<td>'+response[i].sv_payment_day+'일 이내</td>';
@@ -2612,6 +2635,146 @@ function getComList(searchYn){
                 $("#paycom_extend").html(">");
             }
             
+        }
+    });
+}
+function getLog(){
+
+    var url = "/api/fetchLogs/1/"+$("#mb_seq").val();
+    var end = $("#log_end").val();
+    var start = $("#log_start").val();
+    var datas = $("#logForm").serialize();
+// alert(start);
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        data : datas+"&mb_seq="+$("#mb_seq").val()+"&start="+start+"&end="+end,
+        success:function(response){
+            console.log(response);
+            var html = "";
+            for(var i = 0;i<response.list.length;i++){
+                var num = parseInt(response.total) - (($("#log_start").val()-1)*end) - i;
+                html += '<tr>\
+                            <td>'+num+'</td>\
+                            <td>'+response.list[i].lo_regdate+'</td>\
+                            <td>'+response.list[i].lo_type+'</td>\
+                            <td>'+response.list[i].lo_item+'</td>\
+                            <td>'+response.list[i].lo_origin+'</td>\
+                            <td>'+response.list[i].lo_after+'</td>\
+                            <td>';
+                                if(response.list[i].lo_user == "1"){
+                                    html += "ADMIN";
+                                }else if(response.list[i].lo_user == "2"){
+                                    html += "SYSTEM";
+                                }else{
+                                    html += "USER";
+                                }
+                            html += '</td>\
+                            <td></td>\
+                            <td>'+response.list[i].lo_ip+'</td>\
+                        </tr>';
+                
+            }
+            if(html == ""){
+                html = "<tr><td colspan=9 align=center>내용이 없습니다.</td></tr>";
+            }
+            console.log(html);
+            $("#log-list").html(html);
+
+            $("#logPaging").bootpag({
+                total : Math.ceil(parseInt(response.total)/end), // 총페이지수 (총 Row / list노출개수)
+                page : $("#log_start").val(), // 현재 페이지 default = 1
+                maxVisible:5, // 페이지 숫자 노출 개수
+                wrapClass : "pagination",
+                next : ">",
+                prev : "<",
+                nextClass : "last",
+                prevClass : "first",
+                activeClass : "active"
+
+            }).on('page', function(event,num){ // 이벤트 액션
+                // document.location.href='/pageName/'+num; // 페이지 이동
+                $("#log_start").val(num);
+                getLog();
+            })
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+}
+
+function getAllLog(){
+
+    var url = "/api/fetchAllLogs/"+$("#mb_seq").val();
+    var end = $("#log_all_end").val();
+    var start = $("#log_all_start").val();
+    var datas = $("#logFormAll").serialize();
+// alert(start);
+    $.ajax({
+        url : url,
+        type : 'GET',
+        dataType : 'JSON',
+        data : datas+"&mb_seq="+$("#mb_seq").val()+"&start="+start+"&end="+end,
+        success:function(response){
+            var html = "";
+            for(var i = 0;i<response.list.length;i++){
+                var num = parseInt(response.total) - (($("#log_all_start").val()-1)*end) - i;
+                if(response.list[i].sv_number !== null){
+                    var sv_number = response.list[i].sv_number;
+                }else if(response.list[i].sva_number !== null){
+                    var sv_number = response.list[i].sva_number;
+                }else{
+                    var sv_number = "";
+                }
+                html += '<tr>\
+                            <td>'+num+'</td>\
+                            <td>'+response.list[i].lo_regdate+'</td>\
+                            <td>'+sv_number+'</td>\
+                            <td>'+response.list[i].lo_type+'</td>\
+                            <td>'+response.list[i].lo_item+'</td>\
+                            <td>'+response.list[i].lo_origin+'</td>\
+                            <td>'+response.list[i].lo_after+'</td>\
+                            <td>';
+                                if(response.list[i].lo_user == "1"){
+                                    html += "ADMIN";
+                                }else if(response.list[i].lo_user == "2"){
+                                    html += "SYSTEM";
+                                }else{
+                                    html += "USER";
+                                }
+                            html += '</td>\
+                            <td></td>\
+                            <td>'+response.list[i].lo_ip+'</td>\
+                        </tr>';
+                
+            }
+            if(html == ""){
+                html = "<tr><td colspan=10 align=center>내용이 없습니다.</td></tr>";
+            }
+            console.log(html);
+            $("#log-list-all").html(html);
+
+            $("#logPagingAll").bootpag({
+                total : Math.ceil(parseInt(response.total)/end), // 총페이지수 (총 Row / list노출개수)
+                page : $("#log_all_start").val(), // 현재 페이지 default = 1
+                maxVisible:5, // 페이지 숫자 노출 개수
+                wrapClass : "pagination",
+                next : ">",
+                prev : "<",
+                nextClass : "last",
+                prevClass : "first",
+                activeClass : "active"
+
+            }).on('page', function(event,num){ // 이벤트 액션
+                // document.location.href='/pageName/'+num; // 페이지 이동
+                $("#log_all_start").val(num);
+                getAllLog();
+            })
+        },
+        error: function(error){
+            console.log(error);
         }
     });
 }

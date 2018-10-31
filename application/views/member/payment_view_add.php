@@ -1,4 +1,5 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/df-number-format/2.1.6/jquery.number.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootpag/1.0.7/jquery.bootpag.min.js"></script>
 <div style="background:#fff;width:100%;overflow-x:hidden">
     <div class="popup_title" style="padding:10px">
          부가항목 요금 상세
@@ -82,9 +83,9 @@
                     <div class="label"><div>요금 납부 방법</div></div>
                     <div class="input">
                         <select name="sv_payment_type" id="sv_payment_type" class="select2" style="width:120px">
-                            <option value="1" <?=($info["sv_payment_type"] == "1" ? "selected":"")?>>무통장</option>
-                            <option value="2" <?=($info["sv_payment_type"] == "2" ? "selected":"")?>>카드</option>
-                            <option value="3" <?=($info["sv_payment_type"] == "3" ? "selected":"")?>>CMS</option>
+                            <option disabled="disabled" value="1" <?=($info["sv_payment_type"] == "1" ? "selected":"")?>>무통장</option>
+                            <option disabled="disabled" value="2" <?=($info["sv_payment_type"] == "2" ? "selected":"")?>>카드</option>
+                            <option disabled="disabled" value="3" <?=($info["sv_payment_type"] == "3" ? "selected":"")?>>CMS</option>
                         </select>
                     </div>
                 </div>
@@ -97,20 +98,20 @@
                 <div class="modal-field-input">
                     <div class="label"><div>청구 기준</div></div>
                     <div class="input">서비스 이용 월의 <select name="sv_pay_type" id="sv_pay_type" class="select2" style="width:80px">
-                                    <option value="0" <?=($info["sv_pay_type"] == "0" ? "selected":"")?>>전월</option>
-                                    <option value="1" <?=($info["sv_pay_type"] == "1" ? "selected":"")?>>당월</option>
-                                    <option value="2" <?=($info["sv_pay_type"] == "2" ? "selected":"")?>>익월</option>
+                                    <option disabled="disabled" value="0" <?=($info["sv_pay_type"] == "0" ? "selected":"")?>>전월</option>
+                                    <option disabled="disabled" value="1" <?=($info["sv_pay_type"] == "1" ? "selected":"")?>>당월</option>
+                                    <option disabled="disabled" value="2" <?=($info["sv_pay_type"] == "2" ? "selected":"")?>>익월</option>
                                 </select> 청구 </div>
                 </div>
                 <div class="modal-field-input">
                     <div class="label"><div>자동 청구일</div></div>
                     <div class="input">
                         <select name="sv_pay_day" id="sv_pay_day" class="select2" style="width:180px">
-                            <option value="">자동 청구일을 선택하세요</option>
+                            <option disabled="disabled" value="">자동 청구일을 선택하세요</option>
                             <?php for($i = 1; $i < 28;$i++): ?>
-                            <option value="<?=($i)?>" <?=($info["sv_pay_day"] == $i ? "selected":"")?>><?=($i)?>일</option>
+                            <option disabled="disabled" value="<?=($i)?>" <?=($info["sv_pay_day"] == $i ? "selected":"")?>><?=($i)?>일</option>
                             <?php endfor; ?>
-                            <option value="말일" <?=($info["sv_pay_day"] > "28" ? "selected":"")?>>말일</option>
+                            <option disabled="disabled" value="말일" <?=($info["sv_pay_day"] > "28" ? "selected":"")?>>말일</option>
                         </select>
                     </div>
                 </div>
@@ -120,15 +121,15 @@
                     <div class="label"><div>계산서 발행</div></div>
                     <div class="input">
                         <select  name="sv_pay_publish" id="sv_pay_publish" class="select2" style="width:40%">
-                            <option  value="0" <?=($info["sv_pay_publish"] == "0" ? "selected":"")?>>발행</option>
-                            <option value="1" <?=($info["sv_pay_publish"] == "1" ? "selected":"")?>>미발행</option>
+                            <option disabled="disabled" value="0" <?=($info["sv_pay_publish"] == "0" ? "selected":"")?>>발행</option>
+                            <option disabled="disabled" value="1" <?=($info["sv_pay_publish"] == "1" ? "selected":"")?>>미발행</option>
 
                         </select>
 
 
                         <select name="sv_pay_publish_type" id="sv_pay_publish_type" class="select2" style="width:40%">
-                            <option value="0" <?=($info["sv_pay_publish_type"] == "0" ? "selected":"")?>>영수 발행</option>
-                            <option value="1" <?=($info["sv_pay_publish_type"] == "1" ? "selected":"")?>>청구 발행</option>
+                            <option disabled="disabled" value="0" <?=($info["sv_pay_publish_type"] == "0" ? "selected":"")?>>영수 발행</option>
+                            <option disabled="disabled" value="1" <?=($info["sv_pay_publish_type"] == "1" ? "selected":"")?>>청구 발행</option>
 
                         </select>
                     </div>
@@ -137,14 +138,14 @@
                     <div class="label"><div>결제일</div></div>
                     <div class="input">
                         청구일로부터
-                             <input type="text" style="width:15%" name="sv_payment_day" id="sv_payment_day" value="<?=$info["sv_payment_day"]?>"> 일 후
+                             <input type="text" style="width:15%" name="sv_payment_day" id="sv_payment_day" readonly value="<?=$info["sv_payment_day"]?>"> 일 후
                     </div>
                 </div>
             </div>
             <div class="modal-field">
                 <div class="modal-field-input">
                     <div class="label"><div>최초 과금 시작일</div></div>
-                    <div class="input"><input type="text" style="width:38.7%" name="sv_account_start" id="sv_account_start" value="<?=$info["sv_account_start"]?>" class="datepicker4"> </div>
+                    <div class="input"><input type="text" style="width:38.7%" name="sv_account_start" id="sv_account_start" readonly value="<?=$info["sv_account_start"]?>"> </div>
                 </div>
                 <div class="modal-field-input">
                     <div class="label"><div>최초 과금 만료일</div></div>
@@ -363,6 +364,80 @@
                 <textarea name="admin_msg" style="width:99.4%;height:100px;background-color:#fafafa;"></textarea>
             </div>
         </div>
+        <div class="modal-title">
+            <div class="modal-title-text"><div>변경 로그</div></div>
+            <div style="float:right;position:relative;top:-26px;right:10px;">
+                <select class="select2" name="log_end" id="log_end" style="width:90px;">
+                    <option value="10">10라인</option>
+                    <option value="20" selected>20라인</option>
+                    <option value="30">30라인</option>
+                    <option value="50">50라인</option>
+                    <option value="100">100라인</option>
+                </select>
+            </div>
+        </div>
+        <form id="logForm">
+        <div style="float:right;font-size:12px;padding:5px 0px">
+            <ul style="list-style:none;padding:0;margin:0">
+                <li style="float:left;padding-top:5px">구분 </li>
+                <li style="float:left;padding-left:3px">
+                    <select name="lo_type" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-top:5px;padding-left:10px">항목</li>
+                <li style="float:left;padding-left:3px">
+                    <select name="lo_item" class="select2" style="width:100px">
+                        <option value="">전체 로그</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-top:5px;padding-left:10px">날짜</li>
+                <li style="float:left;padding-left:3px">
+                    <input type="text" name="start_date" class="datepicker3"> ~ <input type="text" name="end_date" class="datepicker3">
+                </li>
+            </ul>
+            <ul style="clear:both;list-style:none;padding:10px 0px 0px 0px;margin:0">
+                <li style="float:left;padding-top:5px">작업자 구분 : </li>
+                <li style="float:left;padding-top:3px;padding-left:10px">
+                    ADMIN <input type="checkbox" name="lo_user[]" value="1"> SYSTEM <input type="checkbox" name="lo_user[]" value="2"> USER <input type="checkbox" name="lo_user[]" value="3">
+                </li>
+                <li style="float:left">
+                    <select name="searchType" class="select2" style="width:120px">
+                        <option value="">작업자 이름</option>
+                        <option value="">작업자 ID</option>
+                        <option value="lo_ip">접속 IP</option>
+                    </select>
+                </li>
+                <li style="float:left;padding-left:5px">
+                    <input type="text" name="searchWord"><button class="btn btn-brown btn-small btn-log-search" type="button">검색</button>
+                </li>
+
+            </ul>
+        </div>
+        </form>
+        <div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>No</th>
+                    <th>날짜</th>
+                    <th>구분</th>
+                    <th>항목</th>
+                    <th>변경 전</th>
+                    <th>변경 후</th>
+                    <th>작업자 구분</th>
+                    <th>작업자</th>
+                    <th>접속 IP</th>
+                </tr>
+                </thead>
+                <tbody id="log-list">
+                
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <div id="logPaging"></div>
+        </div>
         <div class="modal-button">
             <button class="btn btn-black btn-payment-modify-add" type="button">수정</button>
         </div>
@@ -430,4 +505,8 @@
 
     <div class="modal-close-btn" style="margin-top:14px"><button class="btn btn-black btn-small btn-price-policy">적용</button> <button class="btn btn-default btn-small" onclick="$('#dialogFirstSetting').dialog('close')">닫기</button></div>
 </div>
+<input type="hidden" id="log_start" value=1>
 <script src="/assets/js/memberPaymentView.js?date=<?=time()?>"></script>
+<script>
+    getAddLog();
+</script>

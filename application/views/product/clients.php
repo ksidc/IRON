@@ -32,6 +32,7 @@
 
                     <input type="text" name="searchWord" id="searchWord">
                     <button class="btn btn-search btn-form-search" type="submit">검색</button>
+                    
                 </div>
             </div>
         </form>
