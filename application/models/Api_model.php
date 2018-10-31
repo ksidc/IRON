@@ -8665,7 +8665,7 @@ class Api_model extends CI_Model {
             $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','장비 위치',$b_row["sv_position"],$this->input->post("sv_position"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_out_serial"] != $this->input->post("sv_out_serial")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','장비 위치',$b_row["sv_out_serial"],$this->input->post("sv_out_serial"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','제품 시리얼 번호',$b_row["sv_out_serial"],$this->input->post("sv_out_serial"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_firmware"] != $this->input->post("sv_firmware")){
             $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','펌웨어 버전',$b_row["sv_firmware"],$this->input->post("sv_firmware"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
