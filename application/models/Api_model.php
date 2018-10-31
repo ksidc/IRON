@@ -6823,7 +6823,23 @@ class Api_model extends CI_Model {
                     }else{ // 최초청구가 아닐때 로직은 동일 금액계산 및 청구일로직만 차이
                         $row = $query->row_array();
                         $pm_service_start = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2),substr($row["pm_service_end"],8,2)+1,substr($row["pm_service_end"],0,4)));
-                        $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["sv_payment_period"],substr($row["pm_service_end"],8,2),substr($row["pm_service_end"],0,4)));
+                        // $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["svp_payment_period"],substr($row["pm_service_end"],8,2),substr($row["pm_service_end"],0,4)));
+                        $origin_end_day = date("t",strtotime($row["pm_service_end"]));
+                        $origin_end_day2 = substr($row["pm_service_end"],8,2);
+
+                        if($origin_end_day == $origin_end_day2){
+                            $next_end_day = date("t",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["svp_payment_period"],1,substr($row["pm_service_end"],0,4)));
+                            if($next_end_day >= $origin_end_day2){ // 30일이 31일로
+                                $pm_service_end = date("Y-m-t",strtotime("+".$row["svp_payment_period"]." months", strtotime($row["pm_service_end"])));
+                            }else{
+                                $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2),substr($row["pm_service_end"],8,2)-1,substr($row["pm_service_end"],0,4)));
+                                $pm_service_end = date("Y-m-t",strtotime("+".$row["svp_payment_period"]." months", strtotime($pm_service_end)));
+                            }
+                            
+                        }else{
+                            $pm_service_end = date("Y-m-d",strtotime("+".$row["svp_payment_period"]." months", strtotime($row["pm_service_end"])));
+                        }
+                        
 
                         $pay_day = $row["sv_pay_day"];
                         if($row["sv_pay_type"] == "0"){ // 전월
@@ -7534,7 +7550,22 @@ class Api_model extends CI_Model {
                             }else{
                                 $row = $query->row_array();
                                 $pm_service_start = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2),substr($row["pm_service_end"],8,2)+1,substr($row["pm_service_end"],0,4)));
-                                $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["svp_payment_period"],substr($row["pm_service_end"],8,2)-1,substr($row["pm_service_end"],0,4)));
+                                // $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["svp_payment_period"],substr($row["pm_service_end"],8,2),substr($row["pm_service_end"],0,4)));
+                                // $pm_service_end = date("Y-m-d",strtotime("+".$row["svp_payment_period"]." months", strtotime($row["pm_service_end"])));
+                                $origin_end_day = date("t",strtotime($row["pm_service_end"]));
+                                $origin_end_day2 = substr($row["pm_service_end"],8,2);
+                                if($origin_end_day == $origin_end_day2){
+                                    $next_end_day = date("t",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["svp_payment_period"],1,substr($row["pm_service_end"],0,4)));
+                                    if($next_end_day >= $origin_end_day2){ // 30일이 31일로
+                                        $pm_service_end = date("Y-m-t",strtotime("+".$row["svp_payment_period"]." months", strtotime($row["pm_service_end"])));
+                                    }else{
+                                        $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2),substr($row["pm_service_end"],8,2)-1,substr($row["pm_service_end"],0,4)));
+                                        $pm_service_end = date("Y-m-t",strtotime("+".$row["svp_payment_period"]." months", strtotime($pm_service_end)));
+                                    }
+                                    
+                                }else{
+                                    $pm_service_end = date("Y-m-d",strtotime("+".$row["svp_payment_period"]." months", strtotime($row["pm_service_end"])));
+                                }
 
                                 $pay_day = $row["sv_pay_day"];
                                 if($row["sv_pay_type"] == "0"){ // 전월
@@ -8245,7 +8276,22 @@ class Api_model extends CI_Model {
                     }else{
                         $row = $query->row_array();
                         $pm_service_start = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2),substr($row["pm_service_end"],8,2)+1,substr($row["pm_service_end"],0,4)));
-                        $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["svp_payment_period"],substr($row["pm_service_end"],8,2),substr($row["pm_service_end"],0,4)));
+                        // $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["svp_payment_period"],substr($row["pm_service_end"],8,2),substr($row["pm_service_end"],0,4)));
+                        // $pm_service_end = date("Y-m-d",strtotime("+".$row["svp_payment_period"]." months", strtotime($row["pm_service_end"])));
+                        $origin_end_day = date("t",strtotime($row["pm_service_end"]));
+                        $origin_end_day2 = substr($row["pm_service_end"],8,2);
+                        if($origin_end_day == $origin_end_day2){
+                            $next_end_day = date("t",mktime(0,0,0,substr($row["pm_service_end"],5,2)+$row["svp_payment_period"],1,substr($row["pm_service_end"],0,4)));
+                            if($next_end_day >= $origin_end_day2){ // 30일이 31일로
+                                $pm_service_end = date("Y-m-t",strtotime("+".$row["svp_payment_period"]." months", strtotime($row["pm_service_end"])));
+                            }else{
+                                $pm_service_end = date("Y-m-d",mktime(0,0,0,substr($row["pm_service_end"],5,2),substr($row["pm_service_end"],8,2)-1,substr($row["pm_service_end"],0,4)));
+                                $pm_service_end = date("Y-m-t",strtotime("+".$row["svp_payment_period"]." months", strtotime($pm_service_end)));
+                            }
+                            
+                        }else{
+                            $pm_service_end = date("Y-m-d",strtotime("+".$row["svp_payment_period"]." months", strtotime($row["pm_service_end"])));
+                        }
 
                         $pay_day = $row["sv_pay_day"];
                         if($row["sv_pay_type"] == "0"){ // 전월
@@ -8665,7 +8711,7 @@ class Api_model extends CI_Model {
             $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','장비 위치',$b_row["sv_position"],$this->input->post("sv_position"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_out_serial"] != $this->input->post("sv_out_serial")){
-            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','제품 시리얼 번호',$b_row["sv_out_serial"],$this->input->post("sv_out_serial"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
+            $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','장비 위치',$b_row["sv_out_serial"],$this->input->post("sv_out_serial"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
         }
         if($b_row["sv_firmware"] != $this->input->post("sv_firmware")){
             $this->logInsert(5,$this->input->post("sv_seq"),'설치/관제정보','펌웨어 버전',$b_row["sv_firmware"],$this->input->post("sv_firmware"),1,'',$_SERVER["REMOTE_ADDR"],$b_row["sv_mb_seq"]);
